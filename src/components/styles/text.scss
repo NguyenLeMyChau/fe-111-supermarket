@@ -1,0 +1,106 @@
+@import './variables.scss';
+
+/* Font weights */
+.font-weight-regular {
+    font-weight: 400;
+}
+
+.font-weight-medium {
+    font-weight: 500;
+}
+
+.font-weight-semibold {
+    font-weight: 600;
+}
+
+.font-weight-bold {
+    font-weight: 700;
+}
+
+/* Text */
+.display-md {
+    // Medium display text
+    font-size: 47px;
+    line-height: 20px;
+}
+
+.display-sm {
+    // Small display text
+    font-size: 30px;
+    line-height: 38px;
+}
+
+.display-xs {
+    // Extra small display text
+    font-size: 24px;
+    line-height: 32px;
+}
+
+.text-xl {
+    // Extra large text
+    font-size: 20px;
+    line-height: 30px;
+}
+
+.text-lg {
+    // Large text
+    font-size: 18px;
+    line-height: 28px;
+}
+
+.text-md {
+    // Medium text
+    font-size: 16px;
+    line-height: 24px;
+}
+
+.text-sm {
+    // Small text
+    font-size: 14px;
+    line-height: 20px;
+}
+
+/* Text colors */
+.text-primary {
+    color: var(--default-color);
+}
+
+.text-success {
+    color: var(--success-color);
+}
+
+.text-danger {
+    color: var(--danger-color);
+}
+
+.text-warning {
+    color: var(--warning-color);
+}
+
+.text-info {
+    color: var(--info-color);
+}
+
+.text-light {
+    color: var(--light-color);
+}
+
+.text-dark {
+    color: var(--dark-color);
+}
+
+.text-muted {
+    color: var(--muted-color);
+}
+
+.text-white {
+    color: var(--white-color);
+}
+
+.text-title {
+    color: var(--title-color);
+}
+
+.text-title-2 {
+    color: var(--title-2-color);
+}

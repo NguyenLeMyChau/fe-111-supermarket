@@ -1,0 +1,47 @@
+@import '../../components//styles//layout.scss';
+
+.login-container {
+    @extend .flex-row-center;
+    width: 70%;
+    height: 50%;
+}
+
+.login-frame {
+    @extend .flex-column-center;
+    width: 50%;
+    height: 100%;
+    padding: 50px;
+    border-radius: 10px;
+}
+
+.login-frame-left {
+    @extend .login-frame;
+    background-color: white;
+    border: 1px solid var(--default-color);
+}
+
+.login-frame-right {
+    @extend .login-frame;
+    background-color: var(--default-color);
+}
+
+
+.login-title {
+    @extend .flex-column-center;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.login-options {
+    @extend .flex-row-space-between;
+    margin-top: 10px;
+    width: 70%;
+    color: var(--white-color);
+}
+
+.login-button {
+    margin-top: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}

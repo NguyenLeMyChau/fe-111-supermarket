@@ -1,0 +1,26 @@
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.centered-container {
+    @extend .flex-center;
+    flex-direction: row;
+    height: 100vh;
+}
+
+.flex-row-center {
+    @extend .flex-center;
+    flex-direction: row;
+}
+
+.flex-column-center {
+    @extend .flex-center;
+    flex-direction: column;
+}
+
+.flex-row-space-between {
+    display: flex;
+    justify-content: space-between;
+}
