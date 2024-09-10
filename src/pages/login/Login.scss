@@ -1,4 +1,5 @@
 @import '../../components//styles//layout.scss';
+@import '../../components//styles//text.scss';
 
 .login-container {
     @extend .flex-row-center;
@@ -35,8 +36,13 @@
 .login-options {
     @extend .flex-row-space-between;
     margin-top: 10px;
-    width: 70%;
+    width: 100%;
     color: var(--white-color);
+}
+
+.login-options input[type="checkbox"] {
+    width: 15px; /* Đặt chiều rộng */
+    height: 15px; /* Đặt chiều cao */
 }
 
 .login-button {
@@ -44,4 +50,20 @@
     width: 100%;
     display: flex;
     justify-content: center;
+}
+
+.login-link {
+    @extend .text-sm;
+    @extend .font-weight-medium;
+    color: var(--white-color); /* Sử dụng biến màu sắc nếu có */
+    text-decoration: none; /* Loại bỏ gạch chân */
+    transition: color 0.3s ease; /* Thêm hiệu ứng chuyển màu khi hover */
+
+    &:hover {
+        color: var(--title-color); /* Màu khi hover */
+    }
+
+    &:active {
+        color: var(--dark-color); /* Màu khi nhấn */
+    }
 }

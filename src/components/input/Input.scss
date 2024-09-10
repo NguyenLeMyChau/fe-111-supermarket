@@ -1,22 +1,46 @@
+@import '../../components/styles/layout.scss';
+@import '../../components/styles/text.scss';
+
 .input-container {
-    display: flex;
-    flex-direction: column;
+    @extend .flex-columm;
 }
 
 .input-label {
-    font-size: 14px;
-    font-weight: 500;
-    color: black;
+    @extend .text-sm;
+    @extend .font-weight-medium;
+    color: var(--black-color);
+}
+
+.input-wrapper {
+    @extend .flex-row-align-center;
+    position: relative;
 }
 
 .input-field {
     width: 300px;
     height: 35px;
-    padding-left: 10px;
-    color: black;
+    color: var(--black-color);
     border: 1px solid;
     border-color: #C4C4C4;
     border-radius: 5px;
     margin: 10px 0;
     box-sizing: border-box;
+    padding-left: 10px;
+}
+
+/* CSS để ẩn dấu "x" trong input trên trình duyệt Chrome */
+.input-field::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.input-icon {
+    position: absolute;
+    pointer-events: none;
+    right: 10px;
+}
+
+.input-wrapper svg {
+    font-size: 25px;
+    color: #858D9D;
 }

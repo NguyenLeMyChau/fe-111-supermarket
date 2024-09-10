@@ -1,0 +1,54 @@
+@import '../../components/styles/text.scss';
+@import '../../components/styles/layout.scss';
+
+.menu-body {
+    @extend .flex-columm;
+    width: 13vw;
+    height: 100vh;
+    background-color: var(--white-color);
+    color: var(--menu-color);
+    padding: 0px 20px;
+}
+
+.menu-logo {
+    @extend .flex-center;
+    width: 100%;
+    height: 80px;
+    margin-bottom: 10px;
+}
+
+.menu-menu {
+    width: 100%;
+    height: auto;
+}
+
+.menu-setting {
+    margin-top: auto;
+    margin-bottom: 30px;
+}
+
+.menu-detail {
+    @extend .flex-row-align-center;
+    @extend .text-md;
+    @extend .font-weight-regular;
+    height: 20px;
+    padding: 15px;
+    padding-left: 20px;
+}
+
+.menu-detail:hover {
+    color: var(--title-color);
+    @extend .text-xl;
+    @extend .font-weight-medium;
+}
+
+.menu-detail.selected {
+    color: var(--default-color);
+    @extend .text-xl;
+    @extend .font-weight-medium;
+}
+
+.menu-detail p {
+    margin-left: 13px;
+    font-size: 15px;
+}

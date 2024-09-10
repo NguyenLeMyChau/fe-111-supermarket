@@ -7,7 +7,12 @@ export default function Button(props) {
         <button
             type={props.type || 'button'}
             className='button'
-            style={{ width: `${props.width}px`, height: `${props.height}px`, color: props.color, backgroundColor: props.backgroundColor }}
+            style={{
+                width: `${props.width}px`,
+                height: `${props.height}px`,
+                color: props.color,
+                backgroundColor: props.backgroundColor,
+            }}
         >
             {props.text}
         </button>

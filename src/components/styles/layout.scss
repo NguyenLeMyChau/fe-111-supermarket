@@ -22,5 +22,30 @@
 
 .flex-row-space-between {
     display: flex;
+    flex-direction: row;
+    align-items: center;
     justify-content: space-between;
+}
+
+.flex-row-align-center {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.flex-row-justify-center {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.flex-columm {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-row-align-start {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
 }

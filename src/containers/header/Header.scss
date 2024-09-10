@@ -1,0 +1,24 @@
+@import '../../components/styles/text.scss';
+@import '../../components/styles/layout.scss';
+
+.header-container {
+    @extend .flex-row-space-between;
+    flex-grow: 1; /* Để Header chiếm phần còn lại của không gian */
+    padding: 10px 40px;
+    background-color: var(--white-color);
+    color: var(--menu-color);
+    box-sizing: border-box;
+    border-left: 2px solid var(--background-color);
+}
+
+.header-container svg {
+    font-size: 27px;
+    color: var(--menu-color);
+}
+
+.header-container .avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    margin-left: 25px;
+}

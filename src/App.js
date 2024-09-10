@@ -1,9 +1,14 @@
 import './App.scss';
-import Login from './containers/Login/Login';
+import Frame from './containers/frame/Frame.js';
+import Header from './containers/header/Header.js';
+import Menu from './containers/menu/Menu.js';
+import Login from './pages/login/Login.js';
 
 function App() {
   return (
-   <Login/>
+    <div className='App-header'>
+      <Frame />
+    </div>
   );
 }
 
