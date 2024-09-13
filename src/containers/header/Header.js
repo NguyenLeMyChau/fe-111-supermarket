@@ -11,7 +11,7 @@ export default function Header() {
                 type='search'
                 placeholder='Search product, supplier, order'
             />
-            <div className='info'>
+            <div>
                 <CiBellOn />
                 <img src={avatar} alt='User Avatar' className='avatar' />
             </div>

@@ -1,0 +1,11 @@
+@import '../../components/styles/text.scss';
+@import '../../components/styles/layout.scss';
+
+.orders-page {
+    @extend .flex-columm;
+    flex-grow: 1;
+    gap: 20px;
+    box-sizing: border-box;
+    min-height: 0;
+    overflow: hidden;
+}

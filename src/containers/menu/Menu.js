@@ -8,7 +8,7 @@ import { IoIosLogOut } from "react-icons/io";
 import { FaRegUser } from "react-icons/fa";
 import { SlSettings } from "react-icons/sl";
 
-function Menu() {
+function Menu({ onchange }) {
     const [selectedItem, setSelectedItem] = useState('Dashboard');
 
     const menuItems = [
@@ -35,6 +35,9 @@ function Menu() {
     const handleItemClick = (label) => {
         console.log(label);
         setSelectedItem(label);
+        if (onchange) { // Kiểm tra nếu onchange được truyền vào
+            onchange(label);
+        }
     };
 
     return (

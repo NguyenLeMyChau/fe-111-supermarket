@@ -5,4 +5,17 @@
     @extend .flex-row-align-start;
     width: 100%;
     height: 100vh;
+    box-sizing: border-box;
+}
+
+.frame-content {
+    @extend .flex-columm;
+    flex-grow: 1;
+}
+
+.frame-content .main-content {
+    @extend .flex-columm;
+    flex-grow: 1;
+    gap: 20px;
+    margin: 20px 30px;
 }
