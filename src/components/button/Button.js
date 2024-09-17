@@ -11,8 +11,10 @@ export default function Button(props) {
                 width: `${props.width}px`,
                 height: `${props.height}px`,
                 color: props.color,
-                backgroundColor: props.backgroundColor,
+                backgroundColor: props.backgroundColor || 'transparent',
+                backgroundImage: props.backgroundImage,
             }}
+            onClick={props.onClick}
         >
             {props.text}
         </button>

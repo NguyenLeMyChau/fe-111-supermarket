@@ -1,11 +1,13 @@
+@import '../../components/styles/variables.scss';
+
 .button {
     width: 300px;
     height: 35px;
-    background-color: #1366D9;
     border: none;
-    color: white;
+    color: var(--white-color);
     text-align: center;
     font-size: 16px;
-    border-radius: 5px;
+    border-radius: 10px;
     box-sizing: border-box;
+    background-color: var(--default-color);
 }

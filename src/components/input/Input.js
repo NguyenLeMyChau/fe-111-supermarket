@@ -13,6 +13,8 @@ export default function Input(props) {
                     placeholder={props.placeholder}
                     className='input-field'
                     style={{ width: `${props.width}px`, height: `${props.height}px` }}
+                    value={props.value}
+                    onChange={props.onChange}
                 />
             </div>
         </div>

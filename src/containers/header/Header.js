@@ -2,18 +2,20 @@ import React from 'react';
 import './Header.scss';
 import Input from '../../components/input/Input';
 import { CiBellOn } from "react-icons/ci";
-import avatar from '../../assets/avatar-music.jpg';
+import { useSelector } from 'react-redux';
 
 export default function Header() {
+    const currentUser = useSelector((state) => state.auth.login.currentUser);
+
     return (
         <div className='header-container'>
             <Input
                 type='search'
                 placeholder='Search product, supplier, order'
             />
-            <div>
+            <div className='flex-row-center'>
                 <CiBellOn />
-                <img src={avatar} alt='User Avatar' className='avatar' />
+                {currentUser && <span>Welcome, {currentUser.user.name}</span>}
             </div>
 
         </div>

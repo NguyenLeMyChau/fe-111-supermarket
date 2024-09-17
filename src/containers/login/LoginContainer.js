@@ -2,27 +2,35 @@ import React, { useState } from 'react';
 import '../../pages/login/Login.scss';
 import Input from '../../components/input/Input';
 import Button from '../../components/button/Button';
+import { loginUser } from '../../store/api/authRequest';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router';
 
 const LoginContainer = () => {
-    // Truy cập CSS variables
-    const root = document.documentElement;
-    const titleColor = getComputedStyle(root).getPropertyValue('--title-color');
-
-    const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
-    const handleLogin = () => {
-        // Logic đăng nhập
-    };
+    const handleLogin = async (e) => {
+        e.preventDefault();
+
+        const loginData = {
+            phone: phone,
+            password: password,
+        };
+
+        loginUser(loginData, dispatch, navigate);
+    }
 
     return (
-        <div>
+        <form onSubmit={handleLogin}>
             <Input
-                label='Email'
-                placeholder='Enter your email'
+                label='Phone'
+                placeholder='Enter your phone'
                 color='white'
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
             />
             <Input
                 type='password'
@@ -45,11 +53,9 @@ const LoginContainer = () => {
                 <Button
                     type='submit'
                     text='Sign In'
-                    backgroundColor={titleColor}
-                    onClick={handleLogin}
                 />
             </div>
-        </div>
+        </form>
     );
 };
 

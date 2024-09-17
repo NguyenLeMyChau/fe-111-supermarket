@@ -11,7 +11,7 @@ export default function Login() {
             <div className='login-container'>
                 <div className='login-frame-left'>
                     <Logo width={300} height={300} />
-                    <label className='display-md font-weight-semibold text-primary'>MINI SMART</label>
+                    <label className='display-md font-weight-semibold text-primary'>CAPY SMART</label>
                 </div>
                 <div className='login-frame-right'>
                     <div className='login-title'>
@@ -20,7 +20,6 @@ export default function Login() {
                     </div>
 
                     <LoginContainer />
-
 
                 </div>
             </div>

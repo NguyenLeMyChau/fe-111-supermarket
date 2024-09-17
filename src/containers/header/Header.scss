@@ -14,11 +14,10 @@
 .header-container svg {
     font-size: 27px;
     color: var(--menu-color);
+    margin-right: 15px;
+
 }
 
-.header-container .avatar {
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    margin-left: 25px;
+.header-container div {
+    padding-right: 20px;
 }

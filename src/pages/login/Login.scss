@@ -50,6 +50,12 @@
     width: 100%;
     display: flex;
     justify-content: center;
+    border-radius: 10px;
+    background-image: linear-gradient(to right, #346C9B, #323C64);
+
+    &:hover {
+        background-image: linear-gradient(to right, #323C64, #346C9B);
+    }
 }
 
 .login-link {

@@ -44,7 +44,7 @@ function Menu({ onchange }) {
         <div className='menu-body'>
             <div className='menu-logo'>
                 <Logo />
-                <p className='text-xl font-weight-semibold text-primary'>MINI SMART</p>
+                <p className='text-xl font-weight-semibold text-primary'>CAPY SMART</p>
             </div>
 
             {menuItems.map((menuSection) => (
