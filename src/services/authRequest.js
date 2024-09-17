@@ -23,7 +23,12 @@ const loginUser = async (loginData, dispatch, navigate) => {
 
         // Lưu thông tin người dùng vào redux store 
         dispatch(loginSuccess(userWithToken));
-        navigate('/frame');
+
+        if (userWithToken.role === 'manager') {
+            navigate('/frame');
+        } else {
+            alert('Chờ cập nhật thêm staff')
+        }
 
     } catch (error) {
         dispatch(loginFailed());
