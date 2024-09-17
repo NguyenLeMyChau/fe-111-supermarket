@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
-import { loginFailed, loginStart, loginSuccess } from '../reducers/authSlice';
+import { loginFailed, loginStart, loginSuccess } from '../store/reducers/authSlice';
 
-export const loginUser = async (loginData, dispatch, navigate) => {
+const loginUser = async (loginData, dispatch, navigate) => {
     dispatch(loginStart());
 
     try {
@@ -31,3 +31,5 @@ export const loginUser = async (loginData, dispatch, navigate) => {
         alert(error.response ? error.response.data.message : error.message);
     }
 }
+
+export { loginUser };

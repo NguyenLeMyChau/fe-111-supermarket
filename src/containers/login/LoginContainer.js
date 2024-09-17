@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import '../../pages/login/Login.scss';
 import Input from '../../components/input/Input';
 import Button from '../../components/button/Button';
-import { loginUser } from '../../store/api/authRequest';
+import { loginUser } from '../../services/authRequest';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router';
 
