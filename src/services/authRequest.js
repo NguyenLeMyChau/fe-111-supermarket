@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
-import { loginFailed, loginStart, loginSuccess } from '../store/reducers/authSlice';
+import { loginFailed, loginStart, loginSuccess, logoutFailed, logoutStart, logoutSuccess, resetLogoutState } from '../store/reducers/authSlice';
 
 const loginUser = async (loginData, dispatch, navigate) => {
     dispatch(loginStart());
@@ -37,4 +37,24 @@ const loginUser = async (loginData, dispatch, navigate) => {
     }
 }
 
-export { loginUser };
+const logoutUser = async (dispatch, navigate, accessToken) => {
+    dispatch(logoutStart());
+    try {
+        await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/logout`, {}, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        await dispatch(logoutSuccess());
+        navigate('/login');
+        setTimeout(() => {
+            dispatch(resetLogoutState());
+        }, 1000);
+    } catch (error) {
+        dispatch(logoutFailed());
+        console.error('Logout failed:', error);
+        alert(error.response ? error.response.data.message : error.message);
+    }
+}
+
+export { loginUser, logoutUser };

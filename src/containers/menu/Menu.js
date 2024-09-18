@@ -7,9 +7,15 @@ import { BsClipboardCheck, BsBoxSeam, BsFileBarGraph } from "react-icons/bs";
 import { IoIosLogOut } from "react-icons/io";
 import { FaRegUser } from "react-icons/fa";
 import { SlSettings } from "react-icons/sl";
+import { logoutUser } from '../../services/authRequest';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router';
 
 function Menu({ onchange }) {
     const [selectedItem, setSelectedItem] = useState('Dashboard');
+    const login = useSelector((state) => state.auth?.login?.currentUser);
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const menuItems = [
         {
@@ -33,10 +39,16 @@ function Menu({ onchange }) {
     ];
 
     const handleItemClick = (label) => {
-        console.log(label);
-        setSelectedItem(label);
-        if (onchange) { // Kiểm tra nếu onchange được truyền vào
-            onchange(label);
+        console.log('label menu:', label);
+        if (label === 'Log Out') {
+            const accessToken = login?.accessToken;
+            logoutUser(dispatch, navigate, accessToken);
+            
+        } else {
+            setSelectedItem(label);
+            if (onchange) { // Kiểm tra nếu onchange được truyền vào
+                onchange(label);
+            }
         }
     };
 
