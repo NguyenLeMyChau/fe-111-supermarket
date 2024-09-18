@@ -10,12 +10,15 @@ import { SlSettings } from "react-icons/sl";
 import { logoutUser } from '../../services/authRequest';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
+import { createAxiosInstance } from '../../utils/util';
+import { logoutSuccess } from '../../store/reducers/authSlice';
 
 function Menu({ onchange }) {
-    const [selectedItem, setSelectedItem] = useState('Dashboard');
-    const login = useSelector((state) => state.auth?.login?.currentUser);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
+    const [selectedItem, setSelectedItem] = useState('Dashboard');
+    const login = useSelector((state) => state.auth?.login?.currentUser);
 
     const menuItems = [
         {
@@ -39,16 +42,22 @@ function Menu({ onchange }) {
     ];
 
     const handleItemClick = (label) => {
-        console.log('label menu:', label);
-        if (label === 'Log Out') {
-            const accessToken = login?.accessToken;
-            logoutUser(dispatch, navigate, accessToken);
-            
-        } else {
-            setSelectedItem(label);
-            if (onchange) { // Kiểm tra nếu onchange được truyền vào
-                onchange(label);
+        const axiosJWT = createAxiosInstance(login, dispatch, logoutSuccess);
+        if (axiosJWT) {
+            console.log('label menu:', label);
+            if (label === 'Log Out') {
+                console.log('Log out axiosJWT:', axiosJWT);
+                const accessToken = login?.accessToken;
+                logoutUser(dispatch, navigate, accessToken, axiosJWT);
+
+            } else {
+                setSelectedItem(label);
+                if (onchange) { // Kiểm tra nếu onchange được truyền vào
+                    onchange(label);
+                }
             }
+        } else {
+            console.error('axiosJWT is not initialized. User might not be logged in.');
         }
     };
 

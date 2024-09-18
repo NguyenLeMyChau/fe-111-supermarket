@@ -9,8 +9,13 @@ const loginUser = async (loginData, dispatch, navigate) => {
         const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/login`, loginData);
         console.log('Login success:', response.data);
 
+        const { accessToken, refreshToken } = response.data;
+
+        // Lưu trữ refresh token trong sessionStorage
+        sessionStorage.setItem('refreshToken', refreshToken);
+
         // Giải mã accessToken để lấy thông tin người dùng
-        const decodedToken = jwtDecode(response.data.accessToken);
+        const decodedToken = jwtDecode(accessToken);
 
         const { exp, iat, ...userWithoutExpIat } = decodedToken;
 
@@ -37,15 +42,16 @@ const loginUser = async (loginData, dispatch, navigate) => {
     }
 }
 
-const logoutUser = async (dispatch, navigate, accessToken) => {
+const logoutUser = async (dispatch, navigate, accessToken, axiosJWT) => {
     dispatch(logoutStart());
     try {
-        await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/logout`, {}, {
+        await axiosJWT.post(`/api/auth/logout`, {}, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
         });
         await dispatch(logoutSuccess());
+        sessionStorage.removeItem('refreshToken');
         navigate('/login');
         setTimeout(() => {
             dispatch(resetLogoutState());
