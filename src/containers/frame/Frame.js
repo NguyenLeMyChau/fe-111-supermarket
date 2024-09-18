@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux';
 export default function Frame() {
     const [currentContent, setCurrentContent] = useState('Dashboard');
     const navigate = useNavigate();
-    const login = useSelector((state) => state.auth.login?.currentUser);
+    const login = useSelector((state) => state.auth?.login?.currentUser);
 
     useEffect(() => {
         console.log('login', login);
