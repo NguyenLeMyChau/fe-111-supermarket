@@ -1,0 +1,30 @@
+.keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 10px;
+    margin-top: 20px;
+  }
+  
+  .keypad button {
+    padding: 20px;
+    font-size: 24px;
+    background-color: #f0f0f0;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .keypad button:hover {
+    background-color: #ddd;
+  }
+  
+  .keypad button:nth-child(10) { /* Phím "C" */
+    background-color: #ff6666;
+    color: #fff;
+  }
+  
+  .keypad button:nth-child(10):hover {
+    background-color: #ff4d4d;
+  }
+  

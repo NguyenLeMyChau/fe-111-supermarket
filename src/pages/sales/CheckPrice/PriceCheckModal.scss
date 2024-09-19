@@ -1,0 +1,63 @@
+/* PriceCheckModal.scss */
+.price-check-overlay {
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed; /* Ensure the overlay covers the full viewport */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000; /* Ensure it appears above other content */
+  }
+  
+  .price-check-modal {
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    max-width: 600px;
+    max-height: 600px;
+    width: 100%; /* Ensure the modal is responsive */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative; /* Remove top positioning */
+  }
+  
+  .price-check-modal h2 {
+    margin-bottom: 16px;
+    font-size: 1.5rem;
+    color: #333;
+  }
+  
+  .price-check-modal input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  
+  .price-check-modal button {
+    background-color: #007bff;
+    border: none;
+    color: #fff;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-right: 10px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .price-check-modal button:hover {
+    background-color: #0056b3;
+  }
+  
+  .price-check-modal .price-result {
+    margin-top: 12px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+  }
+  

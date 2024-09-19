@@ -1,0 +1,203 @@
+
+
+.sales-container {
+  display: flex;
+  flex-direction: column;
+  height: 84vh;
+  background-color: aqua;
+  
+
+  .row-top {
+    display: flex;
+    height: 60%;
+    background-color: var(--default-color);
+
+    .cart-section {
+      width: 100%;
+
+      table {
+        width: 100%;
+        height: 90%;
+        border-collapse: collapse;
+        background-color: var(--light-color);
+        tbody {
+          height: 100%; /* Allow tbody to take up remaining height */
+          display: block; /* Enable explicit height control */
+          overflow-y: auto; /* Make tbody scrollable if content overflows */
+        }
+        thead, tr {
+          display: table;
+          width: 100%; /* Ensure thead and tr take up full width */
+          table-layout: fixed;
+        }
+        th,
+        td {
+          font-size: 18px;
+          padding: 5px;
+          text-align: left;
+          border: 1px solid #ddd;
+          color: var(--black-color);
+        }
+        td {
+          height: 50px; /* Set fixed height for table rows */
+        }
+        th {
+          background-color: var(--light-color);
+        }
+        th:first-child, 
+  td:first-child {
+    width: 50px; /* Small width for the "STT" column */
+  }
+
+  th:nth-child(2), 
+  td:nth-child(2) {
+    width: 30%; /* Larger width for the "Tên sản phẩm" column */
+  }
+      }
+
+      .total-amount {
+        color: var(--black-color);
+        text-align: left;
+        padding: 5px;
+        font-size: 16px;
+        font-weight: bold;
+      }
+    }
+
+    .buttons-right {
+      width: 15%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+
+      button {
+        padding: 15px;
+        width: 85%;
+        font-size: 1rem;
+        background-color: var(--warning-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        margin-top: 20px;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+    }
+  }
+
+  .row-bottom {
+    display: flex;
+    height: 40%;
+  
+    background-color: var(--menu-color);
+
+    .function-section {
+      width: 50%;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      padding: 20px;
+
+      button {
+        padding: 15px;
+        font-size: 1rem;
+        background-color: var(--success-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+    }
+
+    .keypad-section {
+      
+      width: 50%;
+      display: flex;
+      padding: 20px;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+  
+      .input-section {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 10px;
+  
+        .keypad-input {
+          width: 90%;
+          padding: 7px;
+          font-size: 1.2rem;
+          text-align: center;
+         
+          border: 2px solid #ddd;
+          border-radius: 8px;
+          box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+  
+        .submit-btn {
+          padding: 10px 20px;
+          font-size: 1rem;
+          background-color: #007bff;
+          color: white;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+  
+        .submit-btn:hover {
+          background-color: #0056b3;
+        }
+      }
+  
+      .keypad {
+        
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        width: 100%; /* Đặt chiều rộng cố định cho keypad */
+  
+        button {
+          padding:10px 20px;
+          margin: 2px;
+          font-size: 1.2rem;
+          background-color: #f1f1f1;
+          border: none;
+          border-radius: 8px;
+          cursor: pointer;
+          transition: background-color 0.2s ease;
+          box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        }
+  
+        button:hover {
+          background-color: #e0e0e0;
+        }
+      }
+    }
+  }
+
+.clickable-row {
+  cursor: pointer; /* Change cursor to pointer to indicate clickability */
+  transition: background-color 0.3s ease;
+}
+
+.clickable-row:hover {
+  background-color: #f5f5f5; /* Light grey background on hover */
+}
+
+.clickable-row.selected {
+  background-color: #e0e0e0; /* Light blue or grey for the selected row */
+}
+
+/* Other existing styles */
+
+}

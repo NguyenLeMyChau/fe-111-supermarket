@@ -1,0 +1,52 @@
+@import '../../components/styles/text.scss';
+@import '../../components/styles/layout.scss';
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+
+.frame-container {
+    @extend .flex-columm;
+    width: 100vw;
+    height: 100vh;
+    box-sizing: border-box;
+}
+
+
+.header {
+    width: 100%;
+   height: 20%;
+    background-color: #e20101;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+  }
+
+.main-content {
+  flex: 1; /* Chiếm 70% chiều cao */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: #fff;
+
+}
+.sales{
+    @extend .flex-columm;
+    width: 70%;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    
+}
+.promotion{
+    @extend .flex-columm;
+    width: 30%;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+}
