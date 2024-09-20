@@ -101,7 +101,7 @@ const handleCancel = () => {
 };
 
   const handlePay = () => {
-    navigate('/payment', { state: { productList: cart, totalAmount: total } });
+    navigate('/frame_staff/payment', { state: { productList: cart, totalAmount: total } });
   };
 
   // const checkPrice = async (barcode) => {
@@ -169,6 +169,7 @@ const handleCancel = () => {
         <div className="keypad-section">
           <div className="input-section">
             <input
+            
               value={barcode} 
               type="text"
               className="keypad-input"

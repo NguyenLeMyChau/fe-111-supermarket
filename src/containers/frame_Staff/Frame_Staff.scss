@@ -1,22 +1,19 @@
 @import '../../components/styles/text.scss';
 @import '../../components/styles/layout.scss';
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
 
 
-.frame-container {
+.staff-frame-container {
     @extend .flex-columm;
-    width: 100vw;
+    width: 100%;
     height: 100vh;
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
 
 
-.header {
+.staff-header {
     width: 100%;
    height: 20%;
     background-color: #e20101;
@@ -24,11 +21,11 @@
     align-items: center;
     justify-content: center;
     font-size: 1.5rem;
-    padding: 20px;
+      
     border-bottom: 1px solid #ddd;
   }
 
-.main-content {
+.staff-main-content {
   flex: 1; /* Chiếm 70% chiều cao */
   display: flex;
   flex-direction: row;
@@ -36,14 +33,14 @@
   background-color: #fff;
 
 }
-.sales{
+.staff-sales{
     @extend .flex-columm;
     width: 70%;
     border: 1px solid #ddd;
     border-radius: 8px;
     
 }
-.promotion{
+.staff-promotion{
     @extend .flex-columm;
     width: 30%;
     border: 1px solid #ddd;

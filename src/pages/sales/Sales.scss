@@ -5,6 +5,8 @@
   flex-direction: column;
   height: 84vh;
   background-color: aqua;
+  box-sizing: border-box;
+
   
 
   .row-top {
@@ -24,6 +26,7 @@
           height: 100%; /* Allow tbody to take up remaining height */
           display: block; /* Enable explicit height control */
           overflow-y: auto; /* Make tbody scrollable if content overflows */
+          
         }
         thead, tr {
           display: table;
@@ -35,11 +38,10 @@
           font-size: 18px;
           padding: 5px;
           text-align: left;
-          border: 1px solid #ddd;
           color: var(--black-color);
         }
         td {
-          height: 50px; /* Set fixed height for table rows */
+          height: 30px; /* Set fixed height for table rows */
         }
         th {
           background-color: var(--light-color);

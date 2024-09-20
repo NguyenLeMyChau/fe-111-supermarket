@@ -11,9 +11,9 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/frame" element={<Frame />} />
-        <Route path="/frame_staff" element={<Frame_Staff/>} />
-        <Route path="*" element={<Navigate to="/login" />} />
-        <Route path="/frame_staff/payment" element={<Payment/>} />
+        <Route path="/frame-staff" element={<Frame_Staff/>} />
+        <Route path="*" element={<Navigate to="/login"/>} />
+        <Route path="/frame-staff/payment" element={<Payment/>} />
       </Routes>
     </Router>
   );

@@ -8,7 +8,7 @@ const Promotion = () => {
     <div className="container">
          <div className="promotion-section">
         <h2>Numeric Keypad</h2>
-        <div class="numeric-keypad">
+        <div className="numeric-keypad">
   <button>1</button>
   <button>2</button>
   <button>3</button>

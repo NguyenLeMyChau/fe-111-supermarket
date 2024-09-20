@@ -31,8 +31,11 @@ const loginUser = async (loginData, dispatch, navigate) => {
 
         if (userWithToken.role === 'manager') {
             navigate('/frame');
-        } else {
-            alert('Chờ cập nhật thêm staff')
+        } else if(userWithToken.role === 'staff'){
+            navigate('/frame-staff');
+        }
+        else{
+            alert('Chờ cập nhật role')
         }
 
     } catch (error) {

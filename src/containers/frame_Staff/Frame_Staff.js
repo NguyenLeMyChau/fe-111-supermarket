@@ -15,14 +15,12 @@ export default function Frame_Staff() {
       }
    
     return (
-        <div className='frame-container'>
-                <div className='header'> <Header supermarketName={infoHeader.supermarketName} address={infoHeader.address} employeeName={infoHeader.employeeName} /></div>
-                <main className='main-content'>
-                    <div className='sales' >  <Sales/></div>
-                    <div className='promotion'>  <Promotion/></div>
+        <div className='staff-frame-container'>
+                <div className='staff-header'> <Header supermarketName={infoHeader.supermarketName} address={infoHeader.address} employeeName={infoHeader.employeeName} /></div>
+                <main className='staff-main-content'>
+                    <div className='staff-sales' >  <Sales/></div>
+                    <div className='staff-promotion'>  <Promotion/></div>
                 </main>
-                
-            
         </div>
     );
 }
