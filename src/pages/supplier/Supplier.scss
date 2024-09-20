@@ -1,0 +1,14 @@
+@import '../../components/styles/text.scss';
+@import '../../components/styles/layout.scss';
+
+.supplier-container {
+    @extend .flex-columm;
+    flex-grow: 1;
+    background-color: var(--white-color);
+    padding: 0px 20px;
+}
+
+.supplier-container h1 {
+    font-size: 24px;
+    color: var(--title-color);
+}

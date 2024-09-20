@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import './Frame.scss';
-import { useNavigate } from 'react-router';
-import { useSelector } from 'react-redux';
 import Menu from '../menu/Menu';
 import Header from '../header/Header';
+import { useNavigate } from 'react-router';
+import { useSelector } from 'react-redux';
 
-export default function Frame() {
-    const [currentContent, setCurrentContent] = useState('Dashboard');
+export default function FrameStaff() {
+    const [currentContent, setCurrentContent] = useState('User');
     const navigate = useNavigate();
     const logout = useSelector((state) => state.auth?.login?.isLogout);
     const login = useSelector((state) => state.auth?.login?.currentUser);
@@ -16,13 +15,13 @@ export default function Frame() {
         if (!login && !logout) {
             alert('Vui lòng đăng nhập để thực hiện chức năng này!');
             navigate('/login');
-        } else if (login?.role !== 'manager' && !logout) {
-            alert('Chỉ có quản lý mới có thể truy cập trang này!');
+        } else if (login?.role !== 'staff' && !logout) {
+            alert('Chỉ có nhân viên mới có thể truy cập trang này!');
             navigate('/login');
         }
     }, [login, logout, navigate]);
 
-    if (!login || login?.role !== 'manager') {
+    if (!login || login?.role !== 'staff') {
         return <div className='frame-access-denied'></div>;
     }
 

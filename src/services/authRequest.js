@@ -31,10 +31,10 @@ const loginUser = async (loginData, dispatch, navigate) => {
 
         if (userWithToken.role === 'manager') {
             navigate('/frame');
-        } else if(userWithToken.role === 'staff'){
+        } else if (userWithToken.role === 'staff') {
             navigate('/frame-staff');
         }
-        else{
+        else {
             alert('Chờ cập nhật role')
         }
 

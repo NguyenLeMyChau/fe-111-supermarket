@@ -1,47 +1,22 @@
 import React, { useState } from 'react';
 import './Menu.scss';
 import Logo from '../../components/logo/Logo';
-import { MdOutlineInventory2 } from "react-icons/md";
-import { GoHome } from "react-icons/go";
-import { BsClipboardCheck, BsBoxSeam, BsFileBarGraph } from "react-icons/bs";
-import { IoIosLogOut } from "react-icons/io";
-import { FaRegUser } from "react-icons/fa";
-import { SlSettings } from "react-icons/sl";
 import { logoutUser } from '../../services/authRequest';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { createAxiosInstance } from '../../utils/util';
 import { logoutSuccess } from '../../store/reducers/authSlice';
+import useMenuItems from './useMenuItems';
 
 function Menu({ onchange }) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const [selectedItem, setSelectedItem] = useState('Dashboard');
     const login = useSelector((state) => state.auth?.login?.currentUser);
+    const [selectedItem, setSelectedItem] = useState(login?.role === 'manager' ? 'Dashboard' : 'User');
+    const menuItems = useMenuItems(login?.role);
 
-    const menuItems = [
-        {
-            section: "Menu",
-            items: [
-                { Icon: GoHome, label: "Dashboard" },
-                { Icon: MdOutlineInventory2, label: "Inventory" },
-                { Icon: BsFileBarGraph, label: "Report" },
-                { Icon: FaRegUser, label: "Suppliers" },
-                { Icon: BsBoxSeam, label: "Orders" },
-                { Icon: BsClipboardCheck, label: "Manage Store" }
-            ],
-
-        },
-        {
-            section: "Setting",
-            items: [
-                { Icon: SlSettings, label: "Setting" },
-                { Icon: IoIosLogOut, label: "Log Out" }]
-        }
-    ];
-
-    const handleItemClick = (label) => {
+    const handleItemClick = (label, element) => {
         const axiosJWT = createAxiosInstance(login, dispatch, logoutSuccess);
         if (axiosJWT) {
             console.log('label menu:', label);
@@ -50,10 +25,13 @@ function Menu({ onchange }) {
                 const accessToken = login?.accessToken;
                 logoutUser(dispatch, navigate, accessToken, axiosJWT);
 
-            } else {
+            } else if (label === 'Stall') {
+                navigate('/frame-staff/stall');
+            }
+            else {
                 setSelectedItem(label);
                 if (onchange) { // Kiểm tra nếu onchange được truyền vào
-                    onchange(label);
+                    onchange(element);
                 }
             }
         } else {
@@ -71,14 +49,14 @@ function Menu({ onchange }) {
             {menuItems.map((menuSection) => (
                 <div className={`menu-menu ${menuSection.section === 'Setting' ? 'menu-setting' : ''}`} key={menuSection.section}>
                     <div>
-                        {menuSection.items.map(({ Icon, label }) => (
+                        {menuSection.items.map(({ Icon, label, text, element }) => (
                             <div
                                 className={`menu-detail ${selectedItem === label ? 'selected' : ''}`}
-                                onClick={() => handleItemClick(label)}
+                                onClick={() => handleItemClick(label, element)}
                                 key={label}
                             >
                                 <Icon size={20} />
-                                <p>{label}</p>
+                                <p>{text}</p>
                             </div>
                         ))}
                     </div>
