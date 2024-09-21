@@ -8,7 +8,10 @@
     padding: 0px 20px;
 }
 
-.supplier-container h1 {
-    font-size: 24px;
+.supplier-container h3 {
     color: var(--title-color);
+}
+
+.flex-row-align-center>*:not(:last-child) {
+    margin-right: 20px;
 }

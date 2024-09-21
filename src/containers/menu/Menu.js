@@ -16,12 +16,12 @@ function Menu({ onchange }) {
     const [selectedItem, setSelectedItem] = useState(login?.role === 'manager' ? 'Dashboard' : 'User');
     const menuItems = useMenuItems(login?.role);
 
+
     const handleItemClick = (label, element) => {
         const axiosJWT = createAxiosInstance(login, dispatch, logoutSuccess);
         if (axiosJWT) {
             console.log('label menu:', label);
             if (label === 'Log Out') {
-                console.log('Log out axiosJWT:', axiosJWT);
                 const accessToken = login?.accessToken;
                 logoutUser(dispatch, navigate, accessToken, axiosJWT);
 

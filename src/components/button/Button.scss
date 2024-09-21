@@ -1,8 +1,10 @@
 @import '../../components/styles/variables.scss';
+@import '../../components//styles//layout.scss';
 
 .button {
-    width: 300px;
-    height: 35px;
+    @extend .flex-row-center;
+    padding: 0 20px;
+    height: 40px;
     border: none;
     color: var(--white-color);
     text-align: center;

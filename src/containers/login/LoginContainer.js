@@ -26,16 +26,16 @@ const LoginContainer = () => {
     return (
         <form onSubmit={handleLogin}>
             <Input
-                label='Phone'
-                placeholder='Enter your phone'
+                label='Số điện thoại'
+                placeholder='Nhập số điện thoại của bạn'
                 color='white'
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
             />
             <Input
                 type='password'
-                label='Password'
-                placeholder='Enter your password'
+                label='Mật khẩu'
+                placeholder='Nhập mật khẩu của bạn'
                 color='white'
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -43,16 +43,16 @@ const LoginContainer = () => {
             <div className='login-options'>
                 <div className='flex-row-center'>
                     <input type='checkbox' />
-                    <label className='text-md'>Remember me</label>
+                    <label className='text-md'>Ghi nhớ</label>
                 </div>
 
-                <a href='/' className='login-link'>Forgot Password?</a>
+                <a href='/' className='login-link'>Quên mật khẩu?</a>
             </div>
 
             <div className='login-button'>
                 <Button
                     type='submit'
-                    text='Sign In'
+                    text='Đăng nhập'
                 />
             </div>
         </form>

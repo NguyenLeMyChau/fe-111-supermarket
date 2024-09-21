@@ -20,10 +20,6 @@ const refreshToken = async () => {
 };
 
 export const createAxiosInstance = (user, dispatch, stateSuccess) => {
-    if (!user || !user.accessToken) {
-        throw new Error("User or accessToken is undefined");
-    }
-
     const newInstance = axios.create({
         baseURL: process.env.REACT_APP_API_URL,
         withCredentials: true

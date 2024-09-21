@@ -1,13 +1,13 @@
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { loginFailed, loginStart, loginSuccess, logoutFailed, logoutStart, logoutSuccess, resetLogoutState } from '../store/reducers/authSlice';
+import { resetDataManager } from '../store/reducers/commonDataSlice';
 
 const loginUser = async (loginData, dispatch, navigate) => {
     dispatch(loginStart());
 
     try {
         const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/login`, loginData);
-        console.log('Login success:', response.data);
 
         const { accessToken, refreshToken } = response.data;
 
@@ -59,6 +59,7 @@ const logoutUser = async (dispatch, navigate, accessToken, axiosJWT) => {
         setTimeout(() => {
             dispatch(resetLogoutState());
         }, 1000);
+        await dispatch(resetDataManager());
     } catch (error) {
         dispatch(logoutFailed());
         console.error('Logout failed:', error);

@@ -15,8 +15,8 @@ export default function Login() {
                 </div>
                 <div className='login-frame-right'>
                     <div className='login-title'>
-                        <label className='display-sm font-weight-semibold text-title' style={{ margin: 10 }}>Log In</label>
-                        <label className='text-md font-weight-regular text-muted text-title-2'>Welcome back! Please enter your details.</label>
+                        <label className='display-sm font-weight-semibold text-title' style={{ margin: 10 }}>Đăng Nhập</label>
+                        <label className='text-md font-weight-regular text-muted text-title-2'>Vui lòng nhập thông tin của bạn để đăng nhập</label>
                     </div>
 
                     <LoginContainer />
