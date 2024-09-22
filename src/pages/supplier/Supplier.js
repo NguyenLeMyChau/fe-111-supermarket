@@ -3,14 +3,24 @@ import './Supplier.scss';
 import Button from '../../components/button/Button';
 import { IoFilterOutline } from "react-icons/io5";
 import { useSelector } from 'react-redux';
+import usePagination from '../../hooks/usePagination';
 
 export default function Supplier() {
     const suppliers = useSelector((state) => state.commonData?.dataManager?.suppliers);
+    const itemsPerPage = 10;
+
+    const {
+        currentPage,
+        totalPages,
+        currentItems,
+        handleNextPage,
+        handlePreviousPage,
+    } = usePagination(suppliers, itemsPerPage);
 
     return (
         <div className='supplier-container'>
             <header className='flex-row-space-between'>
-                <h3>Suppliers</h3>
+                <h3>Nhà cung cấp</h3>
                 <div className='flex-row-align-center'>
                     <Button
                         text='Add Supplier'
@@ -28,20 +38,39 @@ export default function Supplier() {
             </header>
 
             <main>
-                {suppliers && suppliers.map((supplier) => (
-                    <div key={supplier.id} className='supplier-card'>
-                        <div className='flex-row-space-between'>
-                            <h4>{supplier.name}</h4>
-                            <Button
-                                text='Edit'
-                                className='text-sm font-weight-medium'
-                            />
-                        </div>
-                        <p>{supplier.phone}</p>
-                        <p>{supplier.email}</p>
-                    </div>
-                ))}
+                {currentItems && (
+                    <table className="table">
+                        <thead>
+                            <tr>
+                                <th>Nhà cung cấp</th>
+                                <th>Số điện thoại</th>
+                                <th>Email</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {currentItems.map((supplier) => (
+                                <tr key={supplier._id}>
+                                    <td>{supplier.name}</td>
+                                    <td>{supplier.phone}</td>
+                                    <td>{supplier.email}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                )}
+
+                <div className="pagination">
+                    <button onClick={handlePreviousPage} disabled={currentPage === 1}>
+                        Trước
+                    </button>
+                    <span> {currentPage} / {totalPages}</span>
+                    <button onClick={handleNextPage} disabled={currentPage === totalPages}>
+                        Sau
+                    </button>
+                </div>
             </main>
+
+
         </div>
     );
 }

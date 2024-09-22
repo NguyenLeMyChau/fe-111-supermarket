@@ -1,0 +1,60 @@
+@import '../../components/styles/text.scss';
+@import '../../components/styles/layout.scss';
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    @extend .text-sm;
+    border-bottom: 1px solid #F0F1F3;
+    padding: 10px 0px;
+    text-align: left;
+}
+
+.table tbody tr:hover {
+    background-color: var(--default-color);
+    color: var(--white-color);
+    transition: background-color 0.3s ease;
+}
+
+.table th:nth-child(1),
+.table td:nth-child(1) {
+    width: 50%;
+}
+
+.table th:nth-child(2),
+.table td:nth-child(2) {
+    width: 20%;
+}
+
+.table th:nth-child(3),
+.table td:nth-child(3) {
+    width: 30%;
+}
+
+
+.pagination {
+    @extend .flex-row-center;
+    padding: 10px;
+    margin-top: 1rem;
+}
+
+.pagination button {
+    padding: 0.5rem 1rem;
+    margin: 0 0.5rem;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    cursor: pointer;
+}
+
+.pagination button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.pagination span {
+    margin: 0 0.5rem;
+}

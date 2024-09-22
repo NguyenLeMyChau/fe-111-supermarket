@@ -1,11 +1,13 @@
 @import '../../components/styles/text.scss';
 @import '../../components/styles/layout.scss';
+@import '../../components/styles/table.scss';
 
 .supplier-container {
     @extend .flex-columm;
     flex-grow: 1;
     background-color: var(--white-color);
     padding: 0px 20px;
+    border-radius: 10px;
 }
 
 .supplier-container h3 {
