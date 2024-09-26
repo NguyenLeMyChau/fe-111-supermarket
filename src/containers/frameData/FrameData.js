@@ -3,8 +3,9 @@ import './FrameData.scss';
 import Button from '../../components/button/Button';
 import { IoFilterOutline } from "react-icons/io5";
 import usePagination from '../../hooks/usePagination';
+import TableData from '../tableData/tableData';
 
-export default function FrameData({ title, buttonText, data, columns }) {
+export default function FrameData({ title, buttonText, data, columns, onRowClick }) {
     const itemsPerPage = 10;
 
     const {
@@ -37,24 +38,11 @@ export default function FrameData({ title, buttonText, data, columns }) {
 
             <main>
                 {currentItems && (
-                    <table className="table">
-                        <thead>
-                            <tr>
-                                {columns.map((column) => (
-                                    <th key={column.key} style={{ width: column.width }}>{column.title}</th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {currentItems.map((item, rowIndex) => (
-                                <tr key={rowIndex}>
-                                    {columns.map((column) => (
-                                        <td key={column.key}>{item[column.dataIndex]}</td>
-                                    ))}
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                    <TableData
+                        columns={columns}
+                        data={currentItems}
+                        onRowClick={onRowClick}
+                    />
                 )}
 
                 <div className="pagination">
