@@ -14,6 +14,11 @@
     text-align: left;
 }
 
+.table th.text-center,
+.table td.text-center {
+    text-align: center;
+}
+
 .table tbody tr:hover {
     background-color: var(--default-color);
     color: var(--white-color);
