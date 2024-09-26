@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import FrameData from '../../containers/frameData/FrameData';
-import TableData from '../../containers/tableData/tableData';
 import Modal from '../../components/modal/Modal';
 
 export default function Category() {
@@ -55,15 +54,30 @@ export default function Category() {
                 onRowClick={handleRowClick}
             />
 
-            <Modal title={'Sản phẩm trong danh mục'} isOpen={isModalOpen} onClose={closeModal}>
-                {products.length > 0 ? (
+            <Modal
+                title={'Sản phẩm trong danh mục'}
+                isOpen={isModalOpen}
+                onClose={closeModal}
+            >
+                {/* {products.length > 0 ? (
                     <TableData
                         columns={productColumns}
                         data={products}
                     />
                 ) : (
                     <p style={{ marginLeft: 30 }}>Không có sản phẩm nào trong danh mục này.</p>
-                )}
+                )} */}
+
+                {
+                    products.length > 0 ? (
+                        <FrameData
+                            data={products}
+                            columns={productColumns}
+                        />
+                    ) : (
+                        <p style={{ marginLeft: 30 }}>Không có sản phẩm nào trong danh mục này.</p>
+                    )
+                }
             </Modal>
         </div>
     );

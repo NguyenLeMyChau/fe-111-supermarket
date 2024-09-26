@@ -12,7 +12,7 @@ export default function Input(props) {
                 {props.type === 'search' && <IoIosSearch className='input-icon' />}
                 {props.type === 'radio' ? (
                     props.options.map((option, index) => (
-                        <label key={index} className='radio-option'>
+                        <label key={index} className='radio-option' style={{ margin: '5px 0px' }}>
                             <input
                                 type='radio'
                                 name={props.name}

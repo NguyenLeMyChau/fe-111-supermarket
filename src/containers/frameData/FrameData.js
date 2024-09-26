@@ -15,29 +15,32 @@ export default function FrameData({ title, buttonText, data, columns, onRowClick
         currentItems,
         handleNextPage,
         handlePreviousPage,
+        inputPage,
+        handlePageInputChange,
     } = usePagination(data, itemsPerPage);
 
     return (
         <div className='frame-data-container'>
-            <header className='flex-row-space-between frame-data-padding'>
-                <h3>{title}</h3>
-                <div className='flex-row-align-center'>
-                    <Button
-                        text={buttonText}
-                        backgroundColor='#1366D9'
-                        className='text-sm font-weight-medium'
-                        onClick={() => setIsModalAddItem(true)} // Mở modal
-                    />
+            {buttonText && (
+                <header className='flex-row-space-between frame-data-padding'>
+                    <h3>{title}</h3>
+                    <div className='flex-row-align-center'>
+                        <Button
+                            text={buttonText}
+                            backgroundColor='#1366D9'
+                            className='text-sm font-weight-medium'
+                            onClick={() => setIsModalAddItem(true)} // Mở modal
+                        />
 
-                    <Button
-                        text='Lọc'
-                        className='text-sm font-weight-medium text-black'
-                        border='1px solid #D0D3D9'
-                        icon={<IoFilterOutline size={20}
-                        />}
-                    />
-                </div>
-            </header>
+                        <Button
+                            text='Lọc'
+                            className='text-sm font-weight-medium text-black'
+                            border='1px solid #D0D3D9'
+                            icon={<IoFilterOutline size={20} />}
+                        />
+                    </div>
+                </header>
+            )}
 
             <main>
                 {currentItems && (
@@ -52,7 +55,16 @@ export default function FrameData({ title, buttonText, data, columns, onRowClick
                     <button onClick={handlePreviousPage} disabled={currentPage === 1}>
                         Trước
                     </button>
-                    <span> {currentPage} / {totalPages}</span>
+                    <input
+                        type="number"
+                        value={inputPage}
+                        min={1}
+                        max={totalPages}
+                        onChange={handlePageInputChange}
+                        style={{ width: '50px', height: '25px', textAlign: 'center', fontSize: '16px' }}
+                    />
+
+                    <span> / {totalPages}</span>
                     <button onClick={handleNextPage} disabled={currentPage === totalPages}>
                         Sau
                     </button>

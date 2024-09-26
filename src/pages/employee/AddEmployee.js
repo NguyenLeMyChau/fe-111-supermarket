@@ -40,7 +40,7 @@ export default function AddEmployee({ isOpen, onClose, onAdd }) {
 
                     <Input
                         label='Họ và tên'
-                        placeholder='Nhập họ và tên của bạn'
+                        placeholder='Nhập họ và tên'
                         name='name'
                         value={employeeData.name}
                         onChange={handleChange}
