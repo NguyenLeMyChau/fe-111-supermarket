@@ -71,7 +71,11 @@ export default function FrameData({ title, buttonText, data, columns, onRowClick
                 </div>
             </main>
 
-            {isModalAddItem && renderModal && renderModal(() => setIsModalAddItem(false))}
+            {isModalAddItem
+                && renderModal
+                && renderModal(() => setIsModalAddItem(false))
+                //() => setIsModalAddItem(false): onClose
+            }
 
         </div>
     );
