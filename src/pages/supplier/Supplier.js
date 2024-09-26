@@ -23,13 +23,13 @@ export default function Supplier() {
                 <h3>Nhà cung cấp</h3>
                 <div className='flex-row-align-center'>
                     <Button
-                        text='Add Supplier'
+                        text='Thêm nhà cung cấp'
                         backgroundColor='#1366D9'
                         className='text-sm font-weight-medium'
                     />
 
                     <Button
-                        text='Filters'
+                        text='Lọc'
                         className='text-sm font-weight-medium text-black'
                         border='1px solid #D0D3D9'
                         icon={<IoFilterOutline size={20} />}

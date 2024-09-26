@@ -3,9 +3,10 @@ import Menu from '../menu/Menu';
 import Header from '../header/Header';
 import { useNavigate } from 'react-router';
 import { useSelector } from 'react-redux';
+import User from '../user/User';
 
 export default function FrameStaff() {
-    const [currentContent, setCurrentContent] = useState('User');
+    const [currentContent, setCurrentContent] = useState(<User/>);
     const navigate = useNavigate();
     const logout = useSelector((state) => state.auth?.login?.isLogout);
     const login = useSelector((state) => state.auth?.login?.currentUser);

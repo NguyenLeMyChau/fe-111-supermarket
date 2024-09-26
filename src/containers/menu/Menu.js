@@ -1,43 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './Menu.scss';
 import Logo from '../../components/logo/Logo';
-import { logoutUser } from '../../services/authRequest';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router';
-import { createAxiosInstance } from '../../utils/util';
-import { logoutSuccess } from '../../store/reducers/authSlice';
-import useMenuItems from './useMenuItems';
+import useMenuItems from '../../hooks/useMenuItems';
 
 function Menu({ onchange }) {
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-
-    const login = useSelector((state) => state.auth?.login?.currentUser);
-    const [selectedItem, setSelectedItem] = useState(login?.role === 'manager' ? 'Dashboard' : 'User');
-    const menuItems = useMenuItems(login?.role);
-
-
-    const handleItemClick = (label, element) => {
-        const axiosJWT = createAxiosInstance(login, dispatch, logoutSuccess);
-        if (axiosJWT) {
-            console.log('label menu:', label);
-            if (label === 'Log Out') {
-                const accessToken = login?.accessToken;
-                logoutUser(dispatch, navigate, accessToken, axiosJWT);
-
-            } else if (label === 'Stall') {
-                navigate('/frame-staff/stall');
-            }
-            else {
-                setSelectedItem(label);
-                if (onchange) { // Kiểm tra nếu onchange được truyền vào
-                    onchange(element);
-                }
-            }
-        } else {
-            console.error('axiosJWT is not initialized. User might not be logged in.');
-        }
-    };
+    const { selectedItem, menuItems, handleItemClick } = useMenuItems(onchange);
 
     return (
         <div className='menu-body'>
