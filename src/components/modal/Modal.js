@@ -3,13 +3,20 @@ import ReactModal from 'react-modal';
 import './Modal.scss';
 import { MdCancel } from "react-icons/md";
 
-export default function Modal({ title, isOpen, onClose, children }) {
+export default function Modal({ title, isOpen, onClose, children, width, height }) {
+    const customStyles = {
+        content: {
+            width: width,
+            height: height,
+        },
+    };
     return (
         <ReactModal
             isOpen={isOpen}
             onRequestClose={onClose}
             className="modal-content"
             overlayClassName="modal-overlay"
+            style={customStyles}
             ariaHideApp={false}
         >
             <div className="modal-header">

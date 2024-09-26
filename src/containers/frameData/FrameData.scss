@@ -5,8 +5,11 @@
     @extend .flex-columm;
     flex-grow: 1;
     background-color: var(--white-color);
-    padding: 0px 20px;
     border-radius: 10px;
+}
+
+.frame-data-padding {
+    padding: 0px 20px;
 }
 
 .frame-data-container h3 {

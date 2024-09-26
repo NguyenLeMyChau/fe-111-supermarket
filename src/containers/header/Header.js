@@ -12,6 +12,7 @@ export default function Header() {
             <Input
                 type='search'
                 placeholder='Tìm kiếm...'
+                direction='column'
             />
             <div className='flex-row-center'>
                 <CiBellOn />

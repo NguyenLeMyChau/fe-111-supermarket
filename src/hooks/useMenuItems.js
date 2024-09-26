@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { GoHome } from "react-icons/go";
 import { MdOutlineInventory2, MdProductionQuantityLimits } from "react-icons/md";
-import { BsFileBarGraph, BsBoxSeam } from "react-icons/bs";
+import { BsFileBarGraph, BsBoxSeam, BsPersonVcard } from "react-icons/bs";
 import { FaRegUser, FaCashRegister, FaUsers } from "react-icons/fa";
 import { SlSettings } from "react-icons/sl";
 import { IoIosLogOut } from "react-icons/io";
@@ -20,6 +20,7 @@ import { logoutSuccess } from '../store/reducers/authSlice';
 import { logoutUser } from '../services/authRequest';
 import User from '../containers/user/User';
 import Category from '../pages/category/Category';
+import Employee from '../pages/employee/Employee';
 
 const useMenuItems = (onchange) => {
     const dispatch = useDispatch();
@@ -51,10 +52,11 @@ const useMenuItems = (onchange) => {
         {
             section: "Menu",
             items: [
-                { Icon: FaRegUser, label: "User", text: "Thông tin", element: <User/>},
+                { Icon: FaRegUser, label: "User", text: "Thông tin", element: <User /> },
                 { Icon: GoHome, label: "Dashboard", text: "Tổng quan" },
                 { Icon: BiCategory, label: "Category", text: "Loại sản phẩm", element: <Category /> },
                 { Icon: MdProductionQuantityLimits, label: "Product", text: "Sản phẩm" },
+                { Icon: BsPersonVcard, label: "Employee", text: "Nhân viên", element: <Employee /> },
                 { Icon: MdOutlineInventory2, label: "Inventory", text: "Kho", element: <Inventory /> },
                 { Icon: BsFileBarGraph, label: "Report", text: "Báo cáo" },
                 { Icon: FaUsers, label: "Suppliers", text: "Nhà cung cấp", element: <Supplier /> },

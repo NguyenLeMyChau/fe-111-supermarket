@@ -6,6 +6,7 @@ import { loginSuccess } from '../store/reducers/authSlice';
 import { getAllSuppliers } from '../services/supplierRequest';
 import { useNavigate } from 'react-router';
 import { getAllCategories } from '../services/categoryRequest';
+import { getAllEmployees } from '../services/employeeRequest';
 
 const useCommonData = () => {
     const dispatch = useDispatch();
@@ -20,9 +21,16 @@ const useCommonData = () => {
             try {
                 console.log('fetchDataManager is loading...');
                 dispatch(getDataManagerStart());
-                const suppliers = await getAllSuppliers(currentUser?.accessToken, axiosJWT);
-                const categories = await getAllCategories(currentUser?.accessToken, axiosJWT);
-                dispatch(getDataManagerSuccess({ suppliers: suppliers, categories: categories }));
+                const [suppliers, categories, employees] = await Promise.all([
+                    getAllSuppliers(currentUser?.accessToken, axiosJWT),
+                    getAllCategories(currentUser?.accessToken, axiosJWT),
+                    getAllEmployees(currentUser?.accessToken, axiosJWT),
+                ]);
+                dispatch(getDataManagerSuccess({
+                    suppliers: suppliers,
+                    categories: categories,
+                    employees: employees
+                }));
             } catch (err) {
                 console.log('Error while fetching suppliers:', err);
                 dispatch(getDataManagerFailed());

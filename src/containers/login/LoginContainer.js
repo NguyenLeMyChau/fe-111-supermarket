@@ -31,6 +31,7 @@ const LoginContainer = () => {
                 color='white'
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
+                direction='column'
             />
             <Input
                 type='password'
@@ -39,6 +40,7 @@ const LoginContainer = () => {
                 color='white'
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                direction='column'
             />
             <div className='login-options'>
                 <div className='flex-row-center'>

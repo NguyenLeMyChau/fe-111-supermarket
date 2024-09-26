@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './FrameData.scss';
 import Button from '../../components/button/Button';
 import { IoFilterOutline } from "react-icons/io5";
 import usePagination from '../../hooks/usePagination';
 import TableData from '../tableData/tableData';
 
-export default function FrameData({ title, buttonText, data, columns, onRowClick }) {
+export default function FrameData({ title, buttonText, data, columns, onRowClick, renderModal }) {
     const itemsPerPage = 10;
+    const [isModalAddItem, setIsModalAddItem] = useState(false);
 
     const {
         currentPage,
@@ -18,20 +19,22 @@ export default function FrameData({ title, buttonText, data, columns, onRowClick
 
     return (
         <div className='frame-data-container'>
-            <header className='flex-row-space-between'>
+            <header className='flex-row-space-between frame-data-padding'>
                 <h3>{title}</h3>
                 <div className='flex-row-align-center'>
                     <Button
                         text={buttonText}
                         backgroundColor='#1366D9'
                         className='text-sm font-weight-medium'
+                        onClick={() => setIsModalAddItem(true)} // Mở modal
                     />
 
                     <Button
                         text='Lọc'
                         className='text-sm font-weight-medium text-black'
                         border='1px solid #D0D3D9'
-                        icon={<IoFilterOutline size={20} />}
+                        icon={<IoFilterOutline size={20}
+                        />}
                     />
                 </div>
             </header>
@@ -56,6 +59,7 @@ export default function FrameData({ title, buttonText, data, columns, onRowClick
                 </div>
             </main>
 
+            {isModalAddItem && renderModal && renderModal(() => setIsModalAddItem(false))}
 
         </div>
     );
