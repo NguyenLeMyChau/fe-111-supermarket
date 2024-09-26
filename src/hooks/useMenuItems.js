@@ -19,6 +19,7 @@ import { createAxiosInstance } from '../utils/util';
 import { logoutSuccess } from '../store/reducers/authSlice';
 import { logoutUser } from '../services/authRequest';
 import User from '../containers/user/User';
+import Category from '../pages/category/Category';
 
 const useMenuItems = (onchange) => {
     const dispatch = useDispatch();
@@ -52,7 +53,7 @@ const useMenuItems = (onchange) => {
             items: [
                 { Icon: FaRegUser, label: "User", text: "Thông tin", element: <User/>},
                 { Icon: GoHome, label: "Dashboard", text: "Tổng quan" },
-                { Icon: BiCategory, label: "Category", text: "Loại sản phẩm" },
+                { Icon: BiCategory, label: "Category", text: "Loại sản phẩm", element: <Category /> },
                 { Icon: MdProductionQuantityLimits, label: "Product", text: "Sản phẩm" },
                 { Icon: MdOutlineInventory2, label: "Inventory", text: "Kho", element: <Inventory /> },
                 { Icon: BsFileBarGraph, label: "Report", text: "Báo cáo" },

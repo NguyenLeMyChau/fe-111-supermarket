@@ -20,21 +20,13 @@
     transition: background-color 0.3s ease;
 }
 
-.table th:nth-child(1),
-.table td:nth-child(1) {
-    width: 50%;
+/* Làm cho các tiêu đề cột cố định */
+.table th {
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+    z-index: 1;
 }
-
-.table th:nth-child(2),
-.table td:nth-child(2) {
-    width: 20%;
-}
-
-.table th:nth-child(3),
-.table td:nth-child(3) {
-    width: 30%;
-}
-
 
 .pagination {
     @extend .flex-row-center;

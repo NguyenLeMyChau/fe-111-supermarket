@@ -2,7 +2,7 @@
 @import '../../components/styles/layout.scss';
 @import '../../components/styles/table.scss';
 
-.supplier-container {
+.frame-data-container {
     @extend .flex-columm;
     flex-grow: 1;
     background-color: var(--white-color);
@@ -10,7 +10,7 @@
     border-radius: 10px;
 }
 
-.supplier-container h3 {
+.frame-data-container h3 {
     color: var(--title-color);
 }
 

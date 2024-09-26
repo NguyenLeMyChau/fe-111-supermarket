@@ -13,21 +13,21 @@
 .user-info {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px; /* Khoảng cách giữa các mục thông tin */
+    gap: 20px;
 }
 
 .user-info-item {
     display: flex;
     flex-direction: column;
-    width: calc(33.33% - 20px); /* Chia đều các mục thông tin thành 3 cột */
+    width: calc(33.33% - 20px);
     margin-bottom: 10px;
 }
 
-.label {
+.user-info-item .label {
     font-weight: bold;
     margin-bottom: 5px;
 }
 
-.value {
+.user-info-item .value {
     flex: 1;
 }
