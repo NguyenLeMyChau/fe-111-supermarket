@@ -61,7 +61,7 @@ export default function FrameData({ title, buttonText, data, columns, onRowClick
                         min={1}
                         max={totalPages}
                         onChange={handlePageInputChange}
-                        style={{ width: '50px', height: '25px', textAlign: 'center', fontSize: '16px' }}
+                        className='input-pagation'
                     />
 
                     <span> / {totalPages}</span>
