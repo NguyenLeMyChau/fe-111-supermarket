@@ -13,7 +13,7 @@ export default function Category() {
     const [products, setProducts] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const columns = [
+    const categoryColumn = [
         { title: 'Loại sản phẩm', dataIndex: 'name', key: 'name', width: '30%' },
         { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '50%' },
         { title: 'Số lượng sản phẩm', dataIndex: 'productCount', key: 'productCount', width: '20%', className: 'text-center' },
@@ -50,7 +50,7 @@ export default function Category() {
                 title="Loại sản phẩm"
                 buttonText="Thêm loại sản phẩm"
                 data={enhancedCategories}
-                columns={columns}
+                columns={categoryColumn}
                 onRowClick={handleRowClick}
             />
 

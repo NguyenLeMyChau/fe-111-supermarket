@@ -9,7 +9,7 @@ export default function Employee() {
     const employees = useSelector((state) => state.commonData?.dataManager?.employees) || [];
     console.log(employees);
 
-    const columns = [
+    const employeeColumns = [
         { title: 'Họ và tên', dataIndex: 'name', key: 'name', width: '30%' },
         { title: 'Số điện thoại', dataIndex: 'phone', key: 'phone', width: '20%' },
         { title: 'Email', dataIndex: 'email', key: 'email', width: '20%' },
@@ -30,7 +30,7 @@ export default function Employee() {
             title="Danh sách nhân viên"
             buttonText="Thêm nhân viên"
             data={employees}
-            columns={columns}
+            columns={employeeColumns}
             renderModal={(onClose) => (
                 <AddEmployee
                     isOpen={true}

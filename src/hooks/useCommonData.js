@@ -5,7 +5,7 @@ import { createAxiosInstance } from '../utils/util';
 import { loginSuccess } from '../store/reducers/authSlice';
 import { getAllSuppliers } from '../services/supplierRequest';
 import { useNavigate } from 'react-router';
-import { getAllCategories } from '../services/categoryRequest';
+import { getAllCategories, getAllProducts } from '../services/productRequest';
 import { getAllEmployees } from '../services/employeeRequest';
 
 const useCommonData = () => {
@@ -21,15 +21,17 @@ const useCommonData = () => {
             try {
                 console.log('fetchDataManager is loading...');
                 dispatch(getDataManagerStart());
-                const [suppliers, categories, employees] = await Promise.all([
+                const [suppliers, categories, employees, products] = await Promise.all([
                     getAllSuppliers(currentUser?.accessToken, axiosJWT),
                     getAllCategories(currentUser?.accessToken, axiosJWT),
                     getAllEmployees(currentUser?.accessToken, axiosJWT),
+                    getAllProducts(currentUser?.accessToken, axiosJWT),
                 ]);
                 dispatch(getDataManagerSuccess({
                     suppliers: suppliers,
                     categories: categories,
-                    employees: employees
+                    employees: employees,
+                    products: products,
                 }));
             } catch (err) {
                 console.log('Error while fetching suppliers:', err);
