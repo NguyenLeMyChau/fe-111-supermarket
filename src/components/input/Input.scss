@@ -36,6 +36,22 @@
     padding-left: 10px;
 }
 
+.input-error {
+    border-color: var(--danger-color);
+}
+
+.error-message {
+    display: flex;
+    align-items: center;
+    color: var(--danger-color);
+    font-size: 12px;
+}
+
+.error-icon {
+    margin-right: 0.5rem;
+    color: var(--danger-color);
+}
+
 /* CSS để ẩn dấu "x" trong input trên trình duyệt Chrome */
 .input-field::-webkit-search-cancel-button {
     -webkit-appearance: none;
@@ -45,7 +61,7 @@
 .input-icon {
     position: absolute;
     pointer-events: none;
-    right: 10px;
+    right: 30px;
 }
 
 .input-wrapper svg {

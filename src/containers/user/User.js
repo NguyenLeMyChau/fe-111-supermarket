@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import './User.scss';
-
+import Button from '../../components/button/Button';
 const User = () => {
     const user = useSelector((state) => state.auth?.login?.currentUser);
 
@@ -11,7 +11,16 @@ const User = () => {
 
     return (
         <div className="user-container">
-            <h3>Thông tin người dùng</h3>
+            <header className='flex-row-space-between'>
+                <h3>Thông tin người dùng</h3>
+                <div className='flex-row-align-center'>
+                    <Button
+                        text={'Cập nhật thông tin'}
+                        backgroundColor='#1366D9'
+                        className='text-sm font-weight-medium'
+                    />
+                </div>
+            </header>
             <div className="user-info">
                 <div className="user-info-item">
                     <span className="label">Họ tên:</span>

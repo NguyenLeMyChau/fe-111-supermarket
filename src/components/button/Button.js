@@ -6,7 +6,7 @@ export default function Button(props) {
     return (
         <button
             type={props.type || 'button'}
-            className={`button ${props.className || ''}`}
+            className={`button ${props.className || ''} ${props.disabled ? 'button-disabled' : ''}`}
             style={{
                 width: `${props.width}px`,
                 height: `${props.height}px`,
@@ -16,6 +16,7 @@ export default function Button(props) {
                 border: props.border,
             }}
             onClick={props.onClick}
+            disabled={props.disabled}
         >
             {props.icon && <span style={{ marginTop: '5px', marginRight: '5px' }}>{props.icon}</span>}
             {props.text}

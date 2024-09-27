@@ -1,6 +1,7 @@
 import React from 'react';
 import './Input.scss';
 import { IoIosSearch } from "react-icons/io";
+import { RiErrorWarningLine } from "react-icons/ri";
 
 export default function Input(props) {
     const directionClass = props.direction === 'column' ? 'input-container-column' : 'input-container-row';
@@ -24,17 +25,26 @@ export default function Input(props) {
                         </label>
                     ))
                 ) : (
-                    <input
-                        type={props.type || 'text'}
-                        placeholder={props.placeholder}
-                        className='input-field'
-                        style={{ width: `${props.width}px`, height: `${props.height}px` }}
-                        name={props.name}
-                        value={props.value}
-                        onChange={props.onChange}
-                    />
+                    <div className='input-container-column'>
+                        <input
+                            type={props.type || 'text'}
+                            placeholder={props.placeholder}
+                            className={`input-field ${props.error ? 'input-error' : ''}`}
+                            style={{ width: `${props.width}px`, height: `${props.height}px` }}
+                            name={props.name}
+                            value={props.value}
+                            onChange={props.onChange}
+                        />
+                        {/* {props.error && (
+                            <span className='error-message'>
+                                <RiErrorWarningLine className='error-icon' color="var(--danger-color)" size={20} />
+                                {props.error}
+                            </span>
+                        )} */}
+                    </div>
                 )}
             </div>
         </div>
+
     );
 }

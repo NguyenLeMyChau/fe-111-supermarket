@@ -13,3 +13,7 @@
     box-sizing: border-box;
     background-color: var(--default-color);
 }
+
+.button-disabled{
+    background-image: var(--muted-color);
+}
