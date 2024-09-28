@@ -58,24 +58,26 @@ export default function FrameData({ title, buttonText, data, columns, onRowClick
                             />
                         )}
 
-                        <div className="pagination">
-                            <button onClick={handlePreviousPage} disabled={currentPage === 1}>
-                                Trước
-                            </button>
-                            <input
-                                type="number"
-                                value={inputPage}
-                                min={1}
-                                max={totalPages}
-                                onChange={handlePageInputChange}
-                                className='input-pagation'
-                            />
+                        {totalPages > 0 && (
+                            <div className="pagination">
+                                <button onClick={handlePreviousPage} disabled={currentPage === 1}>
+                                    Trước
+                                </button>
+                                <input
+                                    type="number"
+                                    value={inputPage}
+                                    min={1}
+                                    max={totalPages}
+                                    onChange={handlePageInputChange}
+                                    className='input-pagation'
+                                />
 
-                            <span> / {totalPages}</span>
-                            <button onClick={handleNextPage} disabled={currentPage === totalPages}>
-                                Sau
-                            </button>
-                        </div>
+                                <span> / {totalPages}</span>
+                                <button onClick={handleNextPage} disabled={currentPage === totalPages}>
+                                    Sau
+                                </button>
+                            </div>
+                        )}
                     </main>
 
                     {isModalAddItem
