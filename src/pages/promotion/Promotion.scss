@@ -1,39 +1,39 @@
 // Promotion.scss
 
 .promotion-section {
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-  
-  .numeric-keypad {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-gap: 10px;
-    margin-top: 20px;
-  }
-  
-  .numeric-keypad button {
-    padding: 20px;
-    font-size: 24px;
-    background-color: #f0f0f0;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .numeric-keypad button:hover {
-    background-color: #ddd;
-  }
-  
-  .numeric-keypad button:nth-child(10) { /* Phím "C" */
-    background-color: #ff6666;
-    color: #fff;
-  }
-  
-  .numeric-keypad button:nth-child(10):hover {
-    background-color: #ff4d4d;
-  }
-  
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.numeric-keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 10px;
+  margin-top: 20px;
+}
+
+.numeric-keypad button {
+  padding: 20px;
+  font-size: 24px;
+  background-color: #f0f0f0;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.numeric-keypad button:hover {
+  background-color: #ddd;
+}
+
+.numeric-keypad button:nth-child(10) {
+  /* Phím "C" */
+  background-color: #ff6666;
+  color: #fff;
+}
+
+.numeric-keypad button:nth-child(10):hover {
+  background-color: #ff4d4d;
+}

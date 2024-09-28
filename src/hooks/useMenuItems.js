@@ -10,6 +10,7 @@ import { SlSettings } from "react-icons/sl";
 import { IoIosLogOut } from "react-icons/io";
 import { TbReport } from "react-icons/tb";
 import { BiCategory } from "react-icons/bi";
+import { AiOutlineTag } from "react-icons/ai";
 
 import Supplier from "../pages/supplier/Supplier";
 import Inventory from "../pages/inventory/Inventory";
@@ -22,6 +23,7 @@ import User from '../containers/user/User';
 import Category from '../pages/category/Category';
 import Employee from '../pages/employee/Employee';
 import Product from '../pages/product/Product';
+import Promotion from '../pages/promotion/Promotion';
 
 const useMenuItems = (onchange) => {
     const dispatch = useDispatch();
@@ -58,6 +60,7 @@ const useMenuItems = (onchange) => {
                 { Icon: BiCategory, label: "Category", text: "Loại sản phẩm", element: <Category /> },
                 { Icon: MdProductionQuantityLimits, label: "Product", text: "Sản phẩm", element: <Product /> },
                 { Icon: BsPersonVcard, label: "Employee", text: "Nhân viên", element: <Employee /> },
+                { Icon: AiOutlineTag, label: "Promotion", text: "Khuyến mãi", element: <Promotion /> },
                 { Icon: MdOutlineInventory2, label: "Inventory", text: "Kho", element: <Inventory /> },
                 { Icon: BsFileBarGraph, label: "Report", text: "Báo cáo" },
                 { Icon: FaUsers, label: "Suppliers", text: "Nhà cung cấp", element: <Supplier /> },

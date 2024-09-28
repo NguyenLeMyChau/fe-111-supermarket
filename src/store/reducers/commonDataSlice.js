@@ -6,6 +6,7 @@ const initialState = {
         products: null,
         categories: null,
         employees: null,
+        promotions: null,
         isFetching: false,
         error: false,
         isFetched: false, // Thêm thuộc tính này để kiểm tra xem dữ liệu đã được fetch chưa
@@ -26,6 +27,7 @@ const commonDataSlice = createSlice({
             state.dataManager.categories = action.payload.categories;
             state.dataManager.products = action.payload.products;
             state.dataManager.employees = action.payload.employees;
+            state.dataManager.promotions = action.payload.promotions;
         },
         getDataManagerFailed(state) {
             state.dataManager.isFetching = false;
@@ -33,7 +35,14 @@ const commonDataSlice = createSlice({
             state.dataManager.isFetched = false;
         },
         resetDataManager(state) {
-            state.dataManager.isFetched = false;
+            state.dataManager = {
+                suppliers: [],
+                categories: [],
+                employees: [],
+                products: [],
+                promotions: [],
+                isFetched: false,
+            };
         }
     },
 });

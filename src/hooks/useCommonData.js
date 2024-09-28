@@ -1,12 +1,13 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getDataManagerFailed, getDataManagerStart, getDataManagerSuccess } from '../store/reducers/commonDataSlice';
+import { getDataManagerFailed, getDataManagerStart, getDataManagerSuccess, resetDataManager } from '../store/reducers/commonDataSlice';
 import { createAxiosInstance } from '../utils/util';
 import { loginSuccess } from '../store/reducers/authSlice';
 import { getAllSuppliers } from '../services/supplierRequest';
 import { useNavigate } from 'react-router';
 import { getAllCategories, getAllProducts } from '../services/productRequest';
 import { getAllEmployees } from '../services/employeeRequest';
+import { getAllPromotions } from '../services/promotionRequest';
 
 const useCommonData = () => {
     const dispatch = useDispatch();
@@ -21,17 +22,19 @@ const useCommonData = () => {
             try {
                 console.log('fetchDataManager is loading...');
                 dispatch(getDataManagerStart());
-                const [suppliers, categories, employees, products] = await Promise.all([
+                const [suppliers, categories, employees, products, promotions] = await Promise.all([
                     getAllSuppliers(currentUser?.accessToken, axiosJWT),
                     getAllCategories(currentUser?.accessToken, axiosJWT),
                     getAllEmployees(currentUser?.accessToken, axiosJWT),
                     getAllProducts(currentUser?.accessToken, axiosJWT),
+                    getAllPromotions(currentUser?.accessToken, axiosJWT),
                 ]);
                 dispatch(getDataManagerSuccess({
                     suppliers: suppliers,
                     categories: categories,
                     employees: employees,
                     products: products,
+                    promotions: promotions
                 }));
             } catch (err) {
                 console.log('Error while fetching suppliers:', err);
@@ -55,6 +58,13 @@ const useCommonData = () => {
             navigate('/login');
         }
     }, [currentUser, logout, navigate]);
+
+
+    useEffect(() => {
+        if (logout) {
+            dispatch(resetDataManager());
+        }
+    }, [logout, dispatch]);
 
     if (!currentUser || currentUser?.role !== 'manager') {
         return <div className='frame-access-denied'></div>;
