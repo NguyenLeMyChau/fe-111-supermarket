@@ -16,10 +16,10 @@ function Menu({ onchange }) {
             {menuItems.map((menuSection) => (
                 <div className={`menu-menu ${menuSection.section === 'Setting' ? 'menu-setting' : ''}`} key={menuSection.section}>
                     <div>
-                        {menuSection.items.map(({ Icon, label, text, element }) => (
+                        {menuSection.items.map(({ Icon, label, text, path }) => (
                             <div
                                 className={`menu-detail ${selectedItem === label ? 'selected' : ''}`}
-                                onClick={() => handleItemClick(label, element)}
+                                onClick={() => handleItemClick(label, path)}
                                 key={label}
                             >
                                 <Icon size={20} />

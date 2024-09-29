@@ -6,13 +6,12 @@ import { useSelector } from 'react-redux';
 import User from '../user/User';
 
 export default function FrameStaff() {
-    const [currentContent, setCurrentContent] = useState(<User/>);
+    const [currentContent, setCurrentContent] = useState(<User />);
     const navigate = useNavigate();
     const logout = useSelector((state) => state.auth?.login?.isLogout);
     const login = useSelector((state) => state.auth?.login?.currentUser);
 
     useEffect(() => {
-        console.log('login', login);
         if (!login && !logout) {
             alert('Vui lòng đăng nhập để thực hiện chức năng này!');
             navigate('/login');

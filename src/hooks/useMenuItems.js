@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import { GoHome } from "react-icons/go";
 import { MdOutlineInventory2, MdProductionQuantityLimits } from "react-icons/md";
@@ -12,26 +12,30 @@ import { TbReport } from "react-icons/tb";
 import { BiCategory } from "react-icons/bi";
 import { AiOutlineTag } from "react-icons/ai";
 
-import Supplier from "../pages/supplier/Supplier";
-import Inventory from "../pages/inventory/Inventory";
-import Orders from "../pages/orders/Orders";
-
 import { createAxiosInstance } from '../utils/util';
 import { logoutSuccess } from '../store/reducers/authSlice';
 import { logoutUser } from '../services/authRequest';
-import User from '../containers/user/User';
-import Category from '../pages/category/Category';
-import Employee from '../pages/employee/Employee';
-import Product from '../pages/product/Product';
-import Promotion from '../pages/promotion/Promotion';
+
+
+const getLabelFromPathname = (pathname, menuItems) => {
+    for (const section of menuItems) {
+        for (const item of section.items) {
+            if (item.path === pathname) {
+                return item.label;
+            }
+        }
+    }
+    return null;
+};
 
 const useMenuItems = (onchange) => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
     const login = useSelector((state) => state.auth?.login?.currentUser);
     const [selectedItem, setSelectedItem] = useState('User');
 
-    const handleItemClick = (label, element) => {
+    const handleItemClick = (label, path) => {
         const axiosJWT = createAxiosInstance(login, dispatch, logoutSuccess);
         if (axiosJWT) {
             console.log('label menu:', label);
@@ -43,7 +47,8 @@ const useMenuItems = (onchange) => {
             } else {
                 setSelectedItem(label);
                 if (onchange) {
-                    onchange(element);
+                    navigate(path);
+                    onchange(path);
                 }
             }
         } else {
@@ -51,20 +56,20 @@ const useMenuItems = (onchange) => {
         }
     };
 
-    const menuItems = login?.role === 'manager' ? [
+    const menuItems = useMemo(() => login?.role === 'manager' ? [
         {
             section: "Menu",
             items: [
-                { Icon: FaRegUser, label: "User", text: "Thông tin", element: <User /> },
-                { Icon: GoHome, label: "Dashboard", text: "Tổng quan" },
-                { Icon: BiCategory, label: "Category", text: "Loại sản phẩm", element: <Category /> },
-                { Icon: MdProductionQuantityLimits, label: "Product", text: "Sản phẩm", element: <Product /> },
-                { Icon: BsPersonVcard, label: "Employee", text: "Nhân viên", element: <Employee /> },
-                { Icon: AiOutlineTag, label: "Promotion", text: "Khuyến mãi", element: <Promotion /> },
-                { Icon: MdOutlineInventory2, label: "Inventory", text: "Kho", element: <Inventory /> },
-                { Icon: BsFileBarGraph, label: "Report", text: "Báo cáo" },
-                { Icon: FaUsers, label: "Suppliers", text: "Nhà cung cấp", element: <Supplier /> },
-                { Icon: BsBoxSeam, label: "Orders", text: "Đơn hàng", element: <Orders /> },
+                { Icon: FaRegUser, label: "User", text: "Thông tin", path: '/admin/user' },
+                { Icon: GoHome, label: "Dashboard", text: "Tổng quan", path: '/admin/dashboard' },
+                { Icon: BiCategory, label: "Category", text: "Loại sản phẩm", path: '/admin/category' },
+                { Icon: MdProductionQuantityLimits, label: "Product", text: "Sản phẩm", path: '/admin/product' },
+                { Icon: BsPersonVcard, label: "Employee", text: "Nhân viên", path: '/admin/employee' },
+                { Icon: AiOutlineTag, label: "Promotion", text: "Khuyến mãi", path: '/admin/promotion' },
+                { Icon: MdOutlineInventory2, label: "Inventory", text: "Kho", path: '/admin/inventory' },
+                { Icon: BsFileBarGraph, label: "Report", text: "Báo cáo", path: '/admin/report' },
+                { Icon: FaUsers, label: "Suppliers", text: "Nhà cung cấp", path: '/admin/supplier' },
+                { Icon: BsBoxSeam, label: "Orders", text: "Đơn hàng", path: '/admin/order' },
             ],
         },
         {
@@ -90,7 +95,16 @@ const useMenuItems = (onchange) => {
                 { Icon: IoIosLogOut, label: "Log Out", text: "Đăng xuất" }
             ]
         }
-    ];
+    ], [login]);
+
+    // Cập nhật menu dựa trên URL khi trang được tải
+    useEffect(() => {
+        const path = location.pathname;
+        const label = getLabelFromPathname(path, menuItems);
+        if (label) {
+            setSelectedItem(label);
+        }
+    }, [location, menuItems]);
 
     return {
         selectedItem,

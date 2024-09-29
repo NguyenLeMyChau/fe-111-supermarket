@@ -30,7 +30,7 @@ const loginUser = async (loginData, dispatch, navigate) => {
         dispatch(loginSuccess(userWithToken));
 
         if (userWithToken.role === 'manager') {
-            navigate('/frame');
+            navigate('/admin/user');
         } else if (userWithToken.role === 'staff') {
             navigate('/frame-staff');
         }

@@ -49,7 +49,6 @@ const useCommonData = () => {
     }, [currentUser, axiosJWT, dispatch, isDataFetched]);
 
     useEffect(() => {
-        console.log('login', currentUser);
         if (!currentUser && !logout) {
             alert('Vui lòng đăng nhập để thực hiện chức năng này!');
             navigate('/login');
