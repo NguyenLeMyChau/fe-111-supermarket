@@ -145,6 +145,7 @@ export default function Promotion() {
               data={promotionLine}
               columns={promotionLineColumn}
               onRowClick={handleRowClickDetail}
+              itemsPerPage={8}
             />
           ) : (
             <p style={{ marginLeft: 30 }}>Không có line khuyến mãi nào trong danh mục này.</p>
@@ -162,6 +163,7 @@ export default function Promotion() {
             <FrameData
               data={promotionDetail}
               columns={promotionDetailColumn}
+              itemsPerPage={8}
             />
           ) : (
             <p style={{ marginLeft: 30 }}>Không có chi tiết khuyến mãi nào trong line này.</p>

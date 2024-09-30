@@ -1,0 +1,64 @@
+@import '../styles/text.scss';
+@import '../styles/layout.scss';
+
+.pagination {
+    @extend .flex-row-center;
+    padding: 10px;
+    margin-top: 1rem;
+
+    button {
+        padding: 10px 20px;
+        margin: 5px;
+        border-radius: 5px;
+        border: none;
+        background-color: #f0f0f0;
+        cursor: pointer;
+        font-size: 14px;
+
+        &.active {
+            background-color: var(--default-color);
+            color: white;
+        }
+
+        &:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+    }
+
+    .pagination-button-prev {
+        background-color: var(--title-2-color);
+        color: var(--white-color);
+    }
+
+    .pagination-button-next {
+        background-color: var(--title-2-color);
+        color: var(--white-color);
+    }
+}
+
+
+.pagination span {
+    margin: 0 0.5rem;
+}
+
+.pagination .input-pagation {
+    width: 50px;
+    height: 25px;
+    text-align: center;
+    font-size: 16px;
+    border: none;
+    border-bottom: 1px solid #D0D3D9;
+}
+
+.pagination .button-input {
+    background-color: var(--default-color);
+    color: var(--white-color);
+}
+
+/* Ẩn mũi tên lên xuống trên các trình duyệt Webkit (Chrome, Safari, Edge) */
+.pagination input[type="number"]::-webkit-outer-spin-button,
+.pagination input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}

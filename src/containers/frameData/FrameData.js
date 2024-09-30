@@ -4,16 +4,16 @@ import Button from '../../components/button/Button';
 import { IoFilterOutline } from "react-icons/io5";
 import usePagination from '../../hooks/usePagination';
 import TableData from '../tableData/tableData';
+import Pagination from '../../components/pagination/Pagination';
 
 export default function FrameData({ title, buttonText, data, columns, onRowClick, renderModal, component, itemsPerPage }) {
     const [isModalAddItem, setIsModalAddItem] = useState(false);
+    const setItemsPerPage = itemsPerPage ? itemsPerPage : 10;
 
     const {
-        currentPage,
         totalPages,
         currentItems,
-        goToPage
-    } = usePagination(data, itemsPerPage ? itemsPerPage : 10);
+    } = usePagination(data, setItemsPerPage);
 
     return (
         <div className='frame-data-container'>
@@ -56,15 +56,7 @@ export default function FrameData({ title, buttonText, data, columns, onRowClick
                         )}
 
                         {totalPages > 0 && (
-                            <div className="pagination">
-                                <button onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1}>
-                                    Trước
-                                </button>
-                                <span> {currentPage}/ {totalPages}</span>
-                                <button onClick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages}>
-                                    Sau
-                                </button>
-                            </div>
+                            <Pagination data={data} itemsPerPage={setItemsPerPage} />
                         )}
                     </main>
 
