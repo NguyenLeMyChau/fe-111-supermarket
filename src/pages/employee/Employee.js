@@ -7,7 +7,6 @@ import { MdDoNotDisturbAlt } from 'react-icons/md';
 
 export default function Employee() {
     const employees = useSelector((state) => state.commonData?.dataManager?.employees) || [];
-    console.log(employees);
 
     const employeeColumns = [
         { title: 'Họ và tên', dataIndex: 'name', key: 'name', width: '30%' },

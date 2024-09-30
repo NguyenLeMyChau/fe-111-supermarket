@@ -12,10 +12,7 @@ export default function FrameData({ title, buttonText, data, columns, onRowClick
         currentPage,
         totalPages,
         currentItems,
-        handleNextPage,
-        handlePreviousPage,
-        inputPage,
-        handlePageInputChange,
+        goToPage
     } = usePagination(data, itemsPerPage ? itemsPerPage : 10);
 
     return (
@@ -60,20 +57,11 @@ export default function FrameData({ title, buttonText, data, columns, onRowClick
 
                         {totalPages > 0 && (
                             <div className="pagination">
-                                <button onClick={handlePreviousPage} disabled={currentPage === 1}>
+                                <button onClick={() => goToPage(currentPage - 1)} disabled={currentPage === 1}>
                                     Trước
                                 </button>
-                                <input
-                                    type="number"
-                                    value={inputPage}
-                                    min={1}
-                                    max={totalPages}
-                                    onChange={handlePageInputChange}
-                                    className='input-pagation'
-                                />
-
-                                <span> / {totalPages}</span>
-                                <button onClick={handleNextPage} disabled={currentPage === totalPages}>
+                                <span> {currentPage}/ {totalPages}</span>
+                                <button onClick={() => goToPage(currentPage + 1)} disabled={currentPage === totalPages}>
                                     Sau
                                 </button>
                             </div>
