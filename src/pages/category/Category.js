@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import FrameData from '../../containers/frameData/FrameData';
 import Modal from '../../components/modal/Modal';
+import TableData from '../../containers/tableData/tableData';
 
 export default function Category() {
     const categories = useSelector((state) => state.commonData?.dataManager?.categories) || [];
@@ -24,14 +25,14 @@ export default function Category() {
         {
             title: 'STT',
             key: 'index',
-            width: '10%',
+            width: '5%',
             className: 'text-center',
             render: (_, __, index) => index + 1
         },
-        { title: 'Tên sản phẩm', dataIndex: 'name', key: 'name', width: '25%' },
+        { title: 'Tên sản phẩm', dataIndex: 'name', key: 'name', width: '35%' },
         { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '35%' },
         { title: 'Barcode', dataIndex: 'barcode', key: 'barcode', width: '20%', className: 'text-center' },
-        { title: 'Mã hàng', dataIndex: 'item_code', key: 'item_code', width: '10%', className: 'text-center' },
+        { title: 'Mã hàng', dataIndex: 'item_code', key: 'item_code', width: '5%', className: 'text-center' },
     ];
 
     const handleRowClick = (category) => {
@@ -59,25 +60,14 @@ export default function Category() {
                 isOpen={isModalOpen}
                 onClose={closeModal}
             >
-                {/* {products.length > 0 ? (
+                {products.length > 0 ? (
                     <TableData
                         columns={productColumns}
                         data={products}
                     />
                 ) : (
                     <p style={{ marginLeft: 30 }}>Không có sản phẩm nào trong danh mục này.</p>
-                )} */}
-
-                {
-                    products.length > 0 ? (
-                        <FrameData
-                            data={products}
-                            columns={productColumns}
-                        />
-                    ) : (
-                        <p style={{ marginLeft: 30 }}>Không có sản phẩm nào trong danh mục này.</p>
-                    )
-                }
+                )}
             </Modal>
         </div>
     );

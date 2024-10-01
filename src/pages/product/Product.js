@@ -8,9 +8,9 @@ export default function Product() {
     const [selectedComponent, setSelectedComponent] = useState(null);
 
     const productColumns = [
-        { title: 'Tên sản phẩm', dataIndex: 'name', key: 'name', width: '30%' },
+        { title: 'Tên sản phẩm', dataIndex: 'name', key: 'name', width: '35%' },
         { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '35%' },
-        { title: 'Barcode', dataIndex: 'barcode', key: 'barcode', width: '20%', className: 'text-center' },
+        { title: 'Barcode', dataIndex: 'barcode', key: 'barcode', width: '15%', className: 'text-center' },
         { title: 'Mã hàng', dataIndex: 'item_code', key: 'item_code', width: '15%', className: 'text-center' },
     ];
 

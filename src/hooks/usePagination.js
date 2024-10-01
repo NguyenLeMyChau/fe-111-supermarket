@@ -17,6 +17,8 @@ const usePagination = (data, itemsPerPage) => {
 
     const goToPage = (page) => {
         const currentPath = location.pathname;
+        console.log('Navigating to page:', page);
+        console.log('Current Path:', currentPath);
         if (page === 1) {
             navigate(currentPath);
             return;
@@ -43,6 +45,7 @@ const usePagination = (data, itemsPerPage) => {
         }
         return pageNumbers;
     };
+
 
     return {
         totalPages,

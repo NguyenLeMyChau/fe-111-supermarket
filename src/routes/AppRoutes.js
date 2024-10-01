@@ -13,6 +13,8 @@ import Supplier from "../pages/supplier/Supplier";
 import Inventory from "../pages/inventory/Inventory";
 import Orders from "../pages/orders/Orders";
 
+import ProductSupplier from "../pages/supplier/ProductSupplier";
+
 function AppRoutes() {
     return (
         <Router>
@@ -27,7 +29,9 @@ function AppRoutes() {
                     <Route path="employee" element={<Employee />} />
                     <Route path="promotion" element={<Promotion />} />
                     <Route path="inventory" element={<Inventory />} />
-                    <Route path="supplier" element={<Supplier />} />
+                    <Route path="supplier" element={<Supplier />}>
+                        <Route path=":supplierId/product" element={<ProductSupplier />} />
+                    </Route>
                     <Route path="order" element={<Orders />} />
                 </Route>
                 <Route path="/frame-staff" element={<FrameStaff />} />

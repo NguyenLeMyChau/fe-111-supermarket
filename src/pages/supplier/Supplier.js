@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import FrameData from '../../containers/frameData/FrameData';
-import Modal from '../../components/modal/Modal';
+import ProductSupplier from './ProductSupplier';
+import { useLocation, useNavigate } from 'react-router';
 
 export default function Supplier() {
+    const navigate = useNavigate();
+    const location = useLocation();
+
     const suppliers = useSelector((state) => state.commonData?.dataManager?.suppliers) || [];
     const enhancedSuppliers = suppliers.map((supplier) => ({
         ...supplier,
@@ -33,14 +37,26 @@ export default function Supplier() {
         { title: 'Mã hàng', dataIndex: 'item_code', key: 'item_code', width: '10%', className: 'text-center' },
     ];
 
-    const handleRowClick = (category) => {
-        const categoryProducts = Array.isArray(category.products) ? category.products : [];
-        setProducts(categoryProducts);
+    const handleRowClick = (supplier) => {
+        const supplierProducts = Array.isArray(supplier.products) ? supplier.products : [];
+        setProducts(supplierProducts);
+
+        const pathPrev = location.pathname + location.search;
+        sessionStorage.setItem('previousSupplierPath', pathPrev);
+
+        navigate('/admin/supplier/' + supplier._id + '/product');
         setIsModalOpen(true);
+
     };
 
     const closeModal = () => {
         setIsModalOpen(false);
+
+        const pathPrev = sessionStorage.getItem('previousSupplierPath');
+        if (pathPrev) {
+            navigate(pathPrev);
+            sessionStorage.removeItem('previousSupplierPath');
+        }
     };
 
     return (
@@ -53,22 +69,12 @@ export default function Supplier() {
                 onRowClick={handleRowClick}
             />
 
-            <Modal
-                title={'Sản phẩm trong danh mục'}
-                isOpen={isModalOpen}
-                onClose={closeModal}
-            >
-                {
-                    products.length > 0 ? (
-                        <FrameData
-                            data={products}
-                            columns={productColumns}
-                        />
-                    ) : (
-                        <p style={{ marginLeft: 30 }}>Không có sản phẩm nào trong danh mục này.</p>
-                    )
-                }
-            </Modal>
+            <ProductSupplier
+                isModalOpen={isModalOpen}
+                closeModal={closeModal}
+                products={products}
+                productColumns={productColumns}
+            />
         </div>
     );
 }
