@@ -16,7 +16,12 @@ export default function Header() {
             />
             <div className='flex-row-center'>
                 <CiBellOn />
-                {currentUser && <span>Xin chào, {currentUser.user.name}</span>}
+                {currentUser && (
+                    <div className='greeting'>
+                        <span>Xin chào</span>
+                        <span className='user-name'>{currentUser.user.name}</span>
+                    </div>
+                )}
             </div>
 
         </div>

@@ -3,7 +3,8 @@
 
 .header-container {
     @extend .flex-row-space-between;
-    flex-grow: 1; /* Để Header chiếm phần còn lại của không gian */
+    flex-grow: 1;
+    /* Để Header chiếm phần còn lại của không gian */
     padding: 10px 40px;
     background-color: var(--white-color);
     color: var(--menu-color);
@@ -20,4 +21,14 @@
 
 .header-container div {
     padding-right: 20px;
+}
+
+.greeting {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.user-name {
+    font-weight: bold;
 }

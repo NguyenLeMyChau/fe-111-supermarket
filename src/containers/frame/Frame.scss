@@ -4,6 +4,7 @@
 .frame-container {
     @extend .flex-row-align-start;
     width: 100%;
+    min-height: 100vh;
     box-sizing: border-box;
     background-color: #F0F1F3
 }

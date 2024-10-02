@@ -28,7 +28,7 @@ export default function Warehouse() {
         <div>
             <FrameData
                 title="Kho"
-                buttonText="Thêm loại sản phẩm"
+                buttonText="Cập nhật kho"
                 data={warehouses}
                 columns={warehouseColumn}
                 itemsPerPage={10}
