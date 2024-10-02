@@ -20,7 +20,7 @@ import { logoutUser } from '../services/authRequest';
 const getLabelFromPathname = (pathname, menuItems) => {
     for (const section of menuItems) {
         for (const item of section.items) {
-            if (item.path === pathname) {
+            if (pathname.includes(item.path)) {
                 return item.label;
             }
         }

@@ -14,6 +14,8 @@ import Inventory from "../pages/inventory/Inventory";
 import Orders from "../pages/orders/Orders";
 
 import ProductSupplier from "../pages/supplier/ProductSupplier";
+import ProductWarehouse from "../containers/warehouse/ProductWarehouse";
+import AddOrder from '../containers/order/AddOrder.js';
 
 function AppRoutes() {
     return (
@@ -28,11 +30,15 @@ function AppRoutes() {
                     <Route path="product" element={<Product />} />
                     <Route path="employee" element={<Employee />} />
                     <Route path="promotion" element={<Promotion />} />
-                    <Route path="inventory" element={<Inventory />} />
+                    <Route path="inventory" element={<Inventory />} >
+                        <Route path=":inventoryId/product" element={<ProductWarehouse />} />
+                    </Route>
                     <Route path="supplier" element={<Supplier />}>
                         <Route path=":supplierId/product" element={<ProductSupplier />} />
                     </Route>
-                    <Route path="order" element={<Orders />} />
+                    <Route path="order" element={<Orders />} >
+                        <Route path="add-order" element={<AddOrder />} />
+                    </Route>
                 </Route>
                 <Route path="/frame-staff" element={<FrameStaff />} />
                 <Route path="/frame-staff/stall" element={<Stall />} />

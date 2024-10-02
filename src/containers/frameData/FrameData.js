@@ -46,17 +46,20 @@ export default function FrameData({ title, buttonText, data, columns, onRowClick
                         </header>
                     )}
 
-                    <main>
+                    <main className='main'>
                         {currentItems && (
-                            <TableData
-                                columns={columns}
-                                data={currentItems}
-                                onRowClick={onRowClick}
-                            />
+                            <div className='main-table'>
+                                <TableData
+                                    columns={columns}
+                                    data={currentItems}
+                                    onRowClick={onRowClick}
+                                />
+                            </div>
                         )}
 
                         {totalPages > 0 && (
                             <Pagination data={data} itemsPerPage={setItemsPerPage} />
+
                         )}
                     </main>
 

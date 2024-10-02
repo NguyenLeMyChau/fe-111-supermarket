@@ -6,6 +6,7 @@
     flex-grow: 1;
     background-color: var(--white-color);
     border-radius: 10px;
+    position: relative;
 }
 
 .frame-data-padding {
@@ -18,4 +19,25 @@
 
 .flex-row-align-center>*:not(:last-child) {
     margin-right: 20px;
+}
+
+.frame-data-container .main {
+    flex-grow: 1;
+    overflow: auto;
+}
+
+
+.pagination-container {
+    position: fixed;
+    bottom: 0;
+    left: 0px;
+    width: 100%;
+    background-color: #fff;
+    padding: 10px 0;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
