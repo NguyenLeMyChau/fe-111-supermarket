@@ -8,6 +8,11 @@
     background-color: var(--white-color);
     color: var(--menu-color);
     padding: 0px 20px;
+    position: fixed; // Đặt menu ở vị trí cố định
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    z-index: 1000;
 }
 
 .menu-logo {

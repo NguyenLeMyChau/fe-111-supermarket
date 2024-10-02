@@ -1,13 +1,13 @@
 import React from 'react';
 import './Inventory.scss';
 import Overall from '../../containers/overall/Overall';
-import Product from '../../containers/product/Product';
+import Warehouse from '../../containers/warehouse/Warehouse';
 
 export default function Inventory() {
     return (
         <div className='inventory-container'>
             <Overall />
-            <Product />
+            <Warehouse />
         </div>
     );
 }

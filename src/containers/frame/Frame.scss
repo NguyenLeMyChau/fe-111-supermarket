@@ -4,7 +4,6 @@
 .frame-container {
     @extend .flex-row-align-start;
     width: 100%;
-    height: 100vh;
     box-sizing: border-box;
     background-color: #F0F1F3
 }
@@ -12,14 +11,15 @@
 .frame-content {
     @extend .flex-columm;
     flex-grow: 1;
+    margin-left: 240px;
+    overflow-y: auto;
 }
 
 .frame-content .main-content {
     @extend .flex-columm;
     flex-grow: 1;
     gap: 20px;
-    margin: 0px 30px;
-    margin-top: 20px;
+    padding: 20px;
 }
 
 .frame-access-denied {

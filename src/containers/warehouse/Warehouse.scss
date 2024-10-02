@@ -1,0 +1,14 @@
+@import '../../components/styles/text.scss';
+@import '../../components/styles/layout.scss';
+
+.status-true {
+    font-size: 16px;
+    font-weight: 600;
+    color: green;
+}
+
+.status-false {
+    font-size: 16px;
+    font-weight: 600;
+    color: red;
+}
