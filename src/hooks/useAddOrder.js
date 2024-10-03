@@ -24,6 +24,7 @@ const useAddOrder = (selectedProducts, supplier) => {
     const ordererName = useState(user.user.name);
     const [selectedSupplier, setSelectedSupplier] = useState(supplier ? { value: supplier._id, label: supplier.name } : null);
     const [isLoading, setIsLoading] = useState(false); // Thêm state isLoading
+    const [isLoadingSupplier, setIsLoadingSupplier] = useState(false); // Thêm state isLoadingSupplier
 
     const handleQuantityChange = (productId, value) => {
         setQuantities((prevQuantities) => ({
@@ -70,12 +71,13 @@ const useAddOrder = (selectedProducts, supplier) => {
 
     const handleSupplierSelect = async (selectedOption) => {
         setSelectedSupplier(selectedOption);
+        setIsLoadingSupplier(true); // Bắt đầu trạng thái loading
         try {
             const supplierId = selectedOption.value;
             console.log('ID nhà cung cấp:', supplierId);
             const warehouses = await getWarehousesFromSupplierId(accessToken, axiosJWT, supplierId);
             if (warehouses.length === 0) {
-                alert('Nhà cung cấp này không có sản phẩm nào!');
+                setProducts([]);
                 return;
             } else {
                 setProducts(warehouses);
@@ -90,6 +92,8 @@ const useAddOrder = (selectedProducts, supplier) => {
         } catch (error) {
             console.error('Load dữ liệu nhà cung cấp thất bại:', error);
             alert(error.response ? error.response.data.message : error.message);
+        } finally {
+            setIsLoadingSupplier(false); // Kết thúc trạng thái loading
         }
     };
 
@@ -114,6 +118,7 @@ const useAddOrder = (selectedProducts, supplier) => {
         handleSupplierSelect,
         supplierOptions,
         isLoading,
+        isLoadingSupplier
     };
 };
 
