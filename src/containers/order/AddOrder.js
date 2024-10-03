@@ -1,68 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useLocation } from 'react-router-dom';
 import Button from "../../components/button/Button";
 import './AddOrder.scss';
-import { useSelector } from 'react-redux';
 import Select from 'react-select';
+import useAddOrder from '../../hooks/useAddOrder';
 
 const AddOrder = () => {
     const location = useLocation();
-    const selectedProducts = location.state?.selectedProducts || [];
-    const user = useSelector((state) => state.auth?.login?.currentUser.user);
-    const suppliers = useSelector((state) => state.commonData?.dataManager?.suppliers) || [];
+    const selectedProducts = location.state?.selectedProducts.warehousesWithProductNames;
+    const supplier = location.state?.selectedProducts.supplier;
 
-    const [quantities, setQuantities] = useState(
-        selectedProducts.reduce((acc, product) => {
-            acc[product.product_id] = 1;
-            return acc;
-        }, {})
-    );
+    console.log("Sản phẩm đã chọn:", selectedProducts);
+    console.log('Nhà cung cấp:', supplier);
 
-    const [products, setProducts] = useState(selectedProducts);
-    const [ordererName, setOrdererName] = useState('');
-    const [selectedSupplier, setSelectedSupplier] = useState(null); // Initialize as null
-
-    useEffect(() => {
-        if (user) {
-            setOrdererName(user.name);
-        }
-        if (products.length > 0) {
-            // Set default supplier as an object if products are available
-            setSelectedSupplier({ value: products[0].supplier_name, label: products[0].supplier_name });
-        }
-    }, [user, products]);
-
-    const handleQuantityChange = (productId, value) => {
-        setQuantities((prevQuantities) => ({
-            ...prevQuantities,
-            [productId]: value < 1 ? 1 : value,
-        }));
-    };
-
-    const handleRemoveProduct = (productId) => {
-        setProducts(products.filter(product => product.product_id !== productId));
-        setQuantities((prevQuantities) => {
-            const newQuantities = { ...prevQuantities };
-            delete newQuantities[productId];
-            return newQuantities;
-        });
-    };
-
-    const handleOrder = () => {
-        console.log("Đặt hàng với sản phẩm:", products);
-        console.log("Thông tin người đặt:", ordererName);
-        console.log("Thông tin nhà cung cấp:", selectedSupplier);
-    };
-
-    const handleSupplierSelect = (selectedOption) => {
-        setSelectedSupplier(selectedOption); // Set selected option correctly
-    };
-
-    // Map suppliers to the format expected by react-select
-    const supplierOptions = suppliers.map(supplier => ({
-        value: supplier.name,
-        label: supplier.name,
-    }));
+    const {
+        quantities,
+        products,
+        ordererName,
+        selectedSupplier,
+        handleQuantityChange,
+        handleRemoveProduct,
+        handleOrder,
+        handleSupplierSelect,
+        supplierOptions,
+    } = useAddOrder(selectedProducts, supplier);
 
     return (
         <div className="add-order-container">

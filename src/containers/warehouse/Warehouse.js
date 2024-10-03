@@ -41,7 +41,6 @@ export default function Warehouse() {
         { title: 'Tên sản phẩm', dataIndex: 'product_name', key: 'product_name', width: '30%' },
         { title: 'Tồn kho', dataIndex: 'stock_quantity', key: 'stock_quantity', width: '15%', className: 'text-center' },
         { title: 'Ngưỡng giá trị', dataIndex: 'min_stock_threshold', key: 'min_stock_threshold', width: '15%', className: 'text-center' },
-        { title: 'Nhà cung cấp ', dataIndex: 'supplier_name', key: 'supplier_name', width: '25%' },
         {
             title: 'Trạng thái',
             dataIndex: 'status',

@@ -53,4 +53,21 @@ const getAllOrder = async (accessToken, axiosJWT, dispatch) => {
     }
 }
 
-export { getAllWarehouse, getProductsByWarehouseId, getAllOrder };
+const orderProductFromSupplier = async (accessToken, axiosJWT, orderData) => {
+    const { supplierId, accountId, products } = orderData;
+    try {
+        const response = await axiosJWT.post(`/api/warehouse/order-product-from-supplier`,
+            { supplierId, accountId, products },
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+        return response.data;
+    } catch (error) {
+        console.error('Order product failed:', error);
+        alert(error.response ? error.response.data.message : error.message);
+    }
+}
+
+export { getAllWarehouse, getProductsByWarehouseId, getAllOrder, orderProductFromSupplier };

@@ -17,7 +17,7 @@ export default function ProductWarehouse({ isModalOpen, closeModal, products, pr
             onClose={closeModal}
         >
             {
-                products.length > 0 ? (
+                products ? (
                     <>
                         <div className="warehouse-container">
                             <div className="warehouse-button">
@@ -30,7 +30,7 @@ export default function ProductWarehouse({ isModalOpen, closeModal, products, pr
                             </div>
                         </div>
                         <FrameData
-                            data={products}
+                            data={products.warehousesWithProductNames}
                             columns={productColumns}
                         />
 
