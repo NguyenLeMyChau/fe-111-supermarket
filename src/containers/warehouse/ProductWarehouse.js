@@ -7,7 +7,7 @@ export default function ProductWarehouse({ isModalOpen, closeModal, products, pr
     const navigate = useNavigate();
 
     const handleOrderClick = (product) => {
-        navigate('/admin/order/add-order', { state: { selectedProducts: product } });
+        navigate('/admin/order/add-order', { state: { selectedProduct: product } });
     };
 
     return (

@@ -70,4 +70,19 @@ const orderProductFromSupplier = async (accessToken, axiosJWT, orderData) => {
     }
 }
 
-export { getAllWarehouse, getProductsByWarehouseId, getAllOrder, orderProductFromSupplier };
+const getWarehousesFromSupplierId = async (accessToken, axiosJWT, supplierId) => {
+    try {
+        const response = await axiosJWT.get(`/api/warehouse/get-warehouse-by-supplier?supplierId=${supplierId}`, { supplierId }, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        console.log('Danh sách kho hàng của nhà cung cấp:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Get warehouse suplier failed:', error);
+        alert(error.response ? error.response.data.message : error.message);
+    }
+}
+
+export { getAllWarehouse, getProductsByWarehouseId, getAllOrder, orderProductFromSupplier, getWarehousesFromSupplierId };

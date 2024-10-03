@@ -1,7 +1,7 @@
 // src/hooks/useAddOrder.js
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { orderProductFromSupplier } from '../services/warehouseRequest';
+import { getWarehousesFromSupplierId, orderProductFromSupplier } from '../services/warehouseRequest';
 import { useAccessToken, useAxiosJWT } from '../utils/axiosInstance';
 import { useNavigate } from 'react-router';
 
@@ -20,10 +20,9 @@ const useAddOrder = (selectedProducts, supplier) => {
             return acc;
         }, {})
     );
-
     const [products, setProducts] = useState(selectedProducts);
-    const [ordererName, setOrdererName] = useState('');
-    const [selectedSupplier, setSelectedSupplier] = useState(null);
+    const ordererName = useState(user.user.name);
+    const [selectedSupplier, setSelectedSupplier] = useState(supplier ? { value: supplier._id, label: supplier.name } : null);
     const [isLoading, setIsLoading] = useState(false); // Thêm state isLoading
 
     const handleQuantityChange = (productId, value) => {
@@ -69,9 +68,29 @@ const useAddOrder = (selectedProducts, supplier) => {
         }
     };
 
-    const handleSupplierSelect = (selectedOption) => {
+    const handleSupplierSelect = async (selectedOption) => {
         setSelectedSupplier(selectedOption);
-        console.log('Nhà cung cấp đã chọn:', selectedOption);
+        try {
+            const supplierId = selectedOption.value;
+            console.log('ID nhà cung cấp:', supplierId);
+            const warehouses = await getWarehousesFromSupplierId(accessToken, axiosJWT, supplierId);
+            if (warehouses.length === 0) {
+                alert('Nhà cung cấp này không có sản phẩm nào!');
+                return;
+            } else {
+                setProducts(warehouses);
+
+                const newQuantities = warehouses.reduce((acc, product) => {
+                    acc[product.product_id] = product.quantity || 1;
+                    return acc;
+                }, {});
+                setQuantities(newQuantities);
+            }
+
+        } catch (error) {
+            console.error('Load dữ liệu nhà cung cấp thất bại:', error);
+            alert(error.response ? error.response.data.message : error.message);
+        }
     };
 
     // Sử dụng useMemo để tối ưu hóa việc tạo danh sách nhà cung cấp
@@ -82,15 +101,6 @@ const useAddOrder = (selectedProducts, supplier) => {
         }));
     }, [suppliers]);
 
-    useEffect(() => {
-        if (user) {
-            setOrdererName(user.user.name);
-            if (supplier) {
-                setSelectedSupplier({ value: supplier._id, label: supplier.name });
-            }
-        }
-
-    }, [user, supplier]);
 
     return {
         quantities,
