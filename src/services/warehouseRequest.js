@@ -1,3 +1,4 @@
+import { getOrderFailed, getOrderStart, getOrderSuccess } from "../store/reducers/orderSlice";
 import { getProductsByWarehouseIdSucess, getWarehouseFailed, getWarehouseStart, getWarehouseSuccess } from "../store/reducers/warehouseSlice";
 
 
@@ -35,4 +36,21 @@ const getProductsByWarehouseId = async (accessToken, axiosJWT, dispatch, warehou
     }
 }
 
-export { getAllWarehouse, getProductsByWarehouseId };
+const getAllOrder = async (accessToken, axiosJWT, dispatch) => {
+    dispatch(getOrderStart());
+    try {
+        const response = await axiosJWT.get(`api/warehouse/get-all-orders`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        dispatch(getOrderSuccess(response.data));
+        return response.data;
+    } catch (error) {
+        dispatch(getOrderFailed());
+        console.error('Get all order failed:', error);
+        alert(error.response ? error.response.data.message : error.message);
+    }
+}
+
+export { getAllWarehouse, getProductsByWarehouseId, getAllOrder };

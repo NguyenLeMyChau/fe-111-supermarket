@@ -15,6 +15,7 @@ import storage from 'redux-persist/lib/storage';
 import authReducer from './reducers/authSlice';
 import commonDataReducer from './reducers/commonDataSlice';
 import warehouseReducer from './reducers/warehouseSlice';
+import orderReducer from './reducers/orderSlice';
 
 const persistConfig = {
     key: 'root',
@@ -27,6 +28,7 @@ const rootReducer = combineReducers(
         auth: authReducer,
         commonData: commonDataReducer,
         warehouse: warehouseReducer,
+        order: orderReducer,
     });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

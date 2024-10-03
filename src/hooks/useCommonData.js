@@ -8,7 +8,7 @@ import { useLocation, useNavigate } from 'react-router';
 import { getAllCategories, getAllProducts } from '../services/productRequest';
 import { getAllEmployees } from '../services/employeeRequest';
 import { getAllPromotions } from '../services/promotionRequest';
-import { getAllWarehouse } from '../services/warehouseRequest';
+import { getAllOrder, getAllWarehouse } from '../services/warehouseRequest';
 
 const useCommonData = () => {
     const dispatch = useDispatch();
@@ -54,10 +54,10 @@ const useCommonData = () => {
     useEffect(() => {
         const locationPath = location.pathname;
         if (locationPath === '/admin/inventory') {
-            const warehouses = getAllWarehouse(currentUser?.accessToken, axiosJWT, dispatch);
-            if (warehouses) {
-                console.log('Warehouses:', warehouses);
-            }
+            getAllWarehouse(currentUser?.accessToken, axiosJWT, dispatch);
+        }
+        if (locationPath === '/admin/order') {
+            getAllOrder(currentUser?.accessToken, axiosJWT, dispatch);
         }
     }, [currentUser?.accessToken, axiosJWT, dispatch, location.pathname]);
 
