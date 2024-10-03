@@ -7,8 +7,8 @@ import useAddOrder from '../../hooks/useAddOrder';
 
 const AddOrder = () => {
     const location = useLocation();
-    const selectedProducts = location.state?.selectedProducts.warehousesWithProductNames;
-    const supplier = location.state?.selectedProducts.supplier;
+    const selectedProducts = location.state?.selectedProducts?.warehousesWithProductNames || [];
+    const supplier = location.state?.selectedProducts?.supplier || null;
 
     console.log("Sản phẩm đã chọn:", selectedProducts);
     console.log('Nhà cung cấp:', supplier);
@@ -23,6 +23,7 @@ const AddOrder = () => {
         handleOrder,
         handleSupplierSelect,
         supplierOptions,
+        isLoading,
     } = useAddOrder(selectedProducts, supplier);
 
     return (
@@ -59,6 +60,7 @@ const AddOrder = () => {
                                 <th>Tên sản phẩm</th>
                                 <th>Số lượng tồn kho</th>
                                 <th>Số lượng ngưỡng</th>
+                                <th>Trạng thái</th>
                                 <th>Số lượng đặt hàng</th>
                                 <th>Hành động</th>
                             </tr>
@@ -69,6 +71,11 @@ const AddOrder = () => {
                                     <td>{product.product_name}</td>
                                     <td>{product.stock_quantity}</td>
                                     <td>{product.min_stock_threshold}</td>
+                                    <td>
+                                        <span className={product.status ? 'status-true' : 'status-false'}>
+                                            {product.status ? 'Còn hàng' : 'Hết hàng'}
+                                        </span>
+                                    </td>
                                     <td>
                                         <input
                                             type="number"
@@ -89,12 +96,19 @@ const AddOrder = () => {
                             ))}
                         </tbody>
                     </table>
-                    <Button
-                        text="Xác nhận đặt hàng"
-                        backgroundColor="#1366D9"
-                        onClick={handleOrder}
-                        className="confirm-button"
-                    />
+
+                    {/* Hiển thị trạng thái loading */}
+                    {isLoading ? (
+                        <p className='loading'>Đang xử lý đơn đặt hàng...</p>
+                    ) : (
+                        <Button
+                            text="Xác nhận đặt hàng"
+                            backgroundColor="#1366D9"
+                            onClick={handleOrder}
+                            className="confirm-button"
+                        />
+                    )}
+
                 </div>
             ) : (
                 <p>Không có sản phẩm nào</p>

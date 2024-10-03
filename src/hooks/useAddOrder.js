@@ -1,10 +1,18 @@
 // src/hooks/useAddOrder.js
 import { useState, useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
+import { orderProductFromSupplier } from '../services/warehouseRequest';
+import { useAccessToken, useAxiosJWT } from '../utils/axiosInstance';
+import { useNavigate } from 'react-router';
 
 const useAddOrder = (selectedProducts, supplier) => {
+    const navigate = useNavigate();
+
     const user = useSelector((state) => state.auth?.login?.currentUser);
     const suppliers = useSelector((state) => state.commonData?.dataManager?.suppliers);
+
+    const axiosJWT = useAxiosJWT();
+    const accessToken = useAccessToken();
 
     const [quantities, setQuantities] = useState(
         selectedProducts.reduce((acc, product) => {
@@ -16,6 +24,7 @@ const useAddOrder = (selectedProducts, supplier) => {
     const [products, setProducts] = useState(selectedProducts);
     const [ordererName, setOrdererName] = useState('');
     const [selectedSupplier, setSelectedSupplier] = useState(null);
+    const [isLoading, setIsLoading] = useState(false); // Thêm state isLoading
 
     const handleQuantityChange = (productId, value) => {
         setQuantities((prevQuantities) => ({
@@ -33,20 +42,42 @@ const useAddOrder = (selectedProducts, supplier) => {
         });
     };
 
-    const handleOrder = () => {
-        console.log("Đặt hàng với sản phẩm:", products);
-        console.log("Thông tin người đặt:", user.id);
-        console.log("Thông tin nhà cung cấp:", products[0].supplier_id);
+    const handleOrder = async () => {
+        setIsLoading(true);
+        try {
+            const orderData = {
+                supplierId: selectedSupplier.value,
+                accountId: user.id,
+                products: products.map(product => ({
+                    product_id: product.product_id,
+                    quantity: quantities[product.product_id],
+                    price_order: 2000
+                })),
+            };
+
+            const order = await orderProductFromSupplier(accessToken, axiosJWT, orderData);
+
+            console.log('Kết quả đặt hàng:', order);
+            alert('Đặt hàng thành công!');
+            navigate('/admin/order');
+
+        } catch (error) {
+            console.error('Đặt hàng thất bại:', error);
+            alert(error.response ? error.response.data.message : error.message);
+        } finally {
+            setIsLoading(false); // Đặt isLoading thành false khi xử lý xong
+        }
     };
 
     const handleSupplierSelect = (selectedOption) => {
-        setSelectedSupplier(selectedOption); // Set selected option correctly
+        setSelectedSupplier(selectedOption);
+        console.log('Nhà cung cấp đã chọn:', selectedOption);
     };
 
     // Sử dụng useMemo để tối ưu hóa việc tạo danh sách nhà cung cấp
     const supplierOptions = useMemo(() => {
         return suppliers.map(supplier => ({
-            value: supplier.id,
+            value: supplier._id,
             label: supplier.name,
         }));
     }, [suppliers]);
@@ -54,7 +85,9 @@ const useAddOrder = (selectedProducts, supplier) => {
     useEffect(() => {
         if (user) {
             setOrdererName(user.user.name);
-            setSelectedSupplier({ value: supplier._id, label: supplier.name });
+            if (supplier) {
+                setSelectedSupplier({ value: supplier._id, label: supplier.name });
+            }
         }
 
     }, [user, supplier]);
@@ -70,6 +103,7 @@ const useAddOrder = (selectedProducts, supplier) => {
         handleOrder,
         handleSupplierSelect,
         supplierOptions,
+        isLoading,
     };
 };
 
