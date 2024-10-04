@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './Order.scss';
 import FrameData from '../frameData/FrameData';
 import { useSelector } from 'react-redux';
-import { formatDate } from '../../utils/fotmatDate';
+import { formatCurrency, formatDate } from '../../utils/fotmatDate';
 import { useNavigate } from 'react-router';
 import Modal from '../../components/modal/Modal';
 import TableData from '../tableData/tableData';
@@ -18,7 +18,7 @@ export default function Order() {
     const accessToken = useAccessToken();
 
     const orders = useSelector((state) => state.order?.orders);
-    
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [orderDetail, setOrderDetail] = useState(null);
 
@@ -64,7 +64,8 @@ export default function Order() {
             dataIndex: 'total',
             key: 'total',
             width: '10%',
-            className: 'text-center',
+            className: 'text-right',
+            render: (total) => formatCurrency(total)
         },
         {
             title: 'Trạng thái',

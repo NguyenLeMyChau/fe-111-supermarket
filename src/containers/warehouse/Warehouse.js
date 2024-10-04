@@ -33,6 +33,19 @@ export default function Warehouse() {
 
     const [filteredWarehouses, setFilteredWarehouses] = useState(warehouses);
 
+    const getStatusColor = (status) => {
+        switch (status) {
+            case 'Hết hàng':
+                return 'red';
+            case 'Ít hàng':
+                return 'orange';
+            case 'Còn hàng':
+                return 'green';
+            default:
+                return 'black';
+        }
+    };
+
     const warehouseColumn = [
         { title: 'Tên sản phẩm', dataIndex: 'product_name', key: 'product_name', width: '40%' },
         { title: 'Tồn kho', dataIndex: 'stock_quantity', key: 'stock_quantity', width: '20%', className: 'text-center' },
@@ -43,11 +56,13 @@ export default function Warehouse() {
             key: 'status',
             width: '20%',
             className: 'text-center',
-            render: (status) => (
-                <span className={status ? 'status-true' : 'status-false'}>
-                    {status ? 'Còn hàng' : 'Hết hàng'}
-                </span>
-            )
+            render: (text, record) => {
+                return (
+                    <span style={{ color: getStatusColor(record.status), fontWeight: 500, fontSize: 16 }}>
+                        {record.status}
+                    </span>
+                );
+            }
         },
     ];
 
@@ -61,11 +76,13 @@ export default function Warehouse() {
             key: 'status',
             width: '15%',
             className: 'text-center',
-            render: (status) => (
-                <span className={status ? 'status-true' : 'status-false'}>
-                    {status ? 'Còn hàng' : 'Hết hàng'}
-                </span>
-            )
+            render: (text, record) => {
+                return (
+                    <span style={{ color: getStatusColor(record.status), fontWeight: 500, fontSize: 16 }}>
+                        {record.status}
+                    </span>
+                );
+            }
         }
     ];
 

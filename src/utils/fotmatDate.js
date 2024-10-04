@@ -4,3 +4,7 @@ export const formatDate = (dateString) => {
     const date = new Date(dateString);
     return format(date, 'dd/MM/yyyy HH:mm:ss');
 };
+
+export const formatCurrency = (amount, locale = 'vi-VN', currency = 'VND') => {
+    return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(amount);
+};

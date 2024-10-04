@@ -9,7 +9,6 @@ const AddOrder = () => {
     const location = useLocation();
     const selectedProducts = location.state?.selectedProduct?.warehousesWithProductNames || [];
     const supplier = location.state?.selectedProduct?.supplier || null;
-    console.log('supplier', supplier)
 
     const {
         quantities,
@@ -23,8 +22,20 @@ const AddOrder = () => {
         supplierOptions,
         isLoading,
         isLoadingSupplier,
-        noSupplierMessage
     } = useAddOrder(selectedProducts, supplier);
+
+    const getStatusColor = (status) => {
+        switch (status) {
+            case 'Hết hàng':
+                return 'red';
+            case 'Ít hàng':
+                return 'orange';
+            case 'Còn hàng':
+                return 'green';
+            default:
+                return 'black';
+        }
+    };
 
     return (
         <div className="add-order-container">
@@ -52,7 +63,6 @@ const AddOrder = () => {
             </div>
 
             <div className="product-list">
-                {noSupplierMessage && <p>{noSupplierMessage}</p>}
                 <h4>Thông tin sản phẩm đã chọn:</h4>
                 {isLoadingSupplier ? (
                     <p className='loading'>Đang tải thông tin sản phẩm...</p>
@@ -75,8 +85,8 @@ const AddOrder = () => {
                                     <td>{product.stock_quantity}</td>
                                     <td>{product.min_stock_threshold}</td>
                                     <td>
-                                        <span className={product.status ? 'status-true' : 'status-false'}>
-                                            {product.status ? 'Còn hàng' : 'Hết hàng'}
+                                        <span style={{ color: getStatusColor(product.status), fontWeight: 500, fontSize: 16 }}>
+                                            {product.status}
                                         </span>
                                     </td>
                                     <td>
