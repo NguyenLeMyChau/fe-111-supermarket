@@ -1,0 +1,12 @@
+@import '../../components/styles/text.scss';
+@import '../../components/styles/layout.scss';
+
+.product-detail-container {
+    @extend .flex-columm;
+    flex-grow: 1;
+    background-color: var(--white-color);
+    border-radius: 10px;
+    position: relative;
+    min-height: 82vh;
+    padding-left: 20px;
+}

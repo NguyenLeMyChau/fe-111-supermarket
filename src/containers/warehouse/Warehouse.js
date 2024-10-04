@@ -8,6 +8,8 @@ import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
 import { getProductsByWarehouseId } from '../../services/warehouseRequest';
 import Modal from '../../components/modal/Modal';
 import Button from '../../components/button/Button';
+import { getStatusColor } from '../../utils/fotmatDate';
+import Select from 'react-select';
 
 export default function Warehouse() {
     const navigate = useNavigate();
@@ -28,23 +30,10 @@ export default function Warehouse() {
         productName: '',
         stockQuantity: '',
         minStockThreshold: '',
-        status: '',
+        status: [],
     });
 
     const [filteredWarehouses, setFilteredWarehouses] = useState(warehouses);
-
-    const getStatusColor = (status) => {
-        switch (status) {
-            case 'Hết hàng':
-                return 'red';
-            case 'Ít hàng':
-                return 'orange';
-            case 'Còn hàng':
-                return 'green';
-            default:
-                return 'black';
-        }
-    };
 
     const warehouseColumn = [
         { title: 'Tên sản phẩm', dataIndex: 'product_name', key: 'product_name', width: '40%' },
@@ -116,8 +105,9 @@ export default function Warehouse() {
     };
 
     // Hàm cập nhật bộ lọc
-    const handleFilterChange = (e) => {
-        const { name, value } = e.target;
+    const handleFilterChange = (selectedOptions, actionMeta) => {
+        const { name } = actionMeta;
+        const value = selectedOptions ? selectedOptions.map(option => option.value) : [];
         setFilters((prevFilters) => ({
             ...prevFilters,
             [name]: value,
@@ -145,9 +135,9 @@ export default function Warehouse() {
             );
         }
 
-        if (filters.status) {
+        if (filters.status.length > 0) {
             filteredData = filteredData.filter(warehouse =>
-                warehouse.status === (filters.status === 'true')
+                filters.status.includes(warehouse.status)
             );
         }
 
@@ -161,10 +151,16 @@ export default function Warehouse() {
             productName: '',
             stockQuantity: '',
             minStockThreshold: '',
-            status: '',
+            status: [],
         });
         setFilteredWarehouses(warehouses);
     };
+
+    const statusOptions = [
+        { value: 'Còn hàng', label: 'Còn hàng' },
+        { value: 'Hết hàng', label: 'Hết hàng' },
+        { value: 'Ít hàng', label: 'Ít hàng' },
+    ];
 
     return (
         <div>
@@ -199,7 +195,7 @@ export default function Warehouse() {
                             type="text"
                             name="productName"
                             value={filters.productName}
-                            onChange={handleFilterChange}
+                            onChange={(e) => setFilters({ ...filters, productName: e.target.value })}
                         />
                     </div>
 
@@ -209,7 +205,7 @@ export default function Warehouse() {
                             type="number"
                             name="stockQuantity"
                             value={filters.stockQuantity}
-                            onChange={handleFilterChange}
+                            onChange={(e) => setFilters({ ...filters, stockQuantity: e.target.value })}
                         />
                     </div>
 
@@ -219,21 +215,24 @@ export default function Warehouse() {
                             type="number"
                             name="minStockThreshold"
                             value={filters.minStockThreshold}
-                            onChange={handleFilterChange}
+                            onChange={(e) => setFilters({ ...filters, minStockThreshold: e.target.value })}
                         />
                     </div>
 
                     <div className="filter-item">
                         <label>Trạng thái:</label>
-                        <select
+                        <Select
+                            isMulti
                             name="status"
-                            value={filters.status}
+                            value={statusOptions.filter(option => filters.status.includes(option.value))}
                             onChange={handleFilterChange}
-                        >
-                            <option value="">Tất cả</option>
-                            <option value="true">Còn hàng</option>
-                            <option value="false">Hết hàng</option>
-                        </select>
+                            options={statusOptions}
+                            classNamePrefix="select"
+                            menuPortalTarget={document.body}
+                            styles={{
+                                menuPortal: base => ({ ...base, zIndex: 9999, width: 200 }),
+                            }}
+                        />
                     </div>
 
                     <div className='button-filter'>

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import FrameData from '../../containers/frameData/FrameData';
 import Orders from '../orders/Orders';
+import ProductDetail from './ProductDetail';
 
 export default function Product() {
     const products = useSelector((state) => state.commonData?.dataManager?.products) || [];
@@ -19,13 +20,15 @@ export default function Product() {
     };
 
     return (
-        <FrameData
-            title="Danh sách sản phẩm"
-            buttonText="Thêm sản phẩm"
-            data={products}
-            columns={productColumns}
-            onRowClick={handleRowClick}
-            component={selectedComponent}
-        />
+        // <FrameData
+        //     title="Danh sách sản phẩm"
+        //     buttonText="Thêm sản phẩm"
+        //     data={products}
+        //     columns={productColumns}
+        //     onRowClick={handleRowClick}
+        //     component={selectedComponent}
+        // />
+
+        <ProductDetail />
     );
 }

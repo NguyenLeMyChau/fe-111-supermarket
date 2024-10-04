@@ -4,6 +4,7 @@ import Button from "../../components/button/Button";
 import './AddOrder.scss';
 import Select from 'react-select';
 import useAddOrder from '../../hooks/useAddOrder';
+import { getStatusColor } from '../../utils/fotmatDate';
 
 const AddOrder = () => {
     const location = useLocation();
@@ -23,19 +24,6 @@ const AddOrder = () => {
         isLoading,
         isLoadingSupplier,
     } = useAddOrder(selectedProducts, supplier);
-
-    const getStatusColor = (status) => {
-        switch (status) {
-            case 'Hết hàng':
-                return 'red';
-            case 'Ít hàng':
-                return 'orange';
-            case 'Còn hàng':
-                return 'green';
-            default:
-                return 'black';
-        }
-    };
 
     return (
         <div className="add-order-container">
