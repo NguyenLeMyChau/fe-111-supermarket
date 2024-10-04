@@ -9,6 +9,7 @@ const AddOrder = () => {
     const location = useLocation();
     const selectedProducts = location.state?.selectedProduct?.warehousesWithProductNames || [];
     const supplier = location.state?.selectedProduct?.supplier || null;
+    console.log('supplier', supplier)
 
     const {
         quantities,
@@ -21,7 +22,8 @@ const AddOrder = () => {
         handleSupplierSelect,
         supplierOptions,
         isLoading,
-        isLoadingSupplier
+        isLoadingSupplier,
+        noSupplierMessage
     } = useAddOrder(selectedProducts, supplier);
 
     return (
@@ -50,6 +52,7 @@ const AddOrder = () => {
             </div>
 
             <div className="product-list">
+                {noSupplierMessage && <p>{noSupplierMessage}</p>}
                 <h4>Thông tin sản phẩm đã chọn:</h4>
                 {isLoadingSupplier ? (
                     <p className='loading'>Đang tải thông tin sản phẩm...</p>

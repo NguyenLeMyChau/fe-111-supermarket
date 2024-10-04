@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import './Warehouse.scss';
 import { useDispatch, useSelector } from 'react-redux';
 import FrameData from '../frameData/FrameData';
@@ -18,17 +18,20 @@ export default function Warehouse() {
     const axiosJWT = useAxiosJWT();
 
     const warehouses = useSelector((state) => state.warehouse?.warehouse);
-    console.log(warehouses);
 
     const [products, setProducts] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
-    const [filterProductName, setFilterProductName] = useState('');
-    const [filterStockQuantity, setFilterStockQuantity] = useState('');
-    const [filterMinStockThreshold, setFilterMinStockThreshold] = useState('');
-    const [filterStatus, setFilterStatus] = useState('');
-    const [filteredWarehouses, setFilteredWarehouses] = useState(warehouses);
 
+    // Gom các bộ lọc vào object
+    const [filters, setFilters] = useState({
+        productName: '',
+        stockQuantity: '',
+        minStockThreshold: '',
+        status: '',
+    });
+
+    const [filteredWarehouses, setFilteredWarehouses] = useState(warehouses);
 
     const warehouseColumn = [
         { title: 'Tên sản phẩm', dataIndex: 'product_name', key: 'product_name', width: '40%' },
@@ -95,41 +98,56 @@ export default function Warehouse() {
         setIsFilterOpen(false);
     };
 
+    // Hàm cập nhật bộ lọc
+    const handleFilterChange = (e) => {
+        const { name, value } = e.target;
+        setFilters((prevFilters) => ({
+            ...prevFilters,
+            [name]: value,
+        }));
+    };
+
     const applyFilters = () => {
         let filteredData = warehouses;
 
-        if (filterProductName) {
+        if (filters.productName) {
             filteredData = filteredData.filter(warehouse =>
-                warehouse.product_name.toLowerCase().includes(filterProductName.toLowerCase())
+                warehouse.product_name.toLowerCase().includes(filters.productName.toLowerCase())
             );
         }
 
-        if (filterStockQuantity) {
+        if (filters.stockQuantity) {
             filteredData = filteredData.filter(warehouse =>
-                warehouse.stock_quantity > Number(filterStockQuantity)
+                warehouse.stock_quantity > Number(filters.stockQuantity)
             );
         }
 
-        if (filterMinStockThreshold) {
+        if (filters.minStockThreshold) {
             filteredData = filteredData.filter(warehouse =>
-                warehouse.min_stock_threshold < Number(filterMinStockThreshold)
+                warehouse.min_stock_threshold < Number(filters.minStockThreshold)
             );
         }
 
-        if (filterStatus) {
+        if (filters.status) {
             filteredData = filteredData.filter(warehouse =>
-                warehouse.status === (filterStatus === 'true')
+                warehouse.status === (filters.status === 'true')
             );
         }
 
-        // Cập nhật state `filteredWarehouses` với dữ liệu đã lọc
         setFilteredWarehouses(filteredData);
-        closeFilterModal(); // Đóng modal sau khi lọc
+        closeFilterModal();
     };
 
-    useEffect(() => {
+    // Hàm đặt lại bộ lọc
+    const resetFilters = () => {
+        setFilters({
+            productName: '',
+            stockQuantity: '',
+            minStockThreshold: '',
+            status: '',
+        });
         setFilteredWarehouses(warehouses);
-    }, [warehouses]);
+    };
 
     return (
         <div>
@@ -160,22 +178,41 @@ export default function Warehouse() {
                 <div className="filter-modal-content">
                     <div className="filter-item">
                         <label>Tên sản phẩm:</label>
-                        <input type="text" value={filterProductName} onChange={(e) => setFilterProductName(e.target.value)} />
+                        <input
+                            type="text"
+                            name="productName"
+                            value={filters.productName}
+                            onChange={handleFilterChange}
+                        />
                     </div>
 
                     <div className="filter-item">
                         <label>Tồn kho lớn hơn:</label>
-                        <input type="number" value={filterStockQuantity} onChange={(e) => setFilterStockQuantity(e.target.value)} />
+                        <input
+                            type="number"
+                            name="stockQuantity"
+                            value={filters.stockQuantity}
+                            onChange={handleFilterChange}
+                        />
                     </div>
 
                     <div className="filter-item">
                         <label>Ngưỡng giá trị nhỏ hơn:</label>
-                        <input type="number" value={filterMinStockThreshold} onChange={(e) => setFilterMinStockThreshold(e.target.value)} />
+                        <input
+                            type="number"
+                            name="minStockThreshold"
+                            value={filters.minStockThreshold}
+                            onChange={handleFilterChange}
+                        />
                     </div>
 
                     <div className="filter-item">
                         <label>Trạng thái:</label>
-                        <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
+                        <select
+                            name="status"
+                            value={filters.status}
+                            onChange={handleFilterChange}
+                        >
                             <option value="">Tất cả</option>
                             <option value="true">Còn hàng</option>
                             <option value="false">Hết hàng</option>
@@ -187,8 +224,15 @@ export default function Warehouse() {
                             text='Lọc'
                             backgroundColor='#1366D9'
                             color='white'
-                            width='200'
+                            width='150'
                             onClick={applyFilters}
+                        />
+                        <Button
+                            text='Huỷ lọc'
+                            backgroundColor='#FF0000'
+                            color='white'
+                            width='150'
+                            onClick={resetFilters}
                         />
                     </div>
                 </div>

@@ -10,6 +10,7 @@ const useAddOrder = (selectedProducts, supplier) => {
 
     const user = useSelector((state) => state.auth?.login?.currentUser);
     const suppliers = useSelector((state) => state.commonData?.dataManager?.suppliers);
+    const orders = useSelector((state) => state.order?.orders);
 
     const axiosJWT = useAxiosJWT();
     const accessToken = useAccessToken();
@@ -99,11 +100,30 @@ const useAddOrder = (selectedProducts, supplier) => {
 
     // Sử dụng useMemo để tối ưu hóa việc tạo danh sách nhà cung cấp
     const supplierOptions = useMemo(() => {
-        return suppliers.map(supplier => ({
-            value: supplier._id,
-            label: supplier.name,
-        }));
-    }, [suppliers]);
+        const validStatuses = ['Đang chờ xử lý', 'Đã duyệt', 'Đang giao hàng'];
+        const orderSupplierIds = orders
+            .filter(order => validStatuses.includes(order.status))
+            .map(order => order.supplier_id._id);
+
+        const filteredSuppliers = suppliers
+            .filter(supplierData => {
+                if (orderSupplierIds.includes(supplierData._id)) {
+                    if (supplier && supplier._id === supplierData._id) {
+                        setSelectedSupplier(null);
+                        setProducts([]);
+                    }
+                    return false;
+                }
+                return true;
+            })
+            .map(supplier => ({
+                value: supplier._id,
+                label: supplier.name,
+            }));
+
+        return filteredSuppliers;
+
+    }, [suppliers, orders, supplier]);
 
 
     return {
