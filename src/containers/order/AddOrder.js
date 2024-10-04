@@ -97,7 +97,7 @@ const AddOrder = () => {
                         </tbody>
                     </table>
                 ) : (
-                    <p className="no-products">Nhà cung cấp chưa có sản phẩm nào để hiển thị.</p>
+                    <p className="no-products">Chưa có sản phẩm nào để hiển thị.</p>
                 )}
 
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import './Input.scss';
 import { IoIosSearch } from "react-icons/io";
-import { RiErrorWarningLine } from "react-icons/ri";
+// import { RiErrorWarningLine } from "react-icons/ri";
 
 export default function Input(props) {
     const directionClass = props.direction === 'column' ? 'input-container-column' : 'input-container-row';

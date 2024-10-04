@@ -6,7 +6,7 @@ import usePagination from '../../hooks/usePagination';
 import TableData from '../tableData/tableData';
 import Pagination from '../../components/pagination/Pagination';
 
-export default function FrameData({ title, buttonText, data, columns, onRowClick, renderModal, onButtonClick, itemsPerPage }) {
+export default function FrameData({ title, buttonText, data, columns, onRowClick, renderModal, onButtonClick, handleFilterClick, itemsPerPage }) {
     const [isModalAddItem, setIsModalAddItem] = useState(false);
 
     const setItemsPerPage = itemsPerPage ? itemsPerPage : 10;
@@ -43,6 +43,7 @@ export default function FrameData({ title, buttonText, data, columns, onRowClick
                                 className='text-sm font-weight-medium text-black'
                                 border='1px solid #D0D3D9'
                                 icon={<IoFilterOutline size={20} />}
+                                onClick={handleFilterClick}
                             />
                         </div>
                     </header>

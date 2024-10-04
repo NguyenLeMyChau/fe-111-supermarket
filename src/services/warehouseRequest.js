@@ -85,4 +85,25 @@ const getWarehousesFromSupplierId = async (accessToken, axiosJWT, supplierId) =>
     }
 }
 
-export { getAllWarehouse, getProductsByWarehouseId, getAllOrder, orderProductFromSupplier, getWarehousesFromSupplierId };
+const updateOrderStatus = async (accessToken, axiosJWT, orderId, newStatus, products) => {
+    try {
+        const response = await axiosJWT.put(`/api/warehouse/update-order-status`, { orderId, newStatus, products }, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('update status failed:', error);
+        alert(error.response ? error.response.data.message : error.message);
+    }
+}
+
+export {
+    getAllWarehouse,
+    getProductsByWarehouseId,
+    getAllOrder,
+    orderProductFromSupplier,
+    getWarehousesFromSupplierId,
+    updateOrderStatus
+};

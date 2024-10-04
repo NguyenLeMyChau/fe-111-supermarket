@@ -22,3 +22,21 @@
     margin-left: auto;
     padding: 10px 30px;
 }
+
+.filter-modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.filter-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 20px;
+}
+
+.filter-modal-content .button-filter {
+    align-self: center;
+}
+
