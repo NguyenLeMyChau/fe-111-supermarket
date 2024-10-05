@@ -120,13 +120,14 @@ export default function Order() {
     };
 
     const handleUpdateStatus = async () => {
-        console.log(orderDetail);
-        try {
-            await updateOrderStatus(accessToken, axiosJWT, orderDetail.orderId, orderDetail.status.value, orderDetail.products);
-            alert('Cập nhật trạng thái đơn hàng thành công');
-            navigate('/admin/order');
-        } catch (error) {
-            console.error('Failed to update status:', error);
+        if (window.confirm('Bạn có chắc chắn muốn cập nhật trạng thái đơn hàng không?')) {
+            try {
+                await updateOrderStatus(accessToken, axiosJWT, orderDetail.orderId, orderDetail.status.value, orderDetail.products);
+                alert('Cập nhật trạng thái đơn hàng thành công');
+                navigate('/admin/order');
+            } catch (error) {
+                console.error('Failed to update status:', error);
+            }
         }
     };
 

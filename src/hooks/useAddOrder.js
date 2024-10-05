@@ -43,6 +43,11 @@ const useAddOrder = (selectedProducts, supplier) => {
     };
 
     const handleOrder = async () => {
+        const isConfirmed = window.confirm('Bạn có chắc chắn muốn đặt hàng không?');
+        if (!isConfirmed) {
+            return;
+        }
+
         setIsLoading(true);
         try {
             const orderData = {
