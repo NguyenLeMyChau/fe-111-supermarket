@@ -77,7 +77,7 @@ export default function ProductDetail() {
                                     <span>087528</span>
                                 </div>
                                 <div className='row'>
-                                    <label>Mã sản phẩm</label>
+                                    <label>Mã hàng</label>
                                     <span>M884</span>
                                 </div>
                             </div>

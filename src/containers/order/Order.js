@@ -21,6 +21,7 @@ export default function Order() {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [orderDetail, setOrderDetail] = useState(null);
+    const [orderStatus, setOrderStatus] = useState(false);
 
     const orderStatuses = [
         { value: 'Đang chờ xử lý', label: 'Đang chờ xử lý', color: '#FFA500' },
@@ -87,15 +88,22 @@ export default function Order() {
     ];
 
     const handleRowClick = (order) => {
-        console.log('order', order);
         const orderProducts = Array.isArray(order.products) ? order.products : [];
         const matchedStatus = orderStatuses.find(status => status.value === order.status);
+
+        const booleanStatus = ['Đã giao hàng', 'Bị từ chối', 'Đã hủy'].includes(matchedStatus.value);
+        if (booleanStatus)
+            setOrderStatus(true);
+        else setOrderStatus(false);
+
         setOrderDetail({
             orderId: order._id,
             status: matchedStatus,
             products: orderProducts
-        })
+        });
+
         setIsModalOpen(true);
+
     };
 
     const closeModal = () => {
@@ -122,6 +130,7 @@ export default function Order() {
         }
     };
 
+
     return (
         <div>
             <FrameData
@@ -147,6 +156,7 @@ export default function Order() {
                         onChange={handleStatusSelect}
                         options={orderStatuses}
                         menuPortalTarget={document.body}
+                        isDisabled={orderStatus}
                         styles={{
                             menuPortal: base => ({ ...base, zIndex: 9999, width: 200 }),
                             option: (provided, state) => ({
@@ -162,13 +172,18 @@ export default function Order() {
                         }}
                     />
 
-                    <Button
-                        text="Cập nhật trạng thái"
-                        backgroundColor="#1366D9"
-                        onClick={handleUpdateStatus}
-                        className="update-status-button"
-                    />
+                    {
+                        !orderStatus && (
+                            <Button
+                                text="Cập nhật trạng thái"
+                                backgroundColor="#1366D9"
+                                onClick={handleUpdateStatus}
+                                className="update-status-button"
+                            />
+                        )
+                    }
                 </div>
+
 
                 {orderDetail?.products?.length > 0 ? (
                     <TableData
