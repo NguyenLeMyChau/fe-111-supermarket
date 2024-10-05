@@ -40,8 +40,7 @@ const useMenuItems = (onchange) => {
         if (axiosJWT) {
             console.log('label menu:', label);
             if (label === 'Log Out') {
-                const accessToken = login?.accessToken;
-                logoutUser(dispatch, navigate, accessToken, axiosJWT);
+                logoutUser(dispatch, navigate, login?.accessToken, axiosJWT);
             } else if (label === 'Stall') {
                 navigate('/frame-staff/stall');
             } else {

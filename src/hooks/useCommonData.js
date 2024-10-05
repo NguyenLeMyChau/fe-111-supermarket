@@ -52,14 +52,19 @@ const useCommonData = () => {
     }, [currentUser, axiosJWT, dispatch, isDataFetched]);
 
     useEffect(() => {
+        if (!currentUser) {
+            console.warn('Current user is not logged in. Skipping API calls.');
+            return; // Ngừng thực hiện các API call nếu currentUser là null
+        }
+
         const locationPath = location.pathname;
         if (locationPath === '/admin/inventory') {
-            getAllWarehouse(currentUser?.accessToken, axiosJWT, dispatch);
+            getAllWarehouse(currentUser.accessToken, axiosJWT, dispatch);
         }
         if (locationPath === '/admin/order') {
-            getAllOrder(currentUser?.accessToken, axiosJWT, dispatch);
+            getAllOrder(currentUser.accessToken, axiosJWT, dispatch);
         }
-    }, [currentUser?.accessToken, axiosJWT, dispatch, location.pathname]);
+    }, [currentUser, axiosJWT, dispatch, location.pathname]);
 
 
     useEffect(() => {
