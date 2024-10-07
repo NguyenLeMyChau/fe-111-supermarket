@@ -8,7 +8,7 @@ export default function Supplier() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const suppliers = useSelector((state) => state.commonData?.dataManager?.suppliers) || [];
+    const suppliers = useSelector((state) => state.supplier?.suppliers) || [];
     const enhancedSuppliers = suppliers.map((supplier) => ({
         ...supplier,
         productCount: Array.isArray(supplier.products) ? supplier.products.length : 0,

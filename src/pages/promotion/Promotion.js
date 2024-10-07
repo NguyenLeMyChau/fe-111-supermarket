@@ -7,7 +7,7 @@ import { formatDate } from '../../utils/fotmatDate';
 import Modal from '../../components/modal/Modal';
 
 export default function Promotion() {
-  const promotions = useSelector((state) => state.commonData?.dataManager?.promotions) || [];
+  const promotions = useSelector((state) => state.promotion?.promotions) || [];
 
   const [promotionLine, setPromotionLine] = useState([]);
   const [isModalOpenLine, setIsModalOpenLine] = useState(false);

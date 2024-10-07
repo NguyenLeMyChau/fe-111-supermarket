@@ -5,7 +5,7 @@ import Orders from '../orders/Orders';
 import ProductDetail from './ProductDetail';
 
 export default function Product() {
-    const products = useSelector((state) => state.commonData?.dataManager?.products) || [];
+    const products = useSelector((state) => state.product?.products) || [];
     const [selectedComponent, setSelectedComponent] = useState(null);
 
     const productColumns = [
@@ -20,15 +20,15 @@ export default function Product() {
     };
 
     return (
-        // <FrameData
-        //     title="Danh sách sản phẩm"
-        //     buttonText="Thêm sản phẩm"
-        //     data={products}
-        //     columns={productColumns}
-        //     onRowClick={handleRowClick}
-        //     component={selectedComponent}
-        // />
+        <FrameData
+            title="Danh sách sản phẩm"
+            buttonText="Thêm sản phẩm"
+            data={products}
+            columns={productColumns}
+            onRowClick={handleRowClick}
+            component={selectedComponent}
+        />
 
-        <ProductDetail />
+        // <ProductDetail />
     );
 }

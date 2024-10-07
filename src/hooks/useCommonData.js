@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getDataManagerFailed, getDataManagerStart, getDataManagerSuccess, resetDataManager } from '../store/reducers/commonDataSlice';
 import { createAxiosInstance } from '../utils/util';
 import { loginSuccess } from '../store/reducers/authSlice';
 import { getAllSuppliers } from '../services/supplierRequest';
@@ -18,42 +17,10 @@ const useCommonData = () => {
     const currentUser = useSelector((state) => state.auth?.login?.currentUser);
     const logout = useSelector((state) => state.auth?.login?.isLogout);
     const axiosJWT = createAxiosInstance(currentUser, dispatch, loginSuccess);
-    const isDataFetched = useSelector((state) => state.commonData?.dataManager?.isFetched);
 
     useEffect(() => {
-        const fetchDataManager = async () => {
-            try {
-                console.log('fetchDataManager is loading...');
-                dispatch(getDataManagerStart());
-                const [suppliers, categories, employees, products, promotions] = await Promise.all([
-                    getAllSuppliers(currentUser?.accessToken, axiosJWT),
-                    getAllCategories(currentUser?.accessToken, axiosJWT),
-                    getAllEmployees(currentUser?.accessToken, axiosJWT),
-                    getAllProducts(currentUser?.accessToken, axiosJWT),
-                    getAllPromotions(currentUser?.accessToken, axiosJWT),
-                ]);
-                dispatch(getDataManagerSuccess({
-                    suppliers: suppliers,
-                    categories: categories,
-                    employees: employees,
-                    products: products,
-                    promotions: promotions
-                }));
-            } catch (err) {
-                console.log('Error while fetching suppliers:', err);
-                dispatch(getDataManagerFailed());
-            }
-        };
-
-        if (currentUser?.role === 'manager' && !isDataFetched) {
-            fetchDataManager();
-        }
-
-    }, [currentUser, axiosJWT, dispatch, isDataFetched]);
-
-    useEffect(() => {
-        if (!currentUser) {
-            console.warn('Current user is not logged in. Skipping API calls.');
+        if (!currentUser || !currentUser.role === 'manager') {
+            console.warn('currentUser is null or not manager');
             return; // Ngừng thực hiện các API call nếu currentUser là null
         }
 
@@ -63,6 +30,21 @@ const useCommonData = () => {
         }
         if (locationPath === '/admin/order') {
             getAllOrder(currentUser.accessToken, axiosJWT, dispatch);
+        }
+        if (locationPath === '/admin/product') {
+            getAllProducts(currentUser.accessToken, axiosJWT, dispatch);
+        }
+        if (locationPath === '/admin/category') {
+            getAllCategories(currentUser.accessToken, axiosJWT, dispatch);
+        }
+        if (locationPath === '/admin/supplier') {
+            getAllSuppliers(currentUser.accessToken, axiosJWT, dispatch);
+        }
+        if (locationPath === '/admin/employee') {
+            getAllEmployees(currentUser.accessToken, axiosJWT, dispatch);
+        }
+        if (locationPath === '/admin/promotion') {
+            getAllPromotions(currentUser.accessToken, axiosJWT, dispatch);
         }
     }, [currentUser, axiosJWT, dispatch, location.pathname]);
 
@@ -80,7 +62,7 @@ const useCommonData = () => {
 
     useEffect(() => {
         if (logout) {
-            dispatch(resetDataManager());
+            // dispatch(resetDataManager());
         }
     }, [logout, dispatch]);
 
