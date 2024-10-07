@@ -1,12 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import FrameData from '../../containers/frameData/FrameData';
-import Orders from '../orders/Orders';
-import ProductDetail from './ProductDetail';
+import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
+import { getProductsDetail } from '../../services/productRequest';
+import { useLocation, useNavigate } from 'react-router';
+import ProductDetail from './ProductDetail'; // Import ProductDetail component
 
 export default function Product() {
+    const navigate = useNavigate();
+    const location = useLocation();
+    const axiosJWT = useAxiosJWT();
+    const accessToken = useAccessToken();
+
     const products = useSelector((state) => state.product?.products) || [];
-    const [selectedComponent, setSelectedComponent] = useState(null);
+    const isProductDetail = location.pathname.includes('product-detail');
 
     const productColumns = [
         { title: 'Tên sản phẩm', dataIndex: 'name', key: 'name', width: '35%' },
@@ -15,20 +22,25 @@ export default function Product() {
         { title: 'Mã hàng', dataIndex: 'item_code', key: 'item_code', width: '15%', className: 'text-center' },
     ];
 
-    const handleRowClick = () => {
-        setSelectedComponent(<Orders goBack={() => setSelectedComponent(null)} />);
+    const handleRowClick = async (product) => {
+        const detail = await getProductsDetail(accessToken, axiosJWT, product._id);
+        console.log('Product detail', detail);
+        navigate(`/admin/product/${product._id}/product-detail`, { state: { detail } });
     };
 
     return (
-        <FrameData
-            title="Danh sách sản phẩm"
-            buttonText="Thêm sản phẩm"
-            data={products}
-            columns={productColumns}
-            onRowClick={handleRowClick}
-            component={selectedComponent}
-        />
-
-        // <ProductDetail />
+        <>
+            {isProductDetail ? (
+                <ProductDetail />
+            ) : (
+                <FrameData
+                    title="Danh sách sản phẩm"
+                    buttonText="Thêm sản phẩm"
+                    data={products}
+                    columns={productColumns}
+                    onRowClick={handleRowClick}
+                />
+            )}
+        </>
     );
 }

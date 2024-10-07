@@ -5,7 +5,9 @@ import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
-import avatar from '../../assets/logo-supermarket-removebg.png';
+import { useLocation } from 'react-router';
+import TableData from '../../containers/tableData/tableData';
+import { formatDate } from '../../utils/fotmatDate';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -38,14 +40,42 @@ function a11yProps(index) {
 
 export default function ProductDetail() {
     const [value, setValue] = useState(0);
+    const location = useLocation();
+    const { detail: data } = location.state || {};
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
 
+    const transactionColumn = [
+        { title: 'Mã đơn hàng', dataIndex: 'order_id', key: 'order_id', width: '25%' },
+        { title: 'Kiểu', dataIndex: 'type', key: 'type', width: '15%' },
+        {
+            title: 'Ngày giao dịch',
+            dataIndex: 'createdAt',
+            key: 'createdAt',
+            width: '15%',
+            className: 'text-center',
+            render: (date) => formatDate(date)
+        },
+        { title: 'Số lượng', dataIndex: 'quantity', key: 'quantity', width: '15%', className: 'text-center' },
+        {
+            title: 'Trạng thái',
+            dataIndex: 'status',
+            key: 'status',
+            width: '15%',
+            render: (status) =>
+                status ? (
+                    <span style={{ color: 'green', fontWeight: 500 }}>Đã nhập kho</span>
+                ) : (
+                    <span style={{ color: 'red', fontWeight: 500 }}>Chưa nhập kho</span>
+                ),
+        },
+    ];
+
     return (
         <div className='product-detail-container'>
-            <h2>Margi</h2>
+            <h2>{data.name}</h2>
             <Box sx={{ width: '100%' }}>
                 <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                     <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
@@ -62,27 +92,27 @@ export default function ProductDetail() {
                             <div className='left'>
                                 <div className='row'>
                                     <label>Tên sản phẩm</label>
-                                    <span>Margin</span>
+                                    <span>{data.name}</span>
                                 </div>
                                 <div className='row'>
                                     <label>ID sản phẩm</label>
-                                    <span>087426985</span>
+                                    <span>{data._id}</span>
                                 </div>
                                 <div className='row'>
                                     <label>Loại sản phẩm</label>
-                                    <span>Bánh kẹo</span>
+                                    <span>{data.category_id.name}</span>
                                 </div>
                                 <div className='row'>
                                     <label>Barcode</label>
-                                    <span>087528</span>
+                                    <span>{data.barcode}</span>
                                 </div>
                                 <div className='row'>
                                     <label>Mã hàng</label>
-                                    <span>M884</span>
+                                    <span>{data.item_code}</span>
                                 </div>
                             </div>
                             <div className='right flex-row-align-center'>
-                                <img src={avatar} alt='avatar' />
+                                <img src={data.img} alt='avatar' />
                             </div>
                         </div>
 
@@ -91,15 +121,15 @@ export default function ProductDetail() {
                             <div className='left'>
                                 <div className='row'>
                                     <label>Tên nhà cung cấp</label>
-                                    <span>Vinamilk</span>
+                                    <span>{data.supplier_id.name}</span>
                                 </div>
                                 <div className='row'>
                                     <label>Số điện thoại</label>
-                                    <span>087426985</span>
+                                    <span>{data.supplier_id.phone}</span>
                                 </div>
                                 <div className='row'>
                                     <label>email</label>
-                                    <span>email@gmail.com</span>
+                                    <span>{data.supplier_id.email}</span>
                                 </div>
 
                             </div>
@@ -121,7 +151,13 @@ export default function ProductDetail() {
                     </div>
                 </CustomTabPanel>
                 <CustomTabPanel value={value} index={1}>
-                    Item Two
+                    <div className='information'>
+                        <h3>Danh sách giao dịch</h3>
+                    </div>
+                    <TableData
+                        data={data.transactions}
+                        columns={transactionColumn}
+                    />
                 </CustomTabPanel>
                 <CustomTabPanel value={value} index={2}>
                     Item Three

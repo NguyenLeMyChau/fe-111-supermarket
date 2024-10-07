@@ -33,4 +33,17 @@ const getAllProducts = async (accessToken, axiosJWT, dispatch) => {
     }
 };
 
-export { getAllCategories, getAllProducts };
+const getProductsDetail = async (accessToken, axiosJWT, productId) => {
+    try {
+        const response = await axiosJWT.get(`/api/product/get-product-detail/${productId}`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Get product detail failed:', error);
+    }
+}
+
+export { getAllCategories, getAllProducts, getProductsDetail };

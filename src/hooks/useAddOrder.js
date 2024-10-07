@@ -9,7 +9,7 @@ const useAddOrder = (selectedProducts, supplier) => {
     const navigate = useNavigate();
 
     const user = useSelector((state) => state.auth?.login?.currentUser);
-    const suppliers = useSelector((state) => state.commonData?.dataManager?.suppliers);
+    const suppliers = useSelector((state) => state.supplier?.suppliers);
 
     const axiosJWT = useAxiosJWT();
     const accessToken = useAccessToken();
