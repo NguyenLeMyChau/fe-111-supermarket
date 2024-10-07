@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createAxiosInstance } from '../utils/util';
 import { loginSuccess } from '../store/reducers/authSlice';
@@ -18,35 +18,33 @@ const useCommonData = () => {
     const logout = useSelector((state) => state.auth?.login?.isLogout);
     const axiosJWT = createAxiosInstance(currentUser, dispatch, loginSuccess);
 
+    const apiCallMapping = useMemo(() => ({
+        '/admin/inventory': getAllWarehouse,
+        '/admin/order': getAllOrder,
+        '/admin/product': getAllProducts,
+        '/admin/category': getAllCategories,
+        '/admin/supplier': getAllSuppliers,
+        '/admin/employee': getAllEmployees,
+        '/admin/promotion': getAllPromotions,
+    }), []);
+
     useEffect(() => {
-        if (!currentUser || !currentUser.role === 'manager') {
+        // Kiểm tra currentUser và vai trò là 'manager'
+        if (!currentUser || currentUser.role !== 'manager') {
             console.warn('currentUser is null or not manager');
-            return; // Ngừng thực hiện các API call nếu currentUser là null
+            return;
         }
 
         const locationPath = location.pathname;
-        if (locationPath === '/admin/inventory') {
-            getAllWarehouse(currentUser.accessToken, axiosJWT, dispatch);
+
+        // Lấy API call function tương ứng với locationPath
+        const apiCall = apiCallMapping[locationPath];
+
+        // Thực hiện API call nếu tồn tại
+        if (apiCall) {
+            apiCall(currentUser.accessToken, axiosJWT, dispatch);
         }
-        if (locationPath === '/admin/order') {
-            getAllOrder(currentUser.accessToken, axiosJWT, dispatch);
-        }
-        if (locationPath === '/admin/product') {
-            getAllProducts(currentUser.accessToken, axiosJWT, dispatch);
-        }
-        if (locationPath === '/admin/category') {
-            getAllCategories(currentUser.accessToken, axiosJWT, dispatch);
-        }
-        if (locationPath === '/admin/supplier') {
-            getAllSuppliers(currentUser.accessToken, axiosJWT, dispatch);
-        }
-        if (locationPath === '/admin/employee') {
-            getAllEmployees(currentUser.accessToken, axiosJWT, dispatch);
-        }
-        if (locationPath === '/admin/promotion') {
-            getAllPromotions(currentUser.accessToken, axiosJWT, dispatch);
-        }
-    }, [currentUser, axiosJWT, dispatch, location.pathname]);
+    }, [currentUser, axiosJWT, dispatch, location.pathname, apiCallMapping]);
 
 
     useEffect(() => {

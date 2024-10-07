@@ -48,7 +48,7 @@ export default function ProductDetail() {
     };
 
     const transactionColumn = [
-        { title: 'Mã đơn hàng', dataIndex: 'order_id', key: 'order_id', width: '25%' },
+        { title: 'Mã giao dịch', dataIndex: '_id', key: '_id', width: '25%' },
         { title: 'Kiểu', dataIndex: 'type', key: 'type', width: '15%' },
         {
             title: 'Ngày giao dịch',
