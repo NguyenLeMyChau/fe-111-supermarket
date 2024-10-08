@@ -3,7 +3,7 @@
 
 .order-container {
     @extend .flex-columm;
-    flex-grow: 1; 
+    flex-grow: 1;
     background-color: var(--white-color);
     padding: 0px 20px;
     overflow: auto;
@@ -12,4 +12,22 @@
 .order-container h1 {
     font-size: 24px;
     color: var(--title-color);
+}
+
+.order-container-status {
+    margin: 20px 0px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding-left: 20px;
+
+    label {
+        font-weight: bold;
+        margin-right: 10px;
+    }
+
+    .update-status-button {
+        margin-left: 20px;
+    }
 }

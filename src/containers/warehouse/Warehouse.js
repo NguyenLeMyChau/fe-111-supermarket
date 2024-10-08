@@ -6,6 +6,10 @@ import { useLocation, useNavigate } from 'react-router';
 import ProductWarehouse from './ProductWarehouse';
 import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
 import { getProductsByWarehouseId } from '../../services/warehouseRequest';
+import Modal from '../../components/modal/Modal';
+import Button from '../../components/button/Button';
+import { getStatusColor } from '../../utils/fotmatDate';
+import Select from 'react-select';
 
 export default function Warehouse() {
     const navigate = useNavigate();
@@ -19,6 +23,17 @@ export default function Warehouse() {
 
     const [products, setProducts] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+    // Gom các bộ lọc vào object
+    const [filters, setFilters] = useState({
+        productName: '',
+        stockQuantity: '',
+        minStockThreshold: '',
+        status: [],
+    });
+
+    const [filteredWarehouses, setFilteredWarehouses] = useState(warehouses);
 
     const warehouseColumn = [
         { title: 'Tên sản phẩm', dataIndex: 'product_name', key: 'product_name', width: '40%' },
@@ -30,34 +45,37 @@ export default function Warehouse() {
             key: 'status',
             width: '20%',
             className: 'text-center',
-            render: (status) => (
-                <span className={status ? 'status-true' : 'status-false'}>
-                    {status ? 'Còn hàng' : 'Hết hàng'}
-                </span>
-            )
-        },];
+            render: (text, record) => {
+                return (
+                    <span style={{ color: getStatusColor(record.status), fontWeight: 500, fontSize: 16 }}>
+                        {record.status}
+                    </span>
+                );
+            }
+        },
+    ];
 
     const productColumns = [
         { title: 'Tên sản phẩm', dataIndex: 'product_name', key: 'product_name', width: '30%' },
         { title: 'Tồn kho', dataIndex: 'stock_quantity', key: 'stock_quantity', width: '15%', className: 'text-center' },
         { title: 'Ngưỡng giá trị', dataIndex: 'min_stock_threshold', key: 'min_stock_threshold', width: '15%', className: 'text-center' },
-        { title: 'Nhà cung cấp ', dataIndex: 'supplier_name', key: 'supplier_name', width: '25%' },
         {
             title: 'Trạng thái',
             dataIndex: 'status',
             key: 'status',
             width: '15%',
             className: 'text-center',
-            render: (status) => (
-                <span className={status ? 'status-true' : 'status-false'}>
-                    {status ? 'Còn hàng' : 'Hết hàng'}
-                </span>
-            )
+            render: (text, record) => {
+                return (
+                    <span style={{ color: getStatusColor(record.status), fontWeight: 500, fontSize: 16 }}>
+                        {record.status}
+                    </span>
+                );
+            }
         }
     ];
 
     const handleRowClick = async (warehouse) => {
-
         const pathPrev = location.pathname + location.search;
         sessionStorage.setItem('previousWarehousePath', pathPrev);
 
@@ -66,7 +84,6 @@ export default function Warehouse() {
 
         navigate('/admin/inventory/' + warehouse._id + '/product');
         setIsModalOpen(true);
-
     };
 
     const closeModal = () => {
@@ -79,16 +96,82 @@ export default function Warehouse() {
         }
     };
 
+    const handleFilterClick = () => {
+        setIsFilterOpen(true);
+    };
+
+    const closeFilterModal = () => {
+        setIsFilterOpen(false);
+    };
+
+    // Hàm cập nhật bộ lọc
+    const handleFilterChange = (selectedOptions, actionMeta) => {
+        const { name } = actionMeta;
+        const value = selectedOptions ? selectedOptions.map(option => option.value) : [];
+        setFilters((prevFilters) => ({
+            ...prevFilters,
+            [name]: value,
+        }));
+    };
+
+    const applyFilters = () => {
+        let filteredData = warehouses;
+
+        if (filters.productName) {
+            filteredData = filteredData.filter(warehouse =>
+                warehouse.product_name.toLowerCase().includes(filters.productName.toLowerCase())
+            );
+        }
+
+        if (filters.stockQuantity) {
+            filteredData = filteredData.filter(warehouse =>
+                warehouse.stock_quantity > Number(filters.stockQuantity)
+            );
+        }
+
+        if (filters.minStockThreshold) {
+            filteredData = filteredData.filter(warehouse =>
+                warehouse.min_stock_threshold < Number(filters.minStockThreshold)
+            );
+        }
+
+        if (filters.status.length > 0) {
+            filteredData = filteredData.filter(warehouse =>
+                filters.status.includes(warehouse.status)
+            );
+        }
+
+        setFilteredWarehouses(filteredData);
+        closeFilterModal();
+    };
+
+    // Hàm đặt lại bộ lọc
+    const resetFilters = () => {
+        setFilters({
+            productName: '',
+            stockQuantity: '',
+            minStockThreshold: '',
+            status: [],
+        });
+        setFilteredWarehouses(warehouses);
+    };
+
+    const statusOptions = [
+        { value: 'Còn hàng', label: 'Còn hàng' },
+        { value: 'Hết hàng', label: 'Hết hàng' },
+        { value: 'Ít hàng', label: 'Ít hàng' },
+    ];
 
     return (
         <div>
             <FrameData
                 title="Kho"
                 buttonText="Cập nhật kho"
-                data={warehouses}
+                data={filteredWarehouses}
                 columns={warehouseColumn}
                 itemsPerPage={10}
                 onRowClick={handleRowClick}
+                handleFilterClick={handleFilterClick}
             />
 
             <ProductWarehouse
@@ -97,7 +180,80 @@ export default function Warehouse() {
                 products={products}
                 productColumns={productColumns}
             />
+
+            <Modal
+                title={'Lọc dữ liệu kho'}
+                isOpen={isFilterOpen}
+                onClose={closeFilterModal}
+                width={500}
+                height={400}
+            >
+                <div className="filter-modal-content">
+                    <div className="filter-item">
+                        <label>Tên sản phẩm:</label>
+                        <input
+                            type="text"
+                            name="productName"
+                            value={filters.productName}
+                            onChange={(e) => setFilters({ ...filters, productName: e.target.value })}
+                        />
+                    </div>
+
+                    <div className="filter-item">
+                        <label>Tồn kho lớn hơn:</label>
+                        <input
+                            type="number"
+                            name="stockQuantity"
+                            value={filters.stockQuantity}
+                            onChange={(e) => setFilters({ ...filters, stockQuantity: e.target.value })}
+                        />
+                    </div>
+
+                    <div className="filter-item">
+                        <label>Ngưỡng giá trị nhỏ hơn:</label>
+                        <input
+                            type="number"
+                            name="minStockThreshold"
+                            value={filters.minStockThreshold}
+                            onChange={(e) => setFilters({ ...filters, minStockThreshold: e.target.value })}
+                        />
+                    </div>
+
+                    <div className="filter-item">
+                        <label>Trạng thái:</label>
+                        <Select
+                            isMulti
+                            name="status"
+                            value={statusOptions.filter(option => filters.status.includes(option.value))}
+                            onChange={handleFilterChange}
+                            options={statusOptions}
+                            classNamePrefix="select"
+                            menuPortalTarget={document.body}
+                            styles={{
+                                menuPortal: base => ({ ...base, zIndex: 9999, width: 200 }),
+                            }}
+                        />
+                    </div>
+
+                    <div className='button-filter'>
+                        <Button
+                            text='Lọc'
+                            backgroundColor='#1366D9'
+                            color='white'
+                            width='150'
+                            onClick={applyFilters}
+                        />
+                        <Button
+                            text='Huỷ lọc'
+                            backgroundColor='#FF0000'
+                            color='white'
+                            width='150'
+                            onClick={resetFilters}
+                        />
+                    </div>
+                </div>
+            </Modal>
+
         </div>
     );
 }
-

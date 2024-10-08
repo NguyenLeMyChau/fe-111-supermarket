@@ -1,7 +1,6 @@
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { loginFailed, loginStart, loginSuccess, logoutFailed, logoutStart, logoutSuccess, resetLogoutState } from '../store/reducers/authSlice';
-import { resetDataManager } from '../store/reducers/commonDataSlice';
 
 const loginUser = async (loginData, dispatch, navigate) => {
     dispatch(loginStart());
@@ -59,7 +58,7 @@ const logoutUser = async (dispatch, navigate, accessToken, axiosJWT) => {
         setTimeout(() => {
             dispatch(resetLogoutState());
         }, 1000);
-        await dispatch(resetDataManager());
+        // await dispatch(resetDataManager());
     } catch (error) {
         dispatch(logoutFailed());
         console.error('Logout failed:', error);

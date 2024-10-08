@@ -7,7 +7,7 @@ export default function ProductWarehouse({ isModalOpen, closeModal, products, pr
     const navigate = useNavigate();
 
     const handleOrderClick = (product) => {
-        navigate('/admin/order/add-order', { state: { selectedProducts: product } });
+        navigate('/admin/order/add-order', { state: { selectedProduct: product } });
     };
 
     return (
@@ -17,7 +17,7 @@ export default function ProductWarehouse({ isModalOpen, closeModal, products, pr
             onClose={closeModal}
         >
             {
-                products.length > 0 ? (
+                products ? (
                     <>
                         <div className="warehouse-container">
                             <div className="warehouse-button">
@@ -30,7 +30,7 @@ export default function ProductWarehouse({ isModalOpen, closeModal, products, pr
                             </div>
                         </div>
                         <FrameData
-                            data={products}
+                            data={products.warehousesWithProductNames}
                             columns={productColumns}
                         />
 

@@ -1,6 +1,5 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getDataManagerFailed, getDataManagerStart, getDataManagerSuccess, resetDataManager } from '../store/reducers/commonDataSlice';
 import { createAxiosInstance } from '../utils/util';
 import { loginSuccess } from '../store/reducers/authSlice';
 import { getAllSuppliers } from '../services/supplierRequest';
@@ -8,7 +7,7 @@ import { useLocation, useNavigate } from 'react-router';
 import { getAllCategories, getAllProducts } from '../services/productRequest';
 import { getAllEmployees } from '../services/employeeRequest';
 import { getAllPromotions } from '../services/promotionRequest';
-import { getAllWarehouse } from '../services/warehouseRequest';
+import { getAllOrder, getAllWarehouse } from '../services/warehouseRequest';
 
 const useCommonData = () => {
     const dispatch = useDispatch();
@@ -18,48 +17,34 @@ const useCommonData = () => {
     const currentUser = useSelector((state) => state.auth?.login?.currentUser);
     const logout = useSelector((state) => state.auth?.login?.isLogout);
     const axiosJWT = createAxiosInstance(currentUser, dispatch, loginSuccess);
-    const isDataFetched = useSelector((state) => state.commonData?.dataManager?.isFetched);
+
+    const apiCallMapping = useMemo(() => ({
+        '/admin/inventory': getAllWarehouse,
+        '/admin/order': getAllOrder,
+        '/admin/product': getAllProducts,
+        '/admin/category': getAllCategories,
+        '/admin/supplier': getAllSuppliers,
+        '/admin/employee': getAllEmployees,
+        '/admin/promotion': getAllPromotions,
+    }), []);
 
     useEffect(() => {
-        const fetchDataManager = async () => {
-            try {
-                console.log('fetchDataManager is loading...');
-                dispatch(getDataManagerStart());
-                const [suppliers, categories, employees, products, promotions] = await Promise.all([
-                    getAllSuppliers(currentUser?.accessToken, axiosJWT),
-                    getAllCategories(currentUser?.accessToken, axiosJWT),
-                    getAllEmployees(currentUser?.accessToken, axiosJWT),
-                    getAllProducts(currentUser?.accessToken, axiosJWT),
-                    getAllPromotions(currentUser?.accessToken, axiosJWT),
-                ]);
-                dispatch(getDataManagerSuccess({
-                    suppliers: suppliers,
-                    categories: categories,
-                    employees: employees,
-                    products: products,
-                    promotions: promotions
-                }));
-            } catch (err) {
-                console.log('Error while fetching suppliers:', err);
-                dispatch(getDataManagerFailed());
-            }
-        };
-
-        if (currentUser?.role === 'manager' && !isDataFetched) {
-            fetchDataManager();
+        // Kiểm tra currentUser và vai trò là 'manager'
+        if (!currentUser || currentUser.role !== 'manager') {
+            console.warn('currentUser is null or not manager');
+            return;
         }
 
-    }, [currentUser, axiosJWT, dispatch, isDataFetched]);
-
-    useEffect(() => {
         const locationPath = location.pathname;
-        if (locationPath === '/admin/inventory') {
-            const warehouses = getAllWarehouse(currentUser?.accessToken, axiosJWT, dispatch);
-            if (warehouses) {
-                console.log('Warehouses:', warehouses);
-            }
+
+        // Lấy API call function tương ứng với locationPath
+        const apiCall = apiCallMapping[locationPath];
+
+        // Thực hiện API call nếu tồn tại
+        if (apiCall) {
+            apiCall(currentUser.accessToken, axiosJWT, dispatch);
         }
-    }, [currentUser?.accessToken, axiosJWT, dispatch, location.pathname]);
+    }, [currentUser, axiosJWT, dispatch, location.pathname, apiCallMapping]);
 
 
     useEffect(() => {
@@ -75,7 +60,7 @@ const useCommonData = () => {
 
     useEffect(() => {
         if (logout) {
-            dispatch(resetDataManager());
+            // dispatch(resetDataManager());
         }
     }, [logout, dispatch]);
 

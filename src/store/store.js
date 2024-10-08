@@ -13,8 +13,13 @@ import {
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import authReducer from './reducers/authSlice';
-import commonDataReducer from './reducers/commonDataSlice';
 import warehouseReducer from './reducers/warehouseSlice';
+import orderReducer from './reducers/orderSlice';
+import productReducer from './reducers/productSlice';
+import categoryReducer from './reducers/categorySlice';
+import supplierReducer from './reducers/supplierSlice';
+import employeeReducer from './reducers/employeeSlice';
+import promotionReducer from './reducers/promotionSlice';
 
 const persistConfig = {
     key: 'root',
@@ -25,8 +30,13 @@ const persistConfig = {
 const rootReducer = combineReducers(
     {
         auth: authReducer,
-        commonData: commonDataReducer,
         warehouse: warehouseReducer,
+        order: orderReducer,
+        product: productReducer,
+        category: categoryReducer,
+        supplier: supplierReducer,
+        employee: employeeReducer,
+        promotion: promotionReducer,
     });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

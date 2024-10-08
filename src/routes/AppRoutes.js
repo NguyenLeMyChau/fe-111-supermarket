@@ -16,6 +16,7 @@ import Orders from "../pages/orders/Orders";
 import ProductSupplier from "../pages/supplier/ProductSupplier";
 import ProductWarehouse from "../containers/warehouse/ProductWarehouse";
 import AddOrder from '../containers/order/AddOrder.js';
+import ProductDetail from '../pages/product/ProductDetail.js';
 
 function AppRoutes() {
     return (
@@ -27,7 +28,9 @@ function AppRoutes() {
                     <Route path="*" element={<Navigate to="/admin/user" />} />
                     <Route path="user" element={<User />} />
                     <Route path="category" element={<Category />} />
-                    <Route path="product" element={<Product />} />
+                    <Route path="product" element={<Product />}>
+                        <Route path=':productId/product-detail' element={<ProductDetail />} />
+                    </Route>
                     <Route path="employee" element={<Employee />} />
                     <Route path="promotion" element={<Promotion />} />
                     <Route path="inventory" element={<Inventory />} >

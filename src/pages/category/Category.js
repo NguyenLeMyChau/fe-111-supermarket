@@ -5,7 +5,7 @@ import Modal from '../../components/modal/Modal';
 import TableData from '../../containers/tableData/tableData';
 
 export default function Category() {
-    const categories = useSelector((state) => state.commonData?.dataManager?.categories) || [];
+    const categories = useSelector((state) => state.category?.categories) || [];
     const enhancedCategories = categories.map((category) => ({
         ...category,
         productCount: Array.isArray(category.products) ? category.products.length : 0,

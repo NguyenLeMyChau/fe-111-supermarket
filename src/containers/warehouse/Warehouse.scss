@@ -22,3 +22,36 @@
     margin-left: auto;
     padding: 10px 30px;
 }
+
+.filter-modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.filter-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 20px;
+}
+
+.filter-modal-content .button-filter {
+    display: flex;
+    align-self: center;
+    flex-direction: row;
+    margin-top: 30px;
+    gap: 20px
+}
+
+.filter-modal-content input, select, option {
+    width: 250px;
+    height: 30px;
+    padding-left: 10px;
+}
+
+.filter-modal-content select, option{
+    width: 260px;
+    height: 35px;
+}
+

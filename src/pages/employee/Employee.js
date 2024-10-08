@@ -6,7 +6,7 @@ import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import { MdDoNotDisturbAlt } from 'react-icons/md';
 
 export default function Employee() {
-    const employees = useSelector((state) => state.commonData?.dataManager?.employees) || [];
+    const employees = useSelector((state) => state.employee?.employees) || [];
 
     const employeeColumns = [
         { title: 'Họ và tên', dataIndex: 'name', key: 'name', width: '30%' },
