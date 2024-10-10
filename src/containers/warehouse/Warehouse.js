@@ -151,8 +151,7 @@ export default function Warehouse() {
 
         if (filters.productName) {
             filteredData = filteredData.filter(warehouse =>
-                warehouse.product_name.toLowerCase().includes(filters.productName.toLowerCase())
-            );
+                warehouse.product?.name?.toLowerCase().includes(filters.productName.toLowerCase()));
         }
 
         if (filters.stockQuantity) {
