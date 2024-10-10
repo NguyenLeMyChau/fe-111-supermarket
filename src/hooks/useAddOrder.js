@@ -1,28 +1,29 @@
 // src/hooks/useAddOrder.js
 import { useState, useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { getWarehousesFromSupplierId, orderProductFromSupplier } from '../services/warehouseRequest';
+import { orderProductFromSupplier } from '../services/warehouseRequest';
 import { useAccessToken, useAxiosJWT } from '../utils/axiosInstance';
 import { useNavigate } from 'react-router';
 
-const useAddOrder = (selectedProducts, supplier) => {
+const useAddOrder = (selectedProducts, supplierId) => {
     const navigate = useNavigate();
 
     const user = useSelector((state) => state.auth?.login?.currentUser);
     const suppliers = useSelector((state) => state.supplier?.suppliers);
+    const warehouses = useSelector((state) => state.warehouse?.warehouse);
 
     const axiosJWT = useAxiosJWT();
     const accessToken = useAccessToken();
 
     const [quantities, setQuantities] = useState(
         selectedProducts.reduce((acc, product) => {
-            acc[product.product_id] = 1;
+            acc[product.product._id] = 1;
             return acc;
         }, {})
     );
     const [products, setProducts] = useState(selectedProducts);
     const ordererName = useState(user.user.name);
-    const [selectedSupplier, setSelectedSupplier] = useState(supplier ? { value: supplier._id, label: supplier.name } : null);
+    const [selectedSupplier, setSelectedSupplier] = useState(null);
     const [isLoading, setIsLoading] = useState(false); // Thêm state isLoading
     const [isLoadingSupplier, setIsLoadingSupplier] = useState(false); // Thêm state isLoadingSupplier
 
@@ -34,7 +35,7 @@ const useAddOrder = (selectedProducts, supplier) => {
     };
 
     const handleRemoveProduct = (productId) => {
-        setProducts(products.filter(product => product.product_id !== productId));
+        setProducts(products.filter(product => product.product._id !== productId));
         setQuantities((prevQuantities) => {
             const newQuantities = { ...prevQuantities };
             delete newQuantities[productId];
@@ -54,9 +55,9 @@ const useAddOrder = (selectedProducts, supplier) => {
                 supplierId: selectedSupplier.value,
                 accountId: user.id,
                 products: products.map(product => ({
-                    product_id: product.product_id,
-                    quantity: quantities[product.product_id],
-                    price_order: 2000
+                    product_id: product.product._id,
+                    quantity: quantities[product.product._id],
+                    price_order: product.order_Price,
                 })),
             };
 
@@ -76,19 +77,19 @@ const useAddOrder = (selectedProducts, supplier) => {
 
     const handleSupplierSelect = async (selectedOption) => {
         setSelectedSupplier(selectedOption);
-        setIsLoadingSupplier(true); // Bắt đầu trạng thái loading
+        setIsLoadingSupplier(true);
         try {
             const supplierId = selectedOption.value;
-            console.log('ID nhà cung cấp:', supplierId);
-            const warehouses = await getWarehousesFromSupplierId(accessToken, axiosJWT, supplierId);
-            if (warehouses.length === 0) {
+            const filteredProducts = warehouses.filter(item => item.product && item.product.supplier_id === supplierId);
+
+            if (filteredProducts.length === 0) {
                 setProducts([]);
                 return;
             } else {
-                setProducts(warehouses);
+                setProducts(filteredProducts);
 
-                const newQuantities = warehouses.reduce((acc, product) => {
-                    acc[product.product_id] = product.quantity || 1;
+                const newQuantities = filteredProducts.reduce((acc, product) => {
+                    acc[product.product._id] = product.quantity || 1;
                     return acc;
                 }, {});
                 setQuantities(newQuantities);
@@ -98,7 +99,7 @@ const useAddOrder = (selectedProducts, supplier) => {
             console.error('Load dữ liệu nhà cung cấp thất bại:', error);
             alert(error.response ? error.response.data.message : error.message);
         } finally {
-            setIsLoadingSupplier(false); // Kết thúc trạng thái loading
+            setIsLoadingSupplier(false);
         }
     };
 
@@ -106,6 +107,10 @@ const useAddOrder = (selectedProducts, supplier) => {
     const supplierOptions = useMemo(() => {
         // const validStatuses = ['Đang chờ xử lý', 'Đã duyệt', 'Đang giao hàng'];
 
+        if (supplierId) {
+            const supplier = suppliers.find(supplier => supplier._id === supplierId);
+            setSelectedSupplier({ value: supplier._id, label: supplier.name });
+        }
         const filteredSuppliers = suppliers
             .map(supplier => ({
                 value: supplier._id,
@@ -113,7 +118,7 @@ const useAddOrder = (selectedProducts, supplier) => {
             }));
         return filteredSuppliers;
 
-    }, [suppliers]);
+    }, [supplierId, suppliers]);
 
 
     return {

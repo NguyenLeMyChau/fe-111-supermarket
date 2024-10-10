@@ -17,6 +17,7 @@ const useCommonData = () => {
     const currentUser = useSelector((state) => state.auth?.login?.currentUser);
     const logout = useSelector((state) => state.auth?.login?.isLogout);
     const axiosJWT = createAxiosInstance(currentUser, dispatch, loginSuccess);
+    const warehouses = useSelector((state) => state.warehouse?.warehouse);
 
     const apiCallMapping = useMemo(() => ({
         '/admin/inventory': getAllWarehouse,
@@ -37,6 +38,13 @@ const useCommonData = () => {
 
         const locationPath = location.pathname;
 
+        // Kiểm tra trường hợp đặc biệt cho đường dẫn '/admin/order'
+        if (locationPath === '/admin/order' && (!warehouses || warehouses.length === 0)) {
+            // Nếu không có warehouse, gọi getAllWarehouse
+            console.log('Get all warehouse');
+            getAllWarehouse(currentUser.accessToken, axiosJWT, dispatch);
+        }
+
         // Lấy API call function tương ứng với locationPath
         const apiCall = apiCallMapping[locationPath];
 
@@ -44,7 +52,7 @@ const useCommonData = () => {
         if (apiCall) {
             apiCall(currentUser.accessToken, axiosJWT, dispatch);
         }
-    }, [currentUser, axiosJWT, dispatch, location.pathname, apiCallMapping]);
+    }, [currentUser, axiosJWT, dispatch, location.pathname, apiCallMapping, warehouses]);
 
 
     useEffect(() => {
