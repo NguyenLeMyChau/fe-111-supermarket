@@ -1,4 +1,14 @@
 // Promotion.scss
+.promotion-form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.promotion-form-row {
+  display: flex;
+  gap: 15px;
+}
 
 .promotion-section {
   padding: 20px;
@@ -36,4 +46,51 @@
 
 .numeric-keypad button:nth-child(10):hover {
   background-color: #ff4d4d;
+}
+
+
+.select {
+  margin: 20px 0;
+  width: 100%; /* Chiều rộng đầy đủ */
+  min-height: 40px; /* Chiều cao tối thiểu */
+  border: 1px solid #ccc; /* Đường viền màu xám */
+  border-radius: 4px; /* Bo góc */
+}
+
+.select__control {
+  border: 1px solid #ccc; /* Đường viền màu xám */
+  box-shadow: none; /* Không có bóng */
+  border-radius: 4px; /* Bo góc */
+
+  &:hover {
+      border-color: #888; /* Đổi màu viền khi hover */
+  }
+}
+
+.select__menu {
+  z-index: 10; /* Đảm bảo menu không bị che khuất */
+  border-radius: 4px; /* Bo góc */
+}
+
+.select__option {
+  padding: 10px; /* Padding cho từng tùy chọn */
+  transition: background-color 0.2s; /* Hiệu ứng chuyển đổi nền */
+
+  &:hover {
+      background-color: #f0f0f0; /* Màu nền khi hover */
+  }
+}
+
+// Định nghĩa cho select khi nó được chọn
+.select__single-value {
+  color: #333; /* Màu chữ */
+  font-weight: 500; /* Đậm chữ */
+}
+
+.select__placeholder {
+  color: #aaa; /* Màu chữ cho placeholder */
+}
+
+.select__indicator {
+  color: #4CAF50; /* Màu cho biểu tượng */
 }
