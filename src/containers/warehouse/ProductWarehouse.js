@@ -30,7 +30,7 @@ export default function ProductWarehouse({ isModalOpen, closeModal, products, pr
                             </div>
                         </div>
                         <FrameData
-                            data={products.warehousesWithProductNames}
+                            data={products}
                             columns={productColumns}
                         />
 

@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import './Warehouse.scss';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import FrameData from '../frameData/FrameData';
 import { useLocation, useNavigate } from 'react-router';
 import ProductWarehouse from './ProductWarehouse';
-import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
-import { getProductsByWarehouseId } from '../../services/warehouseRequest';
+
 import Modal from '../../components/modal/Modal';
 import Button from '../../components/button/Button';
 import { getStatusColor } from '../../utils/fotmatDate';
@@ -14,10 +13,6 @@ import Select from 'react-select';
 export default function Warehouse() {
     const navigate = useNavigate();
     const location = useLocation();
-    const dispatch = useDispatch();
-
-    const accessToken = useAccessToken();
-    const axiosJWT = useAxiosJWT();
 
     const warehouses = useSelector((state) => state.warehouse?.warehouse);
 
@@ -36,9 +31,22 @@ export default function Warehouse() {
     const [filteredWarehouses, setFilteredWarehouses] = useState(warehouses);
 
     const warehouseColumn = [
-        { title: 'Tên sản phẩm', dataIndex: 'product_name', key: 'product_name', width: '40%' },
+        {
+            title: 'Tên sản phẩm',
+            dataIndex: 'product',
+            key: 'product_name',
+            width: '30%',
+            render: (text, record) => {
+                return (
+                    <span>
+                        {record.product ? record.product.name : 'Không có sản phẩm'}
+                    </span>
+                );
+            }
+        },
         { title: 'Tồn kho', dataIndex: 'stock_quantity', key: 'stock_quantity', width: '20%', className: 'text-center' },
         { title: 'Ngưỡng giá trị', dataIndex: 'min_stock_threshold', key: 'min_stock_threshold', width: '20%', className: 'text-center' },
+        { title: 'Giá nhập', dataIndex: 'order_Price', key: 'order_Price', width: '20%', className: 'text-center' },
         {
             title: 'Trạng thái',
             dataIndex: 'status',
@@ -56,14 +64,27 @@ export default function Warehouse() {
     ];
 
     const productColumns = [
-        { title: 'Tên sản phẩm', dataIndex: 'product_name', key: 'product_name', width: '30%' },
+        {
+            title: 'Tên sản phẩm',
+            dataIndex: 'product',
+            key: 'product_name',
+            width: '30%',
+            render: (text, record) => {
+                return (
+                    <span>
+                        {record.product ? record.product.name : 'Không có sản phẩm'}
+                    </span>
+                );
+            }
+        },
         { title: 'Tồn kho', dataIndex: 'stock_quantity', key: 'stock_quantity', width: '15%', className: 'text-center' },
         { title: 'Ngưỡng giá trị', dataIndex: 'min_stock_threshold', key: 'min_stock_threshold', width: '15%', className: 'text-center' },
+        { title: 'Giá nhập', dataIndex: 'order_Price', key: 'order_Price', width: '20%', className: 'text-center' },
         {
             title: 'Trạng thái',
             dataIndex: 'status',
             key: 'status',
-            width: '15%',
+            width: '20%',
             className: 'text-center',
             render: (text, record) => {
                 return (
@@ -72,18 +93,29 @@ export default function Warehouse() {
                     </span>
                 );
             }
-        }
+        },
     ];
 
     const handleRowClick = async (warehouse) => {
         const pathPrev = location.pathname + location.search;
         sessionStorage.setItem('previousWarehousePath', pathPrev);
 
-        const warehouseProduct = await getProductsByWarehouseId(accessToken, axiosJWT, dispatch, warehouse._id);
-        setProducts(warehouseProduct);
+        // Lọc sản phẩm từ warehouse theo supplier_id
+        if (warehouse && warehouse.product) {
+            const supplierId = warehouse.product.supplier_id;
 
-        navigate('/admin/inventory/' + warehouse._id + '/product');
-        setIsModalOpen(true);
+            // Lọc sản phẩm từ warehouses theo supplier_id
+            const filteredProducts = warehouses.filter(item => item.product && item.product.supplier_id === supplierId);
+
+            // Cập nhật state với danh sách sản phẩm đã lọc
+            setProducts(filteredProducts);
+            navigate('/admin/inventory/' + warehouse._id + '/product');
+            setIsModalOpen(true);
+
+        } else {
+            console.error("Warehouse or product is null", warehouse);
+        }
+
     };
 
     const closeModal = () => {

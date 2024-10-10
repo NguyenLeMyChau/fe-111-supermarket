@@ -8,8 +8,9 @@ import { getStatusColor } from '../../utils/fotmatDate';
 
 const AddOrder = () => {
     const location = useLocation();
-    const selectedProducts = location.state?.selectedProduct?.warehousesWithProductNames || [];
-    const supplier = location.state?.selectedProduct?.supplier || null;
+    const selectedProducts = location.state?.selectedProduct || [];
+    const supplierId = location.state?.selectedProduct[0]?.product.supplier_id || null;
+
 
     const {
         quantities,
@@ -23,7 +24,7 @@ const AddOrder = () => {
         supplierOptions,
         isLoading,
         isLoadingSupplier,
-    } = useAddOrder(selectedProducts, supplier);
+    } = useAddOrder(selectedProducts, supplierId);
 
     return (
         <div className="add-order-container">
@@ -61,17 +62,19 @@ const AddOrder = () => {
                                 <th>Tên sản phẩm</th>
                                 <th>Số lượng tồn kho</th>
                                 <th>Số lượng ngưỡng</th>
+                                <th>Giá nhập</th>
                                 <th>Trạng thái</th>
-                                <th>Số lượng đặt hàng</th>
+                                <th>Số lượng (Thùng)</th>
                                 <th>Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
                             {products.map((product) => (
-                                <tr key={product.product_id}>
-                                    <td>{product.product_name}</td>
+                                <tr key={product.product._id}>
+                                    <td>{product.product.name}</td>
                                     <td>{product.stock_quantity}</td>
                                     <td>{product.min_stock_threshold}</td>
+                                    <td>{product.order_Price}</td>
                                     <td>
                                         <span style={{ color: getStatusColor(product.status), fontWeight: 500, fontSize: 16 }}>
                                             {product.status}
@@ -81,8 +84,8 @@ const AddOrder = () => {
                                         <input
                                             type="number"
                                             min="1"
-                                            value={quantities[product.product_id]}
-                                            onChange={(e) => handleQuantityChange(product.product_id, parseInt(e.target.value))}
+                                            value={quantities[product.product._id]}
+                                            onChange={(e) => handleQuantityChange(product.product._id, parseInt(e.target.value))}
                                             className="quantity-input"
                                         />
                                     </td>
@@ -90,7 +93,7 @@ const AddOrder = () => {
                                         <Button
                                             text="Xóa"
                                             backgroundColor="#FF0000"
-                                            onClick={() => handleRemoveProduct(product.product_id)}
+                                            onClick={() => handleRemoveProduct(product.product._id)}
                                         />
                                     </td>
                                 </tr>

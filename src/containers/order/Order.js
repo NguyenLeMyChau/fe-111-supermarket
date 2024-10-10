@@ -125,6 +125,7 @@ export default function Order() {
                 await updateOrderStatus(accessToken, axiosJWT, orderDetail.orderId, orderDetail.status.value, orderDetail.products);
                 alert('Cập nhật trạng thái đơn hàng thành công');
                 navigate('/admin/order');
+                // setIsModalOpen(false);
             } catch (error) {
                 console.error('Failed to update status:', error);
             }
