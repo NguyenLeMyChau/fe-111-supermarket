@@ -84,7 +84,7 @@ export default function Order() {
     const productColumns = [
         { title: 'Tên sản phẩm', dataIndex: 'name', key: 'name', width: '35%' },
         { title: 'Số lượng', dataIndex: 'quantity', key: 'quantity', width: '35%', className: 'text-center' },
-        { title: 'Giá nhập', dataIndex: 'price', key: 'pricee', width: '20%', className: 'text-center' },
+        { title: 'Giá nhập', dataIndex: 'price', key: 'price', width: '20%', className: 'text-center', render: (price) => formatCurrency(price) },
     ];
 
     const handleRowClick = (order) => {

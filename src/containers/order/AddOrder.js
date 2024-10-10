@@ -4,7 +4,7 @@ import Button from "../../components/button/Button";
 import './AddOrder.scss';
 import Select from 'react-select';
 import useAddOrder from '../../hooks/useAddOrder';
-import { getStatusColor } from '../../utils/fotmatDate';
+import { formatCurrency, getStatusColor } from '../../utils/fotmatDate';
 
 const AddOrder = () => {
     const location = useLocation();
@@ -76,7 +76,7 @@ const AddOrder = () => {
                                     <td>{product.stock_quantity}</td>
                                     <td>{product.min_stock_threshold}</td>
                                     <td>{product.unit_convert}</td>
-                                    <td>{product.order_Price}</td>
+                                    <td>{formatCurrency(product.order_Price)}</td>
                                     <td>
                                         <span style={{ color: getStatusColor(product.status), fontWeight: 500, fontSize: 16 }}>
                                             {product.status}
