@@ -48,7 +48,7 @@ const addPromotionLine = async (promotionLineData, accessToken, axiosJWT) => {
     }
 };
 
-export {  addPromotionLine };
+export { addPromotionLine };
 
 const addPromotionDetail = async (promotionLineData, accessToken, axiosJWT) => {
     try {
@@ -64,5 +64,5 @@ const addPromotionDetail = async (promotionLineData, accessToken, axiosJWT) => {
     }
 };
 
-export {  addPromotionDetail };
+export { addPromotionDetail };
 

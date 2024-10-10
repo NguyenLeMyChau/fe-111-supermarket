@@ -11,9 +11,9 @@ import AddPromotionLine from './AddPromotionLine';
 import AddPromotionDetail from './AddPromotionDetail';
 
 export default function Promotion() {
-  const promotions = useSelector((state) => state.commonData?.dataManager?.promotions) || [];
-  const [currentHeader,selectCurrentHeader]= useState({});
-  const [currentLine,selectCurrentLine]= useState({});
+  const promotions = useSelector((state) => state.promotion?.promotions) || [];
+  const [currentHeader, selectCurrentHeader] = useState({});
+  const [currentLine, selectCurrentLine] = useState({});
 
   const [promotionLine, setPromotionLine] = useState([]);
   const [isModalOpenLine, setIsModalOpenLine] = useState(false);
@@ -114,7 +114,8 @@ export default function Promotion() {
     const promotionLine = Array.isArray(promotionHeader.lines) ? promotionHeader.lines : [];
     setPromotionLine(promotionLine);
     setIsModalOpenLine(true);
-    selectCurrentHeader(promotionHeader)
+    selectCurrentHeader(promotionHeader);
+    console.log('promotionHeader', promotionHeader);
   };
 
   const closeModalLine = () => {
@@ -122,9 +123,9 @@ export default function Promotion() {
   };
 
   const handleRowClickDetail = (promotionLine) => {
-    
+
     const promotionDetail = Array.isArray(promotionLine.details) ? promotionLine.details : [];
-     selectCurrentLine(promotionLine);
+    selectCurrentLine(promotionLine);
     setPromotionDetail(promotionDetail);
     setIsModalOpenDetail(true);
   }
@@ -143,10 +144,10 @@ export default function Promotion() {
         onRowClick={handleRowClickLine}
         renderModal={(onClose) => (
           <AddPromotionHeader
-              isOpen={true}
-              onClose={onClose}
+            isOpen={true}
+            onClose={onClose}
           />
-      )}
+        )}
       />
 
       <Modal
@@ -155,21 +156,22 @@ export default function Promotion() {
         onClose={closeModalLine}
       >
 
-         
-            <FrameData
-              data={promotionLine}
-              columns={promotionLineColumn}
-              onRowClick={handleRowClickDetail}
-              itemsPerPage={8}
-              renderModal={(onClose,data) => (
-                <AddPromotionLine
-                    isOpen={true}
-                    onClose={onClose}
-                    promotionHeader={currentHeader}
-                />
-            )}
+
+        <FrameData
+          data={promotionLine}
+          columns={promotionLineColumn}
+          buttonText={'Thêm loại khuyến mãi'}
+          onRowClick={handleRowClickDetail}
+          itemsPerPage={8}
+          renderModal={(onClose, data) => (
+            <AddPromotionLine
+              isOpen={true}
+              onClose={onClose}
+              promotionHeader={currentHeader}
             />
-          ) 
+          )}
+        />
+
       </Modal>
 
       <Modal
@@ -177,20 +179,20 @@ export default function Promotion() {
         isOpen={isModalOpenDetail}
         onClose={closeModalDetail}
       >
-       
-            <FrameData
-              data={promotionDetail}
-                buttonText="Thêm khuyến mãi"
-              columns={promotionDetailColumn}
-              itemsPerPage={8}
-              renderModal={(onClose) => (
-                <AddPromotionDetail
-                    isOpen={true}
-                    onClose={onClose}
-                    promotionLine={currentLine}
-                    />
-                  )}
-                  />
+
+        <FrameData
+          data={promotionDetail}
+          buttonText="Thêm khuyến mãi"
+          columns={promotionDetailColumn}
+          itemsPerPage={8}
+          renderModal={(onClose) => (
+            <AddPromotionDetail
+              isOpen={true}
+              onClose={onClose}
+              promotionLine={currentLine}
+            />
+          )}
+        />
       </Modal>
     </div>
 

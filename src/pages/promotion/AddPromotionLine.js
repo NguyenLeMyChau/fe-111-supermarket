@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './Promotion.scss'; 
+import './Promotion.scss';
 import Modal from '../../components/modal/Modal';
 import Input from '../../components/input/Input';
 import Button from '../../components/button/Button';
@@ -17,12 +17,14 @@ export default function AddPromotionLine({ isOpen, onClose, promotionHeader }) {
         description: '',
         startDate: '',
         endDate: '',
-        type: { value: 'percentage', label: 'Phần trăm' }, // Mặc định là percentage
-        status: { value: 'active', label: 'Active' }, // Mặc định là active
-        promotionHeaderId: promotionHeader.id
+        type: 'percentage', // Mặc định là percentage
+        status: 'active', // Mặc định là active
+        promotionHeader_id: promotionHeader._id
     });
 
     const handleChange = (selectedOption, action) => {
+        console.log('selectedOption', selectedOption);
+        console.log('action', action);
         const { name } = action;
         setPromotionLineData((prevData) => ({ ...prevData, [name]: selectedOption }));
     };
@@ -37,6 +39,7 @@ export default function AddPromotionLine({ isOpen, onClose, promotionHeader }) {
         }
 
         try {
+            console.log('promotionLineData', promotionLineData);
             const response = await addPromotionLine(promotionLineData, accessToken, axiosJWT);
             if (response) {
                 console.log('Promotion line added:', response);
@@ -44,9 +47,9 @@ export default function AddPromotionLine({ isOpen, onClose, promotionHeader }) {
                     description: '',
                     startDate: '',
                     endDate: '',
-                    type: { value: 'percentage', label: 'Phần trăm' },
-                    status: { value: 'active', label: 'Active' },
-                    promotionHeaderId: promotionHeader.id
+                    type: 'percentage', // Mặc định là percentage
+                    status: 'active', // Mặc định là active
+                    promotionHeader_id: promotionHeader._id
                 });
                 setErrors({});
                 alert('Đã thêm dòng khuyến mãi thành công');
@@ -74,7 +77,7 @@ export default function AddPromotionLine({ isOpen, onClose, promotionHeader }) {
             isOpen={isOpen}
             onClose={onClose}
             width={'30%'}
-           
+
         >
             <div className='flex-column-center' >
                 <form onSubmit={handleAddPromotionLine} >
@@ -121,10 +124,10 @@ export default function AddPromotionLine({ isOpen, onClose, promotionHeader }) {
                         value={promotionLineData.status}
                         onChange={handleChange}
                         classNamePrefix="select"
-                        
+
                     />
 
-                    <div className='flex-row-center' style={{paddingTop:100}}>
+                    <div className='flex-row-center' style={{ paddingTop: 100 }}>
                         <div className='login-button' style={{ width: 200 }}>
                             <Button
                                 type='submit'
