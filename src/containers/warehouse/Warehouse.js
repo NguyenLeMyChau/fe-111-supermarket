@@ -31,6 +31,7 @@ export default function Warehouse() {
     const [filteredWarehouses, setFilteredWarehouses] = useState(warehouses);
 
     const warehouseColumn = [
+        { title: 'Mã kho', dataIndex: 'item_code', key: 'item_code', width: '10%', className: 'text-center' },
         {
             title: 'Tên sản phẩm',
             dataIndex: 'product',
@@ -39,14 +40,14 @@ export default function Warehouse() {
             render: (text, record) => {
                 return (
                     <span>
-                        {record.product ? record.product.name : 'Không có sản phẩm'}
+                        {record.product ? record.product.name : ''}
                     </span>
                 );
             }
         },
-        { title: 'Tồn kho', dataIndex: 'stock_quantity', key: 'stock_quantity', width: '20%', className: 'text-center' },
-        { title: 'Ngưỡng giá trị', dataIndex: 'min_stock_threshold', key: 'min_stock_threshold', width: '20%', className: 'text-center' },
-        { title: 'Giá nhập', dataIndex: 'order_Price', key: 'order_Price', width: '20%', className: 'text-center' },
+        { title: 'Tồn kho', dataIndex: 'stock_quantity', key: 'stock_quantity', width: '15%', className: 'text-center' },
+        { title: 'Ngưỡng giá trị', dataIndex: 'min_stock_threshold', key: 'min_stock_threshold', width: '15%', className: 'text-center' },
+        { title: 'Giá nhập', dataIndex: 'order_Price', key: 'order_Price', width: '15%', className: 'text-center' },
         {
             title: 'Trạng thái',
             dataIndex: 'status',
@@ -64,6 +65,7 @@ export default function Warehouse() {
     ];
 
     const productColumns = [
+        { title: 'Mã kho', dataIndex: 'item_code', key: 'item_code', width: '10%', className: 'text-center' },
         {
             title: 'Tên sản phẩm',
             dataIndex: 'product',
@@ -79,7 +81,7 @@ export default function Warehouse() {
         },
         { title: 'Tồn kho', dataIndex: 'stock_quantity', key: 'stock_quantity', width: '15%', className: 'text-center' },
         { title: 'Ngưỡng giá trị', dataIndex: 'min_stock_threshold', key: 'min_stock_threshold', width: '15%', className: 'text-center' },
-        { title: 'Giá nhập', dataIndex: 'order_Price', key: 'order_Price', width: '20%', className: 'text-center' },
+        { title: 'Giá nhập', dataIndex: 'order_Price', key: 'order_Price', width: '15%', className: 'text-center' },
         {
             title: 'Trạng thái',
             dataIndex: 'status',
