@@ -17,7 +17,7 @@ const useAddOrder = (selectedProducts, supplierId) => {
 
     const [quantities, setQuantities] = useState(
         selectedProducts.reduce((acc, product) => {
-            acc[product.product_id] = 1;
+            acc[product.product._id] = 1;
             return acc;
         }, {})
     );

@@ -62,6 +62,7 @@ const AddOrder = () => {
                                 <th>Tên sản phẩm</th>
                                 <th>Số lượng tồn kho</th>
                                 <th>Số lượng ngưỡng</th>
+                                <th>Giá trị quy đổi</th>
                                 <th>Giá nhập</th>
                                 <th>Trạng thái</th>
                                 <th>Số lượng (Thùng)</th>
@@ -74,6 +75,7 @@ const AddOrder = () => {
                                     <td>{product.product.name}</td>
                                     <td>{product.stock_quantity}</td>
                                     <td>{product.min_stock_threshold}</td>
+                                    <td>{product.unit_convert}</td>
                                     <td>{product.order_Price}</td>
                                     <td>
                                         <span style={{ color: getStatusColor(product.status), fontWeight: 500, fontSize: 16 }}>
