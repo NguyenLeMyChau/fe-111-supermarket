@@ -17,16 +17,15 @@ export default function AddPromotionLine({ isOpen, onClose, promotionHeader }) {
         description: '',
         startDate: '',
         endDate: '',
-        type: 'percentage', // Mặc định là percentage
-        status: 'active', // Mặc định là active
+        type: 'percentage', // Default value as a string
+        status: 'active', // Default value as a string
         promotionHeader_id: promotionHeader._id
     });
 
+    // Update the handleChange to set the string value, not the entire object
     const handleChange = (selectedOption, action) => {
-        console.log('selectedOption', selectedOption);
-        console.log('action', action);
         const { name } = action;
-        setPromotionLineData((prevData) => ({ ...prevData, [name]: selectedOption }));
+        setPromotionLineData((prevData) => ({ ...prevData, [name]: selectedOption.value })); // Store only the string value
     };
 
     const handleAddPromotionLine = async (e) => {
@@ -39,16 +38,14 @@ export default function AddPromotionLine({ isOpen, onClose, promotionHeader }) {
         }
 
         try {
-            console.log('promotionLineData', promotionLineData);
             const response = await addPromotionLine(promotionLineData, accessToken, axiosJWT);
             if (response) {
-                console.log('Promotion line added:', response);
                 setPromotionLineData({
                     description: '',
                     startDate: '',
                     endDate: '',
-                    type: 'percentage', // Mặc định là percentage
-                    status: 'active', // Mặc định là active
+                    type: 'percentage', // Reset to default value
+                    status: 'active', // Reset to default value
                     promotionHeader_id: promotionHeader._id
                 });
                 setErrors({});
@@ -112,7 +109,7 @@ export default function AddPromotionLine({ isOpen, onClose, promotionHeader }) {
                     <Select
                         name='type'
                         options={typeOptions}
-                        value={promotionLineData.type}
+                        value={typeOptions.find(option => option.value === promotionLineData.type)} // Match the string value
                         onChange={handleChange}
                         classNamePrefix="select"
                     />
@@ -121,10 +118,9 @@ export default function AddPromotionLine({ isOpen, onClose, promotionHeader }) {
                     <Select
                         name='status'
                         options={statusOptions}
-                        value={promotionLineData.status}
+                        value={statusOptions.find(option => option.value === promotionLineData.status)} // Match the string value
                         onChange={handleChange}
                         classNamePrefix="select"
-
                     />
 
                     <div className='flex-row-center' style={{ paddingTop: 100 }}>

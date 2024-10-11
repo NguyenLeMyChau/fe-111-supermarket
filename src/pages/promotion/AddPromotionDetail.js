@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Promotion.scss';
 import Modal from '../../components/modal/Modal';
 import Input from '../../components/input/Input';
@@ -7,14 +7,18 @@ import { addPromotionDetail } from '../../services/promotionRequest';
 import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
 import { validatePromotionDetailData } from '../../utils/validation';
 
+import Dropdownpicker from '../../components/dropdownpicker/dropdownpicker';
+import { getAllProducts } from '../../services/productRequest';
+import { useDispatch } from 'react-redux';
+
 export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
     const axiosJWT = useAxiosJWT();
     const accessToken = useAccessToken();
-
+    const dispatch = useDispatch();
     const [errors, setErrors] = useState({});
+    const [products, setProducts] = useState([]);
     const [promotionDetailData, setPromotionDetailData] = useState({
         product_id: '',
-        unit_id: '',
         quantity: '',
         product_donate: '',
         quantity_donate: '',
@@ -22,41 +26,55 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
         amount_donate: '',
         percent: '',
         amount_limit: '',
-        promotionLine_id:promotionLine._id
+        promotionLine_id: promotionLine._id
     });
+
+    const fetchProducts = async () => {
+        try {
+            const productsData = await getAllProducts(accessToken, axiosJWT,dispatch);
+            setProducts(productsData);
+        } catch (error) {
+            console.error('Failed to fetch products:', error);
+        }
+    };
+
+    useEffect(() => {
+        if (promotionLine.type === 'quantity' && products.length===0) {
+            fetchProducts();
+        }
+    }, [promotionLine.type, accessToken, axiosJWT, dispatch]);
+    console.log(products);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setPromotionDetailData((prevData) => ({ ...prevData, [name]: value }));
     };
-
+    const handleDropdownChange = (name, value) => {
+        setPromotionDetailData((prevData) => ({ ...prevData, [name]: value }));
+    };
     const handleAddPromotionDetail = async (e) => {
         e.preventDefault();
 
-        // Kiểm tra dữ liệu
         const validationErrors = validatePromotionDetailData(promotionDetailData);
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
             return;
         }
 
-        // Gọi API để thêm promotion detail
         try {
-            
-            const response = await addPromotionDetail({ ...promotionDetailData  }, accessToken, axiosJWT);
+            const response = await addPromotionDetail({ ...promotionDetailData }, accessToken, axiosJWT);
             if (response) {
                 console.log('Promotion detail added:', response);
-                // Xóa dữ liệu sau khi thêm thành công
                 setPromotionDetailData({
                     product_id: '',
-                    unit_id: '',
                     quantity: '',
                     product_donate: '',
                     quantity_donate: '',
                     amount_sales: '',
                     amount_donate: '',
                     percent: '',
-                    amount_limit: ''
+                    amount_limit: '',
+                    promotionLine_id: promotionLine._id
                 });
                 setErrors({});
                 alert('Đã thêm chi tiết khuyến mãi thành công');
@@ -75,11 +93,12 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
             onClose={onClose}
             width={'30%'}
         >
-            <div className='flex-column-center'>
-                <form onSubmit={handleAddPromotionDetail}>
+            <div className='add-promotion-detail-modal'>
+                <form className='promotion-detail-form' onSubmit={handleAddPromotionDetail}>
                     {promotionLine.type === 'percentage' && (
                         <>
                             <Input
+                                className='promotion-input'
                                 type='number'
                                 label='Số tiền bán'
                                 name='amount_sales'
@@ -88,6 +107,7 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
                                 error={errors.amount_sales}
                             />
                             <Input
+                                className='promotion-input'
                                 type='number'
                                 label='Phần trăm'
                                 name='percent'
@@ -96,6 +116,7 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
                                 error={errors.percent}
                             />
                             <Input
+                                className='promotion-input'
                                 type='number'
                                 label='Giới hạn số tiền'
                                 name='amount_limit'
@@ -108,6 +129,7 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
 
                     {promotionLine.type === 'amount' && (
                         <Input
+                            className='promotion-input'
                             type='number'
                             label='Số tiền tặng kèm'
                             name='amount_donate'
@@ -117,25 +139,22 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
                         />
                     )}
 
-                    {promotionLine.type === 'product' && (
+                    {promotionLine.type === 'quantity' && (
+                        
                         <>
-                            <Input
-                                label='Product ID'
-                                placeholder='Nhập ID sản phẩm'
-                                name='product_id'
+                            <Dropdownpicker
+                                className='promotion-dropdown'
+                                label='Sản phẩm'
+                                options={products.map((product) => ({
+                                    value: product._id,
+                                    label: product.name,
+                                }))}
                                 value={promotionDetailData.product_id}
-                                onChange={handleChange}
+                                onChange={(value) => handleDropdownChange('product_id', value)}
                                 error={errors.product_id}
                             />
                             <Input
-                                label='Unit ID'
-                                placeholder='Nhập ID đơn vị'
-                                name='unit_id'
-                                value={promotionDetailData.unit_id}
-                                onChange={handleChange}
-                                error={errors.unit_id}
-                            />
-                            <Input
+                                className='promotion-input'
                                 type='number'
                                 label='Số lượng'
                                 name='quantity'
@@ -143,15 +162,19 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
                                 onChange={handleChange}
                                 error={errors.quantity}
                             />
-                            <Input
+                            <Dropdownpicker
+                                className='promotion-dropdown'
                                 label='Sản phẩm tặng kèm'
-                                placeholder='Nhập ID sản phẩm tặng kèm'
-                                name='product_donate'
+                                options={products.map((product) => ({
+                                    value: product._id,
+                                    label: product.name,
+                                }))}
                                 value={promotionDetailData.product_donate}
-                                onChange={handleChange}
+                                onChange={(value) => handleDropdownChange('product_donate', value)}
                                 error={errors.product_donate}
                             />
                             <Input
+                                className='promotion-input'
                                 type='number'
                                 label='Số lượng tặng kèm'
                                 name='quantity_donate'
@@ -162,11 +185,11 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
                         </>
                     )}
 
-                    <div className='flex-row-center'>
+                    <div className='flex-row-center' >
                         <div className='login-button' style={{ width: 200 }}>
                             <Button
                                 type='submit'
-                                text='Thêm Chi Tiết'
+                                text='Thêm dòng khuyến mãi'
                             />
                         </div>
                     </div>

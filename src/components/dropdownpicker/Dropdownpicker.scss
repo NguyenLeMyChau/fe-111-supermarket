@@ -1,0 +1,59 @@
+.dropdown-wrapper {
+    width: 100%; // Chiều rộng đầy đủ
+}
+
+.dropdown-container {
+    display: flex; // Sử dụng flexbox để căn chỉnh
+    align-items: center; // Căn giữa theo chiều dọc
+    gap: 20px;
+}
+
+.dropdown-label {
+    color: var(--black-color);
+    width: 100px; // Chiều rộng của nhãn
+    font-weight: 500; // Định dạng font-weight
+    
+}
+
+.dropdown-select {
+    width: 500px; // Chiều rộng giống như trường nhập liệu
+    height: 35px; // Chiều cao giống như trường nhập liệu
+    color: var(--black-color);
+    border: 1px solid #C4C4C4; // Màu viền
+    border-radius: 5px; // Bo góc
+    margin: 10px 0; // Khoảng cách giữa dropdown và phần tử khác
+    box-sizing: border-box; // Đảm bảo padding và border được tính vào tổng chiều rộng
+    padding-left: 10px; // Thêm khoảng cách bên trái
+    padding-right: 30px; // Khoảng cách bên phải để có chỗ cho icon
+    background-color: white; // Màu nền
+    background-repeat: no-repeat; // Không lặp lại icon
+    appearance: none; // Ẩn giao diện mặc định của dropdown
+    transition: border-color 0.3s; // Hiệu ứng chuyển tiếp cho màu viền
+}
+
+.dropdown-select:focus {
+    border-color: var(--black-color); // Thay đổi màu viền khi focus
+    outline: none; // Ẩn outline mặc định
+}
+
+.dropdown-error {
+    border-color: var(--danger-color); // Màu viền khi có lỗi
+}
+
+.error-message {
+    display: flex;
+    align-items: center;
+    color: var(--danger-color); // Màu chữ cho thông báo lỗi
+    font-size: 12px; // Kích thước font cho thông báo lỗi
+    margin-top: 5px; // Khoảng cách giữa dropdown và thông báo lỗi
+}
+
+.error-icon {
+    margin-right: 0.5rem; // Khoảng cách giữa icon và văn bản thông báo lỗi
+    color: var(--danger-color); // Màu cho icon thông báo lỗi
+}
+
+/* Hiệu ứng hover cho dropdown */
+.dropdown-select:hover {
+    border-color: var(--black-color); // Thay đổi màu viền khi hover
+}

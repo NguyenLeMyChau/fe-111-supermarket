@@ -50,16 +50,17 @@ const addPromotionLine = async (promotionLineData, accessToken, axiosJWT) => {
 
 export { addPromotionLine };
 
-const addPromotionDetail = async (promotionLineData, accessToken, axiosJWT) => {
+const addPromotionDetail = async (promotionDetailData, accessToken, axiosJWT) => {
+    console.log(promotionDetailData)
     try {
-        const response = await axiosJWT.post(`/api/promotion/add-promotion-detail`, promotionLineData, {
+        const response = await axiosJWT.post(`/api/promotion/add-promotion-detail`, promotionDetailData, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
         });
         return response.data;
     } catch (error) {
-        console.error('Add promotion line failed:', error);
+        console.error('Add promotion detail failed:', error);
         throw error;
     }
 };

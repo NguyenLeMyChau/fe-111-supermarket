@@ -94,3 +94,44 @@
 .select__indicator {
   color: #4CAF50; /* Màu cho biểu tượng */
 }
+.add-promotion-detail-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
+
+.promotion-detail-form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.promotion-input {
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.promotion-dropdown {
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.submit-button-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.submit-button {
+  width: 200px;
+}
+
+.error-message {
+  color: red;
+  margin-top: -10px;
+  margin-bottom: 10px;
+}

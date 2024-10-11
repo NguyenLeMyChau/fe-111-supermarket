@@ -100,13 +100,15 @@ export default function Promotion() {
     },];
 
   const promotionDetailColumn = [
-    { title: 'Giá sales', dataIndex: 'amount_sales', key: 'amount_sales', width: '10%', className: 'text-center' },
-    { title: 'Giá donate', dataIndex: 'amount_donate', key: 'amount_donate', width: '10%', className: 'text-center' },
-    { title: 'Số lượng', dataIndex: 'quantity', key: 'quantity', width: '10%', className: 'text-center' },
-    { title: 'Số lượng donate', dataIndex: 'quantity_donate', key: 'quantity_donate', width: '10%', className: 'text-center' },
-    { title: 'Percent', dataIndex: 'percent', key: 'percent', width: '10%', className: 'text-center' },
+    { title: 'Số tiền bán', dataIndex: 'amount_sales', key: 'amount_sales', width: '10%', className: 'text-center' },
+    { title: 'Phần trăm khuyến mãi', dataIndex: 'percent', key: 'percent', width: '10%', className: 'text-center' },
+    { title: 'Tôi đa', dataIndex: 'amount_limit', key: 'amount_limit', width: '10%', className: 'text-center' },
+    { title: 'Số tiền tặng', dataIndex: 'amount_donate', key: 'amount_donate', width: '10%', className: 'text-center' },
     { title: 'Tên sản phẩm', dataIndex: 'product', key: 'product', width: '15%', render: (product) => product?.name },
-    { title: 'Đơn vị sản phẩm', dataIndex: 'unit', key: 'unit', width: '15%', className: 'text-center', render: (unit) => unit?.description },
+    { title: 'Số lượng', dataIndex: 'quantity', key: 'quantity', width: '10%', className: 'text-center' },
+    { title: 'Sản phẩm tặng', dataIndex: 'product', key: 'product_donate', width: '15%', render: (product) => product?.name },
+    { title: 'Số lượng tặng', dataIndex: 'quantity_donate', key: 'quantity_donate', width: '10%', className: 'text-center' },
+    
   ];
 
 
@@ -115,7 +117,6 @@ export default function Promotion() {
     setPromotionLine(promotionLine);
     setIsModalOpenLine(true);
     selectCurrentHeader(promotionHeader);
-    console.log('promotionHeader', promotionHeader);
   };
 
   const closeModalLine = () => {
