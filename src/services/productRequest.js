@@ -17,6 +17,37 @@ const getAllCategories = async (accessToken, axiosJWT, dispatch) => {
     }
 };
 
+const addCategory = async (categoryData, accessToken, axiosJWT) => {
+    try {
+        const response = await axiosJWT.post(`/api/product/add-category`, categoryData, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        alert('Thêm thành công loại sản phẩm mới');
+        return response.data;
+    }
+    catch (error) {
+        console.error('Add category failed:', error);
+    }
+}
+
+const updateCategory = async (categoryId, categoryData, accessToken, axiosJWT) => {
+    try {
+        const response = await axiosJWT.put(`/api/product/update-category/${categoryId}`, categoryData, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        alert('Cập nhật thành công loại sản phẩm');
+        return response.data;
+    }
+    catch (error) {
+        console.error('Update category failed:', error);
+    }
+}
+
+
 const getAllProducts = async (accessToken, axiosJWT, dispatch) => {
     dispatch(getProductStart());
     try {
@@ -46,4 +77,4 @@ const getProductsDetail = async (accessToken, axiosJWT, productId) => {
     }
 }
 
-export { getAllCategories, getAllProducts, getProductsDetail };
+export { getAllCategories, addCategory, updateCategory, getAllProducts, getProductsDetail };

@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { GoHome } from "react-icons/go";
 import { MdOutlineInventory2, MdProductionQuantityLimits } from "react-icons/md";
-import { BsFileBarGraph, BsBoxSeam, BsPersonVcard } from "react-icons/bs";
+import { BsFileBarGraph, BsPersonVcard } from "react-icons/bs";
 import { FaRegUser, FaCashRegister, FaUsers } from "react-icons/fa";
 import { SlSettings } from "react-icons/sl";
 import { IoIosLogOut } from "react-icons/io";
@@ -66,9 +66,8 @@ const useMenuItems = (onchange) => {
                 { Icon: BsPersonVcard, label: "Employee", text: "Nhân viên", path: '/admin/employee' },
                 { Icon: AiOutlineTag, label: "Promotion", text: "Khuyến mãi", path: '/admin/promotion' },
                 { Icon: MdOutlineInventory2, label: "Inventory", text: "Kho", path: '/admin/inventory' },
-                { Icon: BsFileBarGraph, label: "Report", text: "Báo cáo", path: '/admin/report' },
+                { Icon: BsFileBarGraph, label: "Bill", text: "Nhập kho", path: '/admin/bill' },
                 { Icon: FaUsers, label: "Suppliers", text: "Nhà cung cấp", path: '/admin/supplier' },
-                { Icon: BsBoxSeam, label: "Orders", text: "Đơn hàng", path: '/admin/order' },
             ],
         },
         {

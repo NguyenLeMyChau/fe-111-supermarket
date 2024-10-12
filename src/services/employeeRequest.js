@@ -31,4 +31,19 @@ const registerEmployee = async (registerData, accessToken, axiosJWT) => {
     }
 }
 
-export { getAllEmployees, registerEmployee };
+const updateEmployee = async (employeeId, employeeData, accessToken, axiosJWT) => {
+    try {
+        const response = await axiosJWT.put(`/api/employee/update-employee/${employeeId}`, employeeData, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        alert('Cập nhật thông tin nhân viên thành công');
+        return response.data;
+    } catch (error) {
+        console.error('Update employee failed:', error);
+        alert(error.response ? error.response.data.message : error.message);
+    }
+}
+
+export { getAllEmployees, registerEmployee, updateEmployee };

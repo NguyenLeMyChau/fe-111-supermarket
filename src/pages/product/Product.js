@@ -6,7 +6,6 @@ import { getProductsDetail } from '../../services/productRequest';
 import { useLocation, useNavigate } from 'react-router';
 import ProductDetail from './ProductDetail'; // Import ProductDetail component
 import { CiEdit } from 'react-icons/ci';
-import { MdOutlineDelete } from "react-icons/md";
 import Modal from '../../components/modal/Modal';
 import UpdateProduct from './UpdateProduct';
 
@@ -49,20 +48,7 @@ export default function Product() {
                     onClick={(event) => handleEditClick(event, record)}
                 />
             ),
-        },
-        {
-            title: 'Xoá',
-            key: 'delete',
-            width: '10%',
-            className: 'text-center',
-            render: (text, record) => (
-                <MdOutlineDelete
-                    style={{ color: 'red', cursor: 'pointer' }}
-                    size={25}
-                    onClick={(event) => handleEditClick(event, record)}
-                />
-            ),
-        },
+        }
     ];
 
     const handleRowClick = async (product) => {

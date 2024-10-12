@@ -7,7 +7,7 @@ import { useLocation, useNavigate } from 'react-router';
 import { getAllCategories, getAllProducts } from '../services/productRequest';
 import { getAllEmployees } from '../services/employeeRequest';
 import { getAllPromotions } from '../services/promotionRequest';
-import { getAllOrder, getAllWarehouse } from '../services/warehouseRequest';
+import { getAllBill, getAllWarehouse } from '../services/warehouseRequest';
 
 const useCommonData = () => {
     const dispatch = useDispatch();
@@ -21,7 +21,7 @@ const useCommonData = () => {
 
     const apiCallMapping = useMemo(() => ({
         '/admin/inventory': getAllWarehouse,
-        '/admin/order': getAllOrder,
+        '/admin/bill': getAllBill,
         '/admin/product': getAllProducts,
         '/admin/category': getAllCategories,
         '/admin/supplier': getAllSuppliers,
@@ -37,13 +37,6 @@ const useCommonData = () => {
         }
 
         const locationPath = location.pathname;
-
-        // Kiểm tra trường hợp đặc biệt cho đường dẫn '/admin/order'
-        if (locationPath === '/admin/order' && (!warehouses || warehouses.length === 0)) {
-            // Nếu không có warehouse, gọi getAllWarehouse
-            console.log('Get all warehouse');
-            getAllWarehouse(currentUser.accessToken, axiosJWT, dispatch);
-        }
 
         // Lấy API call function tương ứng với locationPath
         const apiCall = apiCallMapping[locationPath];

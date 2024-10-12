@@ -11,12 +11,12 @@ import Employee from '../pages/employee/Employee';
 import Promotion from '../pages/promotion/Promotion';
 import Supplier from "../pages/supplier/Supplier";
 import Inventory from "../pages/inventory/Inventory";
-import Orders from "../pages/orders/Orders";
 
 import ProductSupplier from "../pages/supplier/ProductSupplier";
 import ProductWarehouse from "../containers/warehouse/ProductWarehouse";
-import AddOrder from '../containers/order/AddOrder.js';
 import ProductDetail from '../pages/product/ProductDetail.js';
+import Bill from '../pages/bill/Bill.js';
+import AddBill from '../pages/bill/AddBill.js';
 
 function AppRoutes() {
     return (
@@ -39,8 +39,12 @@ function AppRoutes() {
                     <Route path="supplier" element={<Supplier />}>
                         <Route path=":supplierId/product" element={<ProductSupplier />} />
                     </Route>
-                    <Route path="order" element={<Orders />} >
+                    {/* <Route path="order" element={<Orders />} >
                         <Route path="add-order" element={<AddOrder />} />
+                    </Route> */}
+                    <Route path="bill" element={<Bill />} >
+                        <Route path="add-bill" element={<AddBill />} />
+
                     </Route>
                 </Route>
                 <Route path="/frame-staff" element={<FrameStaff />} />

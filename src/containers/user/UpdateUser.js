@@ -1,14 +1,23 @@
 import React, { useState } from 'react';
 import Button from '../../components/button/Button';
 import Input from '../../components/input/Input';
+import { updateUser } from '../../services/authRequest';
+import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
+import { useNavigate } from 'react-router';
+import { useDispatch } from 'react-redux';
 
 const UpdateUser = ({ user }) => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+    const accessToken = useAccessToken();
+    const axiosJWT = useAxiosJWT();
+
     const [formData, setFormData] = useState({
-        name: user.name,
-        phone: user.phone,
-        email: user.email,
-        gender: user.gender,
-        address: user.address,
+        name: user.user.name,
+        phone: user.user.phone,
+        email: user.user.email,
+        gender: user.user.gender,
+        address: user.user.address,
     });
 
     const handleChange = (e) => {
@@ -26,9 +35,12 @@ const UpdateUser = ({ user }) => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // Call API to update user data
+        console.log('user', user);
+        console.log('Form data:', formData);
+        // Gọi API cập nhật thông tin người dùng
+        await updateUser(user.id, formData, dispatch, navigate, accessToken, axiosJWT);
     };
 
     return (
@@ -60,7 +72,6 @@ const UpdateUser = ({ user }) => {
                     placeholder='Nhập email'
                     value={formData.email}
                     onChange={handleChange}
-                    disabled={true}
                 />
 
                 <Input

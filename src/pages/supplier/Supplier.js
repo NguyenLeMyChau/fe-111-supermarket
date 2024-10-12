@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from 'react-router';
 import { CiEdit } from 'react-icons/ci';
 import Modal from '../../components/modal/Modal';
 import UpdateSupplier from './UpdateSupplier';
+import AddSuplier from './AddSupplier';
 
 export default function Supplier() {
     const navigate = useNavigate();
@@ -18,6 +19,8 @@ export default function Supplier() {
     }));
     const [products, setProducts] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isOpenNewSupplier, setIsOpenNewSupplier] = useState(false);
+
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedSupplier, setSelectedSupplier] = useState(null);
 
@@ -34,10 +37,12 @@ export default function Supplier() {
     };
 
     const supplierColumns = [
-        { title: 'Nhà cung cấp', dataIndex: 'name', key: 'name', width: '30%' },
-        { title: 'Số điện thoại', dataIndex: 'phone', key: 'phone', width: '20%' },
-        { title: 'Email', dataIndex: 'email', key: 'email', width: '20%' },
-        { title: 'Số lượng sản phẩm', dataIndex: 'productCount', key: 'productCount', width: '20%', className: 'text-center' },
+        { title: 'Nhà cung cấp', dataIndex: 'name', key: 'name', width: '20%' },
+        { title: 'Số điện thoại', dataIndex: 'phone', key: 'phone', width: '5%' },
+        { title: 'Email', dataIndex: 'email', key: 'email', width: '5%' },
+        { title: 'Địa chỉ', dataIndex: 'address', key: 'address', width: '30%' },
+        { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '20%' },
+        { title: 'Số lượng sản phẩm', dataIndex: 'productCount', key: 'productCount', width: '10%', className: 'text-center' },
         {
             title: 'Chỉnh sửa',
             key: 'edit',
@@ -97,6 +102,7 @@ export default function Supplier() {
                 data={enhancedSuppliers}
                 columns={supplierColumns}
                 onRowClick={handleRowClick}
+                onButtonClick={() => setIsOpenNewSupplier(true)}
             />
 
             <ProductSupplier
@@ -106,13 +112,20 @@ export default function Supplier() {
                 productColumns={productColumns}
             />
 
+            {isOpenNewSupplier && (
+                <AddSuplier
+                    isOpen={isOpenNewSupplier}
+                    onClose={() => setIsOpenNewSupplier(false)}
+                />
+            )}
+
 
             {isEditModalOpen && (
                 <Modal
                     title='Cập nhật nhà cung cấp'
                     isOpen={isEditModalOpen}
                     onClose={handleCloseEditModal}
-                    width={'30%'}
+                    width={'50%'}
                 >
                     <UpdateSupplier
                         supplier={selectedSupplier}

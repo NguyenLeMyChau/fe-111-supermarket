@@ -69,7 +69,7 @@ const User = () => {
                         width={'30%'}
                     >
                         <UpdateUser
-                            user={user.user}
+                            user={user}
                         />
                     </Modal>
                 )

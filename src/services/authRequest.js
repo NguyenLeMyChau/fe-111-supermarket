@@ -66,4 +66,22 @@ const logoutUser = async (dispatch, navigate, accessToken, axiosJWT) => {
     }
 }
 
-export { loginUser, logoutUser };
+const updateUser = async (accountId, userData, dispatch, navigate, accessToken, axiosJWT) => {
+    try {
+        await axiosJWT.put(`/api/user/update-user/${accountId}`, userData, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+
+        alert('Cập nhật thông tin thành công. Vui lòng đăng nhập lại để thực hiện thao tác khác');
+
+        logoutUser(dispatch, navigate, accessToken, axiosJWT);
+
+    } catch (error) {
+        console.error('Update user failed:', error);
+        alert(error.response ? error.response.data.message : error.message);
+    }
+}
+
+export { loginUser, logoutUser, updateUser };
