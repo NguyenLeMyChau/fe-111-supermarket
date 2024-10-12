@@ -1,15 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { formatDate } from '../../utils/fotmatDate';
 import FrameData from '../../containers/frameData/FrameData';
 import { useLocation, useNavigate } from 'react-router';
 import AddBill from './AddBill';
 import { useSelector } from 'react-redux';
+import BillDetail from './BillDetail';
+import Modal from '../../components/modal/Modal';
 
 export default function Bill() {
     const navigate = useNavigate();
     const location = useLocation();
+
     const orders = useSelector((state) => state.order?.orders);
     const isAddBill = location.pathname.includes('add-bill');
+    const [isBillDetail, setIsBillDetail] = useState(false);
+    const [selectedOrder, setSelectedOrder] = useState(null);
 
     const orderColumn = [
         {
@@ -36,8 +41,9 @@ export default function Bill() {
         }
     ];
 
-    const handleRowClick = (order) => {
-
+    const handleRowClick = async (order) => {
+        setSelectedOrder(order);
+        setIsBillDetail(true);
     };
 
     return (
@@ -45,6 +51,14 @@ export default function Bill() {
             {
                 isAddBill ? (
                     <AddBill />
+                ) : isBillDetail ? (
+                    <Modal
+                        title={'Thông tin phiếu nhập'}
+                        isOpen={isBillDetail}
+                        onClose={() => setIsBillDetail(false)}
+                    >
+                        <BillDetail bill={selectedOrder} />
+                    </Modal>
                 ) : (
                     <FrameData
                         title="Phiếu nhập kho"
