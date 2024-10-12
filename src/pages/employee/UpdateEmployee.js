@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
 import Button from '../../components/button/Button';
 import Input from '../../components/input/Input';
+import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
+import { updateEmployee } from '../../services/employeeRequest';
+import { useNavigate } from 'react-router';
 
 const UpdateEmployee = ({ employee }) => {
-    console.log(employee);
+    const accessToken = useAccessToken();
+    const axiosJWT = useAxiosJWT();
+    const navigate = useNavigate();
+
     const [formData, setFormData] = useState({
         name: employee.name,
         phone: employee.phone,
@@ -11,6 +17,7 @@ const UpdateEmployee = ({ employee }) => {
         gender: employee.gender,
         address: employee.address,
         active: employee.active,
+        account_id: employee.account_id,
     });
 
     const handleChange = (e) => {
@@ -35,9 +42,12 @@ const UpdateEmployee = ({ employee }) => {
         }));
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         // Call API to update user data
+        console.log('formData:', formData);
+        await updateEmployee(employee._id, formData, accessToken, axiosJWT);
+        navigate('/admin/employee');
     };
 
     return (
