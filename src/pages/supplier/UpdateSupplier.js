@@ -1,12 +1,19 @@
 import React, { useState } from 'react';
 import Button from '../../components/button/Button';
 import Input from '../../components/input/Input';
+import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
+import { updateSupplier } from '../../services/supplierRequest';
 
 const UpdateSupplier = ({ supplier }) => {
+    const accessToken = useAccessToken();
+    const axiosJWT = useAxiosJWT();
+
     const [formData, setFormData] = useState({
         name: supplier.name,
         phone: supplier.phone,
         email: supplier.email,
+        address: supplier.address,
+        description: supplier.description,
     });
 
     const handleChange = (e) => {
@@ -17,9 +24,10 @@ const UpdateSupplier = ({ supplier }) => {
         });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         // Call API to update user data
+        await updateSupplier(supplier._id, formData, accessToken, axiosJWT);
     };
 
     return (
@@ -28,11 +36,12 @@ const UpdateSupplier = ({ supplier }) => {
             <form onSubmit={handleSubmit}>
 
                 <Input
-                    label='Tên nhà cung cấp'
+                    label='Nhà cung cấp'
                     name='name'
                     placeholder='Nhập tên nhà cung cấp'
                     value={formData.name}
                     onChange={handleChange}
+                    width={500}
                 />
 
                 <Input
@@ -41,7 +50,7 @@ const UpdateSupplier = ({ supplier }) => {
                     placeholder='Nhập số điện thoại'
                     value={formData.phone}
                     onChange={handleChange}
-                    disabled={true}
+                    width={500}
                 />
 
                 <Input
@@ -50,6 +59,25 @@ const UpdateSupplier = ({ supplier }) => {
                     name='email'
                     value={formData.email}
                     onChange={handleChange}
+                    width={500}
+                />
+
+                <Input
+                    label='Địa chỉ'
+                    name='address'
+                    placeholder='Nhập địa chỉ'
+                    value={formData.address}
+                    onChange={handleChange}
+                    width={500}
+                />
+
+                <Input
+                    label='Mô tả'
+                    name='description'
+                    placeholder='Nhập mô tả'
+                    value={formData.description}
+                    onChange={handleChange}
+                    width={500}
                 />
 
                 <div className='flex-row-center'>

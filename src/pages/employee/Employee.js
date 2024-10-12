@@ -24,9 +24,11 @@ export default function Employee() {
     };
 
     const employeeColumns = [
-        { title: 'Họ và tên', dataIndex: 'name', key: 'name', width: '30%' },
-        { title: 'Số điện thoại', dataIndex: 'phone', key: 'phone', width: '20%' },
-        { title: 'Email', dataIndex: 'email', key: 'email', width: '20%' },
+        { title: 'Họ và tên', dataIndex: 'name', key: 'name', width: '20%' },
+        { title: 'Số điện thoại', dataIndex: 'phone', key: 'phone', width: '10%' },
+        { title: 'Email', dataIndex: 'email', key: 'email', width: '10%' },
+        { title: 'Địa chỉ', dataIndex: 'address', key: 'address', width: '20%' },
+        { title: 'Giới tính', dataIndex: 'gender', key: 'gender', width: '10%', render: (gender) => gender ? 'Nữ' : 'Nam' },
         {
             title: 'Hoạt động',
             dataIndex: 'active',
