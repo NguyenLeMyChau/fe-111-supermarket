@@ -3,6 +3,7 @@ import Button from '../../components/button/Button';
 import Input from '../../components/input/Input';
 
 const UpdateEmployee = ({ employee }) => {
+    console.log(employee);
     const [formData, setFormData] = useState({
         name: employee.name,
         phone: employee.phone,
@@ -68,7 +69,6 @@ const UpdateEmployee = ({ employee }) => {
                     placeholder='Nhập email'
                     value={formData.email}
                     onChange={handleChange}
-                    disabled={true}
                 />
 
                 <Input
@@ -107,7 +107,7 @@ const UpdateEmployee = ({ employee }) => {
                     <div className='login-button' style={{ width: 200 }}>
                         <Button
                             type='submit'
-                            text='Cập nhật nhân viên'
+                            text='Cập nhật'
                         />
                     </div>
                 </div>
