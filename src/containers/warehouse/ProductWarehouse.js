@@ -1,14 +1,14 @@
-import { useNavigate } from "react-router";
-import Button from "../../components/button/Button";
+// import { useNavigate } from "react-router";
+// import Button from "../../components/button/Button";
 import Modal from "../../components/modal/Modal";
 import FrameData from "../../containers/frameData/FrameData";
 
 export default function ProductWarehouse({ isModalOpen, closeModal, products, productColumns }) {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
-    const handleOrderClick = (product) => {
-        navigate('/admin/order/add-order', { state: { selectedProduct: product } });
-    };
+    // const handleOrderClick = (product) => {
+    //     navigate('/admin/order/add-order', { state: { selectedProduct: product } });
+    // };
 
     return (
         <Modal
@@ -19,7 +19,7 @@ export default function ProductWarehouse({ isModalOpen, closeModal, products, pr
             {
                 products ? (
                     <>
-                        <div className="warehouse-container">
+                        {/* <div className="warehouse-container">
                             <div className="warehouse-button">
                                 <Button
                                     text='Đặt hàng'
@@ -28,7 +28,7 @@ export default function ProductWarehouse({ isModalOpen, closeModal, products, pr
 
                                 />
                             </div>
-                        </div>
+                        </div> */}
                         <FrameData
                             data={products}
                             columns={productColumns}

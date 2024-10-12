@@ -28,16 +28,19 @@ export default function FrameData({ title, buttonText, data, columns, onRowClick
     return (
         <div className='frame-data-container'>
             <>
-                {buttonText && (
-                    <header className='flex-row-space-between frame-data-padding'>
-                        <h3>{title}</h3>
-                        <div className='flex-row-align-center'>
+                <header className='flex-row-space-between frame-data-padding'>
+                    <h3>{title}</h3>
+                    <div className='flex-row-align-center'>
+                        {buttonText && (
+
                             <Button
                                 text={buttonText}
                                 backgroundColor='#1366D9'
                                 className='text-sm font-weight-medium'
                                 onClick={handleButtonClick}
                             />
+                        )}
+                        {handleFilterClick && (
                             <Button
                                 text='Lọc'
                                 className='text-sm font-weight-medium text-black'
@@ -45,9 +48,10 @@ export default function FrameData({ title, buttonText, data, columns, onRowClick
                                 icon={<IoFilterOutline size={20} />}
                                 onClick={handleFilterClick}
                             />
-                        </div>
-                    </header>
-                )}
+                        )}
+                    </div>
+                </header>
+
 
                 <main className='main'>
                     {currentItems && (

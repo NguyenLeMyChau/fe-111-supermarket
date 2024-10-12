@@ -68,9 +68,46 @@ const updateOrderStatus = async (accessToken, axiosJWT, orderId, newStatus, prod
     }
 }
 
+const addBillWarehouse = async (orderData, accessToken, axiosJWT) => {
+    const { supplierId, accountId, productList } = orderData;
+
+    try {
+        const response = await axiosJWT.post(`/api/warehouse/add-bill-warehouse`,
+            { supplierId, accountId, productList },
+            {
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+        return response.data;
+    } catch (error) {
+        console.error('Add bill failed:', error);
+        alert(error.response ? error.response.data.message : error.message);
+    }
+}
+
+const getAllBill = async (accessToken, axiosJWT, dispatch) => {
+    dispatch(getOrderStart());
+    try {
+        const response = await axiosJWT.get(`api/warehouse/get-all-bill`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        dispatch(getOrderSuccess(response.data));
+        return response.data;
+    } catch (error) {
+        dispatch(getOrderFailed());
+        console.error('Get all order failed:', error);
+        alert(error.response ? error.response.data.message : error.message);
+    }
+}
+
 export {
     getAllWarehouse,
     getAllOrder,
     orderProductFromSupplier,
-    updateOrderStatus
+    updateOrderStatus,
+    addBillWarehouse,
+    getAllBill
 };
