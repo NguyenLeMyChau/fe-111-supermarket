@@ -5,10 +5,13 @@ import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import { MdDoNotDisturbAlt } from 'react-icons/md';
 import { formatDate } from '../../utils/fotmatDate';
 import Modal from '../../components/modal/Modal';
+import { CiEdit } from 'react-icons/ci';
 
 import AddPromotionHeader from './AddPromotion';
 import AddPromotionLine from './AddPromotionLine';
 import AddPromotionDetail from './AddPromotionDetail';
+import UpdatePromotionHeader from './UpdatePromotionHeader';
+import UpdatePromotionLine from './UpdatePromotionLine';
 
 export default function Promotion() {
   const promotions = useSelector((state) => state.promotion?.promotions) || [];
@@ -21,8 +24,38 @@ export default function Promotion() {
   const [promotionDetail, setPromotionDetail] = useState([]);
   const [isModalOpenDetail, setIsModalOpenDetail] = useState(false);
 
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isEditModalLineOpen, setIsEditModalLineOpen] = useState(false);
+
+  const typeMapping = {
+    'amount': 'Giảm giá',
+    'quantity': 'Tặng sản phẩm',
+    'percentage': 'Phiếu giảm giá',
+    'combo': 'Combo',
+  };
+
+  const handleEditClick = (event, promotionHeader) => {
+    event.stopPropagation(); 
+    selectCurrentHeader(promotionHeader);
+    setIsEditModalOpen(true);
+};
+const handleCloseEditModal = () => {
+  setIsEditModalOpen(false);
+  selectCurrentHeader(null);
+};
+
+const handleEditClickLine = (event, promotionLine) => {
+  event.stopPropagation(); 
+  selectCurrentLine(promotionLine);
+  setIsEditModalLineOpen(true);
+};
+const handleCloseEditModalLine  = () => {
+  setIsEditModalLineOpen(false);
+selectCurrentLine(null);
+};
+
   const promotionHeaderColumn = [
-    { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '40%' },
+    { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '40%', },
     {
       title: 'Số lượng line',
       dataIndex: 'lines',
@@ -57,16 +90,29 @@ export default function Promotion() {
         active
           ? <IoIosCheckmarkCircleOutline style={{ color: 'green' }} size={20} />
           : <MdDoNotDisturbAlt style={{ color: 'red' }} size={20} />
-    },];
+    },
+    {
+      title: 'Chỉnh sửa',
+      key: 'edit',
+      width: '10%',
+      className: 'text-center',
+      render: (text, record) => (
+          <CiEdit
+              style={{ color: 'blue', cursor: 'pointer' }}
+              size={25}
+              onClick={(event) => handleEditClick(event, record)}
+          />
+      ),
+  },];
 
   const promotionLineColumn = [
-    { title: 'Loại khuyến mãi', dataIndex: 'type', key: 'type', width: '15%' },
+    { title: 'Loại khuyến mãi', dataIndex: 'type', key: 'type', width: '15%',render: (text) => typeMapping[text] || text, },
     { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '30%' },
     {
       title: 'Số lượng sản phẩm',
       dataIndex: 'details',
       key: 'details',
-      width: '10%',
+      width: '15%',
       className: 'text-center',
       render: (details) => (Array.isArray(details) ? details.length : 0)
     },
@@ -97,7 +143,19 @@ export default function Promotion() {
         active
           ? <IoIosCheckmarkCircleOutline style={{ color: 'green' }} size={20} />
           : <MdDoNotDisturbAlt style={{ color: 'red' }} size={20} />
-    },];
+    }, {
+      title: 'Chỉnh sửa',
+      key: 'edit',
+      width: '10%',
+      className: 'text-center',
+      render: (text, record) => (
+          <CiEdit
+              style={{ color: 'blue', cursor: 'pointer' }}
+              size={25}
+              onClick={(event) => handleEditClickLine(event, record)}
+          />
+      ),
+  },];
 
   const promotionDetailColumn = [
     { title: 'Số tiền bán', dataIndex: 'amount_sales', key: 'amount_sales', width: '10%', className: 'text-center' },
@@ -106,9 +164,8 @@ export default function Promotion() {
     { title: 'Số tiền tặng', dataIndex: 'amount_donate', key: 'amount_donate', width: '10%', className: 'text-center' },
     { title: 'Tên sản phẩm', dataIndex: 'product', key: 'product', width: '15%', render: (product) => product?.name },
     { title: 'Số lượng', dataIndex: 'quantity', key: 'quantity', width: '10%', className: 'text-center' },
-    { title: 'Sản phẩm tặng', dataIndex: 'product', key: 'product_donate', width: '15%', render: (product) => product?.name },
+    { title: 'Sản phẩm tặng', dataIndex: 'product_donate', key: 'product_donate', width: '15%', render: (product) => product?.name },
     { title: 'Số lượng tặng', dataIndex: 'quantity_donate', key: 'quantity_donate', width: '10%', className: 'text-center' },
-    
   ];
 
 
@@ -126,6 +183,7 @@ export default function Promotion() {
   const handleRowClickDetail = (promotionLine) => {
 
     const promotionDetail = Array.isArray(promotionLine.details) ? promotionLine.details : [];
+    console.log(promotionDetail)
     selectCurrentLine(promotionLine);
     setPromotionDetail(promotionDetail);
     setIsModalOpenDetail(true);
@@ -195,6 +253,33 @@ export default function Promotion() {
           )}
         />
       </Modal>
+      {isEditModalOpen && (
+                <Modal
+                title={`Cập nhật ${currentHeader.description}`}
+                    isOpen={isEditModalOpen}
+                    onClose={handleCloseEditModal}
+                    width={'30%'}
+                >
+                    <UpdatePromotionHeader
+                        promotionHeader={currentHeader}
+                        onClose={handleCloseEditModal}
+                    />
+                </Modal>
+            )}
+             {isEditModalLineOpen && (
+                <Modal
+                title={`Cập nhật ${currentHeader.description}`}
+                    isOpen={isEditModalLineOpen}
+                    onClose={handleCloseEditModalLine}
+                    width={'30%'}
+                >
+                    <UpdatePromotionLine
+                        promotionLine={currentLine}
+                        promotionHeader={currentHeader}
+                        onClose={handleCloseEditModalLine}
+                    />
+                </Modal>
+            )}
     </div>
 
 

@@ -8,21 +8,12 @@ import QuantityModal from "./Quantity/QuantityModal.js";
 const Sales = () => {
   const navigate = useNavigate();
   const [product, setProduct] = useState();
-  const [barcode, setBarcode] = useState(0);
+  const [barcode, setBarcode] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [quantityModalOpen, setQuantityModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  const [cart, setCart] = useState([
-    {
-      id: 1,
-      name: "Sample Product",
-      price: 100000, // Sample price in VND
-      quantity: 1,
-      discount: 10000, // Sample discount in VND
-      total: 90000 // Price - Discount
-    }
-  ]);
-  const [total, setTotal] = useState(90000); // Initial total based on sample product
+  const [cart, setCart] = useState([]);
+  const [total, setTotal] = useState(); // Initial total based on sample product
 
   const handleKeyPress = (value) => {
     setBarcode((prev) => parseInt(`${prev}${value}`));
@@ -169,9 +160,9 @@ const handleCancel = () => {
         <div className="keypad-section">
           <div className="input-section">
             <input
-            
-              value={barcode} 
-              type="text"
+              value={barcode}
+              onChange={(e) => setBarcode(e.target.value)}
+              type="number"
               className="keypad-input"
               placeholder="Nhập giá trị"
             />

@@ -19,7 +19,7 @@ export default function Stall() {
             <div className='staff-header'> <Header supermarketName={infoHeader.supermarketName} address={infoHeader.address} employeeName={infoHeader.employeeName} /></div>
             <main className='staff-main-content'>
                 <div className='staff-sales' >  <Sales /></div>
-                <div className='staff-promotion'>  <Promotion /></div>
+                {/* <div className='staff-promotion'>  <Promotion /></div> */}
             </main>
         </div>
     );
