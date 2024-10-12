@@ -3,6 +3,9 @@ import { useSelector } from 'react-redux';
 import FrameData from '../../containers/frameData/FrameData';
 import ProductSupplier from './ProductSupplier';
 import { useLocation, useNavigate } from 'react-router';
+import { CiEdit } from 'react-icons/ci';
+import Modal from '../../components/modal/Modal';
+import UpdateSupplier from './UpdateSupplier';
 
 export default function Supplier() {
     const navigate = useNavigate();
@@ -15,12 +18,39 @@ export default function Supplier() {
     }));
     const [products, setProducts] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [selectedSupplier, setSelectedSupplier] = useState(null);
+
+
+    const handleEditClick = (event, product) => {
+        event.stopPropagation(); // Ngăn chặn sự kiện click của hàng bảng
+        setSelectedSupplier(product);
+        setIsEditModalOpen(true);
+    };
+
+    const handleCloseEditModal = () => {
+        setIsEditModalOpen(false);
+        setSelectedSupplier(null);
+    };
 
     const supplierColumns = [
-        { title: 'Nhà cung cấp', dataIndex: 'name', key: 'name', width: '40%' },
+        { title: 'Nhà cung cấp', dataIndex: 'name', key: 'name', width: '30%' },
         { title: 'Số điện thoại', dataIndex: 'phone', key: 'phone', width: '20%' },
         { title: 'Email', dataIndex: 'email', key: 'email', width: '20%' },
         { title: 'Số lượng sản phẩm', dataIndex: 'productCount', key: 'productCount', width: '20%', className: 'text-center' },
+        {
+            title: 'Chỉnh sửa',
+            key: 'edit',
+            width: '10%',
+            className: 'text-center',
+            render: (text, record) => (
+                <CiEdit
+                    style={{ color: 'blue', cursor: 'pointer' }}
+                    size={25}
+                    onClick={(event) => handleEditClick(event, record)}
+                />
+            ),
+        },
     ];
 
     const productColumns = [
@@ -75,6 +105,20 @@ export default function Supplier() {
                 products={products}
                 productColumns={productColumns}
             />
+
+
+            {isEditModalOpen && (
+                <Modal
+                    title='Cập nhật nhà cung cấp'
+                    isOpen={isEditModalOpen}
+                    onClose={handleCloseEditModal}
+                    width={'30%'}
+                >
+                    <UpdateSupplier
+                        supplier={selectedSupplier}
+                    />
+                </Modal>
+            )}
         </div>
     );
 }

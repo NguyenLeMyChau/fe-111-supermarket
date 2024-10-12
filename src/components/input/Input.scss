@@ -78,3 +78,13 @@
 .radio-option input {
     margin-right: 5px;
 }
+
+.input-field:disabled {
+    background-color: #c3c3c3;
+    cursor: not-allowed;
+}
+
+.radio-option input:disabled {
+    background-color: #c3c3c3;
+    cursor: not-allowed;
+}

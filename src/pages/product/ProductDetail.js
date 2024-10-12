@@ -91,13 +91,14 @@ export default function ProductDetail() {
                         <div className='header'>
                             <div className='left'>
                                 <div className='row'>
+                                    <label>Mã hàng</label>
+                                    <span>{data.item_code}</span>
+                                </div>
+                                <div className='row'>
                                     <label>Tên sản phẩm</label>
                                     <span>{data.name}</span>
                                 </div>
-                                <div className='row'>
-                                    <label>ID sản phẩm</label>
-                                    <span>{data._id}</span>
-                                </div>
+
                                 <div className='row'>
                                     <label>Loại sản phẩm</label>
                                     <span>{data.category_id.name}</span>
@@ -106,10 +107,7 @@ export default function ProductDetail() {
                                     <label>Barcode</label>
                                     <span>{data.barcode}</span>
                                 </div>
-                                <div className='row'>
-                                    <label>Mã hàng</label>
-                                    <span>{data.item_code}</span>
-                                </div>
+
                             </div>
                             <div className='right flex-row-align-center'>
                                 <img src={data.img} alt='avatar' />

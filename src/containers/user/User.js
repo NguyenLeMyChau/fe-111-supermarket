@@ -1,9 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import './User.scss';
 import Button from '../../components/button/Button';
+import Modal from '../../components/modal/Modal';
+import UpdateUser from './UpdateUser';
+
 const User = () => {
     const user = useSelector((state) => state.auth?.login?.currentUser);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleOpenModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+    };
 
     if (!user) {
         return <div className="user-container">No user data available.</div>;
@@ -18,6 +30,7 @@ const User = () => {
                         text={'Cập nhật thông tin'}
                         backgroundColor='#1366D9'
                         className='text-sm font-weight-medium'
+                        onClick={handleOpenModal}
                     />
                 </div>
             </header>
@@ -47,7 +60,22 @@ const User = () => {
                     <span className="value">{user.user.address}</span>
                 </div>
             </div>
+            {
+                isModalOpen && (
+                    <Modal
+                        title='Cập nhật thông tin'
+                        isOpen={isModalOpen}
+                        onClose={handleCloseModal}
+                        width={'30%'}
+                    >
+                        <UpdateUser
+                            user={user.user}
+                        />
+                    </Modal>
+                )
+            }
         </div>
+
     );
 };
 

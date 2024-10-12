@@ -48,12 +48,12 @@ export const validatePromotionLineData = (promotionLineData) => {
     //     errors.startDate = 'Ngày bắt đầu không được để trống';
     // }
 
-    // if (!promotionLineData.endDate) {
-    //     errors.endDate = 'Ngày kết thúc không được để trống';
-    // }
-    // if (promotionLineData.startDate && promotionLineData.endDate && new Date(promotionLineData.endDate) < new Date(promotionLineData.startDate)) {
-    //     errors.endDate = 'Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu';
-    // }
+    if (!promotionLineData.endDate) {
+        errors.endDate = 'Ngày kết thúc không được để trống';
+    }
+    if (promotionLineData.startDate && promotionLineData.endDate && new Date(promotionLineData.endDate) < new Date(promotionLineData.startDate)) {
+        errors.endDate = 'Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu';
+    }
     // if(promotionLineData.promotionHeader_id.trim()){
     //     errors.promotionHeader_id = 'ID chương trình khuyến mãi không tìm thấy';
     // }

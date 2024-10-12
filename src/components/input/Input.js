@@ -34,6 +34,7 @@ export default function Input(props) {
                             name={props.name}
                             value={props.value}
                             onChange={props.onChange}
+                            disabled={props.disabled}
                         />
                         {/* {props.error && (
                             <span className='error-message'>
