@@ -67,3 +67,38 @@ const addPromotionDetail = async (promotionDetailData, accessToken, axiosJWT) =>
 
 export { addPromotionDetail };
 
+
+const updatePromotionHeader = async (promotionHeaderId, updatedData, accessToken, axiosJWT) => {
+    try {
+        const response = await axiosJWT.put(`/api/promotion/update-promotion-header/${promotionHeaderId}`, updatedData, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Update promotion header failed:', error);
+        throw error;
+    }
+};
+
+export { updatePromotionHeader };
+
+
+const updatePromotionLine = async (promotionLineId, updatedData, accessToken, axiosJWT) => {
+    try {
+        const response = await axiosJWT.put(`/api/promotion/update-promotion-line/${promotionLineId}`, updatedData, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Update promotion header failed:', error);
+        throw error;
+    }
+};
+
+export { updatePromotionLine };
+
+

@@ -20,19 +20,19 @@ export const validatePromotionHeaderData = (promotionData) => {
     let errors = {};
 
     if (!promotionData.description.trim()) {
-        errors.description = 'Mô tả chương trình không được để trống';
+        return errors = 'Mô tả chương trình không được để trống';
     }
 
     if (!promotionData.startDate) {
-        errors.startDate = 'Ngày bắt đầu không được để trống';
+        return errors = 'Ngày bắt đầu không được để trống';
     }
 
     if (!promotionData.endDate) {
-        errors.endDate = 'Ngày kết thúc không được để trống';
+        return   errors = 'Ngày kết thúc không được để trống';
     }
 
     if (promotionData.startDate && promotionData.endDate && new Date(promotionData.endDate) < new Date(promotionData.startDate)) {
-        errors.endDate = 'Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu';
+        return   errors = 'Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu';
     }
 
     return errors;
@@ -41,22 +41,23 @@ export const validatePromotionHeaderData = (promotionData) => {
 export const validatePromotionLineData = (promotionLineData) => {
     let errors = {};
 
-    // if (!promotionLineData.description.trim()) {
-    //     errors.description = 'Mô tả dòng khuyến mãi không được để trống';
-    // }
-    // if (!promotionLineData.startDate) {
-    //     errors.startDate = 'Ngày bắt đầu không được để trống';
-    // }
+    if (!promotionLineData.description.trim()) {
+        return errors = 'Mô tả dòng khuyến mãi không được để trống';
+    }
+    if (!promotionLineData.startDate) {
+        return  errors = 'Ngày bắt đầu không được để trống';
+    }
 
     if (!promotionLineData.endDate) {
-        errors.endDate = 'Ngày kết thúc không được để trống';
+        return errors = 'Ngày kết thúc không được để trống';
     }
     if (promotionLineData.startDate && promotionLineData.endDate && new Date(promotionLineData.endDate) < new Date(promotionLineData.startDate)) {
-        errors.endDate = 'Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu';
+        return errors = 'Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu';
     }
-    // if(promotionLineData.promotionHeader_id.trim()){
-    //     errors.promotionHeader_id = 'ID chương trình khuyến mãi không tìm thấy';
-    // }
+    if (!promotionLineData.type) {
+        return errors = 'Vui lòng chọn loại khuyến mãi';
+    }
+   
     return errors;
 };
 

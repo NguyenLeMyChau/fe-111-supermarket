@@ -28,6 +28,7 @@ export default function Input(props) {
                     <div className='input-container-column'>
                         <input
                             type={props.type || 'text'}
+                            defaultChecked={props.defaultChecked}
                             placeholder={props.placeholder}
                             className={`input-field ${props.error ? 'input-error' : ''}`}
                             style={{ width: `${props.width}px`, height: `${props.height}px` }}
@@ -35,6 +36,8 @@ export default function Input(props) {
                             value={props.value}
                             onChange={props.onChange}
                             disabled={props.disabled}
+                            min={props.min}
+                            max={props.max}
                         />
                         {/* {props.error && (
                             <span className='error-message'>

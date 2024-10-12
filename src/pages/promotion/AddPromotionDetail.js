@@ -39,7 +39,7 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
     };
 
     useEffect(() => {
-        if (promotionLine.type === 'quantity' && products.length===0) {
+        if ((promotionLine.type === 'quantity' ||promotionLine.type === 'amount') && products.length===0) {
             fetchProducts();
         }
     }, [promotionLine.type, accessToken, axiosJWT, dispatch]);
@@ -128,6 +128,18 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
                     )}
 
                     {promotionLine.type === 'amount' && (
+                        <>
+                        <Dropdownpicker
+                        className='promotion-dropdown'
+                        label='Sản phẩm'
+                        options={products.map((product) => ({
+                            value: product._id,
+                            label: product.name,
+                        }))}
+                        value={promotionDetailData.product_id}
+                        onChange={(value) => handleDropdownChange('product_id', value)}
+                        error={errors.product_id}
+                    />
                         <Input
                             className='promotion-input'
                             type='number'
@@ -137,6 +149,7 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
                             onChange={handleChange}
                             error={errors.amount_donate}
                         />
+                        </>
                     )}
 
                     {promotionLine.type === 'quantity' && (

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Promotion.scss';
 import Modal from '../../components/modal/Modal';
 import Input from '../../components/input/Input';
@@ -7,20 +7,34 @@ import Select from 'react-select'; // Import React Select
 import { addPromotionLine } from '../../services/promotionRequest';
 import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
 import { validatePromotionLineData } from '../../utils/validation';
+import { format } from 'date-fns';
 
 export default function AddPromotionLine({ isOpen, onClose, promotionHeader }) {
     const axiosJWT = useAxiosJWT();
     const accessToken = useAccessToken();
-
+    const [minStartDate, setMinStartDate] = useState('');
     const [errors, setErrors] = useState({});
+    const today = format(new Date(), 'yyyy-MM-dd');
     const [promotionLineData, setPromotionLineData] = useState({
         description: '',
         startDate: '',
         endDate: '',
-        type: 'percentage', // Default value as a string
-        status: 'active', // Default value as a string
+        type: '', // Default value as a string
+        isActive: true, // Default value as a string
         promotionHeader_id: promotionHeader._id
     });
+
+    useEffect(() => {
+        const startDate = new Date(promotionHeader.startDate);
+        const minStart = startDate < new Date(today) ? today : format(startDate, 'yyyy-MM-dd');
+        setMinStartDate(minStart);
+
+        setPromotionLineData(prev => ({
+            ...prev,
+            startDate: minStart,
+            endDate: format(new Date(promotionHeader.endDate), 'yyyy-MM-dd') // Set endDate from promotionHeader
+        }));
+    }, [promotionHeader, today]);
 
     // Update the handleChange to set the string value, not the entire object
     const handleChange = (selectedOption, action) => {
@@ -30,6 +44,12 @@ export default function AddPromotionLine({ isOpen, onClose, promotionHeader }) {
 
     const handleAddPromotionLine = async (e) => {
         e.preventDefault();
+
+        // Validate endDate to ensure it's not less than startDate
+        if (new Date(promotionLineData.endDate) < new Date(promotionLineData.startDate)) {
+            alert('Ngày kết thúc không được nhỏ hơn ngày bắt đầu.');
+            return;
+        }
 
         const validationErrors = validatePromotionLineData(promotionLineData);
         if (Object.keys(validationErrors).length > 0) {
@@ -42,10 +62,10 @@ export default function AddPromotionLine({ isOpen, onClose, promotionHeader }) {
             if (response) {
                 setPromotionLineData({
                     description: '',
-                    startDate: '',
+                    startDate: minStartDate, // Reset startDate to minStartDate
                     endDate: '',
                     type: 'percentage', // Reset to default value
-                    status: 'active', // Reset to default value
+                    isActive: true, // Reset to default value
                     promotionHeader_id: promotionHeader._id
                 });
                 setErrors({});
@@ -63,21 +83,15 @@ export default function AddPromotionLine({ isOpen, onClose, promotionHeader }) {
         { value: 'quantity', label: 'Số lượng' }
     ];
 
-    const statusOptions = [
-        { value: 'active', label: 'Active' },
-        { value: 'inactive', label: 'Inactive' }
-    ];
-
     return (
         <Modal
             title={`${promotionHeader.description}`}
             isOpen={isOpen}
             onClose={onClose}
             width={'30%'}
-
         >
-            <div className='flex-column-center' >
-                <form onSubmit={handleAddPromotionLine} >
+            <div className='flex-column-center'>
+                <form onSubmit={handleAddPromotionLine}>
                     <Input
                         label='Mô tả dòng khuyến mãi'
                         placeholder='Nhập mô tả'
@@ -94,6 +108,8 @@ export default function AddPromotionLine({ isOpen, onClose, promotionHeader }) {
                         value={promotionLineData.startDate}
                         onChange={(e) => setPromotionLineData({ ...promotionLineData, startDate: e.target.value })}
                         error={errors.startDate}
+                        min={minStartDate}
+                        max={new Date(promotionHeader.endDate).toISOString().slice(0, 10)}
                     />
 
                     <Input
@@ -103,6 +119,8 @@ export default function AddPromotionLine({ isOpen, onClose, promotionHeader }) {
                         value={promotionLineData.endDate}
                         onChange={(e) => setPromotionLineData({ ...promotionLineData, endDate: e.target.value })}
                         error={errors.endDate}
+                        min={promotionLineData.startDate} // Set min based on startDate
+                        max={new Date(promotionHeader.endDate).toISOString().slice(0, 10)}
                     />
 
                     <label htmlFor='type'>Loại khuyến mãi:</label>
@@ -110,15 +128,6 @@ export default function AddPromotionLine({ isOpen, onClose, promotionHeader }) {
                         name='type'
                         options={typeOptions}
                         value={typeOptions.find(option => option.value === promotionLineData.type)} // Match the string value
-                        onChange={handleChange}
-                        classNamePrefix="select"
-                    />
-
-                    <label htmlFor='status'>Trạng thái:</label>
-                    <Select
-                        name='status'
-                        options={statusOptions}
-                        value={statusOptions.find(option => option.value === promotionLineData.status)} // Match the string value
                         onChange={handleChange}
                         classNamePrefix="select"
                     />
