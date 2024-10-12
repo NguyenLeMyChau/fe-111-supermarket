@@ -8,6 +8,7 @@ import { getAllCategories, getAllProducts } from '../services/productRequest';
 import { getAllEmployees } from '../services/employeeRequest';
 import { getAllPromotions } from '../services/promotionRequest';
 import { getAllBill, getAllWarehouse } from '../services/warehouseRequest';
+import { getAllUnit } from '../services/unitRequest';
 
 const useCommonData = () => {
     const dispatch = useDispatch();
@@ -45,6 +46,9 @@ const useCommonData = () => {
         if (apiCall) {
             apiCall(currentUser.accessToken, axiosJWT, dispatch);
         }
+
+        getAllUnit(currentUser.accessToken, axiosJWT, dispatch);
+
     }, [currentUser, axiosJWT, dispatch, location.pathname, apiCallMapping, warehouses]);
 
 

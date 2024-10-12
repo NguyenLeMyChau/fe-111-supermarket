@@ -8,6 +8,7 @@ import ProductDetail from './ProductDetail'; // Import ProductDetail component
 import { CiEdit } from 'react-icons/ci';
 import Modal from '../../components/modal/Modal';
 import UpdateProduct from './UpdateProduct';
+import AddProduct from './AddProduct';
 
 export default function Product() {
     const navigate = useNavigate();
@@ -17,6 +18,8 @@ export default function Product() {
 
     const products = useSelector((state) => state.product?.products) || [];
     const isProductDetail = location.pathname.includes('product-detail');
+    const [isOpenNewProduct, setIsOpenNewProduct] = useState(false);
+
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
 
@@ -68,6 +71,14 @@ export default function Product() {
                     data={products}
                     columns={productColumns}
                     onRowClick={handleRowClick}
+                    onButtonClick={() => setIsOpenNewProduct(true)}
+                />
+            )}
+
+            {isOpenNewProduct && (
+                <AddProduct
+                    isOpen={isOpenNewProduct}
+                    onClose={() => setIsOpenNewProduct(false)}
                 />
             )}
 

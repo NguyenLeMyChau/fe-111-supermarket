@@ -10,7 +10,7 @@ export default function AddSuplier({ isOpen, onClose }) {
     const accessToken = useAccessToken();
 
     const [supplierData, setSupplierData] = useState({ name: '', description: '', phone: '', email: '', address: '' });
-
+    const [errors, setErrors] = useState({});
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -18,7 +18,13 @@ export default function AddSuplier({ isOpen, onClose }) {
             ...supplierData,
             [name]: value,
         });
+        setErrors({
+            ...errors,
+            [name]: '',
+        });
     };
+
+    
 
 
     const handleAddSupplier = async (e) => {
@@ -93,7 +99,7 @@ export default function AddSuplier({ isOpen, onClose }) {
                         <div className='login-button' style={{ width: 200 }}>
                             <Button
                                 type='submit'
-                                text='Thêm loại sản phẩm'
+                                text='Thêm nhà cung cấp'
                             />
                         </div>
                     </div>

@@ -157,8 +157,8 @@ export default function Order() {
                         value={orderDetail?.status}
                         onChange={handleStatusSelect}
                         options={orderStatuses}
-                        menuPortalTarget={document.body}
                         isDisabled={orderStatus}
+                        menuPortalTarget={document.body}
                         styles={{
                             menuPortal: base => ({ ...base, zIndex: 9999, width: 200 }),
                             option: (provided, state) => ({

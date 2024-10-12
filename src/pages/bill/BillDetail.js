@@ -35,9 +35,9 @@ const BillDetail = ({ bill }) => {
                                 <th>Mã sản phẩm</th>
                                 <th>Tên sản phẩm</th>
                                 <th>Đơn vị tính</th>
-                                <th>Số lượng</th>
-                                <th>Đơn giá</th>
-                                <th>Thành tiền</th>
+                                <th style={{ textAlign: 'center' }}>Số lượng</th>
+                                <th style={{ textAlign: 'center' }}>Đơn giá</th>
+                                <th style={{ textAlign: 'center' }}>Thành tiền</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -46,9 +46,9 @@ const BillDetail = ({ bill }) => {
                                     <td>{product.item_code}</td>
                                     <td>{product.name}</td>
                                     <td>{product.unit_name}</td>
-                                    <td>{product.quantity}</td>
-                                    <td>{formatCurrency(product.price)}</td>
-                                    <td>{formatCurrency(product.total)}</td>
+                                    <td style={{ textAlign: 'center' }}>{product.quantity}</td>
+                                    <td style={{ textAlign: 'right' }}>{formatCurrency(product.price)}</td>
+                                    <td style={{ textAlign: 'right' }}>{formatCurrency(product.total)}</td>
                                 </tr>
                             ))}
                         </tbody>

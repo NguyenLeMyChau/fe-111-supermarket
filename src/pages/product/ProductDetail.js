@@ -59,18 +59,6 @@ export default function ProductDetail() {
             render: (date) => formatDate(date)
         },
         { title: 'Số lượng', dataIndex: 'quantity', key: 'quantity', width: '15%', className: 'text-center' },
-        {
-            title: 'Trạng thái',
-            dataIndex: 'status',
-            key: 'status',
-            width: '15%',
-            render: (status) =>
-                status ? (
-                    <span style={{ color: 'green', fontWeight: 500 }}>Đã nhập kho</span>
-                ) : (
-                    <span style={{ color: 'red', fontWeight: 500 }}>Chưa nhập kho</span>
-                ),
-        },
     ];
 
     return (
@@ -81,8 +69,6 @@ export default function ProductDetail() {
                     <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
                         <Tab label="Thông tin" {...a11yProps(0)} sx={{ marginRight: 5 }} />
                         <Tab label="Giao dịch" {...a11yProps(1)} sx={{ marginRight: 5 }} />
-                        <Tab label="Lịch sử" {...a11yProps(2)} sx={{ marginRight: 5 }} />
-                        <Tab label="Nhà cung cấp" {...a11yProps(2)} sx={{ marginRight: 5 }} />
                     </Tabs>
                 </Box>
                 <CustomTabPanel value={value} index={0}>
@@ -131,20 +117,7 @@ export default function ProductDetail() {
                                 </div>
 
                             </div>
-                            <div className='right'>
-                                <div className='row'>
-                                    <label>Tồn kho</label>
-                                    <span>100</span>
-                                </div>
-                                <div className='row'>
-                                    <label>Ngưỡng giá trị</label>
-                                    <span>24</span>
-                                </div>
-                                <div className='row'>
-                                    <label>Đang trên đường</label>
-                                    <span>0</span>
-                                </div>
-                            </div>
+
                         </div>
                     </div>
                 </CustomTabPanel>
@@ -157,9 +130,7 @@ export default function ProductDetail() {
                         columns={transactionColumn}
                     />
                 </CustomTabPanel>
-                <CustomTabPanel value={value} index={2}>
-                    Item Three
-                </CustomTabPanel>
+
             </Box>
         </div>
     );
