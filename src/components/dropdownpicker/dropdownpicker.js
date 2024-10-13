@@ -14,10 +14,11 @@ export default function Dropdownpicker({ label, options, value, onChange, error 
             <div className="dropdown-container">
                 <label className="dropdown-label">{label}</label>
                 <Dropdown 
-                style={{ width: 300}}
+                style={{ width: 300,fontSize:12}}
+                    
                     options={formattedOptions}
                     onChange={values => onChange(values[0]?.value)}
-                    value={formattedOptions.filter(option => option.value === value)} // Giá trị đã chọn
+                    values={formattedOptions.filter(option => option.value === value)} // Giá trị đã chọn
                     placeholder="Chọn một giá trị"
                     searchable
                     clearable

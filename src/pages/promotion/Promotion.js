@@ -12,11 +12,13 @@ import AddPromotionLine from './AddPromotionLine';
 import AddPromotionDetail from './AddPromotionDetail';
 import UpdatePromotionHeader from './UpdatePromotionHeader';
 import UpdatePromotionLine from './UpdatePromotionLine';
+import UpdatePromotionDetail from './UpdatePromotionDetail';
 
 export default function Promotion() {
   const promotions = useSelector((state) => state.promotion?.promotions) || [];
   const [currentHeader, selectCurrentHeader] = useState({});
   const [currentLine, selectCurrentLine] = useState({});
+  const [currentDetail, selectCurrentDetail] = useState({});
 
   const [promotionLine, setPromotionLine] = useState([]);
   const [isModalOpenLine, setIsModalOpenLine] = useState(false);
@@ -26,6 +28,7 @@ export default function Promotion() {
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isEditModalLineOpen, setIsEditModalLineOpen] = useState(false);
+  const [isEditModalDetailOpen, setIsEditModalDetailOpen] = useState(false);
 
   const typeMapping = {
     'amount': 'Giảm giá',
@@ -51,7 +54,16 @@ const handleEditClickLine = (event, promotionLine) => {
 };
 const handleCloseEditModalLine  = () => {
   setIsEditModalLineOpen(false);
-selectCurrentLine(null);
+};
+
+const handleEditClickDetail = (event, promotionDetail) => {
+  event.stopPropagation(); 
+  selectCurrentDetail(promotionDetail);
+  setIsEditModalDetailOpen(true);
+};
+const handleCloseEditModalDetail = () => {
+  setIsEditModalDetailOpen(false);
+  selectCurrentDetail(null);
 };
 
   const promotionHeaderColumn = [
@@ -157,17 +169,63 @@ selectCurrentLine(null);
       ),
   },];
 
-  const promotionDetailColumn = [
-    { title: 'Số tiền bán', dataIndex: 'amount_sales', key: 'amount_sales', width: '10%', className: 'text-center' },
-    { title: 'Phần trăm khuyến mãi', dataIndex: 'percent', key: 'percent', width: '10%', className: 'text-center' },
-    { title: 'Tôi đa', dataIndex: 'amount_limit', key: 'amount_limit', width: '10%', className: 'text-center' },
+  const promotionDetailColumnAmount = [
+    { title: 'Tên sản phẩm', dataIndex: 'product', key: 'product', width: '15%', render: (product) => product?.name },
+    { title: 'Số lượng', dataIndex: 'quantity', key: 'quantity', width: '10%', className: 'text-center' },
     { title: 'Số tiền tặng', dataIndex: 'amount_donate', key: 'amount_donate', width: '10%', className: 'text-center' },
+    {
+      title: 'Chỉnh sửa',
+      key: 'edit',
+      width: '10%',
+      className: 'text-center',
+      render: (text, record) => (
+          <CiEdit
+              style={{ color: 'blue', cursor: 'pointer' }}
+              size={25}
+              onClick={(event) => handleEditClickDetail(event, record)}
+          />
+      ),
+  },
+  ];
+  const promotionDetailColumnQuantity = [
     { title: 'Tên sản phẩm', dataIndex: 'product', key: 'product', width: '15%', render: (product) => product?.name },
     { title: 'Số lượng', dataIndex: 'quantity', key: 'quantity', width: '10%', className: 'text-center' },
     { title: 'Sản phẩm tặng', dataIndex: 'product_donate', key: 'product_donate', width: '15%', render: (product) => product?.name },
     { title: 'Số lượng tặng', dataIndex: 'quantity_donate', key: 'quantity_donate', width: '10%', className: 'text-center' },
+    {
+      title: 'Chỉnh sửa',
+      key: 'edit',
+      width: '10%',
+      className: 'text-center',
+      render: (text, record) => (
+          <CiEdit
+              style={{ color: 'blue', cursor: 'pointer' }}
+              size={25}
+              onClick={(event) => handleEditClickDetail(event, record)}
+          />
+      ),
+  },
   ];
-
+  const promotionDetailColumnPer = [
+    { title: 'Mã khuyến mãi', dataIndex: 'voucher', key: 'amount_donate', width: '15%', className: 'text-center' },
+    { title: 'Số tiền bán', dataIndex: 'amount_sales', key: 'amount_sales', width: '10%', className: 'text-center' },
+    { title: 'Phần trăm khuyến mãi', dataIndex: 'percent', key: 'percent', width: '10%', className: 'text-center' },
+    { title: 'Tôi đa', dataIndex: 'amount_limit', key: 'amount_limit', width: '10%', className: 'text-center' },
+    
+    {
+      title: 'Chỉnh sửa',
+      key: 'edit',
+      width: '10%',
+      className: 'text-center',
+      render: (text, record) => (
+          <CiEdit
+              style={{ color: 'blue', cursor: 'pointer' }}
+              size={25}
+              onClick={(event) => handleEditClickDetail(event, record)}
+          />
+      ),
+  },
+  ];
 
   const handleRowClickLine = (promotionHeader) => {
     const promotionLine = Array.isArray(promotionHeader.lines) ? promotionHeader.lines : [];
@@ -242,8 +300,13 @@ selectCurrentLine(null);
         <FrameData
           data={promotionDetail}
           buttonText="Thêm khuyến mãi"
-          columns={promotionDetailColumn}
-          itemsPerPage={8}
+          columns={
+            currentLine.type === 'quantity'
+              ? promotionDetailColumnQuantity
+              : currentLine.type === 'amount'
+              ? promotionDetailColumnAmount
+              : promotionDetailColumnPer
+          }          itemsPerPage={8}
           renderModal={(onClose) => (
             <AddPromotionDetail
               isOpen={true}
@@ -277,6 +340,20 @@ selectCurrentLine(null);
                         promotionLine={currentLine}
                         promotionHeader={currentHeader}
                         onClose={handleCloseEditModalLine}
+                    />
+                </Modal>
+            )}
+             {isEditModalDetailOpen && (
+                <Modal
+                title={`Cập nhật chương trình khuyến mãi`}
+                    isOpen={isEditModalDetailOpen}
+                    onClose={handleCloseEditModalDetail}
+                    width={'30%'}
+                >
+                    <UpdatePromotionDetail
+                        promotionLine={currentLine}
+                        promotionDetail={currentDetail}
+                        onClose={handleCloseEditModalDetail}
                     />
                 </Modal>
             )}

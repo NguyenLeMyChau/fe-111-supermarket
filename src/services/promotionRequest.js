@@ -94,11 +94,26 @@ const updatePromotionLine = async (promotionLineId, updatedData, accessToken, ax
         });
         return response.data;
     } catch (error) {
-        console.error('Update promotion header failed:', error);
+        console.error('Update promotion line failed:', error);
+        throw error;
+    }
+};
+export { updatePromotionLine };
+
+const updatePromotionDetail = async (promotionDetailId, updatedData, accessToken, axiosJWT) => {
+    try {
+        const response = await axiosJWT.put(`/api/promotion/update-promotion-detail/${promotionDetailId}`, updatedData, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Update promotion line failed:', error);
         throw error;
     }
 };
 
-export { updatePromotionLine };
+export { updatePromotionDetail };
 
 

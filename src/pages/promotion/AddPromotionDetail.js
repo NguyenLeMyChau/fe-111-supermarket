@@ -74,6 +74,7 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
                     amount_donate: '',
                     percent: '',
                     amount_limit: '',
+                    voucher:'',
                     promotionLine_id: promotionLine._id
                 });
                 setErrors({});
@@ -97,6 +98,15 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
                 <form className='promotion-detail-form' onSubmit={handleAddPromotionDetail}>
                     {promotionLine.type === 'percentage' && (
                         <>
+                        <Input
+                                className='promotion-input'
+                                type='text'
+                                label='Mã voucher'
+                                name='voucher'
+                                value={promotionDetailData.voucher}
+                                onChange={handleChange}
+                                error={errors.voucher}
+                            />
                             <Input
                                 className='promotion-input'
                                 type='number'
@@ -140,6 +150,15 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
                         onChange={(value) => handleDropdownChange('product_id', value)}
                         error={errors.product_id}
                     />
+                      <Input
+                                className='promotion-input'
+                                type='number'
+                                label='Số lượng'
+                                name='quantity'
+                                value={promotionDetailData.quantity}
+                                onChange={handleChange}
+                                error={errors.quantity}
+                            />
                         <Input
                             className='promotion-input'
                             type='number'
