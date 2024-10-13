@@ -11,8 +11,8 @@ const usePagination = (data, itemsPerPage) => {
 
     const indexOfLastItem = page * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentItems = data.slice(indexOfFirstItem, indexOfLastItem);
-    const totalPages = Math.ceil(data.length / itemsPerPage);
+    const currentItems = data?.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(data?.length / itemsPerPage);
     const [inputPage, setInputPage] = useState(page);
 
     const goToPage = (page) => {

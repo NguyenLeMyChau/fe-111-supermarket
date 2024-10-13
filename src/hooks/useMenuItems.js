@@ -65,6 +65,7 @@ const useMenuItems = (onchange) => {
                 { Icon: MdProductionQuantityLimits, label: "Product", text: "Sản phẩm", path: '/admin/product' },
                 { Icon: BsPersonVcard, label: "Employee", text: "Nhân viên", path: '/admin/employee' },
                 { Icon: AiOutlineTag, label: "Promotion", text: "Khuyến mãi", path: '/admin/promotion' },
+                { Icon: AiOutlineTag, label: "Price", text: "Giá sản phẩm", path: '/admin/promotion' },
                 { Icon: MdOutlineInventory2, label: "Inventory", text: "Kho", path: '/admin/inventory' },
                 { Icon: BsFileBarGraph, label: "Bill", text: "Nhập kho", path: '/admin/bill' },
                 { Icon: FaUsers, label: "Suppliers", text: "Nhà cung cấp", path: '/admin/supplier' },
