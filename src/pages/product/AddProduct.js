@@ -5,6 +5,8 @@ import Button from '../../components/button/Button';
 import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
 import { useSelector } from 'react-redux';
 import Select from 'react-dropdown-select';
+import { addProductWithWarehouse } from '../../services/productRequest';
+import { uploadImageVideo } from '../../services/uploadRequest';
 
 export default function AddProduct({ isOpen, onClose }) {
     const axiosJWT = useAxiosJWT();
@@ -13,9 +15,6 @@ export default function AddProduct({ isOpen, onClose }) {
     const categories = useSelector((state) => state.category?.categories) || [];
     const suppliers = useSelector((state) => state.supplier?.suppliers) || [];
     const units = useSelector((state) => state.unit?.units) || [];
-    const state = useSelector((state) => state);
-    console.log('state', state)
-    console.log('Units', units);
 
     const [productData, setProductData] = useState({
         name: '',
@@ -23,9 +22,10 @@ export default function AddProduct({ isOpen, onClose }) {
         item_code: '',
         barcode: '',
         min_stock_threshold: '',
-        unit: '',
-        category: '',
-        supplier: ''
+        unit_id: '',
+        category_id: '',
+        supplier_id: '',
+        img: '',
     });
 
     const handleChange = (e) => {
@@ -43,10 +43,29 @@ export default function AddProduct({ isOpen, onClose }) {
         });
     };
 
+    const handleImageChange = async (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            try {
+                const uploadedImageUrl = await uploadImageVideo(file);
+                setProductData((prevState) => ({
+                    ...prevState,
+                    img: uploadedImageUrl.avatar,
+                }));
+            } catch (error) {
+                console.error('Failed to upload image:', error);
+            }
+        }
+    };
+
     const handleAddProduct = async (e) => {
         e.preventDefault();
         try {
             // Gửi yêu cầu thêm sản phẩm
+            await addProductWithWarehouse(productData, accessToken, axiosJWT);
+            console.log('Product data:', productData);
+            onClose();
+
         } catch (error) {
             console.error('Failed to add product:', error);
             alert('Có lỗi xảy ra khi thêm sản phẩm.');
@@ -93,17 +112,26 @@ export default function AddProduct({ isOpen, onClose }) {
 
                         <div className='flex-column'>
                             <div style={{ marginLeft: 160, marginTop: 30 }}>
-                                <label htmlFor="image" className='add-product-add-img'>
-                                    Thêm ảnh
-                                    <input
-                                        type="file"
-                                        id="image"
-                                        accept="image/*"
-                                        style={{ display: 'none' }}
+                                {productData.img ? (
+                                    <img
+                                        src={productData.img}
+                                        alt="Uploaded"
+                                        style={{ width: 125, height: 125, objectFit: 'cover' }}
                                     />
-                                </label>
+                                ) : (
+                                    <label htmlFor="image" className='add-product-add-img'>
+                                        Thêm ảnh
+                                        <input
+                                            type="file"
+                                            name='image'
+                                            id="image"
+                                            accept="image/*"
+                                            style={{ display: 'none' }}
+                                            onChange={handleImageChange}
+                                        />
+                                    </label>
+                                )}
                             </div>
-
                         </div>
                     </div>
 
@@ -122,7 +150,7 @@ export default function AddProduct({ isOpen, onClose }) {
                             label='Ngưỡng giá trị'
                             name='min_stock_threshold'
                             placeholder='Nhập ngưỡng giá trị'
-                            value={productData.barcode}
+                            value={productData.min_stock_threshold}
                             onChange={handleChange}
                         />
 
@@ -134,7 +162,7 @@ export default function AddProduct({ isOpen, onClose }) {
                         <Select
                             name='type'
                             options={categories.map(category => ({ value: category._id, label: category.name }))}
-                            onChange={(selected) => handleSelectChange(selected, 'category')}
+                            onChange={(selected) => handleSelectChange(selected, 'category_id')}
                             values={categories.filter(category => category._id === productData.category)}
                             placeholder="Chọn loại sản phẩm"
 
@@ -144,7 +172,7 @@ export default function AddProduct({ isOpen, onClose }) {
                         <Select
                             name='type'
                             options={units.map(unit => ({ value: unit._id, label: unit.description }))}
-                            onChange={(selected) => handleSelectChange(selected, 'unit')}
+                            onChange={(selected) => handleSelectChange(selected, 'unit_id')}
                             values={units.filter(unit => unit._id === productData.unit)}
                             placeholder="Chọn đơn vị tính"
                         />
@@ -153,7 +181,7 @@ export default function AddProduct({ isOpen, onClose }) {
                         <Select
                             name='type'
                             options={suppliers.map(supplier => ({ value: supplier._id, label: supplier.name }))}
-                            onChange={(selected) => handleSelectChange(selected, 'supplier')}
+                            onChange={(selected) => handleSelectChange(selected, 'supplier_id')}
                             values={suppliers.filter(supplier => supplier._id === productData.supplier)}
                             placeholder="Chọn nhà cung cấp"
                         />

@@ -76,5 +76,18 @@ const getProductsDetail = async (accessToken, axiosJWT, productId) => {
         console.error('Get product detail failed:', error);
     }
 }
+const addProductWithWarehouse = async (productData, accessToken, axiosJWT) => {
+    try {
+        const response = await axiosJWT.post(`/api/product/add-product`, productData, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        alert('Thêm thành công sản phẩm mới');
+        return response.data;
+    } catch (error) {
+        console.error('Add product failed:', error);
+    }
+}
 
-export { getAllCategories, addCategory, updateCategory, getAllProducts, getProductsDetail };
+export { getAllCategories, addCategory, updateCategory, getAllProducts, getProductsDetail, addProductWithWarehouse };

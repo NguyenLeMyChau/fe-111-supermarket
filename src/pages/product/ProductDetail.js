@@ -112,8 +112,19 @@ export default function ProductDetail() {
                                     <span>{data.supplier_id.phone}</span>
                                 </div>
                                 <div className='row'>
-                                    <label>email</label>
+                                    <label>Email</label>
                                     <span>{data.supplier_id.email}</span>
+                                </div>
+                            </div>
+
+                            <div className='right'>
+                                <div className='row'>
+                                    <label>Tồn kho</label>
+                                    <span>{data.warehouse.stock_quantity}</span>
+                                </div>
+                                <div className='row'>
+                                    <label>Ngưỡng giá trị</label>
+                                    <span>{data.warehouse.min_stock_threshold}</span>
                                 </div>
 
                             </div>
