@@ -16,6 +16,8 @@ export default function AddProduct({ isOpen, onClose }) {
     const categories = useSelector((state) => state.category?.categories) || [];
     const suppliers = useSelector((state) => state.supplier?.suppliers) || [];
     const units = useSelector((state) => state.unit?.units) || [];
+    const warehouse = useSelector((state) => state.warehouse?.warehouse) || [];
+    const products = useSelector((state) => state.product?.products) || [];
 
     const [productData, setProductData] = useState({
         name: '',
@@ -38,6 +40,43 @@ export default function AddProduct({ isOpen, onClose }) {
             ...productData,
             [name]: value,
         });
+
+        // Tìm kiếm item_code khi người dùng nhập
+        if (name === 'item_code') {
+            const foundProduct = products.find(product => product.item_code === value);
+            const foundWarehouse = warehouse.find(item => item.item_code === value);
+
+            console.log('Found product:', foundProduct);
+            console.log('Found warehouse:', foundWarehouse);
+
+            if (foundProduct) {
+                setProductData(prevState => ({
+                    ...prevState,
+                    supplier_id: foundProduct.supplier_id,
+                    category_id: foundProduct.category_id,
+                }));
+            } else {
+                // Nếu không tìm thấy sản phẩm, giữ nguyên hoặc cho phép nhập
+                setProductData(prevState => ({
+                    ...prevState,
+                    supplier_id: '', // Giữ nguyên
+                    category_id: '', // Giữ nguyên
+                }));
+            }
+
+            if (foundWarehouse) {
+                setProductData(prevState => ({
+                    ...prevState,
+                    min_stock_threshold: foundWarehouse.min_stock_threshold,
+                }));
+            } else {
+                // Nếu không tìm thấy kho hàng, giữ nguyên hoặc cho phép nhập
+                setProductData(prevState => ({
+                    ...prevState,
+                    min_stock_threshold: '', // Giữ nguyên
+                }));
+            }
+        }
     };
 
     const handleSelectChange = (selected, name) => {
@@ -78,9 +117,14 @@ export default function AddProduct({ isOpen, onClose }) {
         setLoading(true); // Bắt đầu loading
         try {
             // Gửi yêu cầu thêm sản phẩm
-            await addProductWithWarehouse(productData, accessToken, axiosJWT);
+            const result = await addProductWithWarehouse(productData, accessToken, axiosJWT);
             console.log('Product data:', productData);
-            onClose();
+
+            // Nếu thành công, mới gọi onClose()
+            if (result) {
+                onClose();
+            }
+
         } catch (error) {
             console.error('Failed to add product:', error);
             alert('Có lỗi xảy ra khi thêm sản phẩm.');
@@ -185,7 +229,7 @@ export default function AddProduct({ isOpen, onClose }) {
                             name='type'
                             options={categories.map(category => ({ value: category._id, label: category.name }))}
                             onChange={(selected) => handleSelectChange(selected, 'category_id')}
-                            values={categories.filter(category => category._id === productData.category_id)}
+                            values={productData.category_id ? [{ value: productData.category_id, label: categories.find(cat => cat._id === productData.category_id)?.name }] : []} // Update this line
                             placeholder="Chọn loại sản phẩm"
                         />
 
@@ -203,7 +247,7 @@ export default function AddProduct({ isOpen, onClose }) {
                             name='type'
                             options={suppliers.map(supplier => ({ value: supplier._id, label: supplier.name }))}
                             onChange={(selected) => handleSelectChange(selected, 'supplier_id')}
-                            values={suppliers.filter(supplier => supplier._id === productData.supplier_id)}
+                            values={productData.supplier_id ? [{ value: productData.supplier_id, label: suppliers.find(supplier => supplier._id === productData.supplier_id)?.name }] : []} // Update this line
                             placeholder="Chọn nhà cung cấp"
                         />
                     </div>

@@ -21,6 +21,9 @@ const useAddBill = () => {
     const [products, setProducts] = useState([]);
     const ordererName = useState(user.user.name);
     const [selectedSupplier, setSelectedSupplier] = useState(null);
+
+    const [billId, setBillId] = useState('');
+
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingSupplier, setIsLoadingSupplier] = useState(false);
 
@@ -65,6 +68,7 @@ const useAddBill = () => {
             const orderData = {
                 supplierId: selectedSupplier.value,
                 accountId: user.id,
+                billId: billId,
                 productList: products.map(product => ({
                     product_id: product._id,
                     quantity: quantities[product._id],
@@ -76,10 +80,8 @@ const useAddBill = () => {
 
             console.log('orderData:', orderData);
 
-            await addBillWarehouse(orderData, accessToken, axiosJWT);
+            await addBillWarehouse(orderData, navigate, accessToken, axiosJWT);
 
-            alert('Nhập hàng thành công!');
-            navigate('/admin/bill');
             setIsLoading(false);
 
         } catch (error) {
@@ -162,6 +164,8 @@ const useAddBill = () => {
         isLoading,
         isLoadingSupplier,
         handlePriceChange,
+        billId,
+        setBillId,
     };
 };
 

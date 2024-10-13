@@ -68,17 +68,19 @@ const updateOrderStatus = async (accessToken, axiosJWT, orderId, newStatus, prod
     }
 }
 
-const addBillWarehouse = async (orderData, accessToken, axiosJWT) => {
-    const { supplierId, accountId, productList } = orderData;
+const addBillWarehouse = async (orderData, navigate, accessToken, axiosJWT) => {
+    const { supplierId, accountId, billId, productList } = orderData;
 
     try {
         const response = await axiosJWT.post(`/api/warehouse/add-bill-warehouse`,
-            { supplierId, accountId, productList },
+            { supplierId, accountId, billId, productList },
             {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                 },
             });
+        alert('Nhập hàng thành công!');
+        navigate('/admin/bill');
         return response.data;
     } catch (error) {
         console.error('Add bill failed:', error);

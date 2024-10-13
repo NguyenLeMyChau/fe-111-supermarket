@@ -18,6 +18,12 @@ export default function Bill() {
 
     const orderColumn = [
         {
+            title: 'Mã phiếu nhập kho',
+            dataIndex: 'bill_id',
+            key: 'bill_id',
+            width: '15%',
+        },
+        {
             title: 'Nhà cung cấp',
             dataIndex: 'supplierName',
             key: 'supplierName',

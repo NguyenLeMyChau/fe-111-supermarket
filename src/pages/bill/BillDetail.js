@@ -4,11 +4,15 @@ import '../../containers/order/AddOrder.scss';
 
 const BillDetail = ({ bill }) => {
 
-
     return (
         <div className="add-order-container">
             <h2>Phiếu nhập kho</h2>
             <div className="order-info">
+                <div className="info-group">
+                    <label>Mã phiếu nhập kho:</label>
+                    <span>{bill.bill_id}</span>
+                </div>
+
                 <div className="info-group">
                     <label>Tên người nhập:</label>
                     <span>{bill.employee.name}</span>

@@ -20,12 +20,23 @@ const AddBill = () => {
         isLoading,
         isLoadingSupplier,
         handlePriceChange,
+        billId,
+        setBillId
     } = useAddBill();
 
     return (
         <div className="add-order-container">
             <h2>Phiếu nhập kho</h2>
             <div className="order-info">
+                <div className="info-group">
+                    <label>Phiếu nhập kho:</label>
+                    <input
+                        type="text"
+                        value={billId}
+                        onChange={(e) => setBillId(e.target.value)}
+                        placeholder="Nhập mã phiếu nhập kho"
+                    />
+                </div>
                 <div className="info-group">
                     <label>Tên người nhập:</label>
                     <span>{ordererName}</span>

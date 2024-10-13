@@ -119,6 +119,10 @@ export default function ProductDetail() {
 
                             <div className='right'>
                                 <div className='row'>
+                                    <label>Đơn vị tính</label>
+                                    <span>{data.unit_id.description}</span>
+                                </div>
+                                <div className='row'>
                                     <label>Tồn kho</label>
                                     <span>{data.warehouse.stock_quantity}</span>
                                 </div>
@@ -126,7 +130,6 @@ export default function ProductDetail() {
                                     <label>Ngưỡng giá trị</label>
                                     <span>{data.warehouse.min_stock_threshold}</span>
                                 </div>
-
                             </div>
 
                         </div>

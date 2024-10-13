@@ -87,6 +87,7 @@ const addProductWithWarehouse = async (productData, accessToken, axiosJWT) => {
         return response.data;
     } catch (error) {
         console.error('Add product failed:', error);
+        alert(error.response ? error.response.data.message : error.message);
     }
 }
 
