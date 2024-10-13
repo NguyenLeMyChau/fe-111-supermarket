@@ -114,6 +114,13 @@ export default function AddProduct({ isOpen, onClose }) {
 
     const handleAddProduct = async (e) => {
         e.preventDefault();
+        // Hiển thị hộp thoại xác nhận
+        const isConfirmed = window.confirm('Bạn có chắc chắn muốn thêm sản phẩm này?');
+
+        if (!isConfirmed) {
+            return; // Nếu người dùng không xác nhận, dừng lại
+        }
+
         setLoading(true); // Bắt đầu loading
         try {
             // Gửi yêu cầu thêm sản phẩm
