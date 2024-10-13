@@ -4,13 +4,14 @@ import Input from '../../components/input/Input';
 import Button from '../../components/button/Button';
 import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
 import { addSupplier } from '../../services/supplierRequest';
+import { validateSupplierData } from '../../utils/validation';
 
 export default function AddSuplier({ isOpen, onClose }) {
     const axiosJWT = useAxiosJWT();
     const accessToken = useAccessToken();
 
     const [supplierData, setSupplierData] = useState({ name: '', description: '', phone: '', email: '', address: '' });
-
+    const [errors, setErrors] = useState({});
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -18,16 +19,25 @@ export default function AddSuplier({ isOpen, onClose }) {
             ...supplierData,
             [name]: value,
         });
+        setErrors({
+            ...errors,
+            [name]: '',
+        });
     };
-
 
     const handleAddSupplier = async (e) => {
         e.preventDefault();
-
+        const newErrors = validateSupplierData(supplierData);
+        if (Object.keys(newErrors).length > 0) {
+            alert('Vui lòng kiểm tra lại thông tin.');
+            setErrors(newErrors);
+            return;
+        }
         try {
             const response = await addSupplier(supplierData, accessToken, axiosJWT);
             if (response) {
                 setSupplierData({ name: '', description: '', phone: '', email: '', address: '' });
+                setErrors({});
             }
         } catch (error) {
             console.error('Failed to add category:', error);
@@ -52,6 +62,7 @@ export default function AddSuplier({ isOpen, onClose }) {
                         name='name'
                         value={supplierData.name}
                         onChange={handleChange}
+                        error={errors.name}
                     />
                     <Input
                         label='Mô tả'
@@ -59,6 +70,7 @@ export default function AddSuplier({ isOpen, onClose }) {
                         placeholder='Nhập mô tả'
                         value={supplierData.description}
                         onChange={handleChange}
+                        error={errors.description}
                     />
 
                     <Input
@@ -68,6 +80,7 @@ export default function AddSuplier({ isOpen, onClose }) {
                         placeholder='Nhập số điện thoại'
                         value={supplierData.phone}
                         onChange={handleChange}
+                        error={errors.phone}
                     />
 
                     <Input
@@ -77,6 +90,7 @@ export default function AddSuplier({ isOpen, onClose }) {
                         placeholder='Nhập email'
                         value={supplierData.email}
                         onChange={handleChange}
+                        error={errors.email}
                     />
 
                     <Input
@@ -85,6 +99,7 @@ export default function AddSuplier({ isOpen, onClose }) {
                         placeholder='Nhập địa chỉ'
                         value={supplierData.address}
                         onChange={handleChange}
+                        error={errors.address}
                     />
 
 
@@ -93,7 +108,7 @@ export default function AddSuplier({ isOpen, onClose }) {
                         <div className='login-button' style={{ width: 200 }}>
                             <Button
                                 type='submit'
-                                text='Thêm loại sản phẩm'
+                                text='Thêm nhà cung cấp'
                             />
                         </div>
                     </div>

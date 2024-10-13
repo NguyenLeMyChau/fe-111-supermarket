@@ -5,10 +5,7 @@ const refreshToken = async () => {
     try {
         const refreshToken = sessionStorage.getItem('refreshToken');
 
-        const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/refresh`, { refreshToken },
-            {
-                withCredentials: true, // Gửi cookie kèm theo request để server có thể đọc cookie
-            });
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/refresh`, { refreshToken });
 
         sessionStorage.setItem('refreshToken', response.data.refreshToken);
 
@@ -21,8 +18,7 @@ const refreshToken = async () => {
 
 export const createAxiosInstance = (user, dispatch, stateSuccess) => {
     const newInstance = axios.create({
-        baseURL: process.env.REACT_APP_API_URL,
-        withCredentials: true
+        baseURL: process.env.REACT_APP_API_URL
     });
 
     newInstance.interceptors.request.use(

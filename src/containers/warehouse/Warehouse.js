@@ -7,7 +7,7 @@ import ProductWarehouse from './ProductWarehouse';
 
 import Modal from '../../components/modal/Modal';
 import Button from '../../components/button/Button';
-import { formatCurrency, getStatusColor } from '../../utils/fotmatDate';
+import { getStatusColor } from '../../utils/fotmatDate';
 import Select from 'react-select';
 
 export default function Warehouse() {
@@ -45,9 +45,9 @@ export default function Warehouse() {
                 );
             }
         },
-        { title: 'Tồn kho', dataIndex: 'stock_quantity', key: 'stock_quantity', width: '15%', className: 'text-center' },
+        { title: 'Tồn kho', dataIndex: 'stock_quantity', key: 'stock_quantity', width: '10%', className: 'text-center' },
         { title: 'Ngưỡng giá trị', dataIndex: 'min_stock_threshold', key: 'min_stock_threshold', width: '15%', className: 'text-center' },
-        { title: 'Giá nhập', dataIndex: 'order_Price', key: 'order_Price', width: '15%', className: 'text-center', render: (order_Price) => formatCurrency(order_Price) },
+        { title: 'Nhà cung cấp', dataIndex: 'product', key: 'supplier_name', width: '15%', render: (text, record) => record.product ? record.product.supplier_name : '' },
         {
             title: 'Trạng thái',
             dataIndex: 'status',
@@ -81,7 +81,6 @@ export default function Warehouse() {
         },
         { title: 'Tồn kho', dataIndex: 'stock_quantity', key: 'stock_quantity', width: '15%', className: 'text-center' },
         { title: 'Ngưỡng giá trị', dataIndex: 'min_stock_threshold', key: 'min_stock_threshold', width: '15%', className: 'text-center' },
-        { title: 'Giá nhập', dataIndex: 'order_Price', key: 'order_Price', width: '15%', className: 'text-center', render: (order_Price) => formatCurrency(order_Price) },
         {
             title: 'Trạng thái',
             dataIndex: 'status',

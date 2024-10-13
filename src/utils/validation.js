@@ -16,6 +16,17 @@ export const validateEmployeeData = (employeeData) => {
 
     return errors;
 };
+
+export const validateSupplierData = (supplierData) => {
+    let errors = {};
+    if (!supplierData.name) errors.name = 'Tên nhà cung cấp không được để trống';
+    if (!supplierData.description) errors.description = 'Mô tả không được để trống';
+    if (!supplierData.phone) errors.phone = 'Số điện thoại không được để trống';
+    if (!supplierData.email) errors.email = 'Email không được để trống';
+    if (!supplierData.address) errors.address = 'Địa chỉ không được để trống';
+    return errors;
+};
+
 export const validatePromotionHeaderData = (promotionData) => {
     let errors = {};
 
@@ -28,11 +39,11 @@ export const validatePromotionHeaderData = (promotionData) => {
     }
 
     if (!promotionData.endDate) {
-        return   errors = 'Ngày kết thúc không được để trống';
+        return errors = 'Ngày kết thúc không được để trống';
     }
 
     if (promotionData.startDate && promotionData.endDate && new Date(promotionData.endDate) < new Date(promotionData.startDate)) {
-        return   errors = 'Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu';
+        return errors = 'Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu';
     }
 
     return errors;
@@ -45,7 +56,7 @@ export const validatePromotionLineData = (promotionLineData) => {
         return errors = 'Mô tả dòng khuyến mãi không được để trống';
     }
     if (!promotionLineData.startDate) {
-        return  errors = 'Ngày bắt đầu không được để trống';
+        return errors = 'Ngày bắt đầu không được để trống';
     }
 
     if (!promotionLineData.endDate) {
@@ -57,7 +68,7 @@ export const validatePromotionLineData = (promotionLineData) => {
     if (!promotionLineData.type) {
         return errors = 'Vui lòng chọn loại khuyến mãi';
     }
-   
+
     return errors;
 };
 
