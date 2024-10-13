@@ -76,7 +76,7 @@ const getProductsDetail = async (accessToken, axiosJWT, productId) => {
         console.error('Get product detail failed:', error);
     }
 }
-const addProductWithWarehouse = async (productData, accessToken, axiosJWT) => {
+const addProductWithWarehouse = async (productData, accessToken, axiosJWT, onClose) => {
     try {
         const response = await axiosJWT.post(`/api/product/add-product`, productData, {
             headers: {
@@ -84,6 +84,7 @@ const addProductWithWarehouse = async (productData, accessToken, axiosJWT) => {
             },
         });
         alert('Thêm thành công sản phẩm mới');
+        onClose();
         return response.data;
     } catch (error) {
         console.error('Add product failed:', error);
@@ -91,4 +92,22 @@ const addProductWithWarehouse = async (productData, accessToken, axiosJWT) => {
     }
 }
 
-export { getAllCategories, addCategory, updateCategory, getAllProducts, getProductsDetail, addProductWithWarehouse };
+const updateProduct = async (productId, productData, accessToken, axiosJWT) => {
+    try {
+        const response = await axiosJWT.put(`/api/product/update-product/${productId}`, productData, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        alert('Cập nhật thành công sản phẩm');
+        return response.data;
+    } catch (error) {
+        console.error('Update product failed:', error);
+        alert(error.response ? error.response.data.message : error.message);
+    }
+}
+
+export {
+    getAllCategories, addCategory, updateCategory,
+    getAllProducts, getProductsDetail, addProductWithWarehouse, updateProduct
+};

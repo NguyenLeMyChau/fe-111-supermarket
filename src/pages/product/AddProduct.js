@@ -117,13 +117,8 @@ export default function AddProduct({ isOpen, onClose }) {
         setLoading(true); // Bắt đầu loading
         try {
             // Gửi yêu cầu thêm sản phẩm
-            const result = await addProductWithWarehouse(productData, accessToken, axiosJWT);
+            await addProductWithWarehouse(productData, accessToken, axiosJWT, onClose);
             console.log('Product data:', productData);
-
-            // Nếu thành công, mới gọi onClose()
-            if (result) {
-                onClose();
-            }
 
         } catch (error) {
             console.error('Failed to add product:', error);
@@ -214,6 +209,8 @@ export default function AddProduct({ isOpen, onClose }) {
 
 
                         <Input
+                            type='number'
+                            min={1}
                             label='Ngưỡng giá trị'
                             name='min_stock_threshold'
                             placeholder='Nhập ngưỡng giá trị'
@@ -253,17 +250,19 @@ export default function AddProduct({ isOpen, onClose }) {
                     </div>
 
                     <div className='flex-row-center'>
-                        <div className='login-button' style={{ width: 200 }}>
-                            {
-                                loading
-                                    ?
-                                    <ClipLoader size={30} color="#2392D0" loading={loading} />
-                                    : <Button
+                        {
+                            loading
+                                ?
+                                <ClipLoader size={30} color="#2392D0" loading={loading} />
+                                :
+                                <div className='login-button' style={{ width: 200 }}>
+
+                                    <Button
                                         type='submit'
                                         text={'Thêm sản phẩm'}
                                     />
-                            }
-                        </div>
+                                </div>
+                        }
                     </div>
 
                 </form>

@@ -20,6 +20,7 @@ export default function Input(props) {
                                 value={option.value}
                                 checked={props.value === option.value}
                                 onChange={() => props.onChange(option.value)}
+                                min={props.min}
                             />
                             {option.label}
                         </label>

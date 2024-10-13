@@ -27,6 +27,7 @@ export default function Product() {
         event.stopPropagation(); // Ngăn chặn sự kiện click của hàng bảng
         setSelectedProduct(product);
         setIsEditModalOpen(true);
+        console.log('Selected product', product);
     };
 
     const handleCloseEditModal = () => {
@@ -87,7 +88,7 @@ export default function Product() {
                     title='Cập nhật sản phẩm'
                     isOpen={isEditModalOpen}
                     onClose={handleCloseEditModal}
-                    width={'30%'}
+                    width={'70%'}
                 >
                     <UpdateProduct
                         product={selectedProduct}
