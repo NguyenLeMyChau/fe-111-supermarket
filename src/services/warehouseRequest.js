@@ -105,11 +105,27 @@ const getAllBill = async (accessToken, axiosJWT, dispatch) => {
     }
 }
 
+const updateBill = async (oldBillId, newBillId, productList, accessToken, axiosJWT) => {
+    try {
+        const response = await axiosJWT.put(`/api/warehouse/update-bill`, { oldBillId, newBillId, productList }, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        alert('Cập nhật phiếu nhập kho thành công!');
+        return response.data;
+    } catch (error) {
+        console.error('update bill failed:', error);
+        alert(error.response ? error.response.data.message : error.message);
+    }
+}
+
 export {
     getAllWarehouse,
     getAllOrder,
     orderProductFromSupplier,
     updateOrderStatus,
     addBillWarehouse,
-    getAllBill
+    getAllBill,
+    updateBill
 };

@@ -1,5 +1,5 @@
 import React from 'react';
-import { formatCurrency, formatDate } from '../../utils/fotmatDate';
+import { formatDate } from '../../utils/fotmatDate';
 import '../../containers/order/AddOrder.scss';
 
 const BillDetail = ({ bill }) => {
@@ -8,24 +8,27 @@ const BillDetail = ({ bill }) => {
         <div className="add-order-container">
             <h2>Phiếu nhập kho</h2>
             <div className="order-info">
-                <div className="info-group">
-                    <label>Mã phiếu nhập kho:</label>
-                    <span>{bill.bill_id}</span>
+                <div className='flex-row'>
+                    <div className="info-group" style={{ width: 450, marginLeft: 50 }}>
+                        <label>Mã phiếu nhập kho:</label>
+                        <span>{bill.bill_id}</span>
+                    </div>
+                    <div className="info-group">
+                        <label>Ngày nhập:</label>
+                        <span>{formatDate(bill.createdAt)}</span>
+                    </div>
                 </div>
 
-                <div className="info-group">
-                    <label>Tên người nhập:</label>
-                    <span>{bill.employee.name}</span>
-                </div>
+                <div className='flex-row'>
+                    <div className="info-group" style={{ width: 450, marginLeft: 50 }}>
+                        <label>Tên người nhập:</label>
+                        <span>{bill.employee.name}</span>
+                    </div>
 
-                <div className="info-group">
-                    <label>Ngày nhập:</label>
-                    <span>{formatDate(bill.createdAt)}</span>
-                </div>
-
-                <div className="info-group">
-                    <label>Nhà cung cấp:</label>
-                    <span>{bill.supplier_id.name}</span>
+                    <div className="info-group">
+                        <label>Nhà cung cấp:</label>
+                        <span>{bill.supplier_id.name}</span>
+                    </div>
                 </div>
             </div>
 
@@ -40,8 +43,6 @@ const BillDetail = ({ bill }) => {
                                 <th>Tên sản phẩm</th>
                                 <th>Đơn vị tính</th>
                                 <th style={{ textAlign: 'center' }}>Số lượng</th>
-                                <th style={{ textAlign: 'center' }}>Đơn giá</th>
-                                <th style={{ textAlign: 'center' }}>Thành tiền</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -51,8 +52,6 @@ const BillDetail = ({ bill }) => {
                                     <td>{product.name}</td>
                                     <td>{product.unit_name}</td>
                                     <td style={{ textAlign: 'center' }}>{product.quantity}</td>
-                                    <td style={{ textAlign: 'right' }}>{formatCurrency(product.price)}</td>
-                                    <td style={{ textAlign: 'right' }}>{formatCurrency(product.total)}</td>
                                 </tr>
                             ))}
                         </tbody>

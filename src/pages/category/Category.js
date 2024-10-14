@@ -14,6 +14,8 @@ export default function Category() {
         productCount: Array.isArray(category.products) ? category.products.length : 0,
     }));
 
+    console.log('enhancedCategories', enhancedCategories);
+
     const [products, setProducts] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isOpenNewCategory, setIsOpenNewCategory] = useState(false);
@@ -34,8 +36,18 @@ export default function Category() {
 
 
     const categoryColumn = [
-        { title: 'Loại sản phẩm', dataIndex: 'name', key: 'name', width: '30%' },
-        { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '40%' },
+        {
+            title: 'Hình ảnh', dataIndex: 'img', key: 'img', width: '20%', className: 'text-center',
+            render: (text, record) => (
+                <img
+                    src={record.img}
+                    alt={record.name}
+                    style={{ width: 70, height: 70 }}
+                />
+            )
+        },
+        { title: 'Loại sản phẩm', dataIndex: 'name', key: 'name', width: '20%' },
+        { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '30%' },
         { title: 'Số lượng sản phẩm', dataIndex: 'productCount', key: 'productCount', width: '20%', className: 'text-center' },
         {
             title: 'Chỉnh sửa',

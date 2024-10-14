@@ -180,7 +180,7 @@ export default function AddProduct({ isOpen, onClose }) {
                                         <img
                                             src={productData.img}
                                             alt="Uploaded"
-                                            style={{ width: 125, height: 125, objectFit: 'cover' }}
+                                            style={{ width: 125, height: 125, objectFit: 'contain' }}
                                         />
                                     ) : (
                                         <>

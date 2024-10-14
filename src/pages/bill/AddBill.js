@@ -1,7 +1,7 @@
 import React from 'react';
 import Button from "../../components/button/Button";
 import Select from 'react-select';
-import { formatCurrency, formatDate } from '../../utils/fotmatDate';
+import { formatDate } from '../../utils/fotmatDate';
 import useAddBill from '../../hooks/useAddBill';
 
 const AddBill = () => {
@@ -9,7 +9,6 @@ const AddBill = () => {
     const {
         quantities,
         products,
-        prices,
         ordererName,
         selectedSupplier,
         handleQuantityChange,
@@ -19,7 +18,6 @@ const AddBill = () => {
         supplierOptions,
         isLoading,
         isLoadingSupplier,
-        handlePriceChange,
         billId,
         setBillId
     } = useAddBill();
@@ -75,8 +73,6 @@ const AddBill = () => {
                                 <th>Tên sản phẩm</th>
                                 <th>Đơn vị tính</th>
                                 <th>Số lượng</th>
-                                <th>Đơn giá</th>
-                                <th>Thành tiền</th>
                                 <th>Hành động</th>
                             </tr>
                         </thead>
@@ -95,18 +91,7 @@ const AddBill = () => {
                                             className="quantity-input"
                                         />
                                     </td>
-                                    <td>
-                                        <input
-                                            type="number"
-                                            min="1"
-                                            value={prices[product._id]}
-                                            onChange={(e) => handlePriceChange(product._id, parseInt(e.target.value))}
-                                            className="quantity-input"
-                                        />
-                                    </td>
-                                    <td>
-                                        {formatCurrency(prices[product._id] * quantities[product._id])}
-                                    </td>
+
                                     <td>
                                         <Button
                                             text="Xóa"
@@ -124,7 +109,7 @@ const AddBill = () => {
 
 
                 {isLoading ? (
-                    <p className='loading'>Đang xử lý đơn đặt hàng...</p>
+                    <p className='loading'>Đang tạo phiếu nhập...</p>
                 ) : (
                     products.length > 0 && (
                         <Button
