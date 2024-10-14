@@ -100,7 +100,7 @@ const UpdatePromotionHeader = ({ promotionHeader, onClose }) => {
                     label='Trạng thái'
                     name='isActive'
                     type='checkbox'
-                    checked={formData.isActive}
+                    defaultChecked={formData.isActive}
                     onChange={handleCheckboxChange}
                 />
                 

@@ -20,7 +20,7 @@ export default function AddPromotionLine({ isOpen, onClose, promotionHeader }) {
         startDate: '',
         endDate: '',
         type: '', // Default value as a string
-        isActive: true, // Default value as a string
+        isActive: false, // Default value as a string
         promotionHeader_id: promotionHeader._id
     });
 
@@ -65,7 +65,7 @@ export default function AddPromotionLine({ isOpen, onClose, promotionHeader }) {
                     startDate: minStartDate, // Reset startDate to minStartDate
                     endDate: '',
                     type: 'percentage', // Reset to default value
-                    isActive: true, // Reset to default value
+                    isActive: false, // Reset to default value
                     promotionHeader_id: promotionHeader._id
                 });
                 setErrors({});

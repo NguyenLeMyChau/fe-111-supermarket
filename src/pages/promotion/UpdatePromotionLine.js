@@ -109,7 +109,7 @@ const UpdatePromotionLine = ({ promotionLine, onClose, promotionHeader }) => {
                     label="Trạng thái"
                     name="status"
                     type="checkbox"
-                    checked={formData.isActive}
+                    defaultChecked={formData.isActive}
                     onChange={handleCheckboxChange}
                     error={errors.status}
                 />

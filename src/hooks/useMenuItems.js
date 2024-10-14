@@ -9,7 +9,7 @@ import { FaRegUser, FaCashRegister, FaUsers } from "react-icons/fa";
 import { SlSettings } from "react-icons/sl";
 import { IoIosLogOut } from "react-icons/io";
 import { TbReport } from "react-icons/tb";
-import { BiCategory } from "react-icons/bi";
+import { BiCategory, BiSolidOffer } from "react-icons/bi";
 import { AiOutlineTag } from "react-icons/ai";
 
 import { createAxiosInstance } from '../utils/util';
@@ -64,8 +64,8 @@ const useMenuItems = (onchange) => {
                 { Icon: BiCategory, label: "Category", text: "Loại sản phẩm", path: '/admin/category' },
                 { Icon: MdProductionQuantityLimits, label: "Product", text: "Sản phẩm", path: '/admin/product' },
                 { Icon: BsPersonVcard, label: "Employee", text: "Nhân viên", path: '/admin/employee' },
-                { Icon: AiOutlineTag, label: "Promotion", text: "Khuyến mãi", path: '/admin/promotion' },
-                { Icon: AiOutlineTag, label: "Price", text: "Giá sản phẩm", path: '/admin/promotion' },
+                { Icon: BiSolidOffer, label: "Promotion", text: "Khuyến mãi", path: '/admin/promotion' },
+                { Icon: AiOutlineTag, label: "Price", text: "Giá sản phẩm", path: '/admin/price' },
                 { Icon: MdOutlineInventory2, label: "Inventory", text: "Kho", path: '/admin/inventory' },
                 { Icon: BsFileBarGraph, label: "Bill", text: "Nhập kho", path: '/admin/bill' },
                 { Icon: FaUsers, label: "Suppliers", text: "Nhà cung cấp", path: '/admin/supplier' },
