@@ -75,45 +75,99 @@ export const validatePromotionLineData = (promotionLineData) => {
 export const validatePromotionDetailData = (data) => {
     let errors = {};
 
-    // if (data.product_id && !data.product_id.trim()) {
-    //     errors.product_id = 'ID sản phẩm không được để trống';
-    // }
+    if (data.product_id && !data.product_id.trim()) {
+        errors.product_id = 'ID sản phẩm không được để trống';
+    }
 
-    // if (data.unit_id && !data.unit_id.trim()) {
-    //     errors.unit_id = 'ID đơn vị không được để trống';
-    // }
+    if (data.unit_id && !data.unit_id.trim()) {
+        errors.unit_id = 'ID đơn vị không được để trống';
+    }
 
-    // if (data.quantity && (!Number.isInteger(Number(data.quantity)) || data.quantity <= 0)) {
-    //     errors.quantity = 'Số lượng phải là số nguyên dương';
-    // }
+    if (data.quantity && (!Number.isInteger(Number(data.quantity)) || data.quantity <= 0)) {
+        errors.quantity = 'Số lượng phải là số nguyên dương';
+    }
 
-    // if (data.product_donate && !data.product_donate.trim()) {
-    //     errors.product_donate = 'ID sản phẩm tặng kèm không được để trống';
-    // }
+    if (data.product_donate && !data.product_donate.trim()) {
+        errors.product_donate = 'ID sản phẩm tặng kèm không được để trống';
+    }
 
-    // if (data.quantity_donate && (!Number.isInteger(Number(data.quantity_donate)) || data.quantity_donate <= 0)) {
-    //     errors.quantity_donate = 'Số lượng tặng kèm phải là số nguyên dương';
-    // }
+    if (data.quantity_donate && (!Number.isInteger(Number(data.quantity_donate)) || data.quantity_donate <= 0)) {
+        errors.quantity_donate = 'Số lượng tặng kèm phải là số nguyên dương';
+    }
 
-    // // Kiểm tra amount_sales (chỉ khi loại là 'percentage')
-    // if (data.amount_sales && (!Number(data.amount_sales) || data.amount_sales <= 0)) {
-    //     errors.amount_sales = 'Số tiền bán phải là số dương';
-    // }
+    // Kiểm tra amount_sales (chỉ khi loại là 'percentage')
+    if (data.amount_sales && (!Number(data.amount_sales) || data.amount_sales <= 0)) {
+        errors.amount_sales = 'Số tiền bán phải là số dương';
+    }
 
-    // if (data.percent && (Number(data.percent) < 0 || Number(data.percent) > 100)) {
-    //     errors.percent = 'Phần trăm phải nằm trong khoảng từ 0 đến 100';
-    // }
+    if (data.percent && (Number(data.percent) < 0 || Number(data.percent) > 100)) {
+        errors.percent = 'Phần trăm phải nằm trong khoảng từ 0 đến 100';
+    }
 
-    // if (data.amount_limit && (!Number(data.amount_limit) || data.amount_limit <= 0)) {
-    //     errors.amount_limit = 'Giới hạn số tiền phải là số dương';
-    // }
+    if (data.amount_limit && (!Number(data.amount_limit) || data.amount_limit <= 0)) {
+        errors.amount_limit = 'Giới hạn số tiền phải là số dương';
+    }
 
-    // if (data.amount_donate && (!Number(data.amount_donate) || data.amount_donate <= 0)) {
-    //     errors.amount_donate = 'Số tiền tặng kèm phải là số dương';
-    // }
+    if (data.amount_donate && (!Number(data.amount_donate) || data.amount_donate <= 0)) {
+        errors.amount_donate = 'Số tiền tặng kèm phải là số dương';
+    }
 
     return errors;
 };
 
+export const validatePriceHeaderData = (priceHeaderData) => {
+    let errors = {};
+
+    // Check if description is provided and not empty
+    if (!priceHeaderData.description || !priceHeaderData.description.trim()) {
+        return  errors.description = 'Mô tả không được để trống';
+    }
+
+    // Check if startDate is provided
+    if (!priceHeaderData.startDate) {
+        return  errors = 'Ngày bắt đầu không được để trống';
+    }
+
+    // Check if endDate is provided
+    if (!priceHeaderData.endDate) {
+        return  errors = 'Ngày kết thúc không được để trống';
+    }
+
+    // Validate that endDate is after or equal to startDate
+    if (
+        priceHeaderData.startDate &&
+        priceHeaderData.endDate &&
+        new Date(priceHeaderData.endDate) < new Date(priceHeaderData.startDate)
+    ) {
+        return  errors = 'Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu';
+    }
+
+    // Check if status is valid ('active' or 'inactive')
+    if (!['active', 'inactive'].includes(priceHeaderData.status)) {
+        return  errors = 'Trạng thái không hợp lệ';
+    }
+
+    return errors;
+};
+
+export const validatePriceDetailData = (data) => {
+    let errors = {};
+
+    // Validate product_id
+    if (!data.product_id) {
+        return  errors = 'Vui lòng chọn sản phẩm.';
+    }
+
+    // Validate price
+    if (!data.price) {
+        return  errors = 'Vui lòng nhập giá.';
+    } else if (isNaN(data.price)) {
+        return errors = 'Giá phải là một số.';
+    } else if (parseFloat(data.price) <= 0) {
+        return errors = 'Giá phải lớn hơn 0.';
+    }
+
+    return errors;
+};
 
 

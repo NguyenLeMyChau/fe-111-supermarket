@@ -80,6 +80,7 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
                 setErrors({});
                 alert('Đã thêm chi tiết khuyến mãi thành công');
                 onClose(); // Đóng modal
+                window.location.reload()
             }
         } catch (error) {
             console.error('Failed to add promotion detail:', error);

@@ -15,11 +15,9 @@ import UpdatePromotionLine from './UpdatePromotionLine';
 import UpdatePromotionDetail from './UpdatePromotionDetail';
 
 export default function Promotion() {
-  const promotions = useSelector((state) => state.promotion?.promotions) || [];
-  const [currentHeader, selectCurrentHeader] = useState({});
+  const promotions = useSelector((state) => state.promotion?.promotions) || [];  const [currentHeader, selectCurrentHeader] = useState({});
   const [currentLine, selectCurrentLine] = useState({});
   const [currentDetail, selectCurrentDetail] = useState({});
-console.log(promotions)
   const [promotionLine, setPromotionLine] = useState([]);
   const [isModalOpenLine, setIsModalOpenLine] = useState(false);
 

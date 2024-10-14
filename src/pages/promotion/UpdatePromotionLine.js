@@ -59,6 +59,7 @@ const UpdatePromotionLine = ({ promotionLine, onClose, promotionHeader }) => {
             await updatePromotionLine(promotionLine._id, formData, accessToken, axiosJWT);
             alert('Cập nhật dòng khuyến mãi thành công');
             onClose();
+            window.location.reload()
         } catch (error) {
             alert('Cập nhật dòng khuyến mãi thất bại: ' + error.message);
         } finally {

@@ -6,25 +6,38 @@ import { IoIosCheckmarkCircleOutline } from 'react-icons/io';
 import { MdDoNotDisturbAlt } from 'react-icons/md';
 import { CiEdit } from 'react-icons/ci';
 import Modal from '../../components/modal/Modal';
-import AddPromotionDetail from '../promotion/AddPromotionDetail';
-import AddPromotionHeader from '../promotion/AddPromotion';
+import AddProductPrice from './AddPrice';
+import EditProductPrice from './UpdatePrice';
+import AddProductPriceDetail from './AddPriceDetail';
+import UpdatePriceDetail from './UpdatePriceDetail';
 
 export default function Promotion() {
   const prices = useSelector((state) => state.price?.prices) || [];
   const [currentHeader, selectCurrentHeader] = useState({});
+  const [currentDetail, selectCurrentDetail] = useState({});
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isEditModalDetailOpen, setIsEditModalDetailOpen] = useState(false);
   const [productPriceDetail,setProductPriceDetail] = useState([]);
   const [isModalOpenDetail, setIsModalOpenDetail] = useState(false);
-
- console.log(prices)
-
+  
 
  const handleEditClick = (event, productPriceHeader) => {
     event.stopPropagation(); 
     selectCurrentHeader(productPriceHeader);
     setIsEditModalOpen(true);
 };
+const handleCloseEditModal  = () => {
+  setIsEditModalOpen(false);
+};
 
+const handleEditDetailClick = (event, productPriceDetail) => {
+  event.stopPropagation(); 
+  selectCurrentDetail(productPriceDetail);
+  setIsEditModalDetailOpen(true);
+};
+const handleCloseEditModalDetail  = () => {
+  setIsEditModalDetailOpen(false);
+};
 const handleRowClickDetail = (productPriceHeader) => {
     const productDetail = Array.isArray(productPriceHeader.productPrices) ? productPriceHeader.productPrices : [];
     setProductPriceDetail(productDetail);
@@ -92,7 +105,7 @@ const handleRowClickDetail = (productPriceHeader) => {
           <CiEdit
               style={{ color: 'blue', cursor: 'pointer' }}
               size={25}
-              onClick={(event) => handleEditClick(event, record)}
+              onClick={(event) => handleEditDetailClick(event, record)}
           />
       ),
   },];
@@ -106,32 +119,60 @@ const handleRowClickDetail = (productPriceHeader) => {
         columns={productPriceHeader}
         onRowClick={handleRowClickDetail}
         renderModal={(onClose) => (
-          <AddPromotionHeader
+          <AddProductPrice
             isOpen={true}
             onClose={onClose}
           />
         )}
       />
        <Modal
-        title={'Chi tiết khuyến mãi'}
+        title={'Chi tiết chương trình giá'}
         isOpen={isModalOpenDetail}
         onClose={closeModalDetail}
       >
 
-        <FrameData
-          data={productPriceDetail}
-          buttonText="Thêm giá sản phẩm"
-          columns={productDetailColumn }       
-            itemsPerPage={8}
-          renderModal={(onClose) => (
-            <AddPromotionDetail
-              isOpen={true}
-              onClose={onClose}
-              
-            />
-          )}
-        />
+<FrameData
+  data={productPriceDetail}
+  buttonText="Thêm giá sản phẩm"
+  columns={productDetailColumn}
+  itemsPerPage={8}
+  renderModal={currentHeader.status === 'inactive' ? (onClose) => (
+    <AddProductPriceDetail
+      isOpen={true}
+      onClose={onClose}
+      productPriceHeader={currentHeader}
+    />
+  ) : null}
+/>
+
       </Modal>
+      {(isEditModalOpen) ? (
+    <Modal
+        title={`Cập nhật ${currentHeader.description}`}
+        isOpen={isEditModalOpen}
+        onClose={handleCloseEditModal}
+        width={'30%'}
+    >
+        <EditProductPrice
+            priceId={currentHeader._id}
+            initialData={currentHeader}
+            onClose={handleCloseEditModal}
+        />
+    </Modal>
+) : null}
+             {(isEditModalDetailOpen &&  currentHeader.status === 'inactive')?(
+                <Modal
+                title={`Cập nhật ${currentDetail.description}`}
+                    isOpen={isEditModalDetailOpen}
+                    onClose={handleCloseEditModalDetail}
+                    width={'30%'}
+                >
+                    <UpdatePriceDetail
+                    priceDetailid={currentDetail._id} 
+                    priceDetail={currentDetail}
+                    />
+                </Modal>
+            ):null}
     </div>
 
 

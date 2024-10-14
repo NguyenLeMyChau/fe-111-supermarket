@@ -57,6 +57,7 @@ const UpdatePromotionHeader = ({ promotionHeader, onClose }) => {
             await updatePromotionHeader(promotionHeader._id, formData, accessToken, axiosJWT);
             alert('Cập nhật thành công khuyến mãi');
             onClose();
+            window.location.reload()
         } catch (error) {
             alert('Cập nhật khuyến mãi thất bại: ' + error);
         }

@@ -11,6 +11,7 @@ const priceSlice = createSlice({
     initialState,
     reducers: {
         getPriceStart(state) {
+            state.prices = null;
             state.isFetching = true;
             state.error = false;
         },

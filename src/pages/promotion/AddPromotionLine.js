@@ -70,6 +70,7 @@ export default function AddPromotionLine({ isOpen, onClose, promotionHeader }) {
                 });
                 setErrors({});
                 alert('Đã thêm dòng khuyến mãi thành công');
+                window.location.reload()
             }
         } catch (error) {
             console.error('Failed to add promotion line:', error);
