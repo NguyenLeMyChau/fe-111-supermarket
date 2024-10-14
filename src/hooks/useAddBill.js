@@ -16,7 +16,6 @@ const useAddBill = () => {
     const accessToken = useAccessToken();
 
     const [quantities, setQuantities] = useState();
-    const [prices, setPrices] = useState({});
 
     const [products, setProducts] = useState([]);
     const ordererName = useState(user.user.name);
@@ -36,17 +35,6 @@ const useAddBill = () => {
             return newQuantities;
         });
     };
-
-    const handlePriceChange = (productId, value) => {
-        setPrices((prevPrices) => {
-            const newPrices = {
-                ...prevPrices,
-                [productId]: value < 1 ? 1000 : value,
-            };
-            return newPrices;
-        });
-    };
-
 
     const handleRemoveProduct = (productId) => {
         setProducts(products.filter(product => product._id !== productId));
@@ -72,7 +60,6 @@ const useAddBill = () => {
                 productList: products.map(product => ({
                     product_id: product._id,
                     quantity: quantities[product._id],
-                    price_order: prices[product._id],
                     unit_id: product.unit_id,
                     item_code: product.item_code,
                 })),
@@ -121,12 +108,6 @@ const useAddBill = () => {
                 }, {});
                 setQuantities(newQuantities);
 
-                const newPrices = productsWithUnits.reduce((acc, product) => {
-                    acc[product._id] = product.price_order || 1000;
-                    return acc;
-                }, {});
-
-                setPrices(newPrices);
             }
 
         } catch (error) {
@@ -151,7 +132,6 @@ const useAddBill = () => {
 
     return {
         quantities,
-        prices,
         products,
         ordererName,
         selectedSupplier,
@@ -163,7 +143,6 @@ const useAddBill = () => {
         supplierOptions,
         isLoading,
         isLoadingSupplier,
-        handlePriceChange,
         billId,
         setBillId,
     };

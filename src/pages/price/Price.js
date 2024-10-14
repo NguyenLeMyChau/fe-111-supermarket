@@ -113,7 +113,7 @@ const handleRowClickDetail = (productPriceHeader) => {
         )}
       />
        <Modal
-        title={'Chi tiết khuyến mãi'}
+        title={'Chi tiết giá'}
         isOpen={isModalOpenDetail}
         onClose={closeModalDetail}
       >
