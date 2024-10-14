@@ -45,7 +45,7 @@ const handleRowClickDetail = (productPriceHeader) => {
       key: 'startDate',
       width: '15%',
       className: 'text-center',
-      // render: (date) => formatDate(date)
+      render: (date) => formatDate(date)
     },
     {
       title: 'Ngày kết thúc',
@@ -53,7 +53,7 @@ const handleRowClickDetail = (productPriceHeader) => {
       key: 'endDate',
       width: '15%',
       className: 'text-center',
-      // render: (date) => formatDate(date)
+      render: (date) => formatDate(date)
     },
     {
       title: 'Hoạt động',
