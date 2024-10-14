@@ -36,6 +36,16 @@ export default function Product() {
     };
 
     const productColumns = [
+        {
+            title: 'Hình ảnh', dataIndex: 'img', key: 'img', width: '20%', className: 'text-center',
+            render: (text, record) => (
+                <img
+                    src={record.img}
+                    alt={record.name}
+                    style={{ width: 70, height: 70 }}
+                />
+            )
+        },
         { title: 'Mã hàng', dataIndex: 'item_code', key: 'item_code', width: '10%', className: 'text-center' },
         { title: 'Tên sản phẩm', dataIndex: 'name', key: 'name', width: '30%' },
         { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '30%' },
