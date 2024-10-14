@@ -18,6 +18,7 @@ import ProductWarehouse from "../containers/warehouse/ProductWarehouse";
 import ProductDetail from '../pages/product/ProductDetail.js';
 import Bill from '../pages/bill/Bill.js';
 import AddBill from '../pages/bill/AddBill.js';
+import Unit from '../pages/unit/Unit.js';
 
 function AppRoutes() {
     return (
@@ -46,8 +47,8 @@ function AppRoutes() {
                     </Route> */}
                     <Route path="bill" element={<Bill />} >
                         <Route path="add-bill" element={<AddBill />} />
-
                     </Route>
+                    <Route path="unit" element={<Unit />} />
                 </Route>
                 <Route path="/frame-staff" element={<FrameStaff />} />
                 <Route path="/frame-staff/stall" element={<Stall />} />

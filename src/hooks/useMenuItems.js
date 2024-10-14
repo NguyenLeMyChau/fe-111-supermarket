@@ -63,18 +63,18 @@ const useMenuItems = (onchange) => {
                 { Icon: GoHome, label: "Dashboard", text: "Tổng quan", path: '/admin/dashboard' },
                 { Icon: BiCategory, label: "Category", text: "Loại sản phẩm", path: '/admin/category' },
                 { Icon: MdProductionQuantityLimits, label: "Product", text: "Sản phẩm", path: '/admin/product' },
-                { Icon: BsPersonVcard, label: "Employee", text: "Nhân viên", path: '/admin/employee' },
+                // { Icon: SlSettings, label: "Unit", text: "Đơn vị tính", path: '/admin/unit' },
                 { Icon: BiSolidOffer, label: "Promotion", text: "Khuyến mãi", path: '/admin/promotion' },
                 { Icon: AiOutlineTag, label: "Price", text: "Giá sản phẩm", path: '/admin/price' },
                 { Icon: MdOutlineInventory2, label: "Inventory", text: "Kho", path: '/admin/inventory' },
                 { Icon: BsFileBarGraph, label: "Bill", text: "Nhập kho", path: '/admin/bill' },
+                { Icon: BsPersonVcard, label: "Employee", text: "Nhân viên", path: '/admin/employee' },
                 { Icon: FaUsers, label: "Suppliers", text: "Nhà cung cấp", path: '/admin/supplier' },
             ],
         },
         {
             section: "Setting",
             items: [
-                { Icon: SlSettings, label: "Setting", text: "Cài đặt" },
                 { Icon: IoIosLogOut, label: "Log Out", text: "Đăng xuất" }
             ]
         }
