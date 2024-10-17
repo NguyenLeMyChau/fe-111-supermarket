@@ -4,15 +4,12 @@ import Input from '../../components/input/Input';
 import Button from '../../components/button/Button';
 import { useAxiosJWT, useAccessToken } from '../../utils/axiosInstance';
 import { validatePriceDetailData } from '../../utils/validation';
-import { addProductPriceDetail } from '../../services/priceRequest'; // Update this to your actual service path
-import { useDispatch } from 'react-redux';
-import { getAllProducts } from '../../services/productRequest';
+import { addProductPriceDetail, getProductNoPrice } from '../../services/priceRequest'; 
 import Dropdownpicker from '../../components/dropdownpicker/dropdownpicker';
 
 export default function AddProductPriceDetail({ isOpen, onClose,productPriceHeader }) {
   const axiosJWT = useAxiosJWT();
   const accessToken = useAccessToken();
-  const dispatch = useDispatch();
   const [products, setProducts] = useState([]);
   const [productPriceData, setProductPriceData] = useState({
     product_id: '',
@@ -23,12 +20,12 @@ export default function AddProductPriceDetail({ isOpen, onClose,productPriceHead
   const [errors, setErrors] = useState({});
   const fetchProducts = useCallback(async () => {
     try {
-      const productsData = await getAllProducts(accessToken, axiosJWT, dispatch);
+      const productsData = await getProductNoPrice(accessToken, axiosJWT);
       setProducts(productsData);
     } catch (error) {
       console.error('Failed to fetch products:', error);
     }
-  }, [accessToken, axiosJWT, dispatch]);
+  }, [accessToken, axiosJWT]);
 
   useEffect(() => {
     fetchProducts();

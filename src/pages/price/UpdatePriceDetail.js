@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import Modal from '../../components/modal/Modal';
 import Input from '../../components/input/Input';
 import Button from '../../components/button/Button';
 import { useAxiosJWT, useAccessToken } from '../../utils/axiosInstance';
@@ -7,7 +6,6 @@ import { validatePriceDetailData } from '../../utils/validation';
 import { updateProductPriceDetail } from '../../services/priceRequest'; // Update this to your actual service path
 import { useDispatch } from 'react-redux';
 import { getAllProducts } from '../../services/productRequest';
-import Dropdownpicker from '../../components/dropdownpicker/dropdownpicker';
 
 export default function UpdatePriceDetail({ priceDetail,priceDetailid }) {
     const axiosJWT = useAxiosJWT();
@@ -51,10 +49,6 @@ export default function UpdatePriceDetail({ priceDetail,priceDetailid }) {
         setProductPriceData((prevData) => ({ ...prevData, [name]: value }));
     };
 
-    const handleDropdownChange = (name, value) => {
-        setProductPriceData((prevData) => ({ ...prevData, [name]: value }));
-    };
-
     const handleUpdateProductPrice = async (e) => {
         e.preventDefault();
 
@@ -88,16 +82,18 @@ export default function UpdatePriceDetail({ priceDetail,priceDetailid }) {
     return (
             <div className='flex-column-center'>
                 <form onSubmit={handleUpdateProductPrice}>
-                    <Dropdownpicker
-                        className='promotion-dropdown'
+                   
+                      <Input
                         label='Sản phẩm'
-                        options={products.map((product) => ({
-                            value: product._id,
-                            label: product.name,
-                        }))}
-                        value={productPriceData.product_id}
-                        onChange={(value) => handleDropdownChange('product_id', value)}
-                        error={errors.product_id}
+                        placeholder='Nhập giá sản phẩm'
+                        name='price'
+                        value={
+                            products.find(product => product._id === productPriceData.product_id)?.name || ''
+                        }
+                        onChange={handleChange}
+                        error={errors.price}
+                        type='text'
+                        disabled='true'
                     />
 
                     <Input

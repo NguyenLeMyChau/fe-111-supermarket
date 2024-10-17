@@ -76,3 +76,18 @@ export const updateProductPriceDetail = async (accessToken, axiosJWT, priceData,
         throw new Error('Error updating product price detail: ' + error.message);
     }
 };
+
+const getProductNoPrice = async (accessToken, axiosJWT) => {
+    try {
+        const response = await axiosJWT.get(`/api/price/getProductNoPrice`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });  
+        return response.data;
+    } catch (error) {
+        console.error('Get all prices failed:', error);
+    }
+};
+
+export { getProductNoPrice };
