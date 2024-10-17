@@ -77,12 +77,15 @@ export const updateProductPriceDetail = async (accessToken, axiosJWT, priceData,
     }
 };
 
-const getProductNoPrice = async (accessToken, axiosJWT) => {
+const getProductNoPrice = async (accessToken, axiosJWT,productPriceHeader_id) => {
     try {
         const response = await axiosJWT.get(`/api/price/getProductNoPrice`, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
+            params: {
+                productPriceHeader_id
+            }
         });  
         return response.data;
     } catch (error) {

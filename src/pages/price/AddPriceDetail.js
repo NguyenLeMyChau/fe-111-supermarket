@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {  useEffect, useState } from 'react';
 import Modal from '../../components/modal/Modal';
 import Input from '../../components/input/Input';
 import Button from '../../components/button/Button';
@@ -18,19 +18,21 @@ export default function AddProductPriceDetail({ isOpen, onClose,productPriceHead
   });
 
   const [errors, setErrors] = useState({});
-  const fetchProducts = useCallback(async () => {
+  const fetchProducts = async () => {
     try {
-      const productsData = await getProductNoPrice(accessToken, axiosJWT);
+      const productPriceHeaderId = productPriceHeader?._id;
+      const productsData = await getProductNoPrice(accessToken, axiosJWT, productPriceHeaderId);
       setProducts(productsData);
     } catch (error) {
       console.error('Failed to fetch products:', error);
     }
-  }, [accessToken, axiosJWT]);
+  };
 
   useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]); 
-
+    if (isOpen) {
+      fetchProducts();
+    }
+  }, [isOpen]);
   const handleChange = (e) => {
     const { name, value } = e.target;
     setProductPriceData((prevData) => ({ ...prevData, [name]: value }));
