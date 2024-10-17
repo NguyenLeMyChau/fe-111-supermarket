@@ -9,7 +9,8 @@ import { getAllEmployees } from '../services/employeeRequest';
 import { getAllPromotions } from '../services/promotionRequest';
 import { getAllBill, getAllWarehouse } from '../services/warehouseRequest';
 import { getAllUnit } from '../services/unitRequest';
-import {getAllPrices} from '../services/priceRequest'
+import { getAllPrices } from '../services/priceRequest'
+import { getAllInvoices } from '../services/invoiceRequest';
 
 const useCommonData = () => {
     const dispatch = useDispatch();
@@ -30,6 +31,7 @@ const useCommonData = () => {
         '/admin/employee': getAllEmployees,
         '/admin/promotion': getAllPromotions,
         '/admin/price': getAllPrices,
+        '/admin/invoice': getAllInvoices,
     }), []);
 
     useEffect(() => {

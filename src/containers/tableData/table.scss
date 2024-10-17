@@ -24,6 +24,10 @@
     text-align: right;
 }
 
+.table td.text-right-td {
+    text-align: right;
+}
+
 .table tbody tr:hover {
     background-color: var(--default-color);
     color: var(--white-color);
@@ -37,4 +41,3 @@
     background-color: #fff;
     z-index: 1;
 }
-

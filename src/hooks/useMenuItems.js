@@ -11,6 +11,7 @@ import { IoIosLogOut } from "react-icons/io";
 import { TbReport } from "react-icons/tb";
 import { BiCategory, BiSolidOffer } from "react-icons/bi";
 import { AiOutlineTag } from "react-icons/ai";
+import { PiInvoice } from "react-icons/pi";
 
 import { createAxiosInstance } from '../utils/util';
 import { logoutSuccess } from '../store/reducers/authSlice';
@@ -68,6 +69,7 @@ const useMenuItems = (onchange) => {
                 { Icon: AiOutlineTag, label: "Price", text: "Giá sản phẩm", path: '/admin/price' },
                 { Icon: MdOutlineInventory2, label: "Inventory", text: "Kho", path: '/admin/inventory' },
                 { Icon: BsFileBarGraph, label: "Bill", text: "Nhập kho", path: '/admin/bill' },
+                { Icon: PiInvoice, label: "Invoice", text: "Hoá đơn khách", path: '/admin/invoice' },
                 { Icon: BsPersonVcard, label: "Employee", text: "Nhân viên", path: '/admin/employee' },
                 { Icon: FaUsers, label: "Suppliers", text: "Nhà cung cấp", path: '/admin/supplier' },
             ],

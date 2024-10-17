@@ -19,6 +19,7 @@ import ProductDetail from '../pages/product/ProductDetail.js';
 import Bill from '../pages/bill/Bill.js';
 import AddBill from '../pages/bill/AddBill.js';
 import Unit from '../pages/unit/Unit.js';
+import Invoice from '../pages/invoice/Invoice.js';
 
 function AppRoutes() {
     return (
@@ -49,6 +50,7 @@ function AppRoutes() {
                         <Route path="add-bill" element={<AddBill />} />
                     </Route>
                     <Route path="unit" element={<Unit />} />
+                    <Route path="invoice" element={<Invoice />} />
                 </Route>
                 <Route path="/frame-staff" element={<FrameStaff />} />
                 <Route path="/frame-staff/stall" element={<Stall />} />

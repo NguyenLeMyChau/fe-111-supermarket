@@ -22,6 +22,7 @@ import employeeReducer from './reducers/employeeSlice';
 import promotionReducer from './reducers/promotionSlice';
 import unitReducer from './reducers/unitSlice';
 import priceReducer from './reducers/priceSlice'
+import invoiceReducer from './reducers/invoiceSlice';
 
 const persistConfig = {
     key: 'root',
@@ -41,6 +42,7 @@ const rootReducer = combineReducers(
         promotion: promotionReducer,
         unit: unitReducer,
         price:priceReducer,
+        invoice: invoiceReducer,
     });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
