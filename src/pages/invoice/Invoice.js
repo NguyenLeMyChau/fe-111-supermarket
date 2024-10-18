@@ -14,20 +14,50 @@ export default function Invoice() {
     const [products, setProducts] = useState([]);
 
     const invoiceColumn = [
-        { title: 'Khách hàng', dataIndex: 'customerName', key: 'customerName', width: '20%' },
+        { title: 'Mã đơn hàng', dataIndex: '_id', key: '_id', width: '10%' },
+        { title: 'Khách hàng', dataIndex: 'customerName', key: 'customerName', width: '10%' },
+        {
+            title: 'Người nhận',
+            dataIndex: 'paymentInfo',
+            key: 'paymentInfo',
+            width: '10%',
+            render: (paymentInfo) => paymentInfo.name
+        },
         {
             title: 'Ngày đặt hàng',
             dataIndex: 'createdAt',
             key: 'createdAt',
-            width: '20%',
+            width: '15%',
             className: 'text-center',
             render: (date) => formatDate(date)
+        },
+        {
+            title: 'Số điện thoại nhận',
+            dataIndex: 'paymentInfo',
+            key: 'paymentInfo',
+            width: '15%',
+            render: (paymentInfo) => paymentInfo.phone
+        },
+        {
+            title: 'Địa chỉ',
+            dataIndex: 'paymentInfo',
+            key: 'paymentInfo',
+            width: '30%',
+            render: (paymentInfo) => `${paymentInfo?.address?.street}, ${paymentInfo?.address?.ward}, ${paymentInfo?.address?.district}, ${paymentInfo?.address?.city}`
+        },
+        {
+            title: 'Tổng tiền',
+            dataIndex: 'paymentAmount',
+            key: 'paymentAmount',
+            width: '10%',
+            className: 'text-right',
+            render: (total) => formatCurrency(total)
         },
     ];
 
     const invoiceDetailColumn = [
         { title: 'Tên sản phẩm', dataIndex: 'productName', key: 'productName', width: '30%' },
-        { title: 'Đơn vị tính', dataIndex: 'unit', key: 'unit', width: '10%' },
+        { title: 'Đơn vị tính', dataIndex: 'unitName', key: 'unitName', width: '10%' },
         { title: 'Số lượng', dataIndex: 'quantity', key: 'quantity', width: '10%', className: 'text-center' },
         {
             title: 'Giá', dataIndex: 'price', key: 'price', width: '10%', className: 'text-right',
