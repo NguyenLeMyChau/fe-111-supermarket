@@ -1,0 +1,39 @@
+.footer-customer-container {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    background-color: white;
+    border-top: 1px solid #ccc;
+
+    .footer-section {
+        flex: 1;
+        margin: 0 20px;
+    }
+
+    .footer-section h4 {
+        margin-bottom: 10px;
+        font-size: 18px;
+        color: #333;
+    }
+
+    .footer-section p {
+        margin: 5px 0;
+        font-size: 14px;
+        color: #666;
+    }
+
+    .social-icons {
+        display: flex;
+        gap: 10px;
+    }
+
+    .social-icons svg {
+        font-size: 24px;
+        color: #333;
+        cursor: pointer;
+    }
+
+    .social-icons svg:hover {
+        color: #1366D9;
+    }
+}

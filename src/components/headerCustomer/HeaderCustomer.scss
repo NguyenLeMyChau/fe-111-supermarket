@@ -1,0 +1,116 @@
+.header-customer-container {
+    display: flex;
+    align-items: center;
+    padding: 0 80px;
+    background-color: white;
+    border-bottom: 1px solid #e9ecef;
+    height: 10vh;
+
+    h3 {
+        color: #2392D0;
+    }
+
+    .search-container {
+        display: flex;
+        align-items: center;
+        margin-left: 40px;
+        background-color: yellow;
+        width: 500px;
+        height: 35px;
+    }
+
+    .search-input {
+        width: 90%;
+        height: 100%;
+        font-size: 16px;
+        border: 1px solid #ccc;
+        padding: 0 10px;
+    }
+
+    .search-button {
+        width: 10%;
+        height: 102%;
+        background-color: #323C64;
+        color: white;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .user-cart-container {
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+        margin-left: auto;
+    }
+
+    .cart-icon {
+        position: relative;
+        margin-right: 20px;
+        cursor: pointer;
+        margin: 35px;
+    }
+
+    .cart-icon .cart-count {
+        position: absolute;
+        top: -5px;
+        right: -10px;
+        background-color: red;
+        color: white;
+        border-radius: 50%;
+        padding: 2px 5px;
+        font-size: 12px;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        position: relative;
+
+        .user-greeting {
+            display: flex;
+            flex-direction: column;
+            margin-left: 5px;
+        }
+
+        .user-name {
+            font-size: 16px;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            right: -10px;
+            top: 110%;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            width: 200px;
+        }
+
+        .dropdown-item {
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        .dropdown-icon {
+            margin-left: -7px;
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown-icon.open {
+            transform: rotate(180deg);
+        }
+
+    }
+
+
+}

@@ -1,0 +1,123 @@
+.home-customer-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: white;
+
+    header,
+    footer {
+        width: 100%;
+    }
+
+    main {
+        flex: 1 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .background-image {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .explore-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 92%;
+            margin: 30px 0;
+        }
+
+        .explore-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #323C64;
+        }
+
+        .product-categories-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .product-categories {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            width: 100%;
+            height: 200px;
+            margin: 0px 10px;
+            user-select: none; /* Ngăn việc chọn văn bản khi kéo */
+            cursor: grab;
+            /* Thay đổi con trỏ khi đang kéo */
+
+            span {
+                font-size: 16px;
+                font-weight: bold;
+                color: #323C64;
+            }
+
+            p {
+                font-size: 14px;
+                color: #667085;
+                margin-top: 0px;
+            }
+        }
+
+        .product-categories:active {
+            cursor: grabbing;
+            /* Thay đổi con trỏ khi đang kéo thực sự */
+        }
+
+        .product-categories::-webkit-scrollbar {
+            display: none;
+            /* Safari and Chrome */
+        }
+
+        .product-category {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 150px;
+            height: 180px;
+            border: 1px solid #323C64;
+            border-radius: 8px;
+            margin: 0 20px;
+            text-align: center;
+            flex: 0 0 auto;
+            cursor: pointer;
+
+        }
+
+        .product-category img {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 15px;
+        }
+
+        .nav-button {
+            background-color: #323C64;
+            color: #F2F3F4;
+            border: none;
+            border-radius: 4px;
+            padding: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-button:hover {
+            background-color: #0b4a8b;
+        }
+    }
+}

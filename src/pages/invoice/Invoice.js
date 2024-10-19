@@ -12,6 +12,7 @@ export default function Invoice() {
     const invoices = useSelector((state) => state.invoice?.invoices) || [];
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [products, setProducts] = useState([]);
+    const sortedInvoices = invoices.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     const invoiceColumn = [
         { title: 'Mã đơn hàng', dataIndex: '_id', key: '_id', width: '10%' },
@@ -90,7 +91,7 @@ export default function Invoice() {
         <>
             <FrameData
                 title="Danh sách hoá đơn"
-                data={invoices}
+                data={sortedInvoices}
                 columns={invoiceColumn}
                 onRowClick={handleRowClick}
             />
