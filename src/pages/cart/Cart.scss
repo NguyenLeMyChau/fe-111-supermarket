@@ -276,6 +276,28 @@
             background-color: #f2f5f9;
             box-sizing: border-box;
             padding: 10px 20px;
+
+            .detail {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 10px;
+                background-color: #fcfeff;
+                border-radius: 10px;
+                padding: 5px 15px;
+
+                .payment-image {
+                    width: 30px;
+                    height: 30px;
+                    object-fit: cover;
+                    border-radius: 5px;
+                }
+
+                span {
+                    font-weight: bold;
+                    font-size: 14px;
+                }
+            }
         }
 
         .order-button {
@@ -297,4 +319,78 @@
         }
     }
 
+}
+
+.main .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.main .modal-header {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+
+    h4 {
+        margin: 0;
+    }
+
+    button {
+        margin-right: 20px;
+    }
+
+}
+
+.main .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    width: 300px;
+    text-align: center;
+
+    .selected {
+        border: 1px solid #4CAF50;
+        background-color: #e8f5e9;
+        color: black;
+        border-radius: 10px;
+    }
+
+    .unselected {
+        background-color: transparent;
+        color: black;
+        border-radius: 10px;
+    }
+
+}
+
+.main .modal-content ul {
+    list-style: none;
+    padding: 0;
+}
+
+.main .modal-content li {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 10px;
+}
+
+.main .modal-content li:hover {
+    background: #f0f0f0;
+}
+
+.main .modal-content img {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
 }

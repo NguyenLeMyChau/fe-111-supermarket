@@ -5,8 +5,12 @@ import { IoWarning } from "react-icons/io5";
 import { FiChevronRight } from "react-icons/fi";
 import { MdChangeCircle } from "react-icons/md";
 import { AiFillCloseCircle } from "react-icons/ai"; // Import icon
+import PaymentModal from './PaymentModal';
 
 export default function Cart() {
+    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState({});
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
     const [userInfo] = useState({
         name: 'Nguyễn Văn A',
         phone: '0123456789',
@@ -32,6 +36,11 @@ export default function Cart() {
 
     const handleDelete = (id) => {
         setProducts(products.filter(product => product.id !== id));
+    };
+
+    const handlePaymentMethodSelect = (method) => {
+        console.log(method);
+        setSelectedPaymentMethod(method);
     };
 
     return (
@@ -119,17 +128,38 @@ export default function Cart() {
 
                 {/* Footer with Order Button */}
                 <footer>
-                    <div className='payment-method'>
+                    <div className='payment-method' onClick={() => setIsModalOpen(true)}>
                         <label htmlFor="payment">Phương thức thanh toán:</label>
-                        <select id="payment">
-                            <option value="credit-card">Thẻ tín dụng</option>
-                            <option value="paypal">PayPal</option>
-                            <option value="cash">Tiền mặt</option>
-                        </select>
+                        {
+                            selectedPaymentMethod.name ? (
+                                <>
+                                    <div className='detail'>
+                                        <img src={selectedPaymentMethod.icon} alt={selectedPaymentMethod.name} className='payment-image' />
+                                        <span>{selectedPaymentMethod.name}</span>
+                                    </div>
+                                </>
+                            ) : (
+                                <>
+                                    <div className='detail'>
+                                        <span>Chọn phương thức thanh toán</span>
+                                        <FiChevronRight size={25} color='#323C64' className="chevron-right" />
+                                    </div>
+                                </>
+                            )
+                        }
                     </div>
+
 
                     <button className='order-button'>Đặt hàng</button>
                 </footer>
+
+                {/* Payment Modal */}
+                <PaymentModal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    onSelect={handlePaymentMethodSelect}
+                    selectedPaymentMethod={selectedPaymentMethod}
+                />
 
             </main>
 
