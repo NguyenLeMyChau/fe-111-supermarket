@@ -21,6 +21,7 @@ import AddBill from '../pages/bill/AddBill.js';
 import Unit from '../pages/unit/Unit.js';
 import Invoice from '../pages/invoice/Invoice.js';
 import Home from '../pages/home/Home.js';
+import Cart from '../pages/cart/Cart.js';
 
 function AppRoutes() {
     return (
@@ -53,10 +54,16 @@ function AppRoutes() {
                     <Route path="unit" element={<Unit />} />
                     <Route path="invoice" element={<Invoice />} />
                 </Route>
+
                 <Route path="/frame-staff" element={<FrameStaff />} />
                 <Route path="/frame-staff/stall" element={<Stall />} />
                 <Route path="/frame-staff/payment" element={<Payment />} />
+
                 <Route path="/home" element={<Home />} />
+                <Route path="/customer">
+                    <Route path="*" element={<Navigate to="/home" />} />
+                    <Route path="cart" element={<Cart />} />
+                </Route>
 
             </Routes>
         </Router>

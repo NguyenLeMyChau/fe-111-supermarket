@@ -30,6 +30,12 @@ export default function HeaderCustomer() {
         console.log('Cập nhật thông tin');
     };
 
+    const handleCart = () => {
+        // Xử lý chuyển hướng đến trang giỏ hàng
+        console.log('Chuyển hướng đến trang giỏ hàng');
+        navigate('/customer/cart');
+    }
+
     return (
         <div className='header-customer-container'>
             <div className='flex-row-align-center'>
@@ -49,10 +55,12 @@ export default function HeaderCustomer() {
             </div>
 
             <div className='user-cart-container'>
-                <div className='cart-icon'>
+
+                <button className='cart-icon' onClick={handleCart}>
                     <FaShoppingCart size={30} color='#323C64' />
                     <span className='cart-count'>3</span>
-                </div>
+                </button>
+
                 <div className='user-info' onClick={toggleDropdown}>
                     <div className='user-greeting'>
                         <span>Xin chào</span>

@@ -1,0 +1,300 @@
+.cart-customer-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-items: center;
+    min-height: 100vh;
+    background-color: #ede9e9;
+
+    header {
+        width: 100%;
+    }
+
+    main {
+        width: 50%;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 20px 0;
+        background-color: #f2f5f9;
+
+        .main-header {
+            width: 100%;
+            height: 50px;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            background-color: white;
+        }
+
+        .payment-info {
+            width: 90%;
+            height: 80px;
+            background-color: white;
+            margin: 30px 0px;
+            border-radius: 10px;
+            padding-left: 30px;
+            position: relative;
+
+            h5 {
+                position: absolute;
+                top: -37px;
+                background-color: white;
+                padding: 0 15px;
+                border-radius: 5px;
+                font-weight: 500;
+                color: var(--muted-color);
+            }
+
+            .content {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                width: 95%;
+                height: 90%;
+
+                .warning-text {
+                    display: flex;
+                    align-items: center;
+
+                    p {
+                        color: #ff7b01;
+                        font-weight: bold;
+                        font-size: 16px;
+                        margin-left: 10px;
+                    }
+                }
+
+                .chevron-right {
+                    margin-left: auto;
+                }
+
+                .info-text {
+                    display: flex;
+                    flex-direction: column;
+                    align-self: flex-start;
+                    margin-top: 7px;
+
+                    p:first-child {
+                        font-weight: bold;
+                        font-size: 15px;
+                    }
+
+                    .info-user {
+                        display: flex;
+                        flex-direction: row;
+                        margin-top: -7px;
+
+                        span:first-child {
+                            margin-right: 15px;
+                        }
+                    }
+                }
+
+            }
+
+        }
+
+        .cart-items {
+            width: 90%;
+            height: 500px;
+            background-color: white;
+            margin: 30px 0px;
+            border-radius: 10px;
+            padding-left: 30px;
+            position: relative;
+
+            h3 {
+                position: absolute;
+                top: -37px;
+                background-color: white;
+                padding: 0px 15px;
+                border-radius: 5px;
+                color: var(--muted-color);
+            }
+
+
+            .items {
+                width: 100%;
+                height: 100px;
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+                padding: 20px 0;
+
+                .cart-item {
+                    width: 100%;
+                    height: 100%;
+                    display: flex;
+                    align-items: center;
+                    gap: 20px;
+                    margin-right: 20px;
+                    padding-bottom: 10px;
+                    border-bottom: 1px solid #c3c3c3;
+                    position: relative;
+
+                    .delete-button {
+                        position: absolute;
+                        /* Đặt vị trí tuyệt đối */
+                        top: -5px;
+                        /* Điều chỉnh theo yêu cầu */
+                        left: -15px;
+                        /* Điều chỉnh theo yêu cầu */
+                        background: transparent;
+                        /* Không có nền */
+                        border: none;
+                        /* Không có viền */
+                        cursor: pointer;
+                        /* Đổi con trỏ chuột */
+                    }
+
+                    img {
+                        width: 100px;
+                        height: 100px;
+                        object-fit: cover;
+                        border-radius: 8px;
+                    }
+
+                    .item-details {
+                        width: 80%;
+                        height: 90%;
+                        display: flex;
+                        flex-direction: row;
+                        justify-content: space-between;
+
+                        h4 {
+                            margin: 0;
+                        }
+
+                        .item-price {
+                            width: 180px;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: flex-end;
+                            gap: 10px;
+                            margin: 0;
+
+                            .original-price {
+                                font-size: 20px;
+                                font-weight: bold;
+                                margin: 0;
+                            }
+
+                            .promotion-price {
+                                font-size: 15px;
+                                color: var(--muted-color);
+                                margin: -8px 0;
+                                text-decoration: line-through;
+                            }
+
+                            .quantity-control {
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                gap: 15px;
+
+                                button {
+                                    background-color: var(--title-color);
+                                    color: white;
+                                    border: none;
+                                    padding: 5px 15px;
+                                    border-radius: 5px;
+                                    cursor: pointer;
+                                    font-size: 20px;
+
+                                    &:hover {
+                                        background-color: var(--default-color);
+                                    }
+                                }
+
+                                input {
+                                    width: 50px;
+                                    height: 30px;
+                                    font-size: 18px;
+                                    text-align: center;
+                                    border: 1px solid #ccc;
+                                    /* Đặt màu sắc cho border */
+                                    border-radius: 4px;
+                                    /* Nếu bạn muốn border có góc bo */
+                                    outline: none;
+                                    /* Ẩn đường viền mặc định khi focus */
+                                }
+
+                                input:focus {
+                                    border-color: #2392D0;
+                                    box-shadow: 0 0 5px #323C64;
+                                }
+
+                                input[type="number"] {
+                                    -moz-appearance: textfield;
+                                    -webkit-appearance: none;
+                                    appearance: none;
+                                    margin: 0;
+                                }
+
+                                input[type="number"]::-webkit-outer-spin-button,
+                                input[type="number"]::-webkit-inner-spin-button {
+                                    -webkit-appearance: none;
+                                    margin: 0;
+                                }
+
+                                input[type="number"] {
+                                    appearance: textfield;
+                                }
+
+                            }
+
+                        }
+
+
+                    }
+                }
+            }
+        }
+
+    }
+
+    footer {
+        width: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: white;
+        position: fixed;
+        bottom: 0;
+        padding-bottom: 20px;
+
+        .payment-method {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #f2f5f9;
+            box-sizing: border-box;
+            padding: 10px 20px;
+        }
+
+        .order-button {
+            width: 95%;
+            height: 50px;
+            background-color: var(--title-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 20px;
+            margin-top: 10px;
+            font-size: 20px;
+            font-weight: bold;
+
+            &:hover {
+                background-color: var(--default-color);
+            }
+        }
+    }
+
+}
