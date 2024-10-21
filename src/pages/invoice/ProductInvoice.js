@@ -59,7 +59,8 @@ export default function ProductInvoice({ isModalOpen, closeModal, products, sele
                         <table className="product-table">
                             <thead>
                                 <tr>
-                                    <th>Mã sản phẩm</th>
+                                    <th style={{ width: '10%' }}>Hình ảnh</th>
+                                    <th style={{ width: '10%' }}>Mã hàng</th>
                                     <th>Tên sản phẩm</th>
                                     <th style={{ width: '15%' }}>Đơn vị tính</th>
                                     <th style={{ textAlign: 'center', width: '10%' }}>Số lượng</th>
@@ -69,6 +70,9 @@ export default function ProductInvoice({ isModalOpen, closeModal, products, sele
                             <tbody>
                                 {products.map((product) => (
                                     <tr key={product._id}>
+                                        <td>
+                                            <img src={product.productImg} alt={product.productName}/>
+                                        </td>
                                         <td>{product.item_code}</td>
                                         <td>{product.productName}</td>
                                         <td>{product.unitName}</td>
