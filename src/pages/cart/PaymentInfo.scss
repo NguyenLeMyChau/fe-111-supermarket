@@ -1,0 +1,94 @@
+.payment-info-container {
+    padding: 20px;
+    width: 50%;
+    min-height: 100%;
+    background-color: #FFFFFF;
+
+    .header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .header .icon {
+        font-size: 24px;
+        color: #333;
+    }
+
+    .title {
+        font-size: 22px;
+        font-weight: bold;
+        text-align: center;
+        color: #333;
+        flex-grow: 1;
+    }
+
+    .input-container {
+        width: 95%;
+        margin: 20px 0px;
+    }
+
+    .input-container label {
+        display: block;
+        font-size: 14px;
+        margin-bottom: 5px;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    input[type="tel"] {
+        width: 100%;
+        padding: 10px 0px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding-left: 20px;
+    }
+
+    .row-container {
+        display: flex;
+        width: 95%;
+        justify-content: space-between;
+    }
+
+    .input-container-short {
+        width: 45%;
+    }
+
+    .gender-container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .radio-group {
+        display: flex;
+        gap: 30px;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .submit-button {
+        width: 100%;
+        padding: 16px;
+        background-color: var(--title-color);
+        color: #FFFFFF;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
+    .submit-button.disabled {
+        background-color: #A9A9A9;
+        cursor: not-allowed;
+    }
+
+    .district-select{
+        width: 100%;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding-left: 20px;
+        z-index: 1000;
+    }
+}

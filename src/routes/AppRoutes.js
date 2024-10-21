@@ -22,50 +22,57 @@ import Unit from '../pages/unit/Unit.js';
 import Invoice from '../pages/invoice/Invoice.js';
 import Home from '../pages/home/Home.js';
 import Cart from '../pages/cart/Cart.js';
+import { PaymentModalProvider } from '../context/PaymentModalProvider.js';
+import PaymentInfo from '../pages/cart/PaymentInfo.js';
 
 function AppRoutes() {
     return (
         <Router>
-            <Routes>
-                <Route path="*" element={<Navigate to="/login" />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/admin" element={<Frame />}>
-                    <Route path="*" element={<Navigate to="/admin/user" />} />
-                    <Route path="user" element={<User />} />
-                    <Route path="category" element={<Category />} />
-                    <Route path="product" element={<Product />}>
-                        <Route path=':productId/product-detail' element={<ProductDetail />} />
-                    </Route>
-                    <Route path="employee" element={<Employee />} />
-                    <Route path="promotion" element={<Promotion />} />
-                    <Route path="price" element={<Price />} />
-                    <Route path="inventory" element={<Inventory />} >
-                        <Route path=":inventoryId/product" element={<ProductWarehouse />} />
-                    </Route>
-                    <Route path="supplier" element={<Supplier />}>
-                        <Route path=":supplierId/product" element={<ProductSupplier />} />
-                    </Route>
-                    {/* <Route path="order" element={<Orders />} >
+            <PaymentModalProvider>
+
+                <Routes>
+                    <Route path="*" element={<Navigate to="/login" />} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/admin" element={<Frame />}>
+                        <Route path="*" element={<Navigate to="/admin/user" />} />
+                        <Route path="user" element={<User />} />
+                        <Route path="category" element={<Category />} />
+                        <Route path="product" element={<Product />}>
+                            <Route path=':productId/product-detail' element={<ProductDetail />} />
+                        </Route>
+                        <Route path="employee" element={<Employee />} />
+                        <Route path="promotion" element={<Promotion />} />
+                        <Route path="price" element={<Price />} />
+                        <Route path="inventory" element={<Inventory />} >
+                            <Route path=":inventoryId/product" element={<ProductWarehouse />} />
+                        </Route>
+                        <Route path="supplier" element={<Supplier />}>
+                            <Route path=":supplierId/product" element={<ProductSupplier />} />
+                        </Route>
+                        {/* <Route path="order" element={<Orders />} >
                         <Route path="add-order" element={<AddOrder />} />
                     </Route> */}
-                    <Route path="bill" element={<Bill />} >
-                        <Route path="add-bill" element={<AddBill />} />
+                        <Route path="bill" element={<Bill />} >
+                            <Route path="add-bill" element={<AddBill />} />
+                        </Route>
+                        <Route path="unit" element={<Unit />} />
+                        <Route path="invoice" element={<Invoice />} />
                     </Route>
-                    <Route path="unit" element={<Unit />} />
-                    <Route path="invoice" element={<Invoice />} />
-                </Route>
 
-                <Route path="/frame-staff" element={<FrameStaff />} />
-                <Route path="/frame-staff/stall" element={<Stall />} />
-                <Route path="/frame-staff/payment" element={<Payment />} />
+                    <Route path="/frame-staff" element={<FrameStaff />} />
+                    <Route path="/frame-staff/stall" element={<Stall />} />
+                    <Route path="/frame-staff/payment" element={<Payment />} />
 
-                <Route path="/home" element={<Home />} />
-                <Route path="/customer">
-                    <Route path="*" element={<Navigate to="/home" />} />
-                    <Route path="cart" element={<Cart />} />
-                </Route>
+                    <Route path="/home" element={<Home />} />
 
-            </Routes>
+                    <Route path="/customer">
+                        <Route path="*" element={<Navigate to="/home" />} />
+                        <Route path="cart" element={<Cart />} />
+                        <Route path="payment-info" element={<PaymentInfo />} />
+                    </Route>
+                </Routes>
+            </PaymentModalProvider>
+
         </Router>
     );
 }

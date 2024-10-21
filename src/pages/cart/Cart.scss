@@ -12,11 +12,12 @@
 
     main {
         width: 50%;
-        min-height: 100vh;
+        min-height: auto;
         display: flex;
         flex-direction: column;
         align-items: center;
         padding: 20px 0;
+        padding-bottom: 135px;
         background-color: #f2f5f9;
 
         .main-header {
@@ -37,6 +38,7 @@
             border-radius: 10px;
             padding-left: 30px;
             position: relative;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
             h5 {
                 position: absolute;
@@ -99,12 +101,12 @@
 
         .cart-items {
             width: 90%;
-            height: 500px;
             background-color: white;
-            margin: 30px 0px;
             border-radius: 10px;
             padding-left: 30px;
+            padding-bottom: 20px;
             position: relative;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 
             h3 {
                 position: absolute;
@@ -118,7 +120,7 @@
 
             .items {
                 width: 100%;
-                height: 100px;
+                min-height: 100px;
                 display: flex;
                 flex-direction: column;
                 gap: 20px;
@@ -273,7 +275,7 @@
             flex-direction: row;
             align-items: center;
             justify-content: space-between;
-            background-color: #f2f5f9;
+            background-color: #e6e9eb;
             box-sizing: border-box;
             padding: 10px 20px;
 
@@ -393,4 +395,57 @@
     width: 30px;
     height: 30px;
     margin-right: 10px;
+}
+
+.main .payment-total {
+    width: 85%;
+    height: 150px;
+    background-color: white;
+    margin: 30px 0px;
+    border-radius: 10px;
+    padding: 0px 30px;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    h4 {
+        position: absolute;
+        top: -37px;
+        background-color: white;
+        padding: 0 15px;
+        border-radius: 5px;
+        font-weight: 500;
+        color: var(--muted-color);
+    }
+
+    .payment-info-total {
+        width: 85%;
+        height: 70%;
+        margin: 30px 0px;
+        border-radius: 10px;
+        padding-left: 30px;
+        position: relative;
+
+        p {
+            margin-right: 15px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        span {
+            font-weight: 600;
+        }
+    }
+
+    .payment-info p {
+        display: flex;
+        justify-content: space-between;
+        margin: 0;
+        padding: 0;
+    }
+
+    .payment-info span {
+        font-weight: 600;
+    }
 }
