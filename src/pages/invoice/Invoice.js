@@ -4,6 +4,8 @@ import FrameData from '../../containers/frameData/FrameData';
 import { formatCurrency, formatDate } from '../../utils/fotmatDate';
 import { useLocation, useNavigate } from 'react-router';
 import ProductInvoice from './ProductInvoice';
+import './Invoice.scss';
+
 
 export default function Invoice() {
     const navigate = useNavigate();
@@ -11,46 +13,42 @@ export default function Invoice() {
 
     const invoices = useSelector((state) => state.invoice?.invoices) || [];
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [products, setProducts] = useState([]);
-    const sortedInvoices = invoices.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    const [products, setProducts] = useState(null);
+    const [selectedInvoice, setSelectedInvoice] = useState(null);
+
+    // Tạo bản sao của mảng invoices trước khi sắp xếp
+    const sortedInvoices = [...invoices].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     const invoiceColumn = [
         { title: 'Mã đơn hàng', dataIndex: '_id', key: '_id', width: '10%' },
         { title: 'Khách hàng', dataIndex: 'customerName', key: 'customerName', width: '10%' },
         {
-            title: 'Người nhận',
-            dataIndex: 'paymentInfo',
-            key: 'paymentInfo',
-            width: '10%',
-            render: (paymentInfo) => paymentInfo.name
-        },
-        {
             title: 'Ngày đặt hàng',
             dataIndex: 'createdAt',
-            key: 'createdAt',
+            key: 'createdAt', // Sử dụng một khóa duy nhất
             width: '15%',
             className: 'text-center',
             render: (date) => formatDate(date)
         },
         {
+            title: 'Người nhận',
+            dataIndex: 'paymentInfo',
+            key: 'paymentInfo_name', // Sử dụng một khóa duy nhất
+            width: '10%',
+            render: (paymentInfo) => paymentInfo.name
+        },
+        {
             title: 'Số điện thoại nhận',
             dataIndex: 'paymentInfo',
-            key: 'paymentInfo',
+            key: 'paymentInfo_phone', // Sử dụng một khóa duy nhất
             width: '15%',
             render: (paymentInfo) => paymentInfo.phone
         },
         {
-            title: 'Địa chỉ',
-            dataIndex: 'paymentInfo',
-            key: 'paymentInfo',
-            width: '30%',
-            render: (paymentInfo) => `${paymentInfo?.address?.street}, ${paymentInfo?.address?.ward}, ${paymentInfo?.address?.district}, ${paymentInfo?.address?.city}`
-        },
-        {
             title: 'Tổng tiền',
             dataIndex: 'paymentAmount',
-            key: 'paymentAmount',
-            width: '10%',
+            key: 'paymentAmount', // Sử dụng một khóa duy nhất
+            width: '5%',
             className: 'text-right',
             render: (total) => formatCurrency(total)
         },
@@ -69,6 +67,7 @@ export default function Invoice() {
     const handleRowClick = (invoice) => {
         const invoiceProducts = Array.isArray(invoice.details) ? invoice.details : [];
         setProducts(invoiceProducts);
+        setSelectedInvoice(invoice);
 
         const pathPrev = location.pathname + location.search;
         sessionStorage.setItem('previousInvoicePath', pathPrev);
@@ -103,6 +102,7 @@ export default function Invoice() {
                         closeModal={closeModal}
                         products={products}
                         productColumns={invoiceDetailColumn}
+                        selectedInvoice={selectedInvoice}
                     />
                 )
             }

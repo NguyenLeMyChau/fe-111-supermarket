@@ -38,7 +38,7 @@ export default function HeaderCustomer() {
 
     return (
         <div className='header-customer-container'>
-            <div className='flex-row-align-center'>
+            <div className='flex-row-align-center' onClick={() => navigate('/home')}>
                 <Logo />
                 <h3 style={{ marginLeft: -20 }}>CAPY SMART</h3>
             </div>

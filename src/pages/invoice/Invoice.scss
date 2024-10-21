@@ -1,0 +1,78 @@
+.invoice-container {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    box-sizing: border-box;
+    margin: 0 auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.invoice-row {
+    display: grid;
+    gap: 20px;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+
+    .invoice-table table {
+        width: 100%;
+        margin: 0px 30px;
+    }
+
+    .invoice-table th,
+    .invoice-table td {
+        padding: 10px;
+        text-align: left;
+        /* Tạo đường viền giữa các ô */
+    }
+
+    .invoice-table th {
+        /* Màu nền cho tiêu đề */
+        width: 200px;
+        /* Đảm bảo cột tiêu đề có độ rộng cố định */
+    }
+
+    .invoice-table td {
+        padding-left: 20px;
+        width: auto;
+    }
+
+
+}
+
+.invoice-detail {
+    width: 100%;
+    /* Đảm bảo phần chứa bảng có chiều rộng đầy đủ */
+    overflow-x: auto;
+    /* Cho phép thanh cuộn ngang khi cần */
+}
+
+.invoice-detail .product-table {
+    width: 95%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    margin-left: 30px;
+    table-layout: auto;
+    /* Đảm bảo chiều rộng tự động của bảng */
+    overflow: hidden;
+    /* Ẩn thanh cuộn cho bảng */
+
+
+    th,
+    td {
+        padding: 12px;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+
+    .quantity-input {
+        width: 60px;
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+}

@@ -47,8 +47,8 @@ export default function Product() {
             )
         },
         { title: 'Mã hàng', dataIndex: 'item_code', key: 'item_code', width: '10%', className: 'text-center' },
-        { title: 'Tên sản phẩm', dataIndex: 'name', key: 'name', width: '30%' },
-        { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '30%' },
+        { title: 'Tên sản phẩm', dataIndex: 'name', key: 'name', width: '20%' },
+        { title: 'Đơn vị tính', dataIndex: 'unit_id', key: 'unit_id', width: '10%', render: (unit) => unit.description },
         { title: 'Barcode', dataIndex: 'barcode', key: 'barcode', width: '15%', className: 'text-center' },
         {
             title: 'Chỉnh sửa',
