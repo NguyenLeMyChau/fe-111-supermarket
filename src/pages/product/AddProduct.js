@@ -52,6 +52,7 @@ export default function AddProduct({ isOpen, onClose }) {
             if (foundProduct) {
                 setProductData(prevState => ({
                     ...prevState,
+                    name: foundProduct.name,
                     supplier_id: foundProduct.supplier_id,
                     category_id: foundProduct.category_id,
                 }));
@@ -59,6 +60,7 @@ export default function AddProduct({ isOpen, onClose }) {
                 // Nếu không tìm thấy sản phẩm, giữ nguyên hoặc cho phép nhập
                 setProductData(prevState => ({
                     ...prevState,
+                    name: '', // Giữ nguyên
                     supplier_id: '', // Giữ nguyên
                     category_id: '', // Giữ nguyên
                 }));
@@ -150,6 +152,13 @@ export default function AddProduct({ isOpen, onClose }) {
                     <div className='flex-row'>
                         <div className='flex-column'>
                             <Input
+                                label='Mã hàng'
+                                name='item_code'
+                                placeholder='Nhập mã hàng'
+                                value={productData.item_code}
+                                onChange={handleChange}
+                            />
+                            <Input
                                 label='Tên sản phẩm'
                                 placeholder='Nhập tên sản phẩm'
                                 name='name'
@@ -164,13 +173,6 @@ export default function AddProduct({ isOpen, onClose }) {
                                 onChange={handleChange}
                             />
 
-                            <Input
-                                label='Barcode'
-                                name='barcode'
-                                placeholder='Nhập barcode'
-                                value={productData.barcode}
-                                onChange={handleChange}
-                            />
                         </div>
 
                         <div className='flex-column'>
@@ -205,15 +207,13 @@ export default function AddProduct({ isOpen, onClose }) {
                     </div>
 
                     <div className='flex-row'>
-
                         <Input
-                            label='Mã hàng'
-                            name='item_code'
-                            placeholder='Nhập mã hàng'
-                            value={productData.item_code}
+                            label='Barcode'
+                            name='barcode'
+                            placeholder='Nhập barcode'
+                            value={productData.barcode}
                             onChange={handleChange}
                         />
-
 
                         <Input
                             type='number'
