@@ -30,6 +30,7 @@
     "redux-persist": "^6.0.0",
     "resolve-url-loader": "^5.0.0",
     "sass": "^1.78.0",
+    "uuid": "^10.0.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

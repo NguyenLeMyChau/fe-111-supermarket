@@ -39,6 +39,12 @@ export default function Cart() {
         ));
     };
 
+    const handleQuantityChange = (id, newQuantity) => {
+        setProducts(products.map(product =>
+            product.id === id ? { ...product, quantity: newQuantity } : product
+        ));
+    };
+
     const handleDelete = (id) => {
         setProducts(products.filter(product => product.id !== id));
     };
@@ -124,7 +130,9 @@ export default function Cart() {
 
                                                     <div className='quantity-control'>
                                                         <button onClick={() => handleDecrease(product.id)}>-</button>
-                                                        <input type='number' value={product.quantity} readOnly />
+                                                        <input type='number'
+                                                            value={product.quantity}
+                                                            onChange={(e) => handleQuantityChange(product.id, parseInt(e.target.value))} />
                                                         <button onClick={() => handleIncrease(product.id)}>+</button>
                                                     </div>
                                                 </div>
