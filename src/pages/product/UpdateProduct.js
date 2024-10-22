@@ -27,7 +27,7 @@ const UpdateProduct = ({ product }) => {
         description: product.description,
         barcode: product.barcode,
         img: product.img,
-        unit_id: product.unit_id,
+        unit_id: product.unit_id._id,
         category_id: product.category_id,
         supplier_id: product.supplier_id,
         min_stock_threshold: '',

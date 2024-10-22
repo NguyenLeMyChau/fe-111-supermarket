@@ -28,8 +28,9 @@ const UpdateBill = ({ bill }) => {
         try {
             setIsLoading(true);
             // Xử lý cập nhật phiếu nhập kho
-            console.log('bill', bill)
-            console.log('Cập nhật phiếu nhập kho:', { billId, products });
+            console.log('old bill', bill.bill_id)
+            console.log('new bill', billId)
+            console.log('Cập nhật phiếu nhập kho:', products);
             // Thêm logic cập nhật phiếu nhập kho tại đây
             await updateBill(bill.bill_id, billId, products, accessToken, axiosJWT);
             setIsLoading(false);
