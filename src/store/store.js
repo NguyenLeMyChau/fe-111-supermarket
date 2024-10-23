@@ -41,7 +41,7 @@ const rootReducer = combineReducers(
         employee: employeeReducer,
         promotion: promotionReducer,
         unit: unitReducer,
-        price:priceReducer,
+        price: priceReducer,
         invoice: invoiceReducer,
     });
 
@@ -51,9 +51,12 @@ export const store = configureStore({
     reducer: persistedReducer,
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
-            serializableCheck: {
-                ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-            },
+            // serializableCheck: {
+            //     ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+            // },
+            immutableCheck: false, // Tắt ImmutableStateInvariantMiddleware
+            serializableCheck: false, // Tắt kiểm tra tuần tự hóa
+
         }),
 });
 

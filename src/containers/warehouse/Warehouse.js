@@ -15,6 +15,7 @@ export default function Warehouse() {
     const location = useLocation();
 
     const warehouses = useSelector((state) => state.warehouse?.warehouse);
+    const productList = useSelector((state) => state.product?.products) || [];
 
     const [products, setProducts] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -22,6 +23,7 @@ export default function Warehouse() {
 
     // Gom các bộ lọc vào object
     const [filters, setFilters] = useState({
+        item_code: '',
         productName: '',
         stockQuantity: '',
         minStockThreshold: '',
@@ -31,7 +33,7 @@ export default function Warehouse() {
     const [filteredWarehouses, setFilteredWarehouses] = useState(warehouses);
 
     const warehouseColumn = [
-        { title: 'Mã kho', dataIndex: 'item_code', key: 'item_code', width: '10%', className: 'text-center' },
+        { title: 'Mã hàng', dataIndex: 'item_code', key: 'item_code', width: '10%', className: 'text-center' },
         {
             title: 'Tên sản phẩm',
             dataIndex: 'product',
@@ -65,7 +67,7 @@ export default function Warehouse() {
     ];
 
     const productColumns = [
-        { title: 'Mã kho', dataIndex: 'item_code', key: 'item_code', width: '10%', className: 'text-center' },
+        { title: 'Mã hàng', dataIndex: 'item_code', key: 'item_code', width: '10%', className: 'text-center' },
         {
             title: 'Tên sản phẩm',
             dataIndex: 'product',
@@ -150,6 +152,11 @@ export default function Warehouse() {
     const applyFilters = () => {
         let filteredData = warehouses;
 
+        if (filters.item_code) {
+            filteredData = filteredData.filter(warehouse =>
+                warehouse.item_code === filters.item_code);
+        }
+
         if (filters.productName) {
             filteredData = filteredData.filter(warehouse =>
                 warehouse.product?.name?.toLowerCase().includes(filters.productName.toLowerCase()));
@@ -194,6 +201,20 @@ export default function Warehouse() {
         { value: 'Ít hàng', label: 'Ít hàng' },
     ];
 
+    // Lọc các giá trị không trùng nhau cho productOptions
+    const uniqueProductOptions = Array.from(new Set(productList.map(product => product.name)))
+        .map(name => ({
+            value: name,
+            label: name
+        }));
+
+    // Lọc các giá trị không trùng nhau cho itemCodeOptions
+    const uniqueItemCodeOptions = Array.from(new Set(productList.map(product => product.item_code)))
+        .map(item_code => ({
+            value: item_code,
+            label: item_code
+        }));
+
     return (
         <div>
             <FrameData
@@ -217,19 +238,40 @@ export default function Warehouse() {
                 isOpen={isFilterOpen}
                 onClose={closeFilterModal}
                 width={500}
-                height={400}
+                height={500}
             >
                 <div className="filter-modal-content">
                     <div className="filter-item">
-                        <label>Tên sản phẩm:</label>
-                        <input
-                            type="text"
-                            name="productName"
-                            value={filters.productName}
-                            onChange={(e) => setFilters({ ...filters, productName: e.target.value })}
+                        <label>Mã hàng</label>
+                        <Select
+                            value={uniqueItemCodeOptions.find(option => option.value === filters.item_code) || null}
+                            options={uniqueItemCodeOptions}
+                            onChange={(selectedOption) => setFilters({ ...filters, item_code: selectedOption?.value || '' })}
+                            styles={{
+                                container: (provided) => ({
+                                    ...provided,
+                                    width: '265px',
+                                    zIndex: 9999,
+                                }),
+                            }}
                         />
                     </div>
+                    <div className="filter-item">
+                        <label>Tên sản phẩm</label>
+                        <Select
+                            value={uniqueProductOptions.find(option => option.value === filters.productName) || null}
+                            options={uniqueProductOptions}
+                            onChange={(selectedOption) => setFilters({ ...filters, productName: selectedOption?.value || '' })}
+                            styles={{
+                                container: (provided) => ({
+                                    ...provided,
+                                    width: '265px',
+                                    zIndex: 8888,
+                                }),
+                            }}
+                        />
 
+                    </div>
                     <div className="filter-item">
                         <label>Tồn kho lớn hơn:</label>
                         <input

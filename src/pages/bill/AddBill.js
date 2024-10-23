@@ -5,7 +5,6 @@ import { formatDate } from '../../utils/fotmatDate';
 import useAddBill from '../../hooks/useAddBill';
 
 const AddBill = () => {
-
     const {
         quantities,
         products,
@@ -17,9 +16,14 @@ const AddBill = () => {
         handleSupplierSelect,
         supplierOptions,
         isLoading,
-        isLoadingSupplier,
         billId,
-        setBillId
+        setBillId,
+        productOptions,
+        handleProductSelect,
+        units,
+        handleUnitSelect,
+        unitOptions,
+        getUnitDescription
     } = useAddBill();
 
     return (
@@ -61,15 +65,24 @@ const AddBill = () => {
                 />
             </div>
 
+            {selectedSupplier && (
+                <div className="product-select">
+                    <h4>Chọn sản phẩm theo mã hàng:</h4>
+                    <Select
+                        onChange={handleProductSelect}
+                        options={productOptions}
+                        placeholder="Chọn mã sản phẩm"
+                    />
+                </div>
+            )}
+
             <div className="product-list">
                 <h4>Thông tin nhập:</h4>
-                {isLoadingSupplier ? (
-                    <p className='loading'>Đang tải thông tin sản phẩm...</p>
-                ) : products.length > 0 ? (
+                {products.length > 0 ? (
                     <table className="product-table">
                         <thead>
                             <tr>
-                                <th>Mã sản phẩm</th>
+                                <th>Mã hàng</th>
                                 <th>Tên sản phẩm</th>
                                 <th>Đơn vị tính</th>
                                 <th>Số lượng</th>
@@ -77,17 +90,23 @@ const AddBill = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {products.map((product) => (
-                                <tr key={product._id}>
+                            {products.map((product, index) => (
+                                <tr key={index}>
                                     <td>{product.item_code}</td>
                                     <td>{product.name}</td>
-                                    <td>{product.unit_name}</td>
+                                    <td>
+                                        <Select
+                                            value={units[index] ? { value: units[index], label: getUnitDescription(units[index]) } : null}
+                                            onChange={(selectedOption) => handleUnitSelect(index, selectedOption)}
+                                            options={unitOptions(product)}
+                                        />
+                                    </td>
                                     <td>
                                         <input
                                             type="number"
                                             min="1"
-                                            value={quantities[product._id]}
-                                            onChange={(e) => handleQuantityChange(product._id, parseInt(e.target.value))}
+                                            value={quantities[index] || 1} // Sử dụng index để lấy số lượng
+                                            onChange={(e) => handleQuantityChange(index, parseInt(e.target.value))} // Truyền index
                                             className="quantity-input"
                                         />
                                     </td>
@@ -96,7 +115,7 @@ const AddBill = () => {
                                         <Button
                                             text="Xóa"
                                             backgroundColor="#FF0000"
-                                            onClick={() => handleRemoveProduct(product._id)}
+                                            onClick={() => handleRemoveProduct(index)}
                                         />
                                     </td>
                                 </tr>
