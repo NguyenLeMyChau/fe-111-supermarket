@@ -24,6 +24,7 @@ import Home from '../pages/home/Home.js';
 import Cart from '../pages/cart/Cart.js';
 import { PaymentModalProvider } from '../context/PaymentModalProvider.js';
 import PaymentInfo from '../pages/cart/PaymentInfo.js';
+import PriceDetail from '../pages/price/PriceDetail.js'
 
 function AppRoutes() {
     return (
@@ -42,7 +43,9 @@ function AppRoutes() {
                         </Route>
                         <Route path="employee" element={<Employee />} />
                         <Route path="promotion" element={<Promotion />} />
-                        <Route path="price" element={<Price />} />
+                        <Route path="price" element={<Price />}>
+                            <Route path="price-detail" element={<PriceDetail />} />
+                        </Route>
                         <Route path="inventory" element={<Inventory />} >
                             <Route path=":inventoryId/product" element={<ProductWarehouse />} />
                         </Route>
@@ -52,6 +55,7 @@ function AppRoutes() {
                         {/* <Route path="order" element={<Orders />} >
                         <Route path="add-order" element={<AddOrder />} />
                     </Route> */}
+                    
                         <Route path="bill" element={<Bill />} >
                             <Route path="add-bill" element={<AddBill />} />
                         </Route>

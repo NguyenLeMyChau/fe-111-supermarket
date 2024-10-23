@@ -52,7 +52,7 @@ export default function AddProductPrice({ isOpen, onClose }) {
   };
 
   return (
-    <Modal title="Add Product Price" isOpen={isOpen} onClose={onClose} width={'30%'}>
+    <Modal title="Thêm chương trình giá" isOpen={isOpen} onClose={onClose} width={'30%'}>
       <div className='flex-column-center'>
         <form onSubmit={handleAddProductPrice}>
           <Input

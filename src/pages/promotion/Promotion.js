@@ -67,14 +67,6 @@ const handleCloseEditModalDetail = () => {
   const promotionHeaderColumn = [
     { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '40%', },
     {
-      title: 'Số lượng line',
-      dataIndex: 'lines',
-      key: 'lines',
-      width: '10%',
-      className: 'text-center',
-      render: (lines) => (Array.isArray(lines) ? lines.length : 0)
-    },
-    {
       title: 'Ngày bắt đầu',
       dataIndex: 'startDate',
       key: 'startDate',
@@ -119,14 +111,6 @@ const handleCloseEditModalDetail = () => {
     { title: 'Loại khuyến mãi', dataIndex: 'type', key: 'type', width: '15%',render: (text) => typeMapping[text] || text, },
     { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '30%' },
     {
-      title: 'Số lượng sản phẩm',
-      dataIndex: 'details',
-      key: 'details',
-      width: '15%',
-      className: 'text-center',
-      render: (details) => (Array.isArray(details) ? details.length : 0)
-    },
-    {
       title: 'Ngày bắt đầu',
       dataIndex: 'startDate',
       key: 'startDate',
@@ -168,7 +152,15 @@ const handleCloseEditModalDetail = () => {
   },];
 
   const promotionDetailColumnAmount = [
+    { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '30%' },
     { title: 'Tên sản phẩm', dataIndex: 'product', key: 'product', width: '15%', render: (product) => product?.name },
+    {
+      title: "Đơn vị",
+      dataIndex: "product",
+      key: "unit",
+      width: "10%",
+      render: (product) => product?.unit_id.description,
+    },
     { title: 'Số lượng', dataIndex: 'quantity', key: 'quantity', width: '10%', className: 'text-center' },
     { title: 'Số tiền tặng', dataIndex: 'amount_donate', key: 'amount_donate', width: '10%', className: 'text-center' },
     {
@@ -186,9 +178,24 @@ const handleCloseEditModalDetail = () => {
   },
   ];
   const promotionDetailColumnQuantity = [
+    { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '30%' },
     { title: 'Tên sản phẩm', dataIndex: 'product', key: 'product', width: '15%', render: (product) => product?.name },
+    {
+      title: "Đơn vị",
+      dataIndex: "product",
+      key: "unit",
+      width: "10%",
+      render: (product) => product?.unit_id.description,
+    },
     { title: 'Số lượng', dataIndex: 'quantity', key: 'quantity', width: '10%', className: 'text-center' },
-    { title: 'Sản phẩm tặng', dataIndex: 'product_donate', key: 'product_donate', width: '15%', render: (product) => product?.name },
+    { title: 'Sản phẩm tặng', dataIndex: 'product_donate', key: 'product_donate', width: '15%', render: (product_donate) => product_donate?.name },
+    {
+      title: "Đơn vị",
+      dataIndex: "product_donate",
+      key: "unit",
+      width: "10%",
+      render: (product) => product?.unit_id.description,
+    },
     { title: 'Số lượng tặng', dataIndex: 'quantity_donate', key: 'quantity_donate', width: '10%', className: 'text-center' },
     {
       title: 'Chỉnh sửa',
@@ -205,11 +212,10 @@ const handleCloseEditModalDetail = () => {
   },
   ];
   const promotionDetailColumnPer = [
-    { title: 'Mã khuyến mãi', dataIndex: 'voucher', key: 'amount_donate', width: '15%', className: 'text-center' },
+    { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '30%' },
     { title: 'Số tiền bán', dataIndex: 'amount_sales', key: 'amount_sales', width: '10%', className: 'text-center' },
     { title: 'Phần trăm khuyến mãi', dataIndex: 'percent', key: 'percent', width: '10%', className: 'text-center' },
     { title: 'Tôi đa', dataIndex: 'amount_limit', key: 'amount_limit', width: '10%', className: 'text-center' },
-    
     {
       title: 'Chỉnh sửa',
       key: 'edit',
