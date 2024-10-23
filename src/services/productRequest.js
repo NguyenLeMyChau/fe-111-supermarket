@@ -64,6 +64,21 @@ const getAllProducts = async (accessToken, axiosJWT, dispatch) => {
     }
 };
 
+const getAllProductsWithPriceAndPRomotionNoCategory = async (accessToken, axiosJWT, dispatch) => {
+    try {
+        const response = await axiosJWT.get(`/api/product/get-products-with-price-and-promotion-no-category`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        dispatch(getProductSuccess(response.data));
+        return response.data;
+    } catch (error) {
+        console.error('Get all products failed:', error);
+        dispatch(getProductFailed());
+    }
+};
+
 const getProductsDetail = async (accessToken, axiosJWT, productId) => {
     try {
         const response = await axiosJWT.get(`/api/product/get-product-detail/${productId}`, {
@@ -109,5 +124,5 @@ const updateProduct = async (productId, productData, accessToken, axiosJWT) => {
 
 export {
     getAllCategories, addCategory, updateCategory,
-    getAllProducts, getProductsDetail, addProductWithWarehouse, updateProduct
+    getAllProducts, getProductsDetail, addProductWithWarehouse, updateProduct,getAllProductsWithPriceAndPRomotionNoCategory
 };
