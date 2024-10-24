@@ -1,4 +1,4 @@
-// PromotionDetail.js
+import React from "react";
 import { useSelector } from "react-redux";
 import { formatCurrency } from "../../utils/fotmatDate";
 
@@ -12,18 +12,24 @@ export default function ShowPromotion({ promotion }) {
     switch (type) {
         case 'amount':
             return (
-                <>
-                    Mua {promotionDetail.quantity} giảm {formatCurrency(promotionDetail.amount_donate)}
-                </>
+                <p>
+                    Mua {promotionDetail?.quantity} giảm {formatCurrency(promotionDetail?.amount_donate)}
+                </p>
             );
         case 'quantity':
             return (
-                <>
-                    Mua {promotionDetail.quantity} tặng {promotionDetail.quantity_donate}
-                </>
+                <div>
+                    <span>
+                        Mua {promotionDetail?.quantity} {promotionDetail?.productBuy?.unit_id?.description} {promotionDetail?.productBuy?.name}
+                    </span>
+                    <br />
+                    <span>
+                        Tặng {promotionDetail?.quantity_donate} {promotionDetail?.productDonate?.unit_id?.description} {promotionDetail?.productDonate?.name}
+                    </span>
+                </div>
             );
         // Thêm các loại khuyến mãi khác nếu cần
         default:
-            return 'Không có khuyến mãi hợp lệ';
+            return <p>Không có khuyến mãi hợp lệ</p>;
     }
 }
