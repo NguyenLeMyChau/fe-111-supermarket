@@ -1,5 +1,6 @@
 import Modal from "../../components/modal/Modal";
 import { formatCurrency, formatDate } from "../../utils/fotmatDate";
+import ShowPromotion from "./ShowPromotion";
 
 
 export default function ProductInvoice({ isModalOpen, closeModal, products, selectedInvoice }) {
@@ -8,7 +9,7 @@ export default function ProductInvoice({ isModalOpen, closeModal, products, sele
             title={'Chi tiết đơn hàng khách hàng'}
             isOpen={isModalOpen}
             onClose={closeModal}
-            width={'80%'}
+            width={'100%'}
             height={'80%'}
         >
 
@@ -61,23 +62,27 @@ export default function ProductInvoice({ isModalOpen, closeModal, products, sele
                                 <tr>
                                     <th style={{ width: '10%' }}>Hình ảnh</th>
                                     <th style={{ width: '10%' }}>Mã hàng</th>
-                                    <th>Tên sản phẩm</th>
-                                    <th style={{ width: '15%' }}>Đơn vị tính</th>
+                                    <th style={{ width: '15%' }}>Tên sản phẩm</th>
+                                    <th style={{ width: '10%' }}>Đơn vị</th>
                                     <th style={{ textAlign: 'center', width: '10%' }}>Số lượng</th>
                                     <th style={{ textAlign: 'center', width: '10%' }}>Giá</th>
+                                    <th style={{ textAlign: 'center', width: '15%' }}>Khuyến mãi</th>
+                                    <th style={{ textAlign: 'center', width: '20%' }}>Chi tiết KM</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {products.map((product) => (
                                     <tr key={product._id}>
                                         <td>
-                                            <img src={product.productImg} alt={product.productName}/>
+                                            <img src={product.productImg} alt={product.productName} />
                                         </td>
                                         <td>{product.item_code}</td>
                                         <td>{product.productName}</td>
                                         <td>{product.unitName}</td>
                                         <td style={{ textAlign: 'center' }}>{product.quantity}</td>
                                         <td style={{ textAlign: 'right' }}>{formatCurrency(product.price)}</td>
+                                        <td>{product.promotion?.description}</td>
+                                        <td> <ShowPromotion promotion={product.promotion} /></td>
                                     </tr>
                                 ))}
                             </tbody>
