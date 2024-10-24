@@ -92,7 +92,7 @@ const handleCancel = () => {
 };
 
   const handlePay = () => {
-    navigate('/frame_staff/payment', { state: { productList: cart, totalAmount: total } });
+    navigate('/frame-staff/payment', { state: { productList: cart, totalAmount: total } });
   };
 
   // const checkPrice = async (barcode) => {
