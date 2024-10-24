@@ -66,7 +66,7 @@ const getAllProducts = async (accessToken, axiosJWT, dispatch) => {
 
 const getAllProductsWithPriceAndPRomotionNoCategory = async (accessToken, axiosJWT, dispatch) => {
     try {
-        const response = await axiosJWT.get(`/api/product/get-products-with-price-and-promotion-no-category`, {
+        const response = await axiosJWT.get(`/api/auth/get-products-with-price-and-promotion-no-category`, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
