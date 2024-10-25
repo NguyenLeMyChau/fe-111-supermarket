@@ -6,18 +6,32 @@ import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
 import { validatePromotionDetailData } from '../../utils/validation';
 import Dropdownpicker from '../../components/dropdownpicker/dropdownpicker';
 import { getAllProducts } from '../../services/productRequest';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
     const axiosJWT = useAxiosJWT();
     const accessToken = useAccessToken();
     const dispatch = useDispatch();
+    const units = useSelector((state) => state.unit?.units) || [];
+    const [unitItem, setUnitItem] = useState(units);
+    const [unitItemDonate, setUnitItemDonate] = useState(units);
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
     const [products, setProducts] = useState([]);
-
+    const [productItem, setProductItem] = useState([]);
+    console.log(promotionDetail)
+    const [productId, setProductId] = useState({
+        item_code: promotionDetail.product.item_code,
+        unit_id:promotionDetail.product.unit_id._id,
+        name: promotionDetail.product.name,
+      });
+      const [productDonate, setProductDonate] = useState({
+        item_code: promotionDetail.product_donate?.item_code,
+        unit_id:promotionDetail.product_donate?.unit_id._id,
+        name: promotionDetail.product_donate?.name,
+      });
     const [formData, setFormData] = useState({
-        product_id: promotionDetail.product_id || '',
+        product_id: promotionDetail.product._id || '',
         quantity: promotionDetail.quantity || '',
         product_donate: promotionDetail.product_donate?._id || '',
         quantity_donate: promotionDetail.quantity_donate || '',
@@ -25,8 +39,8 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
         amount_donate: promotionDetail.amount_donate || '',
         percent: promotionDetail.percent || '',
         amount_limit: promotionDetail.amount_limit || '',
-        voucher: promotionDetail.voucher || '',
         promotionLine_id: promotionDetail.promotionLine_id,
+        description: promotionDetail.description,
     });
 
     const fetchProducts = async () => {
@@ -44,6 +58,26 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
         }
     }, [promotionLine.type, accessToken, axiosJWT, dispatch]);
 
+    useEffect(() => {
+        if (products.length > 0) {
+          const seenItemCodes = new Set();
+          const filteredProductItem = products
+            .filter(({ item_code }) => {
+              if (seenItemCodes.has(item_code)) {
+                return false; // Skip duplicates
+              }
+              seenItemCodes.add(item_code);
+              return true; // Include unique item_code
+            })
+            .map(({ item_code, name }) => ({
+              item_code,
+              name,
+            }));
+            
+          setProductItem(filteredProductItem);
+        }
+      }, [products]);
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData({
@@ -55,6 +89,83 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
     const handleDropdownChange = (name, value) => {
         setFormData((prevData) => ({ ...prevData, [name]: value }));
     };
+    const handleDropdownChangeProduct = (name, value) => {
+        if (name === "unit_id") {
+          setProductId((prevData) => ({ ...prevData, unit_id: value }));
+        }
+        if (name === "item_code" || name === "name") {
+          const selectedProduct = products.find(
+            (product) => product.name === value || product.item_code === value
+          );
+         
+          if (selectedProduct) {
+            // Get the unit IDs for the selected product
+            const unitIds = products
+              .filter((product) => product.item_code === selectedProduct.item_code)
+              .map((product) => product.unit_id);
+    
+            if (unitIds) {
+              setUnitItem(unitIds);
+            }
+            setProductId((prevData) => ({
+              ...prevData,
+              name: selectedProduct.name,
+              item_code: selectedProduct.item_code,
+            }));
+          }
+        }
+        if (productId.item_code && productId.name && productId.unit_id) {
+          const product_id = products.find(
+            (product) =>
+              product.item_code === productId.item_code &&
+              product.unit_id._id === productId.unit_id
+          );
+          console.log(product_id)      
+          if(product_id)
+          setFormData((prevData) => ({
+            ...prevData,
+            product_id:product_id._id,
+          }));
+        }
+      };
+      const handleDropdownChangeProductDonate = (name, value) => {
+        setProductDonate((prevData) => ({ ...prevData, [name]: value }));
+        if (name === "item_code" || name === "name") {
+          const selectedProductDonate = products.find(
+            (product) => product.name === value || product.item_code === value
+          );
+          if (selectedProductDonate) {
+            // Get the unit IDs for the selected product
+            const unitIds = products
+              .filter((product) => product.item_code === selectedProductDonate.item_code)
+              .map((product) => product.unit_id);
+    
+      
+    
+            if (unitIds) {
+              setUnitItemDonate(unitIds);
+            }
+    
+            setProductDonate((prevData) => ({
+              ...prevData,
+              name: selectedProductDonate.name,
+              item_code: selectedProductDonate.item_code,
+            }));
+          }
+        }
+        if (productDonate.item_code && productDonate.name && productDonate.unit_id) {
+            const product_donate = products.find(
+              (product) =>
+                product.item_code === productDonate.item_code &&
+                product.unit_id._id === productDonate.unit_id
+            )?._id;
+      
+            setErrors((prevData) => ({
+              ...prevData,
+              product_donate,
+            }));
+          }
+      };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -91,112 +202,217 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
                 <form onSubmit={handleSubmit}>
                     {promotionLine.type === 'percentage' && (
                         <>
-                            <Input
-                                className='promotion-input'
-                                type='text'
-                                label='Mã voucher'
-                                name='voucher'
-                                value={formData.voucher}
-                                onChange={handleChange}
-                                error={errors.voucher}
-                            />
-                            <Input
-                                label="Số tiền bán"
-                                name="amount_sales"
-                                value={formData.amount_sales}
-                                type="number"
-                                onChange={handleChange}
-                                error={errors.amount_sales}
-                            />
-                            <Input
-                                label="Phần trăm"
-                                name="percent"
-                                value={formData.percent}
-                                type="number"
-                                onChange={handleChange}
-                                error={errors.percent}
-                            />
-                            <Input
-                                label="Giới hạn số tiền"
-                                name="amount_limit"
-                                value={formData.amount_limit}
-                                type="number"
-                                onChange={handleChange}
-                                error={errors.amount_limit}
-                            />
-                        </>
+                           <Input
+                className="promotion-input"
+                type="text"
+                label="Mô tả"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                error={errors.description}
+              />
+              <Input
+                className="promotion-input"
+                type="number"
+                label="Số tiền bán"
+                name="amount_sales"
+                value={formData.amount_sales}
+                onChange={handleChange}
+                error={errors.amount_sales}
+              />
+              <Input
+                className="promotion-input"
+                type="number"
+                label="Phần trăm"
+                name="percent"
+                value={formData.percent}
+                onChange={handleChange}
+                error={errors.percent}
+              />
+              <Input
+                className="promotion-input"
+                type="number"
+                label="Giới hạn số tiền"
+                name="amount_limit"
+                value={formData.amount_limit}
+                onChange={handleChange}
+                error={errors.amount_limit}
+              />
+            </>
                     )}
 
                     {promotionLine.type === 'amount' && (
                         <>
-                            <Dropdownpicker
-                                label="Sản phẩm"
-                                options={products.map((product) => ({
-                                    value: product._id,
-                                    label: product.name,
-                                }))}
-                                value={formData.product_id}
-                                onChange={(value) => handleDropdownChange('product_id', value)}
-                                error={errors.product_id}
-                            />
-                            <Input
-                                label="Số lượng"
-                                name="quantity"
-                                value={formData.quantity}
-                                type="number"
-                                onChange={handleChange}
-                                error={errors.quantity}
-                            />
-                            <Input
-                                label="Số tiền tặng kèm"
-                                name="amount_donate"
-                                value={formData.amount_donate}
-                                type="number"
-                                onChange={handleChange}
-                                error={errors.amount_donate}
-                            />
-                        </>
+                           <Input
+                className="promotion-input"
+                type="text"
+                label="Mô tả"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                error={errors.description}
+              />
+              <Dropdownpicker
+                className="promotion-dropdown"
+                label="Mã hàng"
+                options={products.map((product) => ({
+                  value: product.item_code,
+                  label: product.item_code,
+                }))}
+                value={productId.item_code}
+                onChange={(value) =>
+                  handleDropdownChangeProduct("item_code", value)
+                }
+                error={errors.item_code}
+              />
+              <Dropdownpicker
+                className="promotion-dropdown"
+                label="Sản phẩm"
+                options={products.map((product) => ({
+                  value: product.name,
+                  label: product.name,
+                }))}
+                value={productId.name}
+                onChange={(value) => handleDropdownChangeProduct("name", value)}
+                error={errors.product_id}
+              />
+              <Dropdownpicker
+                className="promotion-dropdown"
+                label="Đơn vị"
+                options={unitItem.map((unit) => ({
+                  value: unit._id,
+                  label: unit.description,
+                }))}
+                value={productId.unit_id}
+                onChange={(value) =>
+                  handleDropdownChangeProduct("unit_id", value)
+                }
+              />
+              <Input
+                className="promotion-input"
+                type="number"
+                label="Số lượng"
+                name="quantity"
+                value={formData.quantity}
+                onChange={handleChange}
+                error={errors.quantity}
+              />
+              <Input
+                className="promotion-input"
+                type="number"
+                label="Số tiền tặng kèm"
+                name="amount_donate"
+                value={formData.amount_donate}
+                onChange={handleChange}
+                error={errors.amount_donate}
+              />
+            </>
                     )}
 
                     {promotionLine.type === 'quantity' && (
                         <>
-                            <Dropdownpicker
-                                label="Sản phẩm"
-                                options={products.map((product) => ({
-                                    value: product._id,
-                                    label: product.name,
-                                }))}
-                                value={formData.product_id}
-                                onChange={(value) => handleDropdownChange('product_id', value)}
-                                error={errors.product_id}
-                            />
                             <Input
-                                label="Số lượng"
-                                name="quantity"
-                                value={formData.quantity}
-                                type="number"
-                                onChange={handleChange}
-                                error={errors.quantity}
-                            />
-                            <Dropdownpicker
-                                label="Sản phẩm tặng kèm"
-                                options={products.map((product) => ({
-                                    value: product._id,
-                                    label: product.name,
-                                }))}
-                                value={formData.product_donate}
-                                onChange={(value) => handleDropdownChange('product_donate', value)}
-                                error={errors.product_donate}
-                            />
-                            <Input
-                                label="Số lượng tặng kèm"
-                                name="quantity_donate"
-                                value={formData.quantity_donate}
-                                type="number"
-                                onChange={handleChange}
-                                error={errors.quantity_donate}
-                            />
-                        </>
+                className="promotion-input"
+                type="text"
+                label="Mô tả"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                error={errors.description}
+              />
+              <Dropdownpicker
+                className="promotion-dropdown"
+                label="Mã hàng"
+                options={products.map((product) => ({
+                  value: product.item_code,
+                  label: product.item_code,
+                }))}
+                value={productId.item_code}
+                onChange={(value) =>
+                  handleDropdownChangeProduct("item_code", value)
+                }
+                error={errors.item_code}
+              />
+              <Dropdownpicker
+                className="promotion-dropdown"
+                label="Sản phẩm"
+                options={products.map((product) => ({
+                  value: product.name,
+                  label: product.name,
+                }))}
+                value={productId.name}
+                onChange={(value) => handleDropdownChangeProduct("name", value)}
+                error={errors.product_id}
+              />
+              <Dropdownpicker
+                className="promotion-dropdown"
+                label="Đơn vị"
+                options={unitItem.map((unit) => ({
+                  value: unit._id,
+                  label: unit.description,
+                }))}
+                value={productId.unit_id}
+                onChange={(value) =>
+                  handleDropdownChangeProduct("unit_id", value)
+                }
+              />
+              <Input
+                className="promotion-input"
+                type="number"
+                label="Số lượng"
+                name="quantity"
+                value={formData.quantity}
+                onChange={handleChange}
+                error={errors.quantity}
+              />
+              <Dropdownpicker
+                className="promotion-dropdown"
+                label="Mã hàng tặng"
+                options={products.map((product) => ({
+                  value: product.item_code,
+                  label: product.item_code,
+                }))}
+                value={productDonate.item_code}
+                onChange={(value) =>
+                  handleDropdownChangeProductDonate("item_code", value)
+                }
+                error={errors.item_code}
+              />
+              <Dropdownpicker
+                className="promotion-dropdown"
+                label="Sản phẩm tặng"
+                options={products.map((product) => ({
+                  value: product.name,
+                  label: product.name,
+                }))}
+                value={productDonate.name}
+                onChange={(value) =>
+                  handleDropdownChangeProductDonate("name", value)
+                }
+                error={errors.product_id}
+              />
+              <Dropdownpicker
+                className="promotion-dropdown"
+                label="Đơn vị"
+                options={unitItemDonate.map((unit) => ({
+                  value: unit._id,
+                  label: unit.description,
+                }))}
+                value={productDonate.unit_id}
+                onChange={(value) =>
+                  handleDropdownChangeProductDonate("unit_id", value)
+                }
+              />
+              <Input
+                className="promotion-input"
+                type="number"
+                label="Số lượng tặng kèm"
+                name="quantity_donate"
+                value={formData.quantity_donate}
+                onChange={handleChange}
+                error={errors.quantity_donate}
+              />
+            </>
                     )}
 
                     <div className="flex-row-center">

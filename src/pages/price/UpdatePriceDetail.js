@@ -23,6 +23,7 @@ export default function UpdatePriceDetail({ priceDetail,priceDetailid }) {
     const fetchProducts = useCallback(async () => {
         try {
             const productsData = await getAllProducts(accessToken, axiosJWT, dispatch);
+            console.log(productsData)
             setProducts(productsData);
         } catch (error) {
             console.error('Failed to fetch products:', error);
@@ -89,6 +90,18 @@ export default function UpdatePriceDetail({ priceDetail,priceDetailid }) {
                         name='price'
                         value={
                             products.find(product => product._id === productPriceData.product_id)?.name || ''
+                        }
+                        onChange={handleChange}
+                        error={errors.price}
+                        type='text'
+                        disabled='true'
+                    />
+                    <Input
+                        label='Đơn vị tính'
+                        placeholder='Nhập giá sản phẩm'
+                        name='price'
+                        value={
+                            products.find(product => product._id === productPriceData.product_id)?.unit_id.description || ''
                         }
                         onChange={handleChange}
                         error={errors.price}
