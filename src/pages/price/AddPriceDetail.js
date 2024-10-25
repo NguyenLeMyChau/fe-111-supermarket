@@ -6,11 +6,19 @@ import { useAxiosJWT, useAccessToken } from '../../utils/axiosInstance';
 import { validatePriceDetailData } from '../../utils/validation';
 import { addProductPriceDetail, getProductNoPrice } from '../../services/priceRequest'; 
 import Dropdownpicker from '../../components/dropdownpicker/dropdownpicker';
+import { useSelector } from 'react-redux';
 
 export default function AddProductPriceDetail({ isOpen, onClose,productPriceHeader }) {
   const axiosJWT = useAxiosJWT();
   const accessToken = useAccessToken();
+  const units = useSelector((state) => state.unit?.units) || [];
+  const [unitItem, setUnitItem] = useState(units);
   const [products, setProducts] = useState([]);
+  const [productId, setProductId] = useState({
+    item_code: "",
+    unit_id: "",
+    name: "",
+  });
   const [productPriceData, setProductPriceData] = useState({
     product_id: '',
     price: '', 
@@ -22,6 +30,7 @@ export default function AddProductPriceDetail({ isOpen, onClose,productPriceHead
     try {
       const productPriceHeaderId = productPriceHeader?._id;
       const productsData = await getProductNoPrice(accessToken, axiosJWT, productPriceHeaderId);
+      console.log(productsData)
       setProducts(productsData);
     } catch (error) {
       console.error('Failed to fetch products:', error);
@@ -39,6 +48,48 @@ export default function AddProductPriceDetail({ isOpen, onClose,productPriceHead
   };
   const handleDropdownChange = (name, value) => {
     setProductPriceData((prevData) => ({ ...prevData, [name]: value }));
+};
+const handleDropdownChangeProduct = (name, value) => {
+  if (name === "unit_id") {
+    setProductId((prevData) => ({ ...prevData, unit_id: value }));
+  }
+  if (name === "item_code" || name === "name") {
+    const selectedProduct = products.find(
+      (product) => product.name === value || product.item_code === value
+    );
+   
+    if (selectedProduct) {
+      // Get the unit IDs for the selected product
+      const unitIds = products
+        .filter((product) => product.item_code === selectedProduct.item_code)
+        .map((product) => product.unit_id);
+
+      if (unitIds) {
+        setUnitItem(unitIds);
+      }
+
+      setProductId((prevData) => ({
+        ...prevData,
+        name: selectedProduct.name,
+        item_code: selectedProduct.item_code,
+        unit_id:'',
+      }));
+    }
+  }
+  if (productId.item_code && productId.name && productId.unit_id) {
+    const product_id = products.find(
+      (product) =>
+        product.item_code === productId.item_code &&
+        product.unit_id._id === productId.unit_id
+    );
+    console.log(product_id)
+  
+if(product_id)
+  setProductPriceData((prevData) => ({
+      ...prevData,
+      product_id:product_id._id,
+    }));
+  }
 };
   const handleAddProductPrice = async (e) => {
     e.preventDefault();
@@ -76,18 +127,42 @@ export default function AddProductPriceDetail({ isOpen, onClose,productPriceHead
       <div className='flex-column-center'>
         <form onSubmit={handleAddProductPrice}>
         
-                 <Dropdownpicker
-                        className='promotion-dropdown'
-                        label='Sản phẩm'
-                        options={products.map((product) => ({
-                            value: product._id,
-                            label: product.name,
-                        }))}
-                        value={productPriceData.product_id}
-                        onChange={(value) => handleDropdownChange('product_id', value)}
-                        error={errors.product_id}
-                    />
-
+        <Dropdownpicker
+                className="promotion-dropdown"
+                label="Mã hàng"
+                options={products.map((product) => ({
+                  value: product.item_code,
+                  label: product.item_code,
+                }))}
+                value={productId.item_code}
+                onChange={(value) =>
+                  handleDropdownChangeProduct("item_code", value)
+                }
+                error={errors.item_code}
+              />
+              <Dropdownpicker
+                className="promotion-dropdown"
+                label="Sản phẩm"
+                options={products.map((product) => ({
+                  value: product.name,
+                  label: product.name,
+                }))}
+                value={productId.name}
+                onChange={(value) => handleDropdownChangeProduct("name", value)}
+                error={errors.product_id}
+              />
+              <Dropdownpicker
+                className="promotion-dropdown"
+                label="Đơn vị"
+                options={unitItem.map((unit) => ({
+                  value: unit._id,
+                  label: unit.description,
+                }))}
+                value={productId.unit_id}
+                onChange={(value) =>
+                  handleDropdownChangeProduct("unit_id", value)
+                }
+              />
           <Input
             label='Giá'
             placeholder='Nhập giá sản phẩm'
