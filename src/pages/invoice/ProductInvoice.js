@@ -65,9 +65,10 @@ export default function ProductInvoice({ isModalOpen, closeModal, products, sele
                                     <th style={{ width: '15%' }}>Tên sản phẩm</th>
                                     <th style={{ width: '10%' }}>Đơn vị</th>
                                     <th style={{ textAlign: 'center', width: '10%' }}>Số lượng</th>
-                                    <th style={{ textAlign: 'center', width: '10%' }}>Giá</th>
-                                    <th style={{ textAlign: 'center', width: '15%' }}>Khuyến mãi</th>
-                                    <th style={{ textAlign: 'center', width: '20%' }}>Chi tiết KM</th>
+                                    <th style={{ textAlign: 'center', width: '10%' }}>Giá gốc</th>
+                                    <th style={{ textAlign: 'center', width: '10%' }}>Giá tổng</th>
+                                    {/* <th style={{ textAlign: 'center', width: '15%' }}>Khuyến mãi</th> */}
+                                    <th style={{ textAlign: 'center', width: '70%' }}>Khuyến mãi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -81,7 +82,8 @@ export default function ProductInvoice({ isModalOpen, closeModal, products, sele
                                         <td>{product.unitName}</td>
                                         <td style={{ textAlign: 'center' }}>{product.quantity}</td>
                                         <td style={{ textAlign: 'right' }}>{formatCurrency(product.price)}</td>
-                                        <td>{product.promotion?.description}</td>
+                                        <td style={{ textAlign: 'right' }}>{formatCurrency(product.total)}</td>
+                                        {/* <td>{product.promotion?.description}</td> */}
                                         <td> <ShowPromotion promotion={product.promotion} /></td>
                                     </tr>
                                 ))}
