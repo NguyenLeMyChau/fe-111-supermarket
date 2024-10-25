@@ -20,10 +20,8 @@ export default function Promotion() {
   const [currentDetail, selectCurrentDetail] = useState({});
   const [promotionLine, setPromotionLine] = useState([]);
   const [isModalOpenLine, setIsModalOpenLine] = useState(false);
-
   const [promotionDetail, setPromotionDetail] = useState([]);
   const [isModalOpenDetail, setIsModalOpenDetail] = useState(false);
-
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isEditModalLineOpen, setIsEditModalLineOpen] = useState(false);
   const [isEditModalDetailOpen, setIsEditModalDetailOpen] = useState(false);
@@ -72,7 +70,7 @@ const handleCloseEditModalDetail = () => {
       key: 'startDate',
       width: '15%',
       className: 'text-center',
-      render: (date) => formatDate(date)
+      // render: (date) => formatDate(date)
     },
     {
       title: 'Ngày kết thúc',
@@ -80,7 +78,7 @@ const handleCloseEditModalDetail = () => {
       key: 'endDate',
       width: '15%',
       className: 'text-center',
-      render: (date) => formatDate(date)
+      // render: (date) => formatDate(date)
     },
     {
       title: 'Hoạt động',

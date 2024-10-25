@@ -95,30 +95,28 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
 
   const handleDropdownChangeProduct = (name, value) => {
     if (name === "unit_id") {
-      console.log(value);
       setProductId((prevData) => ({ ...prevData, unit_id: value }));
     }
     if (name === "item_code" || name === "name") {
       const selectedProduct = products.find(
         (product) => product.name === value || product.item_code === value
       );
+     
       if (selectedProduct) {
         // Get the unit IDs for the selected product
         const unitIds = products
           .filter((product) => product.item_code === selectedProduct.item_code)
           .map((product) => product.unit_id);
 
-        // Find the unit details for these unit IDs
-        const unitSelect = units.filter((unit) => unitIds.includes(unit._id));
-
-        if (unitSelect) {
-          setUnitItem(unitSelect);
+        if (unitIds) {
+          setUnitItem(unitIds);
         }
 
         setProductId((prevData) => ({
           ...prevData,
           name: selectedProduct.name,
           item_code: selectedProduct.item_code,
+          unit_id:'',
         }));
       }
     }
@@ -126,13 +124,14 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
       const product_id = products.find(
         (product) =>
           product.item_code === productId.item_code &&
-          product.name === productId.name &&
-          product.unit_id === productId.unit_id
-      )?._id;
-
+          product.unit_id._id === productId.unit_id
+      );
+      console.log(product_id)
+      console.log(promotionDetailData)
+  if(product_id)
       setPromotionDetailData((prevData) => ({
         ...prevData,
-        product_id,
+        product_id:product_id._id,
       }));
     }
   };
@@ -148,17 +147,17 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
           .filter((product) => product.item_code === selectedProductDonate.item_code)
           .map((product) => product.unit_id);
 
-        // Find the unit details for these unit IDs
-        const unitSelectDonate = units.filter((unit) => unitIds.includes(unit._id));
+  
 
-        if (unitSelectDonate) {
-          setUnitItemDonate(unitSelectDonate);
+        if (unitIds) {
+          setUnitItemDonate(unitIds);
         }
 
         setProductDonate((prevData) => ({
           ...prevData,
           name: selectedProductDonate.name,
           item_code: selectedProductDonate.item_code,
+          unit_id:'',
         }));
       }
     }
@@ -166,8 +165,7 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
         const product_donate = products.find(
           (product) =>
             product.item_code === productDonate.item_code &&
-            product.name === productDonate.name &&
-            product.unit_id === productDonate.unit_id
+            product.unit_id._id === productDonate.unit_id
         )?._id;
   
         setPromotionDetailData((prevData) => ({
