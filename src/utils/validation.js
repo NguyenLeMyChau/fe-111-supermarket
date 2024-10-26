@@ -10,8 +10,17 @@ export const validateEmployeeData = (employeeData) => {
     if (!employeeData.email.trim()) {
         errors.email = 'Email không được để trống';
     }
-    if (!employeeData.address.trim()) {
-        errors.address = 'Địa chỉ không được để trống';
+    if (!employeeData.address.street.trim()) {
+        errors.address = 'Số nhà tên đường không được để trống';
+    }
+    if (!employeeData.address.ward.trim()) {
+        errors.address = 'Phường/xã không được để trống';
+    }
+    if (!employeeData.address.district.trim()) {
+        errors.address = 'Quận/huyện không được để trống';
+    }
+    if (!employeeData.address.city.trim()) {
+        errors.address = 'Tỉnh/thành phố không được để trống';
     }
 
     return errors;

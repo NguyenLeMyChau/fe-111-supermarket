@@ -21,8 +21,7 @@ export default function Unit() {
     };
 
     const unitColumn = [
-        { title: 'Đơn vị tính', dataIndex: 'description', key: 'description' },
-        { title: 'Số lượng', dataIndex: 'quantity', key: 'quantity', className: 'text-center' },
+        { title: 'Đơn vị tính', dataIndex: 'description', key: 'description', width: '50%' },
         {
             title: 'Chỉnh sửa',
             key: 'edit',

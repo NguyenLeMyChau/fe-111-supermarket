@@ -2,29 +2,28 @@ import React, { useState } from 'react';
 import Button from '../../components/button/Button';
 import Input from '../../components/input/Input';
 import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
-import { updateEmployee } from '../../services/employeeRequest';
 import { useNavigate } from 'react-router';
 import ClipLoader from 'react-spinners/ClipLoader';
+import { updateCustomer } from '../../services/employeeRequest';
 
-const UpdateEmployee = ({ employee }) => {
+const UpdateCustomer = ({ customer }) => {
     const accessToken = useAccessToken();
     const axiosJWT = useAxiosJWT();
     const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);
 
+    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
-        name: employee.name,
-        phone: employee.phone,
-        email: employee.email,
-        gender: employee.gender,
+        name: customer?.name,
+        phone: customer?.phone,
+        email: customer?.email,
+        gender: customer?.gender,
         address: {
-            street: employee.address?.street || '',
-            ward: employee.address?.ward || '',
-            district: employee.address?.district || '',
-            city: employee.address?.city || '',
+            street: customer?.address?.street || '',
+            ward: customer?.address?.ward || '',
+            district: customer?.address?.district || '',
+            city: customer?.address?.city || '',
         },
-        active: employee.active,
-        account_id: employee.account_id,
+        account_id: customer?.account_id,
     });
 
     const handleChange = (e) => {
@@ -53,18 +52,11 @@ const UpdateEmployee = ({ employee }) => {
         }));
     };
 
-    const handleActiveChange = (value) => {
-        setFormData((prevData) => ({
-            ...prevData,
-            active: value
-        }));
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        await updateEmployee(employee._id, formData, accessToken, axiosJWT);
-        navigate('/admin/employee');
+        await updateCustomer(customer._id, formData, accessToken, axiosJWT);
+        navigate('/admin/customer');
         setLoading(false);
     };
 
@@ -92,18 +84,6 @@ const UpdateEmployee = ({ employee }) => {
                 <Input label='Quận/Huyện' placeholder='Nhập quận/huyện' name='district' value={formData.address.district} onChange={handleAddressChange} />
                 <Input label='Tỉnh/Thành phố' placeholder='Nhập tỉnh/thành phố' name='city' value={formData.address.city} onChange={handleAddressChange} />
 
-                <Input
-                    type='radio'
-                    label='Trạng thái'
-                    name='active'
-                    value={formData.active}
-                    onChange={handleActiveChange}
-                    options={[
-                        { label: 'Không hoạt động', value: false },
-                        { label: 'Hoạt động', value: true }
-                    ]}
-                />
-
                 <div className='flex-row-center'>
                     {loading ? (
                         <ClipLoader size={30} color="#2392D0" loading={loading} />
@@ -118,4 +98,4 @@ const UpdateEmployee = ({ employee }) => {
     );
 };
 
-export default UpdateEmployee;
+export default UpdateCustomer;

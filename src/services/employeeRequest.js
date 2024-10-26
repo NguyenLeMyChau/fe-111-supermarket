@@ -64,4 +64,19 @@ const getAllCustomer = async (accessToken, axiosJWT, dispatch) => {
     }
 };
 
-export { getAllEmployees, registerEmployee, updateEmployee, getAllCustomer };
+const updateCustomer = async (customerId, customerData, accessToken, axiosJWT) => {
+    try {
+        const response = await axiosJWT.put(`/api/employee/update-customer/${customerId}`, customerData, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        alert('Cập nhật thông tin khách hàng thành công');
+        return response.data;
+    } catch (error) {
+        console.error('Update customer failed:', error);
+        alert(error.response ? error.response.data.message : error.message);
+    }
+}
+
+export { getAllEmployees, registerEmployee, updateEmployee, getAllCustomer, updateCustomer };

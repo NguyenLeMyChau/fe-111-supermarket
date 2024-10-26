@@ -57,7 +57,8 @@ const User = () => {
                 </div>
                 <div className="user-info-item">
                     <span className="label">Địa chỉ:</span>
-                    <span className="value">{user.user.address}</span>
+                    <span className="value">{user.user.address.street}, {user.user.address.ward}, <br />
+                        {user.user.address.district}, {user.user.address.city}</span>
                 </div>
             </div>
             {

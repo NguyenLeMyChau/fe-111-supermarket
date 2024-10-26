@@ -27,7 +27,17 @@ export default function Employee() {
         { title: 'Họ và tên', dataIndex: 'name', key: 'name', width: '20%' },
         { title: 'Số điện thoại', dataIndex: 'phone', key: 'phone', width: '10%' },
         { title: 'Email', dataIndex: 'email', key: 'email', width: '10%' },
-        { title: 'Địa chỉ', dataIndex: 'address', key: 'address', width: '20%' },
+        {
+            title: 'Địa chỉ',
+            dataIndex: 'address',
+            key: 'address',
+            width: '25%',
+            render: (address) => {
+                if (!address) return '';
+                const { street, ward, district, city } = address;
+                return `${street}, ${ward}, ${district}, ${city}`;
+            }
+        },
         { title: 'Giới tính', dataIndex: 'gender', key: 'gender', width: '10%', render: (gender) => gender ? 'Nữ' : 'Nam' },
         {
             title: 'Hoạt động',

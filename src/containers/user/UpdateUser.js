@@ -17,37 +17,65 @@ const UpdateUser = ({ user }) => {
         phone: user.user.phone,
         email: user.user.email,
         gender: user.user.gender,
-        address: user.user.address,
+        address: {
+            street: user.user.address?.street || '',
+            ward: user.user.address?.ward || '',
+            district: user.user.address?.district || '',
+            city: user.user.address?.city || '',
+        },
     });
+    const [errors, setErrors] = useState({});
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
+        setFormData((prevData) => ({
+            ...prevData,
             [name]: value,
-        });
+        }));
     };
 
     const handleGenderChange = (value) => {
         setFormData((prevData) => ({
             ...prevData,
-            gender: value
+            gender: value,
         }));
+    };
+
+    const handleAddressChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            address: {
+                ...prevData.address,
+                [name]: value,
+            },
+        }));
+    };
+
+    const validateForm = () => {
+        const newErrors = {};
+        if (!formData.phone) newErrors.phone = 'Số điện thoại không được để trống.';
+        if (!formData.email) newErrors.email = 'Email không được để trống.';
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('user', user);
-        console.log('Form data:', formData);
-        // Gọi API cập nhật thông tin người dùng
-        await updateUser(user.id, formData, dispatch, navigate, accessToken, axiosJWT);
+        if (!validateForm()) return;
+
+        try {
+            await updateUser(user.id, formData, dispatch, navigate, accessToken, axiosJWT);
+            alert('Cập nhật thông tin thành công!');
+        } catch (error) {
+            console.error('Error updating user:', error);
+            alert('Cập nhật thất bại. Vui lòng thử lại.');
+        }
     };
 
     return (
         <div className='flex-column-center'>
-
             <form onSubmit={handleSubmit}>
-
                 <Input
                     label='Họ và tên'
                     placeholder='Nhập họ và tên'
@@ -63,8 +91,8 @@ const UpdateUser = ({ user }) => {
                     placeholder='Nhập số điện thoại'
                     value={formData.phone}
                     onChange={handleChange}
+                    error={errors.phone}
                 />
-
                 <Input
                     type='email'
                     label='Email'
@@ -72,8 +100,8 @@ const UpdateUser = ({ user }) => {
                     placeholder='Nhập email'
                     value={formData.email}
                     onChange={handleChange}
+                    error={errors.email}
                 />
-
                 <Input
                     type='radio'
                     label='Giới tính'
@@ -82,27 +110,20 @@ const UpdateUser = ({ user }) => {
                     onChange={handleGenderChange}
                     options={[
                         { label: 'Nam', value: false },
-                        { label: 'Nữ', value: true }
+                        { label: 'Nữ', value: true },
                     ]}
                 />
 
-                <Input
-                    label='Địa chỉ'
-                    placeholder='Nhập địa chỉ'
-                    name='address'
-                    value={formData.address}
-                    onChange={handleChange}
-                />
+                <Input label='Số nhà, tên đường' placeholder='Nhập số nhà và tên đường' name='street' value={formData.address.street} onChange={handleAddressChange} />
+                <Input label='Phường/Xã' placeholder='Nhập phường/xã' name='ward' value={formData.address.ward} onChange={handleAddressChange} />
+                <Input label='Quận/Huyện' placeholder='Nhập quận/huyện' name='district' value={formData.address.district} onChange={handleAddressChange} />
+                <Input label='Tỉnh/Thành phố' placeholder='Nhập tỉnh/thành phố' name='city' value={formData.address.city} onChange={handleAddressChange} />
 
                 <div className='flex-row-center'>
                     <div className='login-button' style={{ width: 200 }}>
-                        <Button
-                            type='submit'
-                            text='Cập nhật thông tin'
-                        />
+                        <Button type='submit' text='Cập nhật thông tin' />
                     </div>
                 </div>
-
             </form>
         </div>
     );

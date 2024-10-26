@@ -3,6 +3,8 @@ import { useSelector } from 'react-redux';
 import FrameData from '../../containers/frameData/FrameData';
 import Modal from '../../components/modal/Modal';
 import { CiEdit } from "react-icons/ci";
+import UpdateCustomer from './UpdateCustomer';
+import AddCustomer from './AddCustomer';
 
 export default function Customer() {
     const customers = useSelector((state) => state.customer?.customers) || [];
@@ -54,8 +56,15 @@ export default function Customer() {
         <>
             <FrameData
                 title="Danh sách khách hàng"
+                buttonText="Thêm khách hàng"
                 data={customers}
                 columns={employeeColumns}
+                renderModal={(onClose) => (
+                    <AddCustomer
+                        isOpen={true}
+                        onClose={onClose}
+                    />
+                )}
             />
 
             {isEditModalOpen && (
@@ -65,7 +74,9 @@ export default function Customer() {
                     onClose={handleCloseEditModal}
                     width={'30%'}
                 >
-
+                    <UpdateCustomer
+                        customer={selectedEmployee}
+                    />
                 </Modal>
             )}
         </>

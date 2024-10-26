@@ -1,19 +1,16 @@
 import React, { useState } from 'react';
-import './Employee.scss';
 import Modal from '../../components/modal/Modal';
 import Input from '../../components/input/Input';
 import Button from '../../components/button/Button';
 import { registerEmployee } from '../../services/employeeRequest';
 import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
 import { validateEmployeeData } from '../../utils/validation';
-import ClipLoader from 'react-spinners/ClipLoader';
 
-export default function AddEmployee({ isOpen, onClose }) {
+export default function AddCustomer({ isOpen, onClose }) {
     const axiosJWT = useAxiosJWT();
     const accessToken = useAccessToken();
 
     const [errors, setErrors] = useState({});
-    const [loading, setLoading] = useState(false); // Trạng thái loading
     const [employeeData, setEmployeeData] = useState({
         name: '',
         phone: '',
@@ -62,8 +59,6 @@ export default function AddEmployee({ isOpen, onClose }) {
             return;
         }
 
-        setLoading(true); // Bắt đầu loading
-
         try {
             const response = await registerEmployee(employeeData, accessToken, axiosJWT);
             if (response) {
@@ -83,14 +78,12 @@ export default function AddEmployee({ isOpen, onClose }) {
         } catch (error) {
             console.error('Failed to register employee:', error);
             alert('Có lỗi xảy ra khi thêm nhân viên.');
-        } finally {
-            setLoading(false); // Kết thúc loading
         }
     };
 
     return (
         <Modal
-            title="Thêm nhân viên"
+            title="Thêm khách hàng"
             isOpen={isOpen}
             onClose={onClose}
             width={'30%'}
@@ -169,14 +162,9 @@ export default function AddEmployee({ isOpen, onClose }) {
                     />
 
                     <div className="flex-row-center">
-                        {loading ? (
-                            <ClipLoader size={30} color="#2392D0" loading={loading} />
-                        ) : (
-                            <div className="login-button" style={{ width: 200 }}>
-                                <Button type="submit" text="Thêm nhân viên" />
-                            </div>
-
-                        )}
+                        <div className="login-button" style={{ width: 200 }}>
+                            <Button type="submit" text="Thêm khách hàng" />
+                        </div>
                     </div>
                 </form>
             </div>
