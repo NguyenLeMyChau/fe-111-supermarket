@@ -7,7 +7,7 @@ import { useLocation, useNavigate } from 'react-router';
 import { getAllCategories, getAllProducts } from '../services/productRequest';
 import { getAllCustomer, getAllEmployees } from '../services/employeeRequest';
 import { getAllPromotions } from '../services/promotionRequest';
-import { getAllBill, getAllWarehouse } from '../services/warehouseRequest';
+import { getAllBill, getAllTransaction, getAllWarehouse } from '../services/warehouseRequest';
 import { getAllUnit } from '../services/unitRequest';
 import { getAllPrices } from '../services/priceRequest'
 import { getAllInvoices } from '../services/invoiceRequest';
@@ -20,7 +20,6 @@ const useCommonData = () => {
     const currentUser = useSelector((state) => state.auth?.login?.currentUser);
     const logout = useSelector((state) => state.auth?.login?.isLogout);
     const axiosJWT = createAxiosInstance(currentUser, dispatch, loginSuccess);
-    const warehouses = useSelector((state) => state.warehouse?.warehouse);
 
     const apiCallMapping = useMemo(() => ({
         '/admin/inventory': getAllWarehouse,
@@ -33,6 +32,8 @@ const useCommonData = () => {
         '/admin/price': getAllPrices,
         '/admin/invoice': getAllInvoices,
         '/admin/customer': getAllCustomer,
+        '/admin/unit': getAllUnit,
+        '/admin/transaction': getAllTransaction,
     }), []);
 
     useEffect(() => {
@@ -51,8 +52,6 @@ const useCommonData = () => {
         if (apiCall) {
             apiCall(currentUser.accessToken, axiosJWT, dispatch);
         }
-
-        getAllUnit(currentUser.accessToken, axiosJWT, dispatch);
 
     }, [currentUser, axiosJWT, dispatch, location.pathname, apiCallMapping]);
 

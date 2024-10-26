@@ -18,6 +18,7 @@ import unitReducer from './reducers/unitSlice';
 import priceReducer from './reducers/priceSlice'
 import invoiceReducer from './reducers/invoiceSlice';
 import customerReducer from './reducers/customerSlice';
+import transactionReducer from './reducers/transactionSlice';
 
 const persistConfig = {
     key: 'root',
@@ -38,7 +39,8 @@ const rootReducer = combineReducers(
         unit: unitReducer,
         price: priceReducer,
         invoice: invoiceReducer,
-        customer: customerReducer
+        customer: customerReducer,
+        transaction: transactionReducer,
     });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

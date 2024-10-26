@@ -5,6 +5,8 @@ import { formatCurrency, formatDate } from '../../utils/fotmatDate';
 import { useLocation, useNavigate } from 'react-router';
 import ProductInvoice from './ProductInvoice';
 import './Invoice.scss';
+import { formatDistanceToNow } from 'date-fns';
+import { vi } from 'date-fns/locale';
 
 
 export default function Invoice() {
@@ -25,10 +27,16 @@ export default function Invoice() {
         {
             title: 'Ngày đặt hàng',
             dataIndex: 'createdAt',
-            key: 'createdAt', // Sử dụng một khóa duy nhất
+            key: 'createdAt',
             width: '15%',
-            className: 'text-center',
-            render: (date) => formatDate(date)
+            render: (date) => (
+                <div>
+                    <div>{formatDate(date)}</div>
+                    <div style={{ fontSize: '12px', color: 'gray' }}>
+                        {formatDistanceToNow(new Date(date), { addSuffix: true, locale: vi })}
+                    </div>
+                </div>
+            )
         },
         {
             title: 'Người nhận',
@@ -93,6 +101,7 @@ export default function Invoice() {
                 data={sortedInvoices}
                 columns={invoiceColumn}
                 onRowClick={handleRowClick}
+                itemsPerPage={5}
             />
 
             {

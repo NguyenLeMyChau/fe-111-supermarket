@@ -1,4 +1,5 @@
 import { getOrderFailed, getOrderStart, getOrderSuccess } from "../store/reducers/orderSlice";
+import { getTransactionFailed, getTransactionStart, getTransactionSuccess } from "../store/reducers/transactionSlice";
 import { getWarehouseFailed, getWarehouseStart, getWarehouseSuccess } from "../store/reducers/warehouseSlice";
 
 
@@ -120,6 +121,23 @@ const updateBill = async (oldBillId, newBillId, productList, accessToken, axiosJ
     }
 }
 
+const getAllTransaction = async (accessToken, axiosJWT, dispatch) => {
+    dispatch(getTransactionStart());
+    try {
+        const response = await axiosJWT.get(`api/warehouse/get-all-transaction`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        dispatch(getTransactionSuccess(response.data));
+        return response.data;
+    } catch (error) {
+        dispatch(getTransactionFailed());
+        console.error('Get all transaction failed:', error);
+        alert(error.response ? error.response.data.message : error.message);
+    }
+}
+
 export {
     getAllWarehouse,
     getAllOrder,
@@ -127,5 +145,6 @@ export {
     updateOrderStatus,
     addBillWarehouse,
     getAllBill,
-    updateBill
+    updateBill,
+    getAllTransaction
 };

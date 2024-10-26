@@ -26,6 +26,7 @@ import { PaymentModalProvider } from '../context/PaymentModalProvider.js';
 import PaymentInfo from '../pages/cart/PaymentInfo.js';
 import PriceDetail from '../pages/price/PriceDetail.js'
 import Customer from '../pages/customer/Customer.js';
+import Transaction from '../pages/transaction/Transaction.js';
 
 function AppRoutes() {
     return (
@@ -45,6 +46,7 @@ function AppRoutes() {
                         <Route path="employee" element={<Employee />} />
                         <Route path="customer" element={<Customer />} />
                         <Route path="promotion" element={<Promotion />} />
+                        <Route path="transaction" element={<Transaction />} />
                         <Route path="price" element={<Price />}>
                             <Route path="price-detail" element={<PriceDetail />} />
                         </Route>
