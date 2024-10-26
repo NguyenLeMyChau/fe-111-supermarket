@@ -30,6 +30,7 @@ export default function AddProduct({ isOpen, onClose }) {
         category_id: '',
         supplier_id: '',
         img: '',
+        unit_convert: []
     });
 
     const [loading, setLoading] = useState(false); // Trạng thái loading
@@ -167,9 +168,16 @@ export default function AddProduct({ isOpen, onClose }) {
 
         setLoading(true); // Bắt đầu loading
         try {
+
+            // Cập nhật productData để bao gồm conversionUnits
+            const updatedProductData = {
+                ...productData,
+                unit_convert: conversionUnits,
+            };
+
             // Gửi yêu cầu thêm sản phẩm
-            await addProductWithWarehouse(productData, accessToken, axiosJWT, onClose);
-            console.log('Product data:', productData);
+            await addProductWithWarehouse(updatedProductData, accessToken, axiosJWT, onClose);
+            console.log('Product data:', updatedProductData);
 
         } catch (error) {
             console.error('Failed to add product:', error);
@@ -355,7 +363,7 @@ export default function AddProduct({ isOpen, onClose }) {
                             <tbody>
                                 {conversionUnits.map((unit, index) => (
                                     <tr key={index}>
-                                        <td style={{ padding: '10px', textAlign: 'center' }}>
+                                        <td style={{ padding: '10px' }}>
                                             <Select
                                                 options={units.map(unit => ({ value: unit._id, label: unit.description }))}
                                                 onChange={(selected) => handleConversionUnitChange(index, 'unit', selected[0]?.value)}
@@ -364,7 +372,6 @@ export default function AddProduct({ isOpen, onClose }) {
                                                     control: (provided) => ({
                                                         ...provided,
                                                         minWidth: '150px',
-                                                        margin: '0 auto', // Center the select box
                                                     }),
                                                 }}
                                             />

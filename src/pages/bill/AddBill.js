@@ -13,13 +13,9 @@ const AddBill = () => {
         handleQuantityChange,
         handleRemoveProduct,
         handleOrder,
-        handleSupplierSelect,
-        supplierOptions,
         isLoading,
         billId,
         setBillId,
-        productOptions,
-        handleProductSelect,
         units,
         handleUnitSelect,
         unitOptions,
@@ -54,27 +50,6 @@ const AddBill = () => {
                     <span>{selectedSupplier ? selectedSupplier.label : 'Chưa chọn nhà cung cấp'}</span>
                 </div>
             </div>
-
-            <div className="supplier-list">
-                <h4>Chọn nhà cung cấp:</h4>
-                <Select
-                    value={selectedSupplier}
-                    onChange={handleSupplierSelect}
-                    options={supplierOptions}
-                    placeholder="Chọn nhà cung cấp"
-                />
-            </div>
-
-            {selectedSupplier && (
-                <div className="product-select">
-                    <h4>Chọn sản phẩm theo mã hàng:</h4>
-                    <Select
-                        onChange={handleProductSelect}
-                        options={productOptions}
-                        placeholder="Chọn mã sản phẩm"
-                    />
-                </div>
-            )}
 
             <div className="product-list">
                 <h4>Thông tin nhập:</h4>
