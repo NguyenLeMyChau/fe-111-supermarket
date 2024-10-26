@@ -9,7 +9,6 @@ const AddBill = () => {
         quantities,
         products,
         ordererName,
-        selectedSupplier,
         handleQuantityChange,
         handleRemoveProduct,
         handleOrder,
@@ -19,7 +18,10 @@ const AddBill = () => {
         units,
         handleUnitSelect,
         unitOptions,
-        getUnitDescription
+        productOptions,
+        getUnitDescription,
+        handleAddProduct,
+        handleProductSelect
     } = useAddBill();
 
     return (
@@ -44,15 +46,11 @@ const AddBill = () => {
                     <label>Ngày nhập:</label>
                     <span>{formatDate(Date.now())}</span>
                 </div>
-
-                <div className="info-group">
-                    <label>Nhà cung cấp:</label>
-                    <span>{selectedSupplier ? selectedSupplier.label : 'Chưa chọn nhà cung cấp'}</span>
-                </div>
             </div>
 
             <div className="product-list">
                 <h4>Thông tin nhập:</h4>
+
                 {products.length > 0 ? (
                     <table className="product-table">
                         <thead>
@@ -60,14 +58,20 @@ const AddBill = () => {
                                 <th>Mã hàng</th>
                                 <th>Tên sản phẩm</th>
                                 <th>Đơn vị tính</th>
-                                <th>Số lượng</th>
-                                <th>Hành động</th>
+                                <th style={{ textAlign: 'center' }}>Số lượng</th>
+                                <th style={{ textAlign: 'center' }}>Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
                             {products.map((product, index) => (
                                 <tr key={index}>
-                                    <td>{product.item_code}</td>
+                                    <td>
+                                        <Select
+                                            value={product.item_code ? { value: product.item_code, label: product.item_code } : null}
+                                            onChange={(selectedOption) => handleProductSelect(index, selectedOption)}
+                                            options={productOptions}
+                                        />
+                                    </td>
                                     <td>{product.name}</td>
                                     <td>
                                         <Select
@@ -76,31 +80,61 @@ const AddBill = () => {
                                             options={unitOptions(product)}
                                         />
                                     </td>
-                                    <td>
+                                    <td style={{ textAlign: 'center' }}>
                                         <input
                                             type="number"
                                             min="1"
-                                            value={quantities[index] || 1} // Sử dụng index để lấy số lượng
-                                            onChange={(e) => handleQuantityChange(index, parseInt(e.target.value))} // Truyền index
+                                            value={quantities[index] || 1}
+                                            onChange={(e) => handleQuantityChange(index, parseInt(e.target.value))}
                                             className="quantity-input"
+                                            style={{ width: '60px', height: '20px', textAlign: 'center', fontSize: 16 }}
                                         />
                                     </td>
-
-                                    <td>
-                                        <Button
-                                            text="Xóa"
-                                            backgroundColor="#FF0000"
+                                    <td style={{ textAlign: 'center' }}>
+                                        <button
                                             onClick={() => handleRemoveProduct(index)}
-                                        />
+                                            style={{
+                                                marginBottom: '10px',
+                                                padding: '10px 20px',
+                                                backgroundColor: '#FF0000',
+                                                color: 'white',
+                                                border: 'none',
+                                                borderRadius: '5px',
+                                                cursor: 'pointer',
+                                                fontSize: 14
+                                            }}
+                                        >
+                                            Xoá
+                                        </button>
+
                                     </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
+
+
                 ) : (
                     <p className="no-products">Chưa có sản phẩm nào để hiển thị.</p>
                 )}
 
+
+                {/* Nút để thêm sản phẩm mới */}
+                <button
+                    onClick={handleAddProduct}
+                    style={{
+                        marginBottom: '10px',
+                        padding: '10px 20px',
+                        backgroundColor: '#323C64',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '5px',
+                        cursor: 'pointer',
+                        fontSize: 20
+                    }}
+                >
+                    +
+                </button>
 
                 {isLoading ? (
                     <p className='loading'>Đang tạo phiếu nhập...</p>
@@ -117,7 +151,6 @@ const AddBill = () => {
             </div>
         </div>
     );
-
 };
 
 export default AddBill;

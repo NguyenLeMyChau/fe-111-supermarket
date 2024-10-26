@@ -22,14 +22,11 @@ export default function AddProduct({ isOpen, onClose }) {
 
     const [productData, setProductData] = useState({
         name: '',
-        description: '',
         item_code: '',
-        barcode: '',
+        description: '',
         min_stock_threshold: '',
-        unit_id: '',
         category_id: '',
         supplier_id: '',
-        img: '',
         unit_convert: []
     });
 
@@ -97,6 +94,8 @@ export default function AddProduct({ isOpen, onClose }) {
         );
         setConversionUnits(updatedUnits);
     };
+
+
     const handleDeleteConversionUnit = (index) => {
         setConversionUnits((prevUnits) => prevUnits.filter((_, i) => i !== index));
     };
@@ -131,30 +130,15 @@ export default function AddProduct({ isOpen, onClose }) {
         });
     };
 
-    const handleImageChange = async (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const fileTypes = /jpeg|jpg|png/; // Chỉ cho phép các loại file hình ảnh
-
-            // Kiểm tra định dạng file
-            if (!fileTypes.test(file.type)) {
-                alert('Vui lòng chọn file hình ảnh hợp lệ (jpeg, jpg, png).');
-                return; // Nếu không hợp lệ, không tiếp tục
+    const handleCheckboxChange = (index) => {
+        const updatedUnits = conversionUnits.map((unit, i) => {
+            if (i === index) {
+                return { ...unit, checkBaseUnit: !unit.checkBaseUnit, quantity: !unit.checkBaseUnit ? 1 : unit.quantity };
+            } else {
+                return { ...unit, checkBaseUnit: false };
             }
-
-            setIsLoadingImage(true); // Bắt đầu loading ảnh
-            try {
-                const uploadedImageUrl = await uploadImageVideo(file);
-                setProductData((prevState) => ({
-                    ...prevState,
-                    img: uploadedImageUrl.avatar,
-                }));
-            } catch (error) {
-                console.error('Failed to upload image:', error);
-            } finally {
-                setIsLoadingImage(false); // Kết thúc loading ảnh
-            }
-        }
+        });
+        setConversionUnits(updatedUnits);
     };
 
     const handleAddProduct = async (e) => {
@@ -198,9 +182,8 @@ export default function AddProduct({ isOpen, onClose }) {
             <div className='flex-column' style={{ paddingLeft: 60, height: '550px' }}>
 
                 <form onSubmit={handleAddProduct}>
-
-                    <div className='flex-row'>
-                        <div className='flex-column'>
+                    <div className='flex-column'>
+                        <div className='flex-row'>
                             <Input
                                 label='Mã hàng'
                                 name='item_code'
@@ -215,6 +198,9 @@ export default function AddProduct({ isOpen, onClose }) {
                                 value={productData.name}
                                 onChange={handleChange}
                             />
+                        </div>
+                        <div className='flex-row'>
+
                             <Input
                                 label='Mô tả'
                                 name='description'
@@ -223,59 +209,19 @@ export default function AddProduct({ isOpen, onClose }) {
                                 onChange={handleChange}
                             />
 
+                            <Input
+                                type='number'
+                                min={1}
+                                label='Ngưỡng giá trị'
+                                name='min_stock_threshold'
+                                placeholder='Nhập ngưỡng giá trị'
+                                value={productData.min_stock_threshold}
+                                onChange={handleChange}
+                            />
                         </div>
 
-                        <div className='flex-column'>
-                            <div style={{ marginLeft: 160, marginTop: 30 }}>
-                                <label htmlFor="image" className='add-product-add-img'>
-                                    {productData.img ? (
-                                        <img
-                                            src={productData.img}
-                                            alt="Uploaded"
-                                            style={{ width: 125, height: 125, objectFit: 'contain' }}
-                                        />
-                                    ) : (
-                                        <>
-                                            {isLoadingImage ? (
-                                                <ClipLoader size={30} color="#2392D0" loading={isLoadingImage} />
-                                            ) : (
-                                                'Thêm ảnh'
-                                            )}
-                                        </>
-                                    )}
-                                    <input
-                                        type="file"
-                                        name='image'
-                                        id="image"
-                                        accept="image/*"
-                                        style={{ display: 'none' }}
-                                        onChange={handleImageChange}
-                                    />
-                                </label>
-                            </div>
-                        </div>
                     </div>
 
-                    <div className='flex-row'>
-                        <Input
-                            label='Barcode'
-                            name='barcode'
-                            placeholder='Nhập barcode'
-                            value={productData.barcode}
-                            onChange={handleChange}
-                        />
-
-                        <Input
-                            type='number'
-                            min={1}
-                            label='Ngưỡng giá trị'
-                            name='min_stock_threshold'
-                            placeholder='Nhập ngưỡng giá trị'
-                            value={productData.min_stock_threshold}
-                            onChange={handleChange}
-                        />
-
-                    </div>
 
                     <div className='flex-column' style={{ paddingRight: 50 }}>
                         <div style={{ display: 'flex', flexDirection: 'row', flex: 1 }}>
@@ -313,20 +259,6 @@ export default function AddProduct({ isOpen, onClose }) {
                             </div>
                         </div>
 
-
-                        <div style={{ width: '100%', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-                            <div style={{ width: '100px', marginRight: '20px' }}> {/* Wrap <p> with a fixed width */}
-                                <p style={{ fontSize: 14, fontWeight: 500 }}>Đơn vị cơ bản</p>
-                            </div>
-                            <div style={{ width: '88%' }}>
-                                <Select
-                                    options={units.map(unit => ({ value: unit._id, label: unit.description }))}
-                                    onChange={(selected) => handleSelectChange(selected, 'unit_id')}
-                                    values={units.filter(unit => unit._id === productData.unit_id)}
-                                    placeholder="Chọn đơn vị cơ bản"
-                                />
-                            </div>
-                        </div>
                     </div>
 
                     <div>
@@ -357,6 +289,7 @@ export default function AddProduct({ isOpen, onClose }) {
                                     <th style={{ padding: '10px' }}>Số lượng</th>
                                     <th style={{ padding: '10px' }}>Barcode</th>
                                     <th style={{ padding: '10px' }}>Hình ảnh</th>
+                                    <th style={{ padding: '10px' }}>Đơn vị cơ bản</th>
                                     <th>Hành động</th>
                                 </tr>
                             </thead>
@@ -384,6 +317,7 @@ export default function AddProduct({ isOpen, onClose }) {
                                                 value={unit.quantity}
                                                 onChange={(e) => handleConversionUnitChange(index, 'quantity', e.target.value)}
                                                 style={{ width: '80px', height: '30px', margin: '0 auto', textAlign: 'center' }}
+                                                disabled={unit.checkBaseUnit} // Vô hiệu hóa ô nhập liệu khi checkbox được chọn
                                             />
                                         </td>
                                         <td style={{ padding: '10px', textAlign: 'center' }}>
@@ -424,6 +358,15 @@ export default function AddProduct({ isOpen, onClose }) {
                                             </label>
                                         </td>
 
+                                        <td style={{ padding: '10px', textAlign: 'center' }}>
+                                            <input
+                                                type="checkbox"
+                                                checked={unit.checkBaseUnit}
+                                                onChange={() => handleCheckboxChange(index)}
+                                                style={{ width: '15px', height: '15px' }}
+                                            />
+                                        </td>
+
                                         <td style={{ textAlign: 'center' }}>
                                             <TiDelete
                                                 size={30}
@@ -439,7 +382,7 @@ export default function AddProduct({ isOpen, onClose }) {
                     )}
 
 
-                    <div className='flex-row-center' style={{ position: 'sticky', bottom: 0, marginTop: '130px' }}>
+                    <div className='flex-row-center' style={{ position: 'sticky', bottom: 0, marginTop: '200px' }}>
                         {loading ? (
                             <ClipLoader size={30} color="#2392D0" loading={loading} />
                         ) : (
@@ -449,7 +392,7 @@ export default function AddProduct({ isOpen, onClose }) {
                         )}
                     </div>
                 </form>
-            </div>
-        </Modal>
+            </div >
+        </Modal >
     );
 }

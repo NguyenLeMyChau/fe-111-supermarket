@@ -8,7 +8,6 @@ const useAddBill = () => {
     const navigate = useNavigate();
 
     const user = useSelector((state) => state.auth?.login?.currentUser);
-    const suppliers = useSelector((state) => state.supplier?.suppliers);
     const productList = useSelector((state) => state.product?.products);
 
     const axiosJWT = useAxiosJWT();
@@ -60,17 +59,36 @@ const useAddBill = () => {
         });
     };
 
+    const handleAddProduct = () => {
+        setProducts((prevProducts) => {
+            // Thêm sản phẩm mới vào danh sách sản phẩm
+            return [...prevProducts, { item_code: '', name: '', unit_id: null }];
+        });
 
-    const handleProductSelect = (selectedOption) => {
-        console.log('selectedOption handleProductSelect', selectedOption);
+        // Thêm số lượng mới cho sản phẩm mới
+        setQuantities((prevQuantities) => {
+            return [...prevQuantities, 1]; // Mặc định số lượng là 1
+        });
+
+        // Thêm đơn vị mới cho sản phẩm mới
+        setUnits((prevUnits) => {
+            return [...prevUnits, null]; // Mặc định đơn vị là null
+        });
+    };
+
+
+
+    const handleProductSelect = (index, selectedOption) => {
         const selected = productList.find(product => product.item_code === selectedOption.value);
         if (selected) {
             setProducts((prevProducts) => {
-                // Luôn thêm sản phẩm vào danh sách, không kiểm tra trùng lặp
-                return [...prevProducts, selected];
+                const newProducts = [...prevProducts];
+                newProducts[index] = selected; // Cập nhật sản phẩm tại index
+                return newProducts;
             });
         }
     };
+
 
     const handleUnitSelect = (index, selectedOption) => {
         setUnits((prevUnits) => {
@@ -88,42 +106,23 @@ const useAddBill = () => {
     };
 
     const productOptions = useMemo(() => {
-        if (!selectedSupplier) return [];
-        const seen = new Set();
         return productList
-            .filter(product => product.supplier_id === selectedSupplier.value)
-            .filter(product => {
-                const isDuplicate = seen.has(product.item_code);
-                seen.add(product.item_code);
-                return !isDuplicate;
-            })
             .map(product => ({
                 value: product.item_code,
                 label: product.item_code,
             }));
-    }, [productList, selectedSupplier]);
+    }, [productList]);
 
-
-    const supplierOptions = useMemo(() => {
-        return suppliers.map(supplier => ({
-            value: supplier._id,
-            label: supplier.name,
-        }));
-    }, [suppliers]);
 
     const unitOptions = (product) => {
-
-        // Tìm các sản phẩm trong productList dựa trên item_code của product
-        const unitProducts = productList.filter(p => p.item_code === product.item_code);
-
         // Truy xuất unitProduct từ các sản phẩm tìm thấy
-        const unitOptions = unitProducts.map(unitProduct => ({
-            value: unitProduct.unit_id._id,
-            label: unitProduct.unit_id.description,
+        const unitOptions = product?.unit_convert?.map(unitProduct => ({
+            value: unitProduct?.unit,
+            label: getUnitDescription(unitProduct?.unit),
         }));
 
         return unitOptions;
-    }
+    };
 
     const handleOrder = async () => {
         const isConfirmed = window.confirm('Bạn có chắc chắn muốn nhập phiếu không?');
@@ -145,19 +144,19 @@ const useAddBill = () => {
         setIsLoading(true);
         try {
             const orderData = {
-                supplierId: selectedSupplier.value,
                 accountId: user.id,
                 billId: billId,
                 productList: products.map((product, index) => ({
-                    quantity: quantities[index] || 1, // Corrected
-                    unit_id: units[index],
+                    product_id: product._id,
                     item_code: product.item_code,
+                    quantity: quantities[index] || 1,
+                    unit_id: units[index],
                 })),
             };
-
+            console.log('products', products);
             console.log('orderData', orderData);
 
-            await addBillWarehouse(orderData, navigate, accessToken, axiosJWT);
+            // await addBillWarehouse(orderData, navigate, accessToken, axiosJWT);
         } catch (error) {
             console.error('Nhập hàng thất bại:', error);
             alert(error.response ? error.response.data.message : error.message);
@@ -178,14 +177,14 @@ const useAddBill = () => {
         handleSupplierSelect,
         productOptions,
         handleProductSelect,
-        supplierOptions,
         isLoading,
         billId,
         setBillId,
         handleUnitSelect,
         units,
         unitOptions,
-        getUnitDescription
+        getUnitDescription,
+        handleAddProduct
     };
 };
 
