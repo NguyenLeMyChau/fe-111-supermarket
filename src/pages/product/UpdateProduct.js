@@ -108,6 +108,14 @@ const UpdateProduct = ({ product }) => {
                 <div className='flex-row'>
                     <div className='flex-column'>
                         <Input
+                            label='Mã hàng'
+                            name='item_code'
+                            placeholder='Nhập mã hàng'
+                            value={formData.item_code}
+                            onChange={handleChange}
+                            disabled={true}
+                        />
+                        <Input
                             label='Tên sản phẩm'
                             placeholder='Nhập tên sản phẩm'
                             name='name'
@@ -122,13 +130,6 @@ const UpdateProduct = ({ product }) => {
                             onChange={handleChange}
                         />
 
-                        <Input
-                            label='Barcode'
-                            name='barcode'
-                            placeholder='Nhập barcode'
-                            value={formData.barcode}
-                            onChange={handleChange}
-                        />
                     </div>
 
                     <div className='flex-column'>
@@ -163,16 +164,13 @@ const UpdateProduct = ({ product }) => {
                 </div>
 
                 <div className='flex-row'>
-
                     <Input
-                        label='Mã hàng'
-                        name='item_code'
-                        placeholder='Nhập mã hàng'
-                        value={formData.item_code}
+                        label='Barcode'
+                        name='barcode'
+                        placeholder='Nhập barcode'
+                        value={formData.barcode}
                         onChange={handleChange}
-                        disabled={true}
                     />
-
 
                     <Input
                         type='number'
