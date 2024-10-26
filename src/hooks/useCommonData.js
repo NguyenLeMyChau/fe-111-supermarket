@@ -5,7 +5,7 @@ import { loginSuccess } from '../store/reducers/authSlice';
 import { getAllSuppliers } from '../services/supplierRequest';
 import { useLocation, useNavigate } from 'react-router';
 import { getAllCategories, getAllProducts } from '../services/productRequest';
-import { getAllEmployees } from '../services/employeeRequest';
+import { getAllCustomer, getAllEmployees } from '../services/employeeRequest';
 import { getAllPromotions } from '../services/promotionRequest';
 import { getAllBill, getAllWarehouse } from '../services/warehouseRequest';
 import { getAllUnit } from '../services/unitRequest';
@@ -32,6 +32,7 @@ const useCommonData = () => {
         '/admin/promotion': getAllPromotions,
         '/admin/price': getAllPrices,
         '/admin/invoice': getAllInvoices,
+        '/admin/customer': getAllCustomer,
     }), []);
 
     useEffect(() => {
@@ -53,7 +54,7 @@ const useCommonData = () => {
 
         getAllUnit(currentUser.accessToken, axiosJWT, dispatch);
 
-    }, [currentUser, axiosJWT, dispatch, location.pathname, apiCallMapping, warehouses]);
+    }, [currentUser, axiosJWT, dispatch, location.pathname, apiCallMapping]);
 
 
     useEffect(() => {

@@ -37,8 +37,9 @@
     @extend .text-md;
     @extend .font-weight-regular;
     height: 20px;
-    padding: 15px;
+    padding: 10px;
     padding-left: 20px;
+    border-bottom: #555;
 }
 
 .menu-detail:hover {
@@ -56,4 +57,23 @@
 .menu-detail p {
     margin-left: 13px;
     font-size: 15px;
+}
+
+.arrow-icon {
+    margin-left: auto;
+    transition: transform 0.3s ease;
+}
+
+.arrow-icon.open {
+    transform: rotate(180deg); // Rotate arrow when submenu is open
+}
+
+.submenu {
+    padding-left: 20px; // Indentation for submenu items
+}
+
+.submenu-item {
+    font-size: 0.9em;
+    color: #555; // Submenu item color
+    cursor: pointer;
 }

@@ -1,4 +1,5 @@
 import { getEmployeeFailed, getEmployeeStart, getEmployeeSuccess } from "../store/reducers/employeeSlice";
+import { getCustomerFailed, getCustomerStart, getCustomerSuccess } from "../store/reducers/customerSlice";
 
 const getAllEmployees = async (accessToken, axiosJWT, dispatch) => {
     dispatch(getEmployeeStart());
@@ -46,4 +47,21 @@ const updateEmployee = async (employeeId, employeeData, accessToken, axiosJWT) =
     }
 }
 
-export { getAllEmployees, registerEmployee, updateEmployee };
+const getAllCustomer = async (accessToken, axiosJWT, dispatch) => {
+    dispatch(getCustomerStart());
+    try {
+        const response = await axiosJWT.get(`/api/employee/get-customers`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        dispatch(getCustomerSuccess(response.data));
+        return response.data;
+    } catch (error) {
+        dispatch(getCustomerFailed());
+        console.error('Get all categories failed:', error);
+        alert(error.response ? error.response.data.message : error.message);
+    }
+};
+
+export { getAllEmployees, registerEmployee, updateEmployee, getAllCustomer };

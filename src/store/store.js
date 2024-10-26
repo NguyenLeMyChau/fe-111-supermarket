@@ -4,12 +4,6 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import {
     persistStore,
     persistReducer,
-    FLUSH,
-    REHYDRATE,
-    PAUSE,
-    PERSIST,
-    PURGE,
-    REGISTER,
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import authReducer from './reducers/authSlice';
@@ -23,6 +17,7 @@ import promotionReducer from './reducers/promotionSlice';
 import unitReducer from './reducers/unitSlice';
 import priceReducer from './reducers/priceSlice'
 import invoiceReducer from './reducers/invoiceSlice';
+import customerReducer from './reducers/customerSlice';
 
 const persistConfig = {
     key: 'root',
@@ -43,6 +38,7 @@ const rootReducer = combineReducers(
         unit: unitReducer,
         price: priceReducer,
         invoice: invoiceReducer,
+        customer: customerReducer
     });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

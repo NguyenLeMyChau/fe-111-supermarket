@@ -12,6 +12,8 @@ import { TbReport } from "react-icons/tb";
 import { BiCategory, BiSolidOffer } from "react-icons/bi";
 import { AiOutlineTag } from "react-icons/ai";
 import { PiInvoice } from "react-icons/pi";
+import { DiUnitySmall } from "react-icons/di";
+import { IoPersonCircleOutline } from "react-icons/io5";
 
 import { createAxiosInstance } from '../utils/util';
 import { logoutSuccess } from '../store/reducers/authSlice';
@@ -60,17 +62,40 @@ const useMenuItems = (onchange) => {
         {
             section: "Menu",
             items: [
-                { Icon: FaRegUser, label: "User", text: "Thông tin", path: '/admin/user' },
+                { Icon: FaRegUser, label: "User", text: "Cá nhân", path: '/admin/user' },
                 { Icon: GoHome, label: "Dashboard", text: "Tổng quan", path: '/admin/dashboard' },
-                { Icon: BiCategory, label: "Category", text: "Loại sản phẩm", path: '/admin/category' },
-                { Icon: MdProductionQuantityLimits, label: "Product", text: "Sản phẩm", path: '/admin/product' },
-                // { Icon: SlSettings, label: "Unit", text: "Đơn vị tính", path: '/admin/unit' },
+                {
+                    Icon: MdProductionQuantityLimits,
+                    label: "ProductMenu",
+                    text: "Sản phẩm",
+                    subItems: [
+                        { Icon: BiCategory, label: "Category", text: "Loại sản phẩm", path: '/admin/category' },
+                        { Icon: MdProductionQuantityLimits, label: "Product", text: "Sản phẩm", path: '/admin/product' },
+                        { Icon: DiUnitySmall, label: "Unit", text: "Đơn vị tính", path: '/admin/unit' },
+                        { Icon: AiOutlineTag, label: "Price", text: "Giá sản phẩm", path: '/admin/price' },
+                    ]
+                },
                 { Icon: BiSolidOffer, label: "Promotion", text: "Khuyến mãi", path: '/admin/promotion' },
-                { Icon: AiOutlineTag, label: "Price", text: "Giá sản phẩm", path: '/admin/price' },
-                { Icon: MdOutlineInventory2, label: "Inventory", text: "Kho", path: '/admin/inventory' },
-                { Icon: BsFileBarGraph, label: "Bill", text: "Nhập kho", path: '/admin/bill' },
-                { Icon: PiInvoice, label: "Invoice", text: "Hoá đơn khách", path: '/admin/invoice' },
-                { Icon: BsPersonVcard, label: "Employee", text: "Nhân viên", path: '/admin/employee' },
+
+                {
+                    Icon: MdOutlineInventory2,
+                    label: "InventoryMenu",
+                    text: "Thông tin kho",
+                    subItems: [
+                        { Icon: MdOutlineInventory2, label: "Inventory", text: "Kho", path: '/admin/inventory' },
+                        { Icon: BsFileBarGraph, label: "Bill", text: "Nhập kho", path: '/admin/bill' },
+                    ]
+                },
+                {
+                    Icon: BsPersonVcard,
+                    label: "InfoMenu",
+                    text: "Thông tin cơ bản",
+                    subItems: [
+                        { Icon: BsPersonVcard, label: "Employee", text: "Nhân viên", path: '/admin/employee' },
+                        { Icon: IoPersonCircleOutline, label: "Customer", text: "Khách hàng", path: '/admin/customer' },
+                        { Icon: PiInvoice, label: "Invoice", text: "Hoá đơn khách", path: '/admin/invoice' },
+                    ]
+                },
                 { Icon: FaUsers, label: "Suppliers", text: "Nhà cung cấp", path: '/admin/supplier' },
             ],
         },
