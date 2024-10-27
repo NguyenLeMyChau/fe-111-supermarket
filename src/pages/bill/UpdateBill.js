@@ -32,7 +32,7 @@ const UpdateBill = ({ bill }) => {
             console.log('new bill', billId)
             console.log('Cập nhật phiếu nhập kho:', products);
             // Thêm logic cập nhật phiếu nhập kho tại đây
-            await updateBill(bill.bill_id, billId, products, accessToken, axiosJWT);
+            // await updateBill(bill.bill_id, billId, products, accessToken, axiosJWT);
             setIsLoading(false);
         } catch (error) {
             setIsLoading(false);
@@ -64,11 +64,6 @@ const UpdateBill = ({ bill }) => {
                         <label>Tên người nhập:</label>
                         <span>{bill.employee.name}</span>
                     </div>
-
-                    <div className="info-group">
-                        <label>Nhà cung cấp:</label>
-                        <span>{bill.supplier_id.name}</span>
-                    </div>
                 </div>
             </div>
 
@@ -87,7 +82,7 @@ const UpdateBill = ({ bill }) => {
                         </thead>
                         <tbody>
                             {products.map((product, index) => (
-                                <tr key={product._id}>
+                                <tr key={index}>
                                     <td>{product.item_code}</td>
                                     <td>{product.name}</td>
                                     <td>{product.unit_name}</td>

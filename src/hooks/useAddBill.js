@@ -9,6 +9,7 @@ const useAddBill = () => {
 
     const user = useSelector((state) => state.auth?.login?.currentUser);
     const productList = useSelector((state) => state.product?.products);
+    const unitList = useSelector((state) => state.unit?.units);
 
     const axiosJWT = useAxiosJWT();
     const accessToken = useAccessToken();
@@ -22,8 +23,18 @@ const useAddBill = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const getUnitDescription = (unitId) => {
-        const unitProduct = productList.find(product => product.unit_id._id === unitId);
-        return unitProduct ? unitProduct.unit_id.description : '';
+        const unitProduct = unitList.find(unit => unit._id === unitId);
+        return unitProduct ? unitProduct?.description : '';
+    };
+
+    const getItemCodeProduct = (product_id) => {
+        const product = productList.find(product => product._id === product_id);
+        return product ? product.item_code : '';
+    };
+
+    const getNameProduct = (product_id) => {
+        const product = productList.find(product => product._id === product_id);
+        return product ? product.name : '';
     };
 
 
@@ -184,7 +195,9 @@ const useAddBill = () => {
         units,
         unitOptions,
         getUnitDescription,
-        handleAddProduct
+        handleAddProduct,
+        getNameProduct,
+        getItemCodeProduct
     };
 };
 

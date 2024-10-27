@@ -44,20 +44,33 @@ export default function Warehouse() {
         {
             title: 'Đơn vị tính', dataIndex: 'unit', key: 'unit', width: '10%', render: (text, record) => record.unit ? record.unit.description : ''
         },
-        { title: 'Tồn kho', dataIndex: 'stock_quantity', key: 'stock_quantity', width: '10%', className: 'text-center' },
-        { title: 'Ngưỡng giá trị', dataIndex: 'min_stock_threshold', key: 'min_stock_threshold', width: '15%', className: 'text-center' },
+        { title: 'Số lượng', dataIndex: 'stock_quantity', key: 'stock_quantity', width: '10%', className: 'text-center' },
         {
-            title: 'Trạng thái',
-            dataIndex: 'status',
-            key: 'status',
-            width: '20%',
+            title: 'Đơn vị cơ bản', dataIndex: 'unitBasic', key: 'unitBasic', width: '15%', render: (text, record) => record.unitBasic ? record.unitBasic.description : ''
+        },
+        {
+            title: 'Số lượng cơ bản',
+            dataIndex: 'quantityBasic',
+            key: 'quantityBasic',
+            width: '15%',
             className: 'text-center',
             render: (text, record) => {
-                return (
-                    <span style={{ color: getStatusColor(record.status), fontWeight: 500, fontSize: 16 }}>
-                        {record.status}
-                    </span>
-                );
+                // Kiểm tra nếu record.unit_convert và record.unit tồn tại
+                if (!record.unit_convert || !record.unit) {
+                    return 'N/A 1';
+                }
+
+                // Tìm đơn vị chuyển đổi
+                const unitConvert = record.unit_convert.find(item => item.unit === record.unit._id);
+
+                // Kiểm tra nếu unitConvert tồn tại
+                if (!unitConvert) {
+                    return 'N/A 2';
+                }
+
+                // Tính toán số lượng cơ bản
+                const quantityBasic = record.stock_quantity * unitConvert.quantity;
+                return quantityBasic; // Định dạng theo nhu cầu
             }
         },
     ];

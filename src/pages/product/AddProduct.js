@@ -207,17 +207,9 @@ export default function AddProduct({ isOpen, onClose }) {
                                 placeholder='Nhập mô tả'
                                 value={productData.description}
                                 onChange={handleChange}
+                                width={770}
                             />
 
-                            <Input
-                                type='number'
-                                min={1}
-                                label='Ngưỡng giá trị'
-                                name='min_stock_threshold'
-                                placeholder='Nhập ngưỡng giá trị'
-                                value={productData.min_stock_threshold}
-                                onChange={handleChange}
-                            />
                         </div>
 
                     </div>
@@ -258,7 +250,6 @@ export default function AddProduct({ isOpen, onClose }) {
                                 </div>
                             </div>
                         </div>
-
                     </div>
 
                     <div>

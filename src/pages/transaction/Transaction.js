@@ -4,14 +4,18 @@ import FrameData from '../../containers/frameData/FrameData';
 import { formatDate } from '../../utils/fotmatDate';
 import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
+import useAddBill from '../../hooks/useAddBill';
 
 export default function Transaction() {
 
     const transactions = useSelector((state) => state.transaction?.transactions) || [];
     const sortedTransactions = [...transactions].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    const { getItemCodeProduct, getNameProduct, getUnitDescription } = useAddBill();
 
     const transactionColumn = [
-        { title: 'Mã giao dịch', dataIndex: '_id', key: '_id', width: '25%' },
+        { title: 'Mã hàng', dataIndex: 'product_id', key: 'product_item_code', width: '10%', render: (product_id) => getItemCodeProduct(product_id) },
+        { title: 'Tên sản phẩm', dataIndex: 'product_id', key: 'product_name', width: '30%', render: (product_id) => getNameProduct(product_id) },
+        { title: 'Đơn vị', dataIndex: 'unit_id', key: 'unit_description', width: '10%', render: (unit_id) => getUnitDescription(unit_id) },
         { title: 'Kiểu', dataIndex: 'type', key: 'type', width: '15%' },
         {
             title: 'Ngày giao dịch',

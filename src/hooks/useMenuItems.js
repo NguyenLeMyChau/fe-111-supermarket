@@ -26,6 +26,13 @@ const getLabelFromPathname = (pathname, menuItems) => {
             if (pathname.includes(item.path)) {
                 return item.label;
             }
+            if (item.subItems) {
+                for (const subItem of item.subItems) {
+                    if (pathname.includes(subItem.path)) {
+                        return subItem.label;
+                    }
+                }
+            }
         }
     }
     return null;

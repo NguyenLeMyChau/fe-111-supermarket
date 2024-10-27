@@ -52,6 +52,7 @@ export default function ProductDetail() {
     const transactionColumn = [
         { title: 'Mã giao dịch', dataIndex: '_id', key: '_id', width: '25%' },
         { title: 'Kiểu', dataIndex: 'type', key: 'type', width: '15%' },
+        { title: 'Đơn vị tính', dataIndex: 'unit_id', key: 'unit_id', width: '15%', render: (unit) => getUnitDescription(unit) },
         {
             title: 'Ngày giao dịch',
             dataIndex: 'createdAt',
