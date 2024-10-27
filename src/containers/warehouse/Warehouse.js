@@ -31,6 +31,7 @@ export default function Warehouse() {
     });
 
     const [filteredWarehouses, setFilteredWarehouses] = useState(warehouses);
+    console.log('filteredWarehouses', filteredWarehouses);
 
     const warehouseColumn = [
         { title: 'Mã hàng', dataIndex: 'item_code', key: 'item_code', width: '10%', className: 'text-center' },
@@ -39,17 +40,12 @@ export default function Warehouse() {
             dataIndex: 'product',
             key: 'product_name',
             width: '30%',
-            render: (text, record) => {
-                return (
-                    <span>
-                        {record.product ? record.product.name : ''}
-                    </span>
-                );
-            }
+        },
+        {
+            title: 'Đơn vị tính', dataIndex: 'unit', key: 'unit', width: '10%', render: (text, record) => record.unit ? record.unit.description : ''
         },
         { title: 'Tồn kho', dataIndex: 'stock_quantity', key: 'stock_quantity', width: '10%', className: 'text-center' },
         { title: 'Ngưỡng giá trị', dataIndex: 'min_stock_threshold', key: 'min_stock_threshold', width: '15%', className: 'text-center' },
-        { title: 'Nhà cung cấp', dataIndex: 'product', key: 'supplier_name', width: '15%', render: (text, record) => record.product ? record.product.supplier_name : '' },
         {
             title: 'Trạng thái',
             dataIndex: 'status',
@@ -73,13 +69,6 @@ export default function Warehouse() {
             dataIndex: 'product',
             key: 'product_name',
             width: '30%',
-            render: (text, record) => {
-                return (
-                    <span>
-                        {record.product ? record.product.name : 'Không có sản phẩm'}
-                    </span>
-                );
-            }
         },
         { title: 'Tồn kho', dataIndex: 'stock_quantity', key: 'stock_quantity', width: '15%', className: 'text-center' },
         { title: 'Ngưỡng giá trị', dataIndex: 'min_stock_threshold', key: 'min_stock_threshold', width: '15%', className: 'text-center' },

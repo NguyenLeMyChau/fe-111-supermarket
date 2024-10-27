@@ -70,11 +70,11 @@ const updateOrderStatus = async (accessToken, axiosJWT, orderId, newStatus, prod
 }
 
 const addBillWarehouse = async (orderData, navigate, accessToken, axiosJWT) => {
-    const { supplierId, accountId, billId, productList } = orderData;
+    const { accountId, billId, productList } = orderData;
 
     try {
         const response = await axiosJWT.post(`/api/warehouse/add-bill-warehouse`,
-            { supplierId, accountId, billId, productList },
+            { accountId, billId, productList },
             {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,

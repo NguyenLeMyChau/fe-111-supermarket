@@ -3,6 +3,7 @@ import { formatDate } from '../../utils/fotmatDate';
 import '../../containers/order/AddOrder.scss';
 
 const BillDetail = ({ bill }) => {
+    console.log('bill', bill);
 
     return (
         <div className="add-order-container">
@@ -24,11 +25,6 @@ const BillDetail = ({ bill }) => {
                         <label>Tên người nhập:</label>
                         <span>{bill.employee.name}</span>
                     </div>
-
-                    <div className="info-group">
-                        <label>Nhà cung cấp:</label>
-                        <span>{bill.supplier_id.name}</span>
-                    </div>
                 </div>
             </div>
 
@@ -46,8 +42,8 @@ const BillDetail = ({ bill }) => {
                             </tr>
                         </thead>
                         <tbody>
-                            {bill.products.map((product) => (
-                                <tr key={product._id}>
+                            {bill.products.map((product, index) => (
+                                <tr key={index}>
                                     <td>{product.item_code}</td>
                                     <td>{product.name}</td>
                                     <td>{product.unit_name}</td>

@@ -156,7 +156,7 @@ const useAddBill = () => {
             console.log('products', products);
             console.log('orderData', orderData);
 
-            // await addBillWarehouse(orderData, navigate, accessToken, axiosJWT);
+            await addBillWarehouse(orderData, navigate, accessToken, axiosJWT);
         } catch (error) {
             console.error('Nhập hàng thất bại:', error);
             alert(error.response ? error.response.data.message : error.message);

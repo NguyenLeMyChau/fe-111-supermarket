@@ -8,12 +8,16 @@ import BillDetail from './BillDetail';
 import Modal from '../../components/modal/Modal';
 import { CiEdit } from 'react-icons/ci';
 import UpdateBill from './UpdateBill';
+import { formatDistanceToNow } from 'date-fns';
+import { vi } from 'date-fns/locale';
 
 export default function Bill() {
     const navigate = useNavigate();
     const location = useLocation();
 
     const orders = useSelector((state) => state.order?.orders);
+    const sortedOrders = [...orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
     const isAddBill = location.pathname.includes('add-bill');
     const [isBillDetail, setIsBillDetail] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
@@ -43,13 +47,6 @@ export default function Bill() {
             width: '15%',
         },
         {
-            title: 'Nhà cung cấp',
-            dataIndex: 'supplierName',
-            key: 'supplierName',
-            width: '30%',
-            render: (text, record) => record.supplier_id.name
-        },
-        {
             title: 'Người nhập phiếu',
             dataIndex: 'employeeName',
             key: 'employeeName',
@@ -60,9 +57,15 @@ export default function Bill() {
             title: 'Ngày nhập phiếu',
             dataIndex: 'createdAt',
             key: 'createdAt',
-            width: '20%',
-            className: 'text-center',
-            render: (date) => formatDate(date)
+            width: '15%',
+            render: (date) => (
+                <div>
+                    <div>{formatDate(date)}</div>
+                    <div style={{ fontSize: '12px', color: 'gray' }}>
+                        {formatDistanceToNow(new Date(date), { addSuffix: true, locale: vi })}
+                    </div>
+                </div>
+            )
         },
         {
             title: 'Chỉnh sửa',
@@ -104,7 +107,7 @@ export default function Bill() {
                         <FrameData
                             title="Phiếu nhập kho"
                             buttonText="Thêm phiếu nhập"
-                            data={orders}
+                            data={sortedOrders}
                             columns={orderColumn}
                             onRowClick={handleRowClick}
                             onButtonClick={() => {
