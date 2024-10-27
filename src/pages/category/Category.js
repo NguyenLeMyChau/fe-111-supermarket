@@ -73,10 +73,10 @@ export default function Category() {
             className: 'text-center',
             render: (_, __, index) => index + 1
         },
+        { title: 'Mã hàng', dataIndex: 'item_code', key: 'item_code', width: '5%', className: 'text-center' },
         { title: 'Tên sản phẩm', dataIndex: 'name', key: 'name', width: '35%' },
         { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '35%' },
         { title: 'Barcode', dataIndex: 'barcode', key: 'barcode', width: '20%', className: 'text-center' },
-        { title: 'Mã hàng', dataIndex: 'item_code', key: 'item_code', width: '5%', className: 'text-center' },
     ];
 
     const handleRowClick = (category) => {

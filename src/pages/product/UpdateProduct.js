@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Button from '../../components/button/Button';
 import Input from '../../components/input/Input';
 import { useSelector } from 'react-redux';
@@ -16,7 +16,6 @@ const UpdateProduct = ({ product }) => {
     const suppliers = useSelector((state) => state.supplier?.suppliers) || [];
     const units = useSelector((state) => state.unit?.units) || [];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    const warehouses = useSelector((state) => state.warehouse?.warehouse) || [];
 
     const [loading, setLoading] = useState(false); // Trạng thái loading
     const [isLoadingImage, setIsLoadingImage] = useState(false); // Trạng thái tải ảnh
@@ -31,19 +30,8 @@ const UpdateProduct = ({ product }) => {
         unit_id: product.unit_id._id,
         category_id: product.category_id,
         supplier_id: product.supplier_id,
-        min_stock_threshold: '',
         unit_convert: [],
     });
-
-    useEffect(() => {
-        const warehouse = warehouses.find(w => w.item_code === product.item_code);
-        if (warehouse) {
-            setFormData(prevState => ({
-                ...prevState,
-                min_stock_threshold: warehouse.min_stock_threshold
-            }));
-        }
-    }, [warehouses, product.item_code]);
 
     const handleAddConversionUnit = () => {
         setConversionUnits([

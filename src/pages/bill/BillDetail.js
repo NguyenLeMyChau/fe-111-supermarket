@@ -46,7 +46,7 @@ const BillDetail = ({ bill }) => {
                                 <tr key={index}>
                                     <td>{product.item_code}</td>
                                     <td>{product.name}</td>
-                                    <td>{product.unit_name}</td>
+                                    <td>{product?.unit_name?.description}</td>
                                     <td style={{ textAlign: 'center' }}>{product.quantity}</td>
                                 </tr>
                             ))}

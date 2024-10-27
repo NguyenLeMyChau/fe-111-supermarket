@@ -7,7 +7,6 @@ import ProductWarehouse from './ProductWarehouse';
 
 import Modal from '../../components/modal/Modal';
 import Button from '../../components/button/Button';
-import { getStatusColor } from '../../utils/fotmatDate';
 import Select from 'react-select';
 
 export default function Warehouse() {
@@ -26,8 +25,6 @@ export default function Warehouse() {
         item_code: '',
         productName: '',
         stockQuantity: '',
-        minStockThreshold: '',
-        status: [],
     });
 
     const [filteredWarehouses, setFilteredWarehouses] = useState(warehouses);
@@ -84,21 +81,6 @@ export default function Warehouse() {
             width: '30%',
         },
         { title: 'Tồn kho', dataIndex: 'stock_quantity', key: 'stock_quantity', width: '15%', className: 'text-center' },
-        { title: 'Ngưỡng giá trị', dataIndex: 'min_stock_threshold', key: 'min_stock_threshold', width: '15%', className: 'text-center' },
-        {
-            title: 'Trạng thái',
-            dataIndex: 'status',
-            key: 'status',
-            width: '20%',
-            className: 'text-center',
-            render: (text, record) => {
-                return (
-                    <span style={{ color: getStatusColor(record.status), fontWeight: 500, fontSize: 16 }}>
-                        {record.status}
-                    </span>
-                );
-            }
-        },
     ];
 
     const handleRowClick = async (warehouse) => {
@@ -141,15 +123,6 @@ export default function Warehouse() {
         setIsFilterOpen(false);
     };
 
-    // Hàm cập nhật bộ lọc
-    const handleFilterChange = (selectedOptions, actionMeta) => {
-        const { name } = actionMeta;
-        const value = selectedOptions ? selectedOptions.map(option => option.value) : [];
-        setFilters((prevFilters) => ({
-            ...prevFilters,
-            [name]: value,
-        }));
-    };
 
     const applyFilters = () => {
         let filteredData = warehouses;
@@ -170,18 +143,6 @@ export default function Warehouse() {
             );
         }
 
-        if (filters.minStockThreshold) {
-            filteredData = filteredData.filter(warehouse =>
-                warehouse.min_stock_threshold < Number(filters.minStockThreshold)
-            );
-        }
-
-        if (filters.status.length > 0) {
-            filteredData = filteredData.filter(warehouse =>
-                filters.status.includes(warehouse.status)
-            );
-        }
-
         setFilteredWarehouses(filteredData);
         closeFilterModal();
     };
@@ -191,17 +152,9 @@ export default function Warehouse() {
         setFilters({
             productName: '',
             stockQuantity: '',
-            minStockThreshold: '',
-            status: [],
         });
         setFilteredWarehouses(warehouses);
     };
-
-    const statusOptions = [
-        { value: 'Còn hàng', label: 'Còn hàng' },
-        { value: 'Hết hàng', label: 'Hết hàng' },
-        { value: 'Ít hàng', label: 'Ít hàng' },
-    ];
 
     // Lọc các giá trị không trùng nhau cho productOptions
     const uniqueProductOptions = Array.from(new Set(productList.map(product => product.name)))
@@ -240,7 +193,7 @@ export default function Warehouse() {
                 isOpen={isFilterOpen}
                 onClose={closeFilterModal}
                 width={500}
-                height={500}
+                height={350}
             >
                 <div className="filter-modal-content">
                     <div className="filter-item">
@@ -281,32 +234,6 @@ export default function Warehouse() {
                             name="stockQuantity"
                             value={filters.stockQuantity}
                             onChange={(e) => setFilters({ ...filters, stockQuantity: e.target.value })}
-                        />
-                    </div>
-
-                    <div className="filter-item">
-                        <label>Ngưỡng giá trị nhỏ hơn:</label>
-                        <input
-                            type="number"
-                            name="minStockThreshold"
-                            value={filters.minStockThreshold}
-                            onChange={(e) => setFilters({ ...filters, minStockThreshold: e.target.value })}
-                        />
-                    </div>
-
-                    <div className="filter-item">
-                        <label>Trạng thái:</label>
-                        <Select
-                            isMulti
-                            name="status"
-                            value={statusOptions.filter(option => filters.status.includes(option.value))}
-                            onChange={handleFilterChange}
-                            options={statusOptions}
-                            classNamePrefix="select"
-                            menuPortalTarget={document.body}
-                            styles={{
-                                menuPortal: base => ({ ...base, zIndex: 9999, width: 200 }),
-                            }}
                         />
                     </div>
 

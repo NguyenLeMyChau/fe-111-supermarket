@@ -119,21 +119,6 @@ export default function ProductDetail() {
                                     <span>{data.supplier_id.email}</span>
                                 </div>
                             </div>
-
-                            <div className='right'>
-                                <div className='row'>
-                                    <label>Đơn vị cơ bản</label>
-                                    <span>{data.unit_id.description}</span>
-                                </div>
-                                <div className='row'>
-                                    <label>Tồn kho</label>
-                                    <span>{data.warehouse.stock_quantity}</span>
-                                </div>
-                                <div className='row'>
-                                    <label>Ngưỡng giá trị</label>
-                                    <span>{data.warehouse.min_stock_threshold}</span>
-                                </div>
-                            </div>
                         </div>
 
                         <h3>Đơn vị tính</h3>

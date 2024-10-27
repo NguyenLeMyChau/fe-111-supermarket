@@ -24,7 +24,6 @@ export default function AddProduct({ isOpen, onClose }) {
         name: '',
         item_code: '',
         description: '',
-        min_stock_threshold: '',
         category_id: '',
         supplier_id: '',
         unit_convert: []
@@ -63,19 +62,6 @@ export default function AddProduct({ isOpen, onClose }) {
                     name: '', // Giữ nguyên
                     supplier_id: '', // Giữ nguyên
                     category_id: '', // Giữ nguyên
-                }));
-            }
-
-            if (foundWarehouse) {
-                setProductData(prevState => ({
-                    ...prevState,
-                    min_stock_threshold: foundWarehouse.min_stock_threshold,
-                }));
-            } else {
-                // Nếu không tìm thấy kho hàng, giữ nguyên hoặc cho phép nhập
-                setProductData(prevState => ({
-                    ...prevState,
-                    min_stock_threshold: '', // Giữ nguyên
                 }));
             }
         }
