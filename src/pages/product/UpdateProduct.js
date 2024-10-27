@@ -7,6 +7,7 @@ import ClipLoader from 'react-spinners/ClipLoader';
 import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
 import { updateProduct } from '../../services/productRequest';
 import { uploadImageVideo } from '../../services/uploadRequest';
+import { getProductsByBarcodeInUnitConvert } from '../../services/authRequest';
 
 const UpdateProduct = ({ product }) => {
     const axiosJWT = useAxiosJWT();
@@ -105,6 +106,18 @@ const UpdateProduct = ({ product }) => {
         e.preventDefault();
         setLoading(true); // Bắt đầu loading
         try {
+
+            // Kiểm tra xem barcode đã tồn tại chưa trong conversionUnits
+            for (const unit of conversionUnits) {
+                const existingProduct = await getProductsByBarcodeInUnitConvert(unit.barcode, accessToken, axiosJWT);
+
+                // Nếu sản phẩm đã tồn tại và không phải là sản phẩm hiện tại, hiển thị thông báo và dừng lại
+                if (existingProduct && existingProduct[0]._id !== product._id) {
+                    alert(`Sản phẩm với mã vạch ${unit.barcode} đã tồn tại.`);
+                    setLoading(false); // Kết thúc loading
+                    return; // Dừng lại nếu sản phẩm đã tồn tại và không phải là sản phẩm hiện tại
+                }
+            }
             // Cập nhật formData để bao gồm conversionUnits
             const updatedformData = {
                 ...formData,

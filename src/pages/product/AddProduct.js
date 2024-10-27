@@ -9,6 +9,7 @@ import { addProductWithWarehouse } from '../../services/productRequest';
 import { uploadImageVideo } from '../../services/uploadRequest';
 import ClipLoader from 'react-spinners/ClipLoader'; // Import ClipLoader
 import { TiDelete } from "react-icons/ti";
+import { getProductsByBarcodeInUnitConvert } from '../../services/authRequest';
 
 export default function AddProduct({ isOpen, onClose }) {
     const axiosJWT = useAxiosJWT();
@@ -138,6 +139,15 @@ export default function AddProduct({ isOpen, onClose }) {
 
         setLoading(true); // Bắt đầu loading
         try {
+            // Kiểm tra xem barcode đã tồn tại chưa trong conversionUnits
+            for (const unit of conversionUnits) {
+                const existingProduct = await getProductsByBarcodeInUnitConvert(unit.barcode, accessToken, axiosJWT);
+
+                if (existingProduct) {
+                    alert(`Sản phẩm với mã vạch ${unit.barcode} đã tồn tại.`);
+                    return; // Dừng lại nếu sản phẩm đã tồn tại
+                }
+            }
 
             // Cập nhật productData để bao gồm conversionUnits
             const updatedProductData = {

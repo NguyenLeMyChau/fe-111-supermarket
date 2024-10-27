@@ -86,4 +86,19 @@ const updateUser = async (accountId, userData, dispatch, navigate, accessToken, 
     }
 }
 
-export { loginUser, logoutUser, updateUser };
+const getProductsByBarcodeInUnitConvert = async (barcode, accessToken, axiosJWT) => {
+    try {
+        const response = await axiosJWT.post(`/api/auth/get-product-by-barcode`, { barcode }, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+
+        return response.data;
+    } catch (error) {
+        console.error('Get product by barcode failed:', error);
+        alert(error.response ? error.response.data.message : error.message);
+    }
+}
+
+export { loginUser, logoutUser, updateUser, getProductsByBarcodeInUnitConvert };
