@@ -32,7 +32,7 @@ const UpdateBill = ({ bill }) => {
             console.log('new bill', billId)
             console.log('Cập nhật phiếu nhập kho:', products);
             // Thêm logic cập nhật phiếu nhập kho tại đây
-            // await updateBill(bill.bill_id, billId, products, accessToken, axiosJWT);
+            await updateBill(bill.bill_id, billId, products, accessToken, axiosJWT);
             setIsLoading(false);
         } catch (error) {
             setIsLoading(false);
@@ -85,7 +85,7 @@ const UpdateBill = ({ bill }) => {
                                 <tr key={index}>
                                     <td>{product.item_code}</td>
                                     <td>{product.name}</td>
-                                    <td>{product.unit_name}</td>
+                                    <td>{product?.unit_name?.description}</td>
                                     <td style={{ textAlign: 'center' }}>
                                         <input
                                             type="number"
