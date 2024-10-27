@@ -29,4 +29,33 @@ const getUnitById = async (unitId, accessToken, axiosJWT) => {
     }
 };
 
-export { getAllUnit, getUnitById };
+const addUnit = async (unitData, accessToken, axiosJWT) => {
+    try {
+        const response = await axiosJWT.post(`/api/unit/add-unit`, unitData, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        alert('Thêm đơn vị tính thành công');
+        return response.data;
+    } catch (error) {
+        console.error('Add unit failed:', error);
+    }
+};
+
+const updateUnit = async (unitId, unitData, accessToken, axiosJWT, navigate) => {
+    try {
+        const response = await axiosJWT.put(`/api/unit/update-unit/${unitId}`, unitData, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        alert('Cập nhật đơn vị tính thành công');
+        navigate('/admin/unit');
+        return response.data;
+    } catch (error) {
+        console.error('Update unit failed:', error);
+    }
+}
+
+export { getAllUnit, getUnitById, addUnit, updateUnit };

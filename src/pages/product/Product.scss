@@ -91,3 +91,24 @@
     text-align: center;
     font-weight: bold;
 }
+
+.product-detail-container .information table {
+    width: 80%;
+    border-collapse: collapse;
+
+    th,
+    td {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: center;
+    }
+
+    th {
+        background-color: #F5F5F5;
+        color: #5D6679;
+    }
+
+    td {
+        color: #5D6679;
+    }
+}

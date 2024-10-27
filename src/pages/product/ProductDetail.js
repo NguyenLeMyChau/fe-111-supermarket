@@ -8,6 +8,7 @@ import Box from '@mui/material/Box';
 import { useLocation } from 'react-router';
 import TableData from '../../containers/tableData/tableData';
 import { formatDate } from '../../utils/fotmatDate';
+import useAddBill from '../../hooks/useAddBill';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -42,6 +43,7 @@ export default function ProductDetail() {
     const [value, setValue] = useState(0);
     const location = useLocation();
     const { detail: data } = location.state || {};
+    const { getUnitDescription } = useAddBill();
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -119,7 +121,7 @@ export default function ProductDetail() {
 
                             <div className='right'>
                                 <div className='row'>
-                                    <label>Đơn vị tính</label>
+                                    <label>Đơn vị cơ bản</label>
                                     <span>{data.unit_id.description}</span>
                                 </div>
                                 <div className='row'>
@@ -131,8 +133,34 @@ export default function ProductDetail() {
                                     <span>{data.warehouse.min_stock_threshold}</span>
                                 </div>
                             </div>
-
                         </div>
+
+                        <h3>Đơn vị tính</h3>
+                        <table style={{ width: "100%", borderCollapse: "collapse", border: "1px solid black" }}>
+                            <thead>
+                                <tr>
+                                    <th>Đơn vị tính</th>
+                                    <th>Số lượng</th>
+                                    <th>Barcode</th>
+                                    <th>Hình ảnh</th>
+                                    <th>Đơn vị cơ bản</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {data.unit_convert.map((item, index) => (
+                                    <tr key={index}>
+                                        <td>{getUnitDescription(item.unit)}</td>
+                                        <td>{item.quantity}</td>
+                                        <td>{item.barcode}</td>
+                                        <td>
+                                            <img src={item.img} alt={`Unit ${item.unit}`} width="50" height="50" />
+                                        </td>
+                                        <td style={{ fontSize: 30 }}>{item.checkBaseUnit ? "x" : ''}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+
                     </div>
                 </CustomTabPanel>
                 <CustomTabPanel value={value} index={1}>
