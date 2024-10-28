@@ -36,6 +36,12 @@ export default function HeaderCustomer() {
         navigate('/customer/cart');
     }
 
+    const handleShowOrder = () => {
+        // Xử lý chuyển hướng đến trang đơn hàng
+        console.log('Chuyển hướng đến trang đơn hàng');
+        navigate('/customer/order');
+    }
+
     return (
         <div className='header-customer-container'>
             <div className='flex-row-align-center' onClick={() => navigate('/home')}>
@@ -70,7 +76,8 @@ export default function HeaderCustomer() {
 
                     {isDropdownOpen && (
                         <div className='dropdown-menu'>
-                            <div className='dropdown-item' onClick={handleUpdateInfo}>Cập nhật thông tin</div>
+                            <div className='dropdown-item' onClick={handleUpdateInfo}>Sửa thông tin cá nhân</div>
+                            <div className='dropdown-item' onClick={handleShowOrder}>Đơn hàng từng mua</div>
                             <div className='dropdown-item' onClick={handleLogout}>Đăng xuất</div>
                         </div>
                     )}

@@ -19,6 +19,11 @@ import priceReducer from './reducers/priceSlice'
 import invoiceReducer from './reducers/invoiceSlice';
 import customerReducer from './reducers/customerSlice';
 import transactionReducer from './reducers/transactionSlice';
+import cartReducer from './reducers/cartSlice';
+import categoryCustomer from './reducers/categoryCustomerSlice';
+import productCustomer from './reducers/productCustomerSlice';
+import invoiceCustomer from './reducers/invoiceCustomerSlice';
+
 
 const persistConfig = {
     key: 'root',
@@ -41,6 +46,10 @@ const rootReducer = combineReducers(
         invoice: invoiceReducer,
         customer: customerReducer,
         transaction: transactionReducer,
+        cart: cartReducer,
+        categoryCustomer: categoryCustomer,
+        productCustomer: productCustomer,
+        invoiceCustomer: invoiceCustomer
     });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
