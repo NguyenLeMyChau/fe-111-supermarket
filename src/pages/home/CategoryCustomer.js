@@ -2,8 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import useCommonDataCustomer from "../../hooks/useCommonDataCustomer";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router";
 
 export default function CategoryCustomer() {
+    const navigate = useNavigate();
     const containerRef = useRef(null);
     const [isDragging, setIsDragging] = useState(false);
     const [startX, setStartX] = useState(0);
@@ -68,7 +70,11 @@ export default function CategoryCustomer() {
                     onMouseLeave={handleMouseLeave}
                 >
                     {categoriesCustomer.map((category, index) => (
-                        <div key={index} className='product-category'>
+                        <div
+                            key={index}
+                            className='product-category'
+                            onClick={() => navigate(`/customer/product`, { state: { category } })}
+                        >
                             <img src={category.img} alt={category.name} />
                             <span>{category.name}</span>
                             <p>{category.products.length} sản phẩm</p>
