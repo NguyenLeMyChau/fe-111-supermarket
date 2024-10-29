@@ -14,7 +14,7 @@ const useCommonDataCustomer = () => {
         try {
             setLoading(true); // Bắt đầu loading
             await getAllCategoriesCustomer(dispatch);
-            await getAllProductsCustomer(dispatch);
+            // await getAllProductsCustomer(dispatch);
         } catch (error) {
             console.error('Error fetching categories:', error);
         } finally {

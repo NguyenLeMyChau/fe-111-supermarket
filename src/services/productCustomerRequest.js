@@ -5,7 +5,7 @@ import { getProductCustomerFailed, getProductCustomerStart, getProductCustomerSu
 const getAllCategoriesCustomer = async (dispatch) => {
     dispatch(getCategoryCustomerStart());
     try {
-        const response = await axios.get(`https://be-111-supermarket.vercel.app/api/auth/get-categories`);
+        const response = await axios.get(`http://localhost:5000/api/auth/get-categories`);
         console.log(response.data)
         dispatch(getCategoryCustomerSuccess(response.data));
         return response.data;

@@ -5,6 +5,9 @@ import { IoChevronBackOutline } from 'react-icons/io5';
 import { useNavigate } from 'react-router';
 import useUser from '../../hooks/useUser';
 import { useSelector } from 'react-redux';
+import { formatCurrency, formatDate } from '../../utils/fotmatDate';
+import { formatDistanceToNow } from 'date-fns';
+import { vi } from 'date-fns/locale';
 
 const OrderCustomer = () => {
     const navigate = useNavigate();
@@ -20,25 +23,12 @@ const OrderCustomer = () => {
         fetchInvoice();
     }, []);
 
-    // Mock orders data
-    const orders = [
-        {
-            orderId: '123456789',
-            orderDate: '2023-10-01',
-            paymentMethod: 'Credit Card',
-            totalAmount: 150000,
-        },
-        {
-            orderId: '987654321',
-            orderDate: '2023-09-25',
-            paymentMethod: 'PayPal',
-            totalAmount: 200000,
-        },
-    ];
-
-    const handleOrderClick = (orderId) => {
-        navigate(`/customer/order-detail/${orderId}`);
+    const handleOrderClick = (order) => {
+        navigate(`/customer/order-detail/${order._id}`, { state: { order } });
     };
+
+    const sortedInvoiceCustomer = [...invoiceCustomer].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
 
     return (
         <div className='cart-customer-container'>
@@ -55,17 +45,24 @@ const OrderCustomer = () => {
                 </div>
 
                 <div className='order-customer-container'>
-                    {orders.map((order, index) => (
-                        <div key={index} className='order-details' onClick={() => handleOrderClick(order.orderId)}>
+                    {sortedInvoiceCustomer.map((order, index) => (
+                        <div key={index} className='order-details' onClick={() => handleOrderClick(order)}>
                             <div className='order-info'>
-                                <p><strong>Order ID:</strong> {order.orderId}</p>
-                                <p><strong>Order Date:</strong> {order.orderDate}</p>
-                                <p><strong>Payment Method:</strong> {order.paymentMethod}</p>
-                                <p><strong>Total Amount:</strong> {order.totalAmount.toLocaleString()} VND</p>
+                                <div className='order-header'>
+                                    <p className='order-id'><strong>Mã đơn hàng:</strong> {order._id}</p>
+                                    <div className='order-date'>
+                                        <p>{formatDate(order.createdAt)}</p>
+                                        <p className='relative-time'>{formatDistanceToNow(new Date(order.createdAt), { addSuffix: true, locale: vi })}</p>
+                                    </div>
+                                </div>
+                                <p><strong>Phương thức thanh toán:</strong> {order.paymentMethod}</p>
+                                <p><strong>Tổng tiền:</strong> {formatCurrency(order.paymentAmount)}</p>
+
                             </div>
                         </div>
                     ))}
                 </div>
+
             </main>
         </div>
     );

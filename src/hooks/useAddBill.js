@@ -17,7 +17,7 @@ const useAddBill = () => {
     const [products, setProducts] = useState([]);
     const [quantities, setQuantities] = useState(Array(products.length).fill(1)); // Khởi tạo mảng số lượng
     const [units, setUnits] = useState(Array(products.length).fill(null)); // Khởi tạo mảng với giá trị null cho mỗi sản phẩm
-    const [ordererName] = useState(user.user.name); // Correctly use only the first element of useState
+    const [ordererName] = useState(user?.user?.name); // Correctly use only the first element of useState
     const [selectedSupplier, setSelectedSupplier] = useState(null);
     const [billId, setBillId] = useState('');
     const [description, setDescription] = useState('');
@@ -159,7 +159,7 @@ const useAddBill = () => {
         setIsLoading(true);
         try {
             const orderData = {
-                accountId: user.id,
+                accountId: user?.id,
                 billId: billId,
                 description: description,
                 productList: products.map((product, index) => ({

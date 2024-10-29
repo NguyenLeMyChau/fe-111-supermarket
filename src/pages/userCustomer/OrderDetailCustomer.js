@@ -1,30 +1,19 @@
 import React from 'react';
 import HeaderCustomer from '../../components/headerCustomer/HeaderCustomer';
 import { IoChevronBackOutline } from 'react-icons/io5';
-import { useNavigate, useParams } from 'react-router';
+import { useLocation, useNavigate, useParams } from 'react-router';
 import './OrderCustomer.scss';
 
 const OrderDetailCustomer = () => {
-    const { orderId } = useParams();
     const navigate = useNavigate();
-    console.log(orderId);
+    const location = useLocation();
 
-    // Mock data cho order chi tiết
-    const orderDetails = {
-        orderId,
-        orderDate: '2023-10-01',
-        paymentMethod: 'Credit Card',
-        totalAmount: 150000,
-        customerInfo: {
-            name: 'Nguyen Van A',
-            phone: '0987654321',
-            address: '123 Nguyen Trai, Thanh Xuan, Ha Noi',
-        },
-        products: [
-            { id: 1, name: 'Product 1', quantity: 2, price: 50000 },
-            { id: 2, name: 'Product 2', quantity: 1, price: 50000 },
-        ],
-    };
+    const { order } = location.state || {};
+    console.log('order', order)
+
+    if (!order) {
+        return <p>Không tìm thấy đơn hàng.</p>;
+    }
 
     return (
         <div className='cart-customer-container'>
@@ -36,11 +25,11 @@ const OrderDetailCustomer = () => {
                 <div className='main-header'>
                     <div className='product-customer-header-content'>
                         <IoChevronBackOutline size={25} onClick={() => navigate(-1)} />
-                        <h3>Chi tiết đơn hàng {orderId}</h3>
+                        <h3>Chi tiết đơn hàng {order._id}</h3>
                     </div>
                 </div>
 
-                <div className='order-detail-container'>
+                {/* <div className='order-detail-container'>
                     <section className='order-section'>
                         <h4>Thông tin nhận hàng</h4>
                         <p><strong>Tên:</strong> {orderDetails.customerInfo.name}</p>
@@ -67,7 +56,7 @@ const OrderDetailCustomer = () => {
                             ))}
                         </ul>
                     </section>
-                </div>
+                </div> */}
 
             </main>
         </div>
