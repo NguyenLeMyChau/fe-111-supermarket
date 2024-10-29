@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import useAddBill from '../../hooks/useAddBill';
 import './ProductCustomer.scss';
 import { TiDelete } from "react-icons/ti";
+import useCart from '../../hooks/useCart';
 
-export default function UnitSelectModal({ isOpen, onClose, units, productName }) {
+export default function UnitSelectModal({ isOpen, onClose, product }) {
     const [selectedUnit, setSelectedUnit] = useState(null);
     const { getUnitDescription } = useAddBill();
     const [quantity, setQuantity] = useState(1);
+    const { addCart } = useCart();
 
     const promotionPrice = 35000;
     const originalPrice = 50000;
@@ -14,10 +16,10 @@ export default function UnitSelectModal({ isOpen, onClose, units, productName })
     const promotionDescription = 'Giảm giá 30%';
 
     useEffect(() => {
-        if (isOpen && units.length > 0) {
-            setSelectedUnit(units[0]);
+        if (isOpen && product.unit_convert.length > 0) {
+            setSelectedUnit(product.unit_convert[0]);
         }
-    }, [isOpen, units]);
+    }, [isOpen, product.unit_convert]);
 
     if (!isOpen) return null;
 
@@ -33,17 +35,22 @@ export default function UnitSelectModal({ isOpen, onClose, units, productName })
         setQuantity(prevQuantity => (prevQuantity > 1 ? prevQuantity - 1 : 1));
     };
 
+    const handleAddCart = async () => {
+        console.log('selectedUnit', selectedUnit);
+        await addCart(product._id, selectedUnit.unit, 1, 10000);
+    }
+
     return (
         <div className='unit-customer-modal-overlay' onClick={onClose}>
             <div className='modal-content-customer' onClick={(e) => e.stopPropagation()}>
                 <div className='modal-header'>
-                    <h3>{productName}</h3>
+                    <h3>{product.name}</h3>
                     <TiDelete size={30} onClick={onClose} className='close-icon' color='#323C64' />
                 </div>
 
                 <ul className='unit-list'>
-                    {units.map((unit, idx) => (
-                        <li key={idx} className='unit-item'>
+                    {product.unit_convert.map((unit, idx) => (
+                        <li key={unit.unit} className='unit-item'>
                             <img src={unit.img} alt={unit.name} className='unit-img' />
                             <div className='unit-details'>
                                 <p>{getUnitDescription(unit.unit)}</p>
@@ -82,7 +89,7 @@ export default function UnitSelectModal({ isOpen, onClose, units, productName })
                         <input type="number" min="1" value={quantity} readOnly className='quantity-input' />
                         <button onClick={handleIncrement} className='quantity-button'>+</button>
                     </div>
-                    <button className='buy-button'>MUA</button>
+                    <button className='buy-button' onClick={handleAddCart}>MUA</button>
                 </div>
             </div>
         </div>

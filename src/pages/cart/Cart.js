@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import HeaderCustomer from '../../components/headerCustomer/HeaderCustomer';
 import './Cart.scss';
 import { IoWarning } from "react-icons/io5";
@@ -8,11 +8,26 @@ import { AiFillCloseCircle } from "react-icons/ai"; // Import icon
 import PaymentModal from './PaymentModal';
 import { usePaymentModal } from '../../context/PaymentModalProvider';
 import { useNavigate } from 'react-router';
+import useCommonDataCustomer from '../../hooks/useCommonDataCustomer';
+import { useSelector } from 'react-redux';
 
 export default function Cart() {
     const navigate = useNavigate();
+    const { fetchDataCart } = useCommonDataCustomer();
+
     const { paymentMethod, setPaymentMethod } = usePaymentModal();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const cart = useSelector(state => state.cart?.carts);
+    console.log('cart', cart);
+
+    useEffect(() => {
+        const loadCartData = async () => {
+            await fetchDataCart(setIsLoading);
+        };
+
+        loadCartData();
+    }, []);
 
     const [userInfo] = useState({
         name: 'Nguyễn Văn A',
@@ -53,6 +68,7 @@ export default function Cart() {
         console.log(method);
         setPaymentMethod(method);
     };
+
 
     return (
         <div className='cart-customer-container'>

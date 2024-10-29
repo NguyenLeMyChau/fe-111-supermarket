@@ -26,7 +26,7 @@ const getPromotionByProductId = async (product_id) => {
         console.error('Get get-promotion-by-product failed:', error);
     }
 }
-const getPromotions= async () => {
+const getPromotions = async () => {
     try {
         const response = await axios.get(`http://localhost:5000/api/auth/get-promotions`);
         console.log(response.data)
@@ -37,11 +37,12 @@ const getPromotions= async () => {
 }
 
 
-const addProductToCart = async (accessToken, axiosJWT, accountId, productId, quantity, total) => {
+const addProductToCart = async (accessToken, axiosJWT, accountId, productId, unitId, quantity, total) => {
     try {
         const response = await axiosJWT.post(`/api/customer/add-product-to-cart`, {
             accountId,
             productId,
+            unitId,
             quantity,
             total,
         }, {
@@ -57,7 +58,7 @@ const addProductToCart = async (accessToken, axiosJWT, accountId, productId, qua
     }
 }
 
-const payCart = async (navigation, accessToken, axiosJWT, customerId, products,paymentMethod,paymentInfo,paymentAmount) => {
+const payCart = async (navigate, accessToken, axiosJWT, customerId, products, paymentMethod, paymentInfo, paymentAmount) => {
     try {
         const response = await axiosJWT.post(`/api/customer/pay-cart`, {
             customerId,
@@ -71,7 +72,7 @@ const payCart = async (navigation, accessToken, axiosJWT, customerId, products,p
             },
         });
         alert('Thanh toán giỏ hàng thành công');
-        navigation.navigate('OrderSuccess');
+        navigate('OrderSuccess');
         return response.data;
     } catch (error) {
         console.error('Pay cart failed:', error);

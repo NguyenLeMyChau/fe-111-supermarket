@@ -1,23 +1,22 @@
 import { useSelector } from "react-redux";
-import { useAccessToken, useAxiosJWT } from "../util/axiosInstance";
 import { addProductToCart, checkStockQuantityInCart, payCart, updateProductCart } from "../services/cartRequest";
-import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
-import useCommonData from "./useCommonData";
-
+import useCommonDataCustomer from '../hooks/useCommonDataCustomer';
+import { useAccessToken, useAxiosJWT } from "../utils/axiosInstance";
+import { useNavigate } from "react-router";
 
 const useCart = () => {
-    const navigation = useNavigation();
+    const navigate = useNavigate();
     const accessToken = useAccessToken();
     const axiosJWT = useAxiosJWT();
-    const { fetchDataCart } = useCommonData();
+    const { fetchDataCart } = useCommonDataCustomer();
 
     const user = useSelector((state) => state.auth?.login?.currentUser) || {};
     const [setLoadingCart] = useState(false);
 
-    const addCart = async (productId, quantity, total) => {
-        await addProductToCart(accessToken, axiosJWT, user.id, productId, quantity, total);
-        await fetchDataCart(setLoadingCart);
+    const addCart = async (productId, unitId, quantity, total) => {
+        await addProductToCart(accessToken, axiosJWT, user.id, productId, unitId, quantity, total);
+        // await fetchDataCart(setLoadingCart);
     }
 
     const updateProductToCart = async (productId, quantity, total) => {
@@ -26,7 +25,7 @@ const useCart = () => {
     }
 
     const payProductInCart = async (customerId, products) => {
-        await payCart(navigation, accessToken, axiosJWT, customerId, products);
+        await payCart(navigate, accessToken, axiosJWT, customerId, products);
     }
 
     const checkStockQuantity = async (item_code, quantity) => {
