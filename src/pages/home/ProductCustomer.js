@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from "react-router";
 import HeaderCustomer from "../../components/headerCustomer/HeaderCustomer";
 import { IoCartOutline, IoChevronBackOutline } from "react-icons/io5";
 import './ProductCustomer.scss';
+import { useEffect } from "react";
 
 export default function ProductCustomer() {
     const location = useLocation();
@@ -13,6 +14,10 @@ export default function ProductCustomer() {
 
     const { category } = location.state || {};
     console.log('category', category);
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     return (
         <div className='cart-customer-container'>
