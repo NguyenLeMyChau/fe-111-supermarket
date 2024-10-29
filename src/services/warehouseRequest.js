@@ -70,11 +70,11 @@ const updateOrderStatus = async (accessToken, axiosJWT, orderId, newStatus, prod
 }
 
 const addBillWarehouse = async (orderData, navigate, accessToken, axiosJWT) => {
-    const { accountId, billId, productList } = orderData;
+    const { accountId, billId, description, productList } = orderData;
 
     try {
         const response = await axiosJWT.post(`/api/warehouse/add-bill-warehouse`,
-            { accountId, billId, productList },
+            { accountId, billId, description, productList },
             {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
@@ -138,6 +138,21 @@ const getAllTransaction = async (accessToken, axiosJWT, dispatch) => {
     }
 }
 
+const cancelBill = async (billId, accessToken, axiosJWT) => {
+    try {
+        const response = await axiosJWT.put(`/api/warehouse/cancel-bill`, { billId }, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        alert('Huỷ phiếu nhập thành công');
+        return response.data;
+    } catch (error) {
+        console.error('Cancel bill failed:', error);
+        alert(error.response ? error.response.data.message : error.message);
+    }
+}
+
 export {
     getAllWarehouse,
     getAllOrder,
@@ -146,5 +161,6 @@ export {
     addBillWarehouse,
     getAllBill,
     updateBill,
-    getAllTransaction
+    getAllTransaction,
+    cancelBill
 };

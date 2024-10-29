@@ -15,8 +15,8 @@ const BillDetail = ({ bill }) => {
                         <span>{bill.bill_id}</span>
                     </div>
                     <div className="info-group">
-                        <label>Ngày nhập:</label>
-                        <span>{formatDate(bill.createdAt)}</span>
+                        <label>Mô tả:</label>
+                        <span>{bill?.description ? bill?.description : 'Không có mô tả'}</span>
                     </div>
                 </div>
 
@@ -24,6 +24,10 @@ const BillDetail = ({ bill }) => {
                     <div className="info-group" style={{ width: 450, marginLeft: 50 }}>
                         <label>Tên người nhập:</label>
                         <span>{bill.employee.name}</span>
+                    </div>
+                    <div className="info-group">
+                        <label>Ngày nhập:</label>
+                        <span>{formatDate(bill.createdAt)}</span>
                     </div>
                 </div>
             </div>
