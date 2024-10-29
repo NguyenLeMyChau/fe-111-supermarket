@@ -5,14 +5,17 @@ import { useAxiosJWT, useAccessToken } from '../../utils/axiosInstance';
 import { format } from 'date-fns';
 import { validatePriceHeaderData } from '../../utils/validation';
 import { updateProductPrice } from '../../services/priceRequest';
+import { useDispatch } from 'react-redux';
 
 export default function EditProductPrice({ onClose, priceId, initialData }) {
   const axiosJWT = useAxiosJWT();
   const accessToken = useAccessToken();
+  const dispatch = useDispatch();
 
   const [productPriceData, setProductPriceData] = useState(initialData || {
+    productPriceHeaderId:'',
     description: '',
-    startDate: format(new Date(), 'yyyy-MM-dd'), 
+    startDate: format(new Date(), 'dd-MM-yyyy'), 
     endDate: '',
     status: 'inactive',
   });
@@ -54,23 +57,30 @@ export default function EditProductPrice({ onClose, priceId, initialData }) {
     }
 
     try {
-      const { updatedPrice, messages } = await updateProductPrice(accessToken, axiosJWT, priceId, productPriceData);
+      const { updatedPrice, messages } = await updateProductPrice(accessToken, axiosJWT,dispatch, priceId, productPriceData);
 
       if (updatedPrice) {
         console.log('Product price updated:', updatedPrice);
         alert('Cập nhật chương trình giá thành công');
-        onClose()
-        window.location.reload()
+        onClose()      
       }else alert(messages.join('\n'));
     } catch (error) {
       console.error('Failed to update product price:', error);
-      alert('Lỗi khi cập nhật sản phẩm');
+      // alert('Lỗi khi cập nhật sản phẩm');
     }
   };
 
   return (
       <div className='flex-column-center'>
         <form onSubmit={handleUpdateProductPrice}>
+        <Input
+            label='Mã bảng giá'
+           
+            name='productPriceHeaderId'
+            value={productPriceData.productPriceHeaderId}
+            onChange={handleChange}
+            disabled={true}
+          />
           <Input
             label='Mô tả'
             placeholder='Nhập mô tả chương trình giá'
@@ -78,6 +88,7 @@ export default function EditProductPrice({ onClose, priceId, initialData }) {
             value={productPriceData.description}
             onChange={handleChange}
             error={errors.description}
+            disabled={initialData.status === 'active'}
           />
 
           <Input
@@ -87,7 +98,7 @@ export default function EditProductPrice({ onClose, priceId, initialData }) {
             value={productPriceData.startDate}
             onChange={handleChange}
             error={errors.startDate}
-            min={initialData.status !== 'active' ? format(new Date(), 'yyyy-MM-dd') : null}
+            // min={initialData.status !== 'active' ? format(new Date(), 'yyyy-MM-dd') : null}
             disabled={initialData.status === 'active'}
           />
 
@@ -99,6 +110,7 @@ export default function EditProductPrice({ onClose, priceId, initialData }) {
             onChange={handleChange}
             error={errors.endDate}
             min={initialData.status === 'active' ? format(new Date(), 'yyyy-MM-dd') : productPriceData.startDate} // Set min to today if status is active
+            disabled={initialData.status === 'active'}
             />
           <Input
                     label='Trạng thái'

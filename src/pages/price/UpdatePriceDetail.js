@@ -4,43 +4,52 @@ import Button from '../../components/button/Button';
 import { useAxiosJWT, useAccessToken } from '../../utils/axiosInstance';
 import { validatePriceDetailData } from '../../utils/validation';
 import { updateProductPriceDetail } from '../../services/priceRequest'; // Update this to your actual service path
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getAllProducts } from '../../services/productRequest';
 
-export default function UpdatePriceDetail({ priceDetail,priceDetailid }) {
+export default function UpdatePriceDetail({ priceDetail,priceDetailid,onClose,updateProductPriceHeader ,updateProductPriceDe}) {
     const axiosJWT = useAxiosJWT();
     const accessToken = useAccessToken();
+    const units = useSelector((state) => state.unit?.units) || [];
     const dispatch = useDispatch();
     const [products, setProducts] = useState([]);
     const [productPriceData, setProductPriceData] = useState({
-        product_id: priceDetail.product_id || '',
+        name:priceDetail.product.name||'',
+        item_code: priceDetail.item_code || '',
+        unit_id:priceDetail.unit_id._id,
         price: priceDetail.price || '',
         productPriceHeader_id: priceDetail.productPriceHeader_id || '',
     });
-
+console.log(priceDetail,priceDetailid)
     const [errors, setErrors] = useState({});
 
-    const fetchProducts = useCallback(async () => {
+    const fetchProducts = async () => {
         try {
-            const productsData = await getAllProducts(accessToken, axiosJWT, dispatch);
-            console.log(productsData)
-            setProducts(productsData);
+          const productsData = await getAllProducts(
+            accessToken,
+            axiosJWT,
+            dispatch
+          );
+      
+          setProducts(productsData);
         } catch (error) {
-            console.error('Failed to fetch products:', error);
+          console.error("Failed to fetch products:", error);
         }
-    }, [accessToken, axiosJWT, dispatch]);
-
-    useEffect(() => {
-        fetchProducts();
-    }, [fetchProducts]);
+      };
+    
+      useEffect(() => {
+          fetchProducts();
+      }, []);
 
     useEffect(() => {
         // Set the product price data when the priceDetail prop changes
         if (priceDetail) {
             setProductPriceData({
-                product_id: priceDetail.product_id,
-                price: priceDetail.price,
-                productPriceHeader_id: priceDetail.productPriceHeader_id,
+                name:priceDetail.product.name,
+                item_code: priceDetail.item_code ,
+                unit_id:priceDetail.unit_id._id,
+                price: priceDetail.price ,
+                productPriceHeader_id: priceDetail.productPriceHeader_id ,
             });
         }
     }, [priceDetail]);
@@ -52,44 +61,69 @@ export default function UpdatePriceDetail({ priceDetail,priceDetailid }) {
 
     const handleUpdateProductPrice = async (e) => {
         e.preventDefault();
-
+        console.log(1)
         const validationErrors = validatePriceDetailData(productPriceData);
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
             alert(JSON.stringify(validationErrors)); // Displaying the validation errors properly
             return;
         }
-
+        console.log(1)
         try {
-            const updatedPrice = await updateProductPriceDetail(accessToken, axiosJWT, productPriceData,priceDetailid); // Use your updated service
-
+            const updatedPrice = await updateProductPriceDetail(accessToken, axiosJWT,dispatch, productPriceData,priceDetailid); // Use your updated service
+            console.log(1)
+            console.log(updatedPrice.data)
             if (updatedPrice) {
-                console.log('Product price updated:', updatedPrice.data);
+                console.log('Product price updated:', updatedPrice);
                 setProductPriceData({
-                    product_id: '',
+                    name:'',
+                    item_code: '',
+                    unit_id:'',
                     price: '',
                     productPriceHeader_id: priceDetail.productPriceHeader_id,
                 });
                 setErrors({});
-                alert('Cập nhật chương trình giá thành công');
-                window.location.reload()
+                alert(updatedPrice.message);
+                const updatedProductPriceHeader = updatedPrice.data.find(
+                  (item) => item._id === productPriceData.productPriceHeader_id
+                );
+          
+                if (updatedProductPriceHeader) {
+                  const productDetail = updatedProductPriceHeader.productPrices || [];
+                  console.log("Product Price Header:", updatedProductPriceHeader);
+                  console.log("Product Detail:", productDetail);
+                  updateProductPriceHeader(updatedProductPriceHeader)
+                  updateProductPriceDe(productDetail)
+                  onClose();
+                }
             }
+            console.log(2)
         } catch (error) {
             console.error('Failed to update product price:', error);
-            alert('Lỗi khi cập nhật sản phẩm');
+            alert(error);
         }
     };
 
     return (
             <div className='flex-column-center'>
                 <form onSubmit={handleUpdateProductPrice}>
-                   
-                      <Input
-                        label='Sản phẩm'
-                        placeholder='Nhập giá sản phẩm'
+                <Input
+                        label='Mã sản phẩm'
+                        placeholder='Nhập mã sản phẩm'
                         name='price'
                         value={
-                            products.find(product => product._id === productPriceData.product_id)?.name || ''
+                            productPriceData.item_code
+                        }
+                        onChange={handleChange}
+                        error={errors.price}
+                        type='text'
+                        disabled='true'                    />
+                      <Input
+                        label='Sản phẩm'
+                        placeholder='Nhập tên sản phẩm'
+                        name='price'
+                        value={
+                            productPriceData.name
                         }
                         onChange={handleChange}
                         error={errors.price}
@@ -98,10 +132,10 @@ export default function UpdatePriceDetail({ priceDetail,priceDetailid }) {
                     />
                     <Input
                         label='Đơn vị tính'
-                        placeholder='Nhập giá sản phẩm'
+                        placeholder='Nhập đơn vị tính'
                         name='price'
                         value={
-                            products.find(product => product._id === productPriceData.product_id)?.unit_id.description || ''
+                            units.find((unit)=>unit._id===productPriceData.unit_id).description
                         }
                         onChange={handleChange}
                         error={errors.price}

@@ -129,7 +129,7 @@ export const validatePriceHeaderData = (priceHeaderData) => {
 
     // Check if description is provided and not empty
     if (!priceHeaderData.description || !priceHeaderData.description.trim()) {
-        return  errors.description = 'Mô tả không được để trống';
+        return  errors = 'Mô tả không được để trống';
     }
 
     // Check if startDate is provided
@@ -163,10 +163,12 @@ export const validatePriceDetailData = (data) => {
     let errors = {};
 
     // Validate product_id
-    if (!data.product_id) {
-        return  errors = 'Vui lòng chọn sản phẩm.';
+    if (!data.item_code) {
+        return  errors = 'Vui lòng chọn sản phẩm';
     }
-
+    if (!data.unit_id) {
+        return  errors = 'Vui lòng chọn đơn vị tính';
+    }
     // Validate price
     if (!data.price) {
         return  errors = 'Vui lòng nhập giá.';

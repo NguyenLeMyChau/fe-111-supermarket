@@ -6,10 +6,16 @@ import Modal from "../../components/modal/Modal";
 import UpdatePriceDetail from "./UpdatePriceDetail";
 import { useLocation } from "react-router";
 import Button from "../../components/button/Button";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Select from "react-dropdown-select";
+import { deleteProductPriceDetail } from "../../services/priceRequest";
+import { MdDelete } from "react-icons/md";
+import { useAccessToken, useAxiosJWT } from "../../utils/axiosInstance";
 
 export default function PriceDetail() {
+  const dispatch = useDispatch();
+  const axiosJWT = useAxiosJWT();
+  const accessToken = useAccessToken();
   const location = useLocation();
   const categories = useSelector((state) => state.category?.categories) || [];
   const units = useSelector((state) => state.unit?.units) || [];
@@ -17,6 +23,7 @@ export default function PriceDetail() {
   const [currentDetail, selectCurrentDetail] = useState({});
   const [isEditModalDetailOpen, setIsEditModalDetailOpen] = useState(false);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
+  const [isOpenNewPrice,setIsOpenNewPrice]= useState(false);
   // Filter state
   const [filters, setFilters] = useState({
     productName: "",
@@ -24,24 +31,65 @@ export default function PriceDetail() {
     minPrice: "",
     maxPrice: "",
   });
+console.log(productDetail,productPriceHeader)
+
+
+const handleDeleteClick = async (event, productPriceHeader) => {
+  event.stopPropagation();
+
+  const confirmDelete = window.confirm("Có chắn chắn xóa giá sản phẩm");
+  if (!confirmDelete) return; // Exit if user cancels
+
+
+    const deletedPriceDetail = await deleteProductPriceDetail(accessToken, axiosJWT, dispatch, productPriceHeader._id);
+    if(deletedPriceDetail) {
+      alert(deletedPriceDetail.message)
+      const updatedProductPriceHeader = deletedPriceDetail.allProductPrices?.find(
+        (item) => item._id === productPriceHeader.productPriceHeader_id
+      );
+      console.log(deletedPriceDetail.allProductPrices)
+      console.log(productPriceHeader)
+      console.log(updatedProductPriceHeader)
+    if (updatedProductPriceHeader) {
+      const productDetail = updatedProductPriceHeader.productPrices || [];
+      updateProductPriceHeader(updatedProductPriceHeader)
+      updateProductPriceDetail(productDetail)
+    }
+  }
+    else alert(deletedPriceDetail.message)
+ 
+};
+
+const [filteredProductHeader, setFilteredProductHeader] =
+useState(productPriceHeader);
 
   const [filteredProductDetails, setFilteredProductDetails] =
     useState(productDetail);
 
+    const updateProductPriceHeader = (updatedHeader) => {
+      setFilteredProductHeader(updatedHeader); 
+      console.log(updatedHeader)
+    };
+    
+    const updateProductPriceDetail = (updateDetail) => {
+      setFilteredProductDetails(updateDetail); 
+      console.log(updateDetail)
+    };
   const productDetailColumn = [
     {
       title: "Mã sản phẩm",
-      dataIndex: "product",
-      key: "itemcode",
+      dataIndex: "item_code",
+      key: "item_code",
       width: "20%",
-      render: (product) => product?.item_code,
+      className: "text-center",
+      // render: (product) => product?.item_code,
     },
     {
       title: "Loại sản phẩm",
       dataIndex: "product",
       key: "category",
       width: "15%",
-      render: (product) => product?.category_id.name,
+      render: (product) => product?.category_id?.name,
     },
     {
       title: "Tên sản phẩm",
@@ -52,10 +100,10 @@ export default function PriceDetail() {
     },
     {
       title: "Đơn vị",
-      dataIndex: "product",
+      dataIndex: "unit_id",
       key: "unit",
       width: "10%",
-      render: (product) => product?.unit_id.description,
+      render: (unit_id) => unit_id?.description,
     },
     {
       title: "Giá",
@@ -76,9 +124,19 @@ export default function PriceDetail() {
           onClick={(event) => handleEditDetailClick(event, record)}
         />
       ),
-    },
-  ];
-
+    },{
+      title: 'Xóa',
+      key: 'delete',
+      width: '5%',
+      className: 'text-center',
+      render: (text, record) => (
+        <MdDelete
+          style={{ color: 'red', cursor: 'pointer' }}
+          size={25}
+          onClick={(event) => handleDeleteClick(event, record)}
+        />
+      ),
+    },];
   const handleEditDetailClick = (event, productPriceDetail) => {
     event.stopPropagation();
     selectCurrentDetail(productPriceDetail);
@@ -182,29 +240,38 @@ export default function PriceDetail() {
   return (
     <div>
       <FrameData
-        title="Chi tiết chương trình giá"
+        title={`Chi tiết : ${filteredProductHeader.description}`}
         data={filteredProductDetails}
         buttonText="Thêm giá sản phẩm"
         columns={productDetailColumn}
         itemsPerPage={8}
         showGoBack={true}
         handleFilterClick={handleFilterClick}
-        renderModal={
-          productPriceHeader?.status === "inactive"
-            ? (onClose) => (
-                <AddProductPriceDetail
-                  isOpen={true}
-                  onClose={onClose}
-                  productPriceHeader={productPriceHeader}
-                />
-              )
-            : null
-        }
+        onButtonClick={() => setIsOpenNewPrice(true)}
+        // renderModal={
+        //   productPriceHeader?.status === "inactive"
+        //     ? (onClose) => (
+        //         <AddProductPriceDetail
+        //           isOpen={true}
+        //           onClose={onClose}
+        //           productPriceHeader={productPriceHeader}
+                 
+        //         />
+        //       )
+        //     : null
+        // }
       />
-
-      {isEditModalDetailOpen && productPriceHeader?.status === "inactive" ? (
+  {isOpenNewPrice && filteredProductHeader?.status === "inactive" ? (<AddProductPriceDetail
+                  isOpen={isOpenNewPrice}
+                  onClose={() => setIsOpenNewPrice(false)}
+                  productPriceHeader={filteredProductHeader}
+                  updateProductPriceDetail={updateProductPriceDetail}
+                  updateProductPriceHeader={updateProductPriceHeader}
+    
+                />):null}
+      {isEditModalDetailOpen && filteredProductHeader?.status === "inactive" ? (
         <Modal
-          title={`Cập nhật ${currentDetail.description}`}
+          title={`Cập nhật giá`}
           isOpen={isEditModalDetailOpen}
           onClose={handleCloseEditModalDetail}
           width={"30%"}
@@ -212,6 +279,9 @@ export default function PriceDetail() {
           <UpdatePriceDetail
             priceDetailid={currentDetail._id}
             priceDetail={currentDetail}
+            onClose={handleCloseEditModalDetail}
+            updateProductPriceDe={updateProductPriceDetail}
+            updateProductPriceHeader={updateProductPriceHeader}
           />
         </Modal>
       ) : null}
