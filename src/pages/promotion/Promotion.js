@@ -13,9 +13,11 @@ import AddPromotionDetail from './AddPromotionDetail';
 import UpdatePromotionHeader from './UpdatePromotionHeader';
 import UpdatePromotionLine from './UpdatePromotionLine';
 import UpdatePromotionDetail from './UpdatePromotionDetail';
+import FramePromo from './FramPromo';
 
 export default function Promotion() {
-  const promotions = useSelector((state) => state.promotion?.promotions) || [];  const [currentHeader, selectCurrentHeader] = useState({});
+  const promotions = useSelector((state) => state.promotion?.promotions) || [];  
+  const [currentHeader, selectCurrentHeader] = useState({});
   const [currentLine, selectCurrentLine] = useState({});
   const [currentDetail, selectCurrentDetail] = useState({});
   const [promotionLine, setPromotionLine] = useState([]);
@@ -25,7 +27,7 @@ export default function Promotion() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isEditModalLineOpen, setIsEditModalLineOpen] = useState(false);
   const [isEditModalDetailOpen, setIsEditModalDetailOpen] = useState(false);
-
+console.log(promotions)
   const typeMapping = {
     'amount': 'Giảm giá',
     'quantity': 'Tặng sản phẩm',
@@ -63,12 +65,12 @@ const handleCloseEditModalDetail = () => {
 };
 
   const promotionHeaderColumn = [
-    { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '40%', },
+    { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '25%', },
     {
       title: 'Ngày bắt đầu',
       dataIndex: 'startDate',
       key: 'startDate',
-      width: '15%',
+      width: '20%',
       className: 'text-center',
       // render: (date) => formatDate(date)
     },
@@ -76,7 +78,7 @@ const handleCloseEditModalDetail = () => {
       title: 'Ngày kết thúc',
       dataIndex: 'endDate',
       key: 'endDate',
-      width: '15%',
+      width: '20%',
       className: 'text-center',
       // render: (date) => formatDate(date)
     },
@@ -94,7 +96,7 @@ const handleCloseEditModalDetail = () => {
     {
       title: 'Chỉnh sửa',
       key: 'edit',
-      width: '10%',
+      width: '20%',
       className: 'text-center',
       render: (text, record) => (
           <CiEdit
@@ -106,8 +108,7 @@ const handleCloseEditModalDetail = () => {
   },];
 
   const promotionLineColumn = [
-    { title: 'Loại khuyến mãi', dataIndex: 'type', key: 'type', width: '15%',render: (text) => typeMapping[text] || text, },
-    { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '30%' },
+    { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '20%' },
     {
       title: 'Ngày bắt đầu',
       dataIndex: 'startDate',
@@ -125,6 +126,7 @@ const handleCloseEditModalDetail = () => {
       className: 'text-center',
       render: (date) => formatDate(date)
     },
+    { title: 'Loại khuyến mãi', dataIndex: 'type', key: 'type', width: '10%', className: 'text-center',render: (text) => typeMapping[text] || text, },
     {
       title: 'Hoạt động',
       dataIndex: 'isActive',
@@ -150,7 +152,7 @@ const handleCloseEditModalDetail = () => {
   },];
 
   const promotionDetailColumnAmount = [
-    { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '30%' },
+    // { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '30%' },
     { title: 'Tên sản phẩm', dataIndex: 'product', key: 'product', width: '15%', render: (product) => product?.name },
     {
       title: "Đơn vị",
@@ -176,7 +178,7 @@ const handleCloseEditModalDetail = () => {
   },
   ];
   const promotionDetailColumnQuantity = [
-    { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '30%' },
+    // { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '30%' },
     { title: 'Tên sản phẩm', dataIndex: 'product', key: 'product', width: '15%', render: (product) => product?.name },
     {
       title: "Đơn vị",
@@ -210,7 +212,7 @@ const handleCloseEditModalDetail = () => {
   },
   ];
   const promotionDetailColumnPer = [
-    { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '30%' },
+    // { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '30%' },
     { title: 'Số tiền bán', dataIndex: 'amount_sales', key: 'amount_sales', width: '10%', className: 'text-center' },
     { title: 'Phần trăm khuyến mãi', dataIndex: 'percent', key: 'percent', width: '10%', className: 'text-center' },
     { title: 'Tôi đa', dataIndex: 'amount_limit', key: 'amount_limit', width: '10%', className: 'text-center' },
@@ -255,12 +257,13 @@ const handleCloseEditModalDetail = () => {
 
   return (
     <div>
-      <FrameData
+      <FramePromo
         title="Khuyến mãi"
-        buttonText="Thêm khuyến mãi"
+        buttonText="Thêm chương trình khuyến mãi"
         data={promotions}
         columns={promotionHeaderColumn}
-        onRowClick={handleRowClickLine}
+        onRowClick={handleRowClickDetail}
+        columnLine={promotionLineColumn}
         renderModal={(onClose) => (
           <AddPromotionHeader
             isOpen={true}
@@ -270,18 +273,18 @@ const handleCloseEditModalDetail = () => {
       />
 
       <Modal
-        title={'Sản phẩm trong danh mục'}
+        title={'Chi tiết khuyến mãi'}
         isOpen={isModalOpenLine}
         onClose={closeModalLine}
       >
 
 
-        <FrameData
+        { <FrameData
           data={promotionLine}
           columns={promotionLineColumn}
           buttonText={'Thêm loại khuyến mãi'}
           onRowClick={handleRowClickDetail}
-          itemsPerPage={8}
+         
           renderModal={(onClose, data) => (
             <AddPromotionLine
               isOpen={true}
@@ -289,7 +292,7 @@ const handleCloseEditModalDetail = () => {
               promotionHeader={currentHeader}
             />
           )}
-        />
+        /> }
 
       </Modal>
 
@@ -301,7 +304,7 @@ const handleCloseEditModalDetail = () => {
 
         <FrameData
           data={promotionDetail}
-          buttonText="Thêm khuyến mãi"
+          buttonText="Thêm chi tiết khuyến mãi"
           columns={
             currentLine.type === 'quantity'
               ? promotionDetailColumnQuantity
