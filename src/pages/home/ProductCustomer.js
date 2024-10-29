@@ -2,10 +2,13 @@ import { useLocation, useNavigate } from "react-router";
 import HeaderCustomer from "../../components/headerCustomer/HeaderCustomer";
 import { IoCartOutline, IoChevronBackOutline } from "react-icons/io5";
 import './ProductCustomer.scss';
+import { useEffect, useState } from "react";
+import UnitSelectModal from "./UnitSelectModal";
 
 export default function ProductCustomer() {
     const location = useLocation();
     const navigate = useNavigate();
+
     const promotionPrice = 35000;
     const originalPrice = 50000;
     const normalPrice = 60000;
@@ -13,6 +16,25 @@ export default function ProductCustomer() {
 
     const { category } = location.state || {};
     console.log('category', category);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [selectedProductUnits, setSelectedProductUnits] = useState([]);
+    const [selectedProductName, setSelectedProductName] = useState('');
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
+    const openUnitModal = (unitConvert, productName) => {
+        setSelectedProductUnits(unitConvert);
+        setSelectedProductName(productName);
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setSelectedProductUnits([]);
+        setSelectedProductName('');
+    };
 
     return (
         <div className='cart-customer-container'>
@@ -48,7 +70,14 @@ export default function ProductCustomer() {
                                         }
                                     </p>
                                     {promotionDescription && <p className="promotion-description">{promotionDescription}</p>}
-                                    <button className='cart-button'>
+
+                                    <button className='cart-button'
+                                        onClick={() => {
+                                            if (product.unit_convert && product.unit_convert.length > 1) {
+                                                openUnitModal(product.unit_convert, product.name);
+                                            }
+                                        }}
+                                    >
                                         <IoCartOutline size={30} />
                                     </button>
                                 </div>
@@ -57,6 +86,14 @@ export default function ProductCustomer() {
                     ) : (
                         <></>
                     )}
+
+                    <UnitSelectModal
+                        isOpen={isModalOpen}
+                        onClose={closeModal}
+                        units={selectedProductUnits}
+                        productName={selectedProductName}
+                    />
+
                 </div>
             </main>
         </div>
