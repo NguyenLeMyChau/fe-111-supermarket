@@ -27,6 +27,7 @@ import PaymentInfo from '../pages/cart/PaymentInfo.js';
 import PriceDetail from '../pages/price/PriceDetail.js'
 import Customer from '../pages/customer/Customer.js';
 import Transaction from '../pages/transaction/Transaction.js';
+import ProductCustomer from '../pages/home/ProductCustomer.js';
 
 function AppRoutes() {
     return (
@@ -77,6 +78,7 @@ function AppRoutes() {
                         <Route path="*" element={<Navigate to="/home" />} />
                         <Route path="cart" element={<Cart />} />
                         <Route path="payment-info" element={<PaymentInfo />} />
+                        <Route path="product" element={<ProductCustomer />} />
                     </Route>
                 </Routes>
             </PaymentModalProvider>

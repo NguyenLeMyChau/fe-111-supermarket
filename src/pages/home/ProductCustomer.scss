@@ -1,0 +1,108 @@
+.product-customer-header-content {
+    display: flex;
+    align-items: center;
+    width: 100%;
+
+    h3 {
+        flex-grow: 1;
+        text-align: center;
+        margin: 0;
+    }
+
+    svg {
+        cursor: pointer;
+        padding-left: 30px;
+    }
+}
+
+.product-customer-product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 35px;
+    padding: 20px;
+    margin-top: 20px;
+
+    .product-card {
+        width: 200px;
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .product-card img {
+        width: 150px;
+        height: 130px;
+        object-fit: contain;
+        align-self: center;
+    }
+
+    .product-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 5px;
+
+        .name {
+            font-size: 13px;
+            color: #333;
+        }
+
+        .price {
+            margin-top: -5px;
+
+            .promotion-price {
+                font-size: 14px;
+                font-weight: bold;
+            }
+
+            .original-price {
+                font-size: 12px;
+                text-decoration: line-through;
+                color: #999;
+
+            }
+
+            .normal-price {
+                font-size: 14px;
+                font-weight: bold;
+            }
+        }
+
+        .promotion-description{
+            font-size: 14px;
+            font-weight: 500;
+            color: #ff0000;
+            margin-top: -10px;
+        }
+
+
+
+    }
+
+    .cart-button {
+        background: #0056b3;
+        border: none;
+        cursor: pointer;
+        color: #fff;
+        width: 100%;
+        /* Độ rộng 100% */
+        height: 50px;
+        /* Chiều cao 30px */
+        align-self: flex-end;
+        /* Đẩy nút xuống cuối */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: 10px;
+    }
+
+    .cart-button:hover {
+        background-color: #004080;
+        /* Màu nền khi hover */
+    }
+}

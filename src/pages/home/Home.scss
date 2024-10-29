@@ -1,8 +1,11 @@
 .home-customer-container {
     display: flex;
     flex-direction: column;
+    max-width: 100%;
     min-height: 100vh;
     background-color: white;
+    overflow-y: hidden;
+    box-sizing: border-box;
 
     header,
     footer {
@@ -10,7 +13,7 @@
     }
 
     main {
-        flex: 1 0 auto;
+        flex: 1;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -47,7 +50,8 @@
             display: flex;
             align-items: center;
             justify-content: flex-start;
-            overflow-x: auto;
+            overflow-x: hidden;
+            overflow-y: hidden;
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: none;
@@ -55,7 +59,8 @@
             width: 100%;
             height: 200px;
             margin: 0px 10px;
-            user-select: none; /* Ngăn việc chọn văn bản khi kéo */
+            user-select: none;
+            /* Ngăn việc chọn văn bản khi kéo */
             cursor: grab;
             /* Thay đổi con trỏ khi đang kéo */
 
