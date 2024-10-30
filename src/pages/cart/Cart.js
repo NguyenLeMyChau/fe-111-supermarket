@@ -163,9 +163,9 @@ export default function Cart() {
                             <div className="payment-total">
                                 <h4>Thanh toán</h4>
                                 <div className="payment-info-total">
-                                    <p>Tổng tiền hàng: <span>2.000.000 VND</span></p>
-                                    <p>Phí vận chuyển: <span>Miễn phí</span></p>
-                                    <p>Tổng thanh toán: <span>2.000.000 VND</span></p>
+                                    <p>Tiền hàng: <span>2.000.000 VND</span></p>
+                                    <p>Giảm giá: <span>Miễn phí</span></p>
+                                    <p>Thanh toán: <span>2.000.000 VND</span></p>
                                 </div>
                             </div>
 

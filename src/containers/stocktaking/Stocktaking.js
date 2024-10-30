@@ -2,19 +2,16 @@ import React, { useState } from 'react';
 import { formatDate } from '../../utils/fotmatDate';
 import FrameData from '../../containers/frameData/FrameData';
 import { useLocation, useNavigate } from 'react-router';
-import AddBill from './AddBill';
+import AddStocktaking from './AddStocktaking';
 import { useSelector } from 'react-redux';
-import BillDetail from './BillDetail';
 import Modal from '../../components/modal/Modal';
 import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { MdAutoDelete, MdCancel, MdCheckCircle } from "react-icons/md";
-import { cancelBill } from '../../services/warehouseRequest';
 import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
 import ClipLoader from 'react-spinners/ClipLoader'; // Import ClipLoader
-import CancelReasonModal from './CancelReasonModal'; // Import CancelReasonModal
 
-export default function Bill() {
+export default function Stocktaking() {
     const navigate = useNavigate();
     const location = useLocation();
     const accessToken = useAccessToken();
@@ -23,7 +20,7 @@ export default function Bill() {
     const orders = useSelector((state) => state.order?.orders);
     const sortedOrders = [...orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-    const isAddBill = location.pathname.includes('add-bill');
+    const isAddBill = location.pathname.includes('add-stocktaking');
     const [isBillDetail, setIsBillDetail] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -108,24 +105,6 @@ export default function Bill() {
         },
     ];
 
-    const handleCancelBill = async (reason) => {
-        setIsCancelModalOpen(false); // Close the cancel reason modal
-
-        const confirmCancel = window.confirm('Bạn có chắc chắn muốn huỷ phiếu nhập này không?');
-        if (!confirmCancel) return;
-
-        setLoading(true);
-        setLoadingBillId(cancelBillId); // Set the loading bill ID
-        try {
-            await cancelBill(cancelBillId, reason, accessToken, axiosJWT);
-            // Optionally, you can refresh the orders list here
-        } catch (error) {
-            console.error('Failed to cancel bill:', error);
-        } finally {
-            setLoading(false);
-            setLoadingBillId(null); // Reset the loading bill ID
-        }
-    }
 
     const handleRowClick = async (order) => {
         setSelectedOrder(order);
@@ -137,37 +116,31 @@ export default function Bill() {
         <div>
             {
                 isAddBill ? (
-                    <AddBill />
+                    <AddStocktaking />
                 ) : isBillDetail ? (
                     <Modal
-                        title={'Thông tin phiếu nhập'}
+                        title={'Thông tin phiếu kiểm kê'}
                         isOpen={isBillDetail}
                         onClose={() => setIsBillDetail(false)}
                         width={'60%'}
                     >
-                        <BillDetail bill={selectedOrder} />
+                        {/* <BillDetail bill={selectedOrder} /> */}
                     </Modal>
                 ) : (
                     <>
                         <FrameData
-                            title="Phiếu nhập kho"
-                            buttonText="Thêm phiếu nhập"
+                            title="Phiếu kiểm kê kho"
+                            buttonText="Thêm phiếu kiểm kê kho"
                             data={sortedOrders}
                             columns={orderColumn}
                             onRowClick={handleRowClick}
                             onButtonClick={() => {
-                                navigate('/admin/bill/add-bill');
+                                navigate('/admin/stocktaking/add-stocktaking');
                             }}
                         />
                     </>
-                )
-            }
+                )}
 
-            <CancelReasonModal
-                isOpen={isCancelModalOpen}
-                onClose={() => setIsCancelModalOpen(false)}
-                onSubmit={handleCancelBill}
-            />
         </div>
     );
 }

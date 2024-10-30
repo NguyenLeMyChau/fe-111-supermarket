@@ -109,7 +109,11 @@ const UpdateProduct = ({ product }) => {
 
             // Kiểm tra xem barcode đã tồn tại chưa trong conversionUnits
             for (const unit of conversionUnits) {
+                if (!unit.barcode) {
+                    continue; // Skip the check if barcode is null or empty
+                }
                 const existingProduct = await getProductsByBarcodeInUnitConvert(unit.barcode, accessToken, axiosJWT);
+                console.log('existingProduct', existingProduct);
 
                 // Nếu sản phẩm đã tồn tại và không phải là sản phẩm hiện tại, hiển thị thông báo và dừng lại
                 if (existingProduct && existingProduct[0]._id !== product._id) {
@@ -123,6 +127,7 @@ const UpdateProduct = ({ product }) => {
                 ...formData,
                 unit_convert: conversionUnits,
             };
+            console.log('updatedformData', updatedformData);
             await updateProduct(product._id, updatedformData, accessToken, axiosJWT);
 
         } catch (error) {
@@ -239,7 +244,7 @@ const UpdateProduct = ({ product }) => {
                                     <td style={{ padding: '10px' }}>
                                         <Select
                                             options={units.map(unit => ({ value: unit._id, label: unit.description }))}
-                                            values={unit.unit ? [{ value: unit.unit, label: units.find(u => u._id === unit.unit)?.description }] : []}
+                                            values={unit.unit._id ? [{ value: unit.unit._id, label: units.find(u => u._id === unit.unit._id)?.description }] : []}
                                             onChange={(selected) => handleConversionUnitChange(index, 'unit', selected[0]?.value)}
                                             placeholder="Chọn đơn vị"
                                             styles={{

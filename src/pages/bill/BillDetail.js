@@ -30,6 +30,20 @@ const BillDetail = ({ bill }) => {
                         <span>{formatDate(bill.createdAt)}</span>
                     </div>
                 </div>
+
+                {bill.status === false && (
+                    <div className='flex-row'>
+                        <div className="info-group" style={{ width: 450, marginLeft: 50 }}>
+                            <label>Lý do huỷ:</label>
+                            <span className="cancel-reason">{bill.cancel_reason}</span>
+                        </div>
+
+                        <div className="info-group">
+                            <label>Ngày huỷ phiếu:</label>
+                            <span className="cancel-reason">{formatDate(bill.updatedAt)}</span>
+                        </div>
+                    </div>
+                )}
             </div>
 
             <div className="product-list">

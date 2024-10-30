@@ -5,6 +5,7 @@ import './ProductCustomer.scss';
 import { useEffect, useState } from "react";
 import UnitSelectModal from "./UnitSelectModal";
 import useCart from "../../hooks/useCart";
+import { formatCurrency } from "../../utils/fotmatDate";
 
 export default function ProductCustomer() {
     const location = useLocation();
@@ -58,7 +59,9 @@ export default function ProductCustomer() {
                 <div className='product-customer-product-grid'>
                     {category.products && category.products.length > 0 ? (
                         category.products.map((product, index) => (
-                            <div key={index} className='product-card'>
+                            <div key={index} className='product-card'
+                                onClick={() => navigate('/customer/product-detail', { state: { product } })}
+                            >
                                 <img src={product.img} alt={product.name} />
                                 <div className='product-info'>
                                     <p className="name">{product.name}</p>
@@ -66,19 +69,20 @@ export default function ProductCustomer() {
                                         {
                                             promotionPrice ? (
                                                 <>
-                                                    <span className="promotion-price">{promotionPrice.toLocaleString()}đ</span>
+                                                    <span className="promotion-price">{formatCurrency(promotionPrice)}</span>
                                                     <br />
-                                                    <span className="original-price">{originalPrice.toLocaleString()}đ</span>
+                                                    <span className="original-price">{formatCurrency(originalPrice)}</span>
                                                 </>
                                             ) : (
-                                                <span className="normal-price">{normalPrice.toLocaleString()}đ</span>
+                                                <span className="normal-price">{formatCurrency(normalPrice)}</span>
                                             )
                                         }
                                     </p>
                                     {promotionDescription && <p className="promotion-description">{promotionDescription}</p>}
 
                                     <button className='cart-button'
-                                        onClick={() => {
+                                        onClick={(event) => {
+                                            event.stopPropagation(); // Ngăn sự kiện onClick của thẻ cha
                                             if (product.unit_convert && product.unit_convert.length > 1) {
                                                 openUnitModal(product);
                                             } else {

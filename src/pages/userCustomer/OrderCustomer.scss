@@ -40,30 +40,32 @@
         }
     }
 
-    .order-header {
+
+}
+
+.order-customer-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: -15px;
+
+    .order-id {
+        flex: 1;
+        font-size: 16px;
+        color: #333;
+    }
+
+    .order-date {
         display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: -15px;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 2px;
+        font-size: 14px;
+        color: gray;
 
-        .order-id {
-            flex: 1;
-            font-size: 16px;
-            color: #333;
-        }
-
-        .order-date {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 2px;
-            font-size: 14px;
+        .relative-time {
+            font-size: 12px;
             color: gray;
-
-            .relative-time {
-                font-size: 12px;
-                color: gray;
-            }
         }
     }
 }

@@ -138,9 +138,9 @@ const getAllTransaction = async (accessToken, axiosJWT, dispatch) => {
     }
 }
 
-const cancelBill = async (billId, accessToken, axiosJWT) => {
+const cancelBill = async (billId, cancel_reason, accessToken, axiosJWT) => {
     try {
-        const response = await axiosJWT.put(`/api/warehouse/cancel-bill`, { billId }, {
+        const response = await axiosJWT.put(`/api/warehouse/cancel-bill`, { billId, cancel_reason }, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
@@ -149,6 +149,28 @@ const cancelBill = async (billId, accessToken, axiosJWT) => {
         return response.data;
     } catch (error) {
         console.error('Cancel bill failed:', error);
+        alert(error.response ? error.response.data.message : error.message);
+    }
+}
+
+const addStocktaking = async (stocktakingData, navigate, accessToken, axiosJWT) => {
+    const { accountId, stocktakingId, reason, productList } = stocktakingData;
+    try {
+        const response = await axiosJWT.post(`/api/warehouse/add-stocktaking`, {
+            accountId,
+            stocktakingId,
+            reason,
+            productList,
+        }, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        alert('Nhập phiếu kiểm kê kho thành công!');
+        navigate('/admin/stocktaking');
+        return response.data;
+    } catch (error) {
+        console.error('Add stocktaking failed:', error);
         alert(error.response ? error.response.data.message : error.message);
     }
 }
@@ -162,5 +184,6 @@ export {
     getAllBill,
     updateBill,
     getAllTransaction,
-    cancelBill
+    cancelBill,
+    addStocktaking
 };

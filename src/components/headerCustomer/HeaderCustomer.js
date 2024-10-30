@@ -70,7 +70,7 @@ export default function HeaderCustomer() {
                 <div className='user-info' onClick={toggleDropdown}>
                     <div className='user-greeting'>
                         <span>Xin chào</span>
-                        <span className='user-name'>Lê Anh Thư</span>
+                        <span className='user-name'>{login?.user?.name}</span>
                     </div>
                     <FaChevronDown className={`dropdown-icon ${isDropdownOpen ? 'open' : ''}`} />
 
