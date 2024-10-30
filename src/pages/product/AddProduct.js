@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from '../../components/modal/Modal';
 import Input from '../../components/input/Input';
 import Button from '../../components/button/Button';
@@ -33,6 +33,29 @@ export default function AddProduct({ isOpen, onClose }) {
     const [loading, setLoading] = useState(false); // Trạng thái loading
     const [isLoadingImage, setIsLoadingImage] = useState(false); // Trạng thái tải ảnh
     const [conversionUnits, setConversionUnits] = useState([]); // Array of conversion units
+    const [error, setError] = useState(''); // State for error message
+    const [isDuplicate, setIsDuplicate] = useState(false); // State for duplicate check
+    const [isEmpty, setIsEmpty] = useState(false); // State for empty check
+
+    useEffect(() => {
+        // Check for duplicate units
+        const unitIds = conversionUnits.map(unit => unit.unit);
+        const hasDuplicates = new Set(unitIds).size !== unitIds.length;
+        setIsDuplicate(hasDuplicates);
+
+        // Check for empty units or quantities
+        const hasEmptyFields = conversionUnits.some(unit => !unit.unit || !unit.quantity);
+        setIsEmpty(hasEmptyFields);
+
+        // Set error message
+        if (hasDuplicates) {
+            setError('Không được chọn trùng đơn vị quy đổi.');
+        } else if (hasEmptyFields) {
+            setError('Đơn vị quy đổi và số lượng không được để trống.');
+        } else {
+            setError('');
+        }
+    }, [conversionUnits]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -81,7 +104,6 @@ export default function AddProduct({ isOpen, onClose }) {
         );
         setConversionUnits(updatedUnits);
     };
-
 
     const handleDeleteConversionUnit = (index) => {
         setConversionUnits((prevUnits) => prevUnits.filter((_, i) => i !== index));
@@ -264,7 +286,7 @@ export default function AddProduct({ isOpen, onClose }) {
                         >
                             Thêm đơn vị quy đổi
                         </button>
-
+                        {error && <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>}
                     </div>
 
                     {/* Conversion units table */}
@@ -288,6 +310,7 @@ export default function AddProduct({ isOpen, onClose }) {
                                                 options={units.map(unit => ({ value: unit._id, label: unit.description }))}
                                                 onChange={(selected) => handleConversionUnitChange(index, 'unit', selected[0]?.value)}
                                                 placeholder="Chọn đơn vị"
+                                                values={unit.unit ? [{ value: unit.unit, label: units.find(u => u._id === unit.unit)?.description }] : []}
                                                 styles={{
                                                     control: (provided) => ({
                                                         ...provided,
@@ -374,7 +397,9 @@ export default function AddProduct({ isOpen, onClose }) {
                             <ClipLoader size={30} color="#2392D0" loading={loading} />
                         ) : (
                             <div className='login-button' style={{ width: 200 }}>
-                                <Button type='submit' text='Thêm sản phẩm' />
+                                <Button type='submit' text='Thêm sản phẩm'
+                                    disabled={isDuplicate || isEmpty} // Disable button if there are duplicate units or empty fields
+                                />
                             </div>
                         )}
                     </div>

@@ -81,7 +81,8 @@ export default function ProductCustomer() {
                                     {promotionDescription && <p className="promotion-description">{promotionDescription}</p>}
 
                                     <button className='cart-button'
-                                        onClick={() => {
+                                        onClick={(event) => {
+                                            event.stopPropagation(); // Ngăn sự kiện onClick của thẻ cha
                                             if (product.unit_convert && product.unit_convert.length > 1) {
                                                 openUnitModal(product);
                                             } else {

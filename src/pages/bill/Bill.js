@@ -12,6 +12,7 @@ import { MdAutoDelete, MdCancel, MdCheckCircle } from "react-icons/md";
 import { cancelBill } from '../../services/warehouseRequest';
 import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
 import ClipLoader from 'react-spinners/ClipLoader'; // Import ClipLoader
+import CancelReasonModal from './CancelReasonModal'; // Import CancelReasonModal
 
 export default function Bill() {
     const navigate = useNavigate();
@@ -27,6 +28,8 @@ export default function Bill() {
     const [selectedOrder, setSelectedOrder] = useState(null);
     const [loading, setLoading] = useState(false);
     const [loadingBillId, setLoadingBillId] = useState(null); // State to track the currently loading bill ID
+    const [isCancelModalOpen, setIsCancelModalOpen] = useState(false); // State to control the cancel reason modal
+    const [cancelBillId, setCancelBillId] = useState(null); // State to track the bill ID being canceled
 
     const orderColumn = [
         {
@@ -62,13 +65,24 @@ export default function Bill() {
             width: '10%',
             className: 'text-center',
             render: (text, record) => (
-                loading && loadingBillId === record._id ? (
-                    <ClipLoader size={30} color="#2392D0" loading={loading} />
+                record.status ? (
+                    loading && loadingBillId === record._id ? (
+                        <ClipLoader size={30} color="#2392D0" loading={loading} />
+                    ) : (
+                        <MdAutoDelete
+                            style={{ color: 'red', cursor: 'pointer' }}
+                            size={25}
+                            onClick={(event) => {
+                                event.stopPropagation(); // Ngăn chặn sự kiện click của hàng bảng
+                                setCancelBillId(record._id); // Set the bill ID to be canceled
+                                setIsCancelModalOpen(true); // Open the cancel reason modal
+                            }}
+                        />
+                    )
                 ) : (
                     <MdAutoDelete
-                        style={{ color: 'red', cursor: 'pointer' }}
+                        style={{ color: 'gray', cursor: 'not-allowed' }}
                         size={25}
-                        onClick={(event) => handleCancelBill(event, record)}
                     />
                 )
             ),
@@ -94,16 +108,16 @@ export default function Bill() {
         },
     ];
 
-    const handleCancelBill = async (event, bill) => {
-        event.stopPropagation(); // Ngăn chặn sự kiện click của hàng bảng
+    const handleCancelBill = async (reason) => {
+        setIsCancelModalOpen(false); // Close the cancel reason modal
 
         const confirmCancel = window.confirm('Bạn có chắc chắn muốn huỷ phiếu nhập này không?');
         if (!confirmCancel) return;
 
         setLoading(true);
-        setLoadingBillId(bill._id); // Set the loading bill ID
+        setLoadingBillId(cancelBillId); // Set the loading bill ID
         try {
-            await cancelBill(bill._id, accessToken, axiosJWT);
+            await cancelBill(cancelBillId, reason, accessToken, axiosJWT);
             // Optionally, you can refresh the orders list here
         } catch (error) {
             console.error('Failed to cancel bill:', error);
@@ -145,14 +159,15 @@ export default function Bill() {
                                 navigate('/admin/bill/add-bill');
                             }}
                         />
-
                     </>
                 )
             }
 
-
+            <CancelReasonModal
+                isOpen={isCancelModalOpen}
+                onClose={() => setIsCancelModalOpen(false)}
+                onSubmit={handleCancelBill}
+            />
         </div>
-
     );
 }
-

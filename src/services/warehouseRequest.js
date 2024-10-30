@@ -138,9 +138,9 @@ const getAllTransaction = async (accessToken, axiosJWT, dispatch) => {
     }
 }
 
-const cancelBill = async (billId, accessToken, axiosJWT) => {
+const cancelBill = async (billId, cancel_reason, accessToken, axiosJWT) => {
     try {
-        const response = await axiosJWT.put(`/api/warehouse/cancel-bill`, { billId }, {
+        const response = await axiosJWT.put(`/api/warehouse/cancel-bill`, { billId, cancel_reason }, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
