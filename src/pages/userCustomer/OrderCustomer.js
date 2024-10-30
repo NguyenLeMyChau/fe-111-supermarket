@@ -48,7 +48,7 @@ const OrderCustomer = () => {
                     {sortedInvoiceCustomer.map((order, index) => (
                         <div key={index} className='order-details' onClick={() => handleOrderClick(order)}>
                             <div className='order-info'>
-                                <div className='order-header'>
+                                <div className='order-customer-header'>
                                     <p className='order-id'><strong>Mã đơn hàng:</strong> {order._id}</p>
                                     <div className='order-date'>
                                         <p>{formatDate(order.createdAt)}</p>

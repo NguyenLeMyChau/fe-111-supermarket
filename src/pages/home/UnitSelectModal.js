@@ -3,6 +3,7 @@ import useAddBill from '../../hooks/useAddBill';
 import './ProductCustomer.scss';
 import { TiDelete } from "react-icons/ti";
 import useCart from '../../hooks/useCart';
+import { formatCurrency } from '../../utils/fotmatDate';
 
 export default function UnitSelectModal({ isOpen, onClose, product }) {
     const [selectedUnit, setSelectedUnit] = useState(null);
@@ -67,12 +68,15 @@ export default function UnitSelectModal({ isOpen, onClose, product }) {
                                 {
                                     promotionPrice ? (
                                         <>
-                                            <span className="promotion-price">{promotionPrice.toLocaleString()}đ</span>
-                                            <br />
-                                            <span className="original-price">{originalPrice.toLocaleString()}đ</span>
+                                            <div style={{ textAlign: "center" }}>
+
+                                                <span className="promotion-price">{formatCurrency(promotionPrice)}</span>
+                                                <br />
+                                                <span className="original-price">{formatCurrency(originalPrice)}</span>
+                                            </div>
                                         </>
                                     ) : (
-                                        <span className="normal-price">{normalPrice.toLocaleString()}đ</span>
+                                        <span className="normal-price">{formatCurrency(normalPrice)}</span>
                                     )
                                 }
                             </p>

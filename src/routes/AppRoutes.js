@@ -30,6 +30,7 @@ import Transaction from '../pages/transaction/Transaction.js';
 import ProductCustomer from '../pages/home/ProductCustomer.js';
 import OrderCustomer from '../pages/userCustomer/OrderCustomer.js';
 import OrderDetailCustomer from '../pages/userCustomer/OrderDetailCustomer.js';
+import ProductDetailCustomer from '../pages/home/ProductDetailCustomer.js';
 
 function AppRoutes() {
     return (
@@ -62,7 +63,7 @@ function AppRoutes() {
                         {/* <Route path="order" element={<Orders />} >
                         <Route path="add-order" element={<AddOrder />} />
                     </Route> */}
-                    
+
                         <Route path="bill" element={<Bill />} >
                             <Route path="add-bill" element={<AddBill />} />
                         </Route>
@@ -83,6 +84,7 @@ function AppRoutes() {
                         <Route path="product" element={<ProductCustomer />} />
                         <Route path="order" element={<OrderCustomer />} />
                         <Route path="order-detail/:orderId" element={<OrderDetailCustomer />} />
+                        <Route path="product-detail" element={<ProductDetailCustomer />} />
                     </Route>
                 </Routes>
             </PaymentModalProvider>
