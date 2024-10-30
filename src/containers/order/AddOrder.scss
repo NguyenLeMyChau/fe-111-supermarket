@@ -21,7 +21,8 @@
         align-items: center;
 
         label,
-        span, input {
+        span,
+        input {
             display: block;
             margin-right: 10px;
             margin-top: 10px;
@@ -84,7 +85,28 @@
     &:hover {
         background-color: #0b4a9c;
     }
+
+    &.disabled {
+        background-color: #cccccc;
+        cursor: not-allowed;
+    }
+
 }
+
+.add-order-container .disabled-button {
+    cursor: not-allowed;
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+
 
 .add-order-container .loading {
     display: flex;

@@ -4,10 +4,12 @@ import { IoCartOutline, IoChevronBackOutline } from "react-icons/io5";
 import './ProductCustomer.scss';
 import { useEffect, useState } from "react";
 import UnitSelectModal from "./UnitSelectModal";
+import useCart from "../../hooks/useCart";
 
 export default function ProductCustomer() {
     const location = useLocation();
     const navigate = useNavigate();
+    const { addCart } = useCart();
 
     const promotionPrice = 35000;
     const originalPrice = 50000;
@@ -18,23 +20,27 @@ export default function ProductCustomer() {
     console.log('category', category);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedProductUnits, setSelectedProductUnits] = useState([]);
-    const [selectedProductName, setSelectedProductName] = useState('');
 
     useEffect(() => {
         window.scrollTo(0, 0);
     }, []);
 
-    const openUnitModal = (unitConvert, productName) => {
-        setSelectedProductUnits(unitConvert);
-        setSelectedProductName(productName);
+    const openUnitModal = (productUnit) => {
+        setSelectedProductUnits(productUnit);
         setIsModalOpen(true);
     };
 
     const closeModal = () => {
         setIsModalOpen(false);
         setSelectedProductUnits([]);
-        setSelectedProductName('');
     };
+
+    const handleAddCart = async (product) => {
+        console.log('selectedProduct', product);
+        console.log('product id', product._id);
+        console.log('product unit id', product.unit_id);
+        await addCart(product._id, product.unit_id, 1, 10000);
+    }
 
     return (
         <div className='cart-customer-container'>
@@ -74,7 +80,9 @@ export default function ProductCustomer() {
                                     <button className='cart-button'
                                         onClick={() => {
                                             if (product.unit_convert && product.unit_convert.length > 1) {
-                                                openUnitModal(product.unit_convert, product.name);
+                                                openUnitModal(product);
+                                            } else {
+                                                handleAddCart(product);
                                             }
                                         }}
                                     >
@@ -90,8 +98,7 @@ export default function ProductCustomer() {
                     <UnitSelectModal
                         isOpen={isModalOpen}
                         onClose={closeModal}
-                        units={selectedProductUnits}
-                        productName={selectedProductName}
+                        product={selectedProductUnits}
                     />
 
                 </div>

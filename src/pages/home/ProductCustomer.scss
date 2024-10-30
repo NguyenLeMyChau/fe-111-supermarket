@@ -85,7 +85,7 @@
     }
 
     .cart-button {
-        background: #0056b3;
+        background: #323C64;
         border: none;
         cursor: pointer;
         color: #fff;
@@ -162,9 +162,9 @@
     }
 
     .unit-img {
-        width: 100px !important;
-        height: 100px !important;
-        object-fit: cover;
+        width: 150px !important;
+        height: 150px !important;
+        object-fit: contain;
         padding: 0px 20px;
     }
 

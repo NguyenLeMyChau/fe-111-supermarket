@@ -17,9 +17,10 @@ const useAddBill = () => {
     const [products, setProducts] = useState([]);
     const [quantities, setQuantities] = useState(Array(products.length).fill(1)); // Khởi tạo mảng số lượng
     const [units, setUnits] = useState(Array(products.length).fill(null)); // Khởi tạo mảng với giá trị null cho mỗi sản phẩm
-    const [ordererName] = useState(user.user.name); // Correctly use only the first element of useState
+    const [ordererName] = useState(user?.user?.name); // Correctly use only the first element of useState
     const [selectedSupplier, setSelectedSupplier] = useState(null);
     const [billId, setBillId] = useState('');
+    const [description, setDescription] = useState('');
     const [isLoading, setIsLoading] = useState(false);
 
     const getUnitDescription = (unitId) => {
@@ -48,7 +49,6 @@ const useAddBill = () => {
 
 
     const handleRemoveProduct = (index) => {
-        console.log(index);
         setProducts((prevProducts) => {
             const newProducts = [...prevProducts];
             newProducts.splice(index, 1); // Xóa sản phẩm tại index
@@ -108,7 +108,6 @@ const useAddBill = () => {
             return newUnits;
         });
 
-        console.log(units);
     };
 
 
@@ -128,8 +127,8 @@ const useAddBill = () => {
     const unitOptions = (product) => {
         // Truy xuất unitProduct từ các sản phẩm tìm thấy
         const unitOptions = product?.unit_convert?.map(unitProduct => ({
-            value: unitProduct?.unit,
-            label: getUnitDescription(unitProduct?.unit),
+            value: unitProduct?.unit._id,
+            label: unitProduct?.unit.description,
         }));
 
         return unitOptions;
@@ -144,6 +143,11 @@ const useAddBill = () => {
             return;
         }
 
+        if (description === '') {
+            alert('Vui lòng nhập mô tả cho phiếu nhập');
+            return;
+        }
+
         // Check if all units are selected before proceeding
         for (let i = 0; i < products.length; i++) {
             if (!units[i]) {
@@ -155,8 +159,9 @@ const useAddBill = () => {
         setIsLoading(true);
         try {
             const orderData = {
-                accountId: user.id,
+                accountId: user?.id,
                 billId: billId,
+                description: description,
                 productList: products.map((product, index) => ({
                     product_id: product._id,
                     item_code: product.item_code,
@@ -164,8 +169,7 @@ const useAddBill = () => {
                     unit_id: units[index],
                 })),
             };
-            console.log('products', products);
-            console.log('orderData', orderData);
+
 
             await addBillWarehouse(orderData, navigate, accessToken, axiosJWT);
         } catch (error) {
@@ -197,7 +201,10 @@ const useAddBill = () => {
         getUnitDescription,
         handleAddProduct,
         getNameProduct,
-        getItemCodeProduct
+        getItemCodeProduct,
+        setDescription,
+        description,
+        setUnits
     };
 };
 

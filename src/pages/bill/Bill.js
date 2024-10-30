@@ -6,14 +6,18 @@ import AddBill from './AddBill';
 import { useSelector } from 'react-redux';
 import BillDetail from './BillDetail';
 import Modal from '../../components/modal/Modal';
-import { CiEdit } from 'react-icons/ci';
-import UpdateBill from './UpdateBill';
 import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
+import { MdAutoDelete, MdCancel, MdCheckCircle } from "react-icons/md";
+import { cancelBill } from '../../services/warehouseRequest';
+import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
+import ClipLoader from 'react-spinners/ClipLoader'; // Import ClipLoader
 
 export default function Bill() {
     const navigate = useNavigate();
     const location = useLocation();
+    const accessToken = useAccessToken();
+    const axiosJWT = useAxiosJWT();
 
     const orders = useSelector((state) => state.order?.orders);
     const sortedOrders = [...orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -21,23 +25,8 @@ export default function Bill() {
     const isAddBill = location.pathname.includes('add-bill');
     const [isBillDetail, setIsBillDetail] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
-
-
-
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-    const [selectedBill, setSelectedBill] = useState(null);
-
-    const handleEditClick = (event, product) => {
-        event.stopPropagation(); // Ngăn chặn sự kiện click của hàng bảng
-        setSelectedBill(product);
-        setIsEditModalOpen(true);
-        console.log('product', product);
-    };
-
-    const handleCloseEditModal = () => {
-        setIsEditModalOpen(false);
-        setSelectedBill(null);
-    };
+    const [loading, setLoading] = useState(false);
+    const [loadingBillId, setLoadingBillId] = useState(null); // State to track the currently loading bill ID
 
     const orderColumn = [
         {
@@ -68,19 +57,61 @@ export default function Bill() {
             )
         },
         {
-            title: 'Chỉnh sửa',
+            title: 'Huỷ phiếu',
             key: 'edit',
             width: '10%',
             className: 'text-center',
             render: (text, record) => (
-                <CiEdit
-                    style={{ color: 'blue', cursor: 'pointer' }}
-                    size={25}
-                    onClick={(event) => handleEditClick(event, record)}
-                />
+                loading && loadingBillId === record._id ? (
+                    <ClipLoader size={30} color="#2392D0" loading={loading} />
+                ) : (
+                    <MdAutoDelete
+                        style={{ color: 'red', cursor: 'pointer' }}
+                        size={25}
+                        onClick={(event) => handleCancelBill(event, record)}
+                    />
+                )
+            ),
+        },
+        {
+            title: 'Trạng thái',
+            key: 'status',
+            width: '10%',
+            className: 'text-center',
+            render: (text, record) => (
+                record.status ? (
+                    <MdCheckCircle
+                        style={{ color: 'green', cursor: 'pointer' }}
+                        size={25}
+                    />
+                ) : (
+                    <MdCancel
+                        style={{ color: 'red', cursor: 'pointer' }}
+                        size={25}
+                    />
+                )
             ),
         },
     ];
+
+    const handleCancelBill = async (event, bill) => {
+        event.stopPropagation(); // Ngăn chặn sự kiện click của hàng bảng
+
+        const confirmCancel = window.confirm('Bạn có chắc chắn muốn huỷ phiếu nhập này không?');
+        if (!confirmCancel) return;
+
+        setLoading(true);
+        setLoadingBillId(bill._id); // Set the loading bill ID
+        try {
+            await cancelBill(bill._id, accessToken, axiosJWT);
+            // Optionally, you can refresh the orders list here
+        } catch (error) {
+            console.error('Failed to cancel bill:', error);
+        } finally {
+            setLoading(false);
+            setLoadingBillId(null); // Reset the loading bill ID
+        }
+    }
 
     const handleRowClick = async (order) => {
         setSelectedOrder(order);
@@ -115,18 +146,6 @@ export default function Bill() {
                             }}
                         />
 
-                        {isEditModalOpen && (
-                            <Modal
-                                title='Cập nhật phiếu nhập kho'
-                                isOpen={isEditModalOpen}
-                                onClose={handleCloseEditModal}
-                                width={'70%'}
-                            >
-                                <UpdateBill
-                                    bill={selectedBill}
-                                />
-                            </Modal>
-                        )}
                     </>
                 )
             }
