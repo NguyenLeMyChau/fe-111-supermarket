@@ -19,7 +19,8 @@ export default function FramePromo({
     onButtonClick, 
     handleFilterClick, 
     columnLine,
-    showGoBack // Thêm prop showGoBack
+    showGoBack,
+    onAddLine 
 }) {
     const navigate = useNavigate(); // Khởi tạo navigate
     const [isModalAddItem, setIsModalAddItem] = useState(false);
@@ -79,6 +80,7 @@ export default function FramePromo({
                                 data={data}
                                 onRowClick={onRowClick}
                                 columnLine={columnLine}
+                                onAddLine={onAddLine}
                             />
                         </div>
                    

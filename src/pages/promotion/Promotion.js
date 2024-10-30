@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import FrameData from '../../containers/frameData/FrameData';
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
-import { MdDoNotDisturbAlt } from 'react-icons/md';
+import { MdDelete, MdDoDisturbOn, MdDoNotDisturbAlt } from 'react-icons/md';
 import { formatDate } from '../../utils/fotmatDate';
 import Modal from '../../components/modal/Modal';
 import { CiEdit } from 'react-icons/ci';
@@ -14,8 +14,15 @@ import UpdatePromotionHeader from './UpdatePromotionHeader';
 import UpdatePromotionLine from './UpdatePromotionLine';
 import UpdatePromotionDetail from './UpdatePromotionDetail';
 import FramePromo from './FramPromo';
+import ClipLoader from 'react-spinners/ClipLoader';
+import { format } from 'date-fns';
+import { deletePromotionDetail, deletePromotionHeader, deletePromotionLine } from '../../services/promotionRequest';
+import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
 
 export default function Promotion() {
+  const dispatch = useDispatch();
+  const axiosJWT = useAxiosJWT();
+  const accessToken = useAccessToken();
   const promotions = useSelector((state) => state.promotion?.promotions) || [];  
   const [currentHeader, selectCurrentHeader] = useState({});
   const [currentLine, selectCurrentLine] = useState({});
@@ -27,11 +34,14 @@ export default function Promotion() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isEditModalLineOpen, setIsEditModalLineOpen] = useState(false);
   const [isEditModalDetailOpen, setIsEditModalDetailOpen] = useState(false);
+  const [loading, setLoading] = useState(false); // Trạng thái loading
+  const [IsOpenNewLine, setIsOpenNewLine] = useState(false);
+
 console.log(promotions)
   const typeMapping = {
-    'amount': 'Giảm giá',
+    'amount': 'Giảm giá sản phẩm',
     'quantity': 'Tặng sản phẩm',
-    'percentage': 'Phiếu giảm giá',
+    'percentage': 'Chiết khấu hóa đơn',
     'combo': 'Combo',
   };
 
@@ -63,16 +73,58 @@ const handleCloseEditModalDetail = () => {
   setIsEditModalDetailOpen(false);
   selectCurrentDetail(null);
 };
+const handleCloseAddModalLine = () => {
+  setIsOpenNewLine(false);
+};
 
+const handleDeleteClick = async (event, promotionLine) => {
+  event.stopPropagation();
+  if(promotionLine.status!=="inactive") return;
+  const confirmDelete = window.confirm("Có chắn chắn xóa giá sản phẩm");
+  if (!confirmDelete) return; // Exit if user cancels
+  setLoading(true)
+    const deleteHeader = await deletePromotionLine(promotionLine._id, accessToken, dispatch, axiosJWT);
+    setLoading(false)
+    if(deleteHeader) 
+      alert(deleteHeader.message)
+    else alert(deleteHeader.message)
+};
+const handleDeleteClickHeader = async (event, promotionHeader) => {
+  event.stopPropagation();
+   const confirmDelete = window.confirm("Có chắn chắn xóa giá sản phẩm");
+   if (!confirmDelete) return; // Exit if user cancels
+   setLoading(true)
+     const deleteHeader = await deletePromotionHeader(promotionHeader._id, accessToken, dispatch, axiosJWT);
+    
+     setLoading(false)
+     if(deleteHeader) 
+       alert(deleteHeader.message)
+     else alert(deleteHeader.message)
+};
+const handleDeleteClickDetail = async (event, promotionDetail) => {
+  event.stopPropagation();
+  if(currentLine.status!=="inactive") return;
+   const confirmDelete = window.confirm("Có chắn chắn xóa giá sản phẩm");
+   if (!confirmDelete) return; // Exit if user cancels
+   
+   setLoading(true)
+     const deleteHeader = await deletePromotionDetail(promotionDetail._id, accessToken, dispatch, axiosJWT);
+     console.log(deleteHeader)
+     setLoading(false)
+     if(deleteHeader) 
+       alert(deleteHeader.message)
+     else alert(deleteHeader.message)
+};
   const promotionHeaderColumn = [
-    { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '25%', },
+    { title: 'Mã khuyến mãi', dataIndex: 'promotionHeaderId', key: 'promotionHeaderId', width: '20%', },
+    { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '20%', },
     {
       title: 'Ngày bắt đầu',
       dataIndex: 'startDate',
       key: 'startDate',
       width: '20%',
       className: 'text-center',
-      // render: (date) => formatDate(date)
+      render: (date) =>format(new Date(date), 'dd-MM-yyyy')
     },
     {
       title: 'Ngày kết thúc',
@@ -80,23 +132,12 @@ const handleCloseEditModalDetail = () => {
       key: 'endDate',
       width: '20%',
       className: 'text-center',
-      // render: (date) => formatDate(date)
-    },
-    {
-      title: 'Hoạt động',
-      dataIndex: 'isActive',
-      key: 'isActive',
-      width: '15%',
-      className: 'text-center',
-      render: (active) =>
-        active
-          ? <IoIosCheckmarkCircleOutline style={{ color: 'green' }} size={20} />
-          : <MdDoNotDisturbAlt style={{ color: 'red' }} size={20} />
+      render: (date) =>format(new Date(date), 'dd-MM-yyyy')
     },
     {
       title: 'Chỉnh sửa',
       key: 'edit',
-      width: '20%',
+      width: '10%',
       className: 'text-center',
       render: (text, record) => (
           <CiEdit
@@ -105,10 +146,29 @@ const handleCloseEditModalDetail = () => {
               onClick={(event) => handleEditClick(event, record)}
           />
       ),
-  },];
+  },
+  // {
+  //   title: 'Xóa',
+  //   key: 'delete',
+  //   width: '8%',
+  //   className: 'text-center',
+  //   render: (text, record) => (
+  //     <MdDelete
+  //       style={{ color: 'Black', cursor: 'pointer' }}
+  //       size={25}
+  //       onClick={(event) =>   {loading ? (
+  //         <ClipLoader size={30} color="#2392D0" loading={loading} />
+  //     ) :(handleDeleteClickHeader(event, record))}}
+  //     />
+  //   ),
+  // }
+];
 
   const promotionLineColumn = [
-    { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '20%' },
+    { title: 'Mã dòng', dataIndex: 'promotionLineId', key: 'promotionLineId', width: '15%', },
+    { title: 'Loại khuyến mãi', dataIndex: 'type', key: 'type', width: '15%', className: 'text-left',render: (text) => typeMapping[text] || text, },
+
+    { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '18%' },
     {
       title: 'Ngày bắt đầu',
       dataIndex: 'startDate',
@@ -116,7 +176,7 @@ const handleCloseEditModalDetail = () => {
       className: 'text-center',
       width: '15%',
 
-      render: (date) => formatDate(date)
+      render: (date) =>format(new Date(date), 'dd-MM-yyyy')
     },
     {
       title: 'Ngày kết thúc',
@@ -124,23 +184,26 @@ const handleCloseEditModalDetail = () => {
       key: 'endDate',
       width: '15%',
       className: 'text-center',
-      render: (date) => formatDate(date)
+      render: (date) =>format(new Date(date), 'dd-MM-yyyy')
     },
-    { title: 'Loại khuyến mãi', dataIndex: 'type', key: 'type', width: '10%', className: 'text-center',render: (text) => typeMapping[text] || text, },
     {
       title: 'Hoạt động',
-      dataIndex: 'isActive',
-      key: 'isActive',
-      width: '10%',
+      dataIndex: 'status',
+      key: 'status',
+      width: '12%',
       className: 'text-center',
-      render: (active) =>
-        active
-          ? <IoIosCheckmarkCircleOutline style={{ color: 'green' }} size={20} />
-          : <MdDoNotDisturbAlt style={{ color: 'red' }} size={20} />
+      render: (status) => (
+        <>
+          {status==='pauseactive' && <MdDoDisturbOn style={{ color: 'yellow',marginRight:5 }} size={15} />}
+          {status==='active' && <IoIosCheckmarkCircleOutline style={{ color: 'green',marginRight:5 }} size={15} />}
+          {status==='inactive' && <MdDoNotDisturbAlt style={{ color: 'red',marginRight:5 }} size={15} />}
+          {statusMaping[status]}
+        </>
+      ),
     }, {
       title: 'Chỉnh sửa',
       key: 'edit',
-      width: '10%',
+      width: '12%',
       className: 'text-center',
       render: (text, record) => (
           <CiEdit
@@ -149,17 +212,32 @@ const handleCloseEditModalDetail = () => {
               onClick={(event) => handleEditClickLine(event, record)}
           />
       ),
-  },];
+    },{
+      title: 'Xóa',
+      key: 'delete',
+      width: '8%',
+      className: 'text-center',
+      render: (text, record) => (
+        <MdDelete
+          style={{ color: 'Black', cursor: 'pointer' }}
+          size={25}
+          onClick={(event) =>   {loading ? (
+            <ClipLoader size={30} color="#2392D0" loading={loading} />
+        ) :(handleDeleteClick(event, record))}}
+        />
+      ),
+    }];
 
   const promotionDetailColumnAmount = [
-    // { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '30%' },
+    { title: 'Mã chi tiết', dataIndex: 'promotionDetailId', key: 'promotionDetailId', width: '20%' },
+    { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '20%' },
     { title: 'Tên sản phẩm', dataIndex: 'product', key: 'product', width: '15%', render: (product) => product?.name },
     {
       title: "Đơn vị",
-      dataIndex: "product",
-      key: "unit",
+      dataIndex: "unit_id",
+      key: "unit_id",
       width: "10%",
-      render: (product) => product?.unit_id.description,
+      render: (unit_id) => unit_id?.description,
     },
     { title: 'Số lượng', dataIndex: 'quantity', key: 'quantity', width: '10%', className: 'text-center' },
     { title: 'Số tiền tặng', dataIndex: 'amount_donate', key: 'amount_donate', width: '10%', className: 'text-center' },
@@ -175,26 +253,41 @@ const handleCloseEditModalDetail = () => {
               onClick={(event) => handleEditClickDetail(event, record)}
           />
       ),
-  },
+  },{
+    title: 'Xóa',
+    key: 'delete',
+    width: '8%',
+    className: 'text-center',
+    render: (text, record) => (
+      <MdDelete
+        style={{ color: 'Black', cursor: 'pointer' }}
+        size={25}
+        onClick={(event) =>   {loading ? (
+          <ClipLoader size={30} color="#2392D0" loading={loading} />
+      ) :(handleDeleteClickDetail(event, record))}}
+      />
+    ),
+  }
   ];
   const promotionDetailColumnQuantity = [
-    // { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '30%' },
-    { title: 'Tên sản phẩm', dataIndex: 'product', key: 'product', width: '15%', render: (product) => product?.name },
+    { title: 'Mã chi tiết', dataIndex: 'promotionDetailId', key: 'promotionDetailId', width: '15%' },
+    { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '15%' },
+    { title: 'Tên sản phẩm', dataIndex: 'product', key: 'product', width: '20%', render: (product) => product?.name },
     {
       title: "Đơn vị",
-      dataIndex: "product",
-      key: "unit",
+      dataIndex: "unit_id",
+      key: "unit_id",
       width: "10%",
-      render: (product) => product?.unit_id.description,
+      render: (unit_id) => unit_id?.description,
     },
     { title: 'Số lượng', dataIndex: 'quantity', key: 'quantity', width: '10%', className: 'text-center' },
-    { title: 'Sản phẩm tặng', dataIndex: 'product_donate', key: 'product_donate', width: '15%', render: (product_donate) => product_donate?.name },
+    { title: 'Sản phẩm tặng', dataIndex: 'product_donate', key: 'product_donate', width: '20%', render: (product_donate) => product_donate?.name },
     {
       title: "Đơn vị",
-      dataIndex: "product_donate",
-      key: "unit",
+      dataIndex: "unit_id_donate",
+      key: "unit_id_donate",
       width: "10%",
-      render: (product) => product?.unit_id.description,
+      render: (unit_id_donate) => unit_id_donate?.description,
     },
     { title: 'Số lượng tặng', dataIndex: 'quantity_donate', key: 'quantity_donate', width: '10%', className: 'text-center' },
     {
@@ -209,10 +302,25 @@ const handleCloseEditModalDetail = () => {
               onClick={(event) => handleEditClickDetail(event, record)}
           />
       ),
-  },
+  },,{
+    title: 'Xóa',
+    key: 'delete',
+    width: '8%',
+    className: 'text-center',
+    render: (text, record) => (
+      <MdDelete
+        style={{ color: 'Black', cursor: 'pointer' }}
+        size={25}
+        onClick={(event) =>   {loading ? (
+          <ClipLoader size={30} color="#2392D0" loading={loading} />
+      ) :(handleDeleteClickDetail(event, record))}}
+      />
+    ),
+  }
   ];
   const promotionDetailColumnPer = [
-    // { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '30%' },
+    { title: 'Mã chi tiết', dataIndex: 'promotionDetailId', key: 'promotionDetailId', width: '20%' },
+    { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '20%' },
     { title: 'Số tiền bán', dataIndex: 'amount_sales', key: 'amount_sales', width: '10%', className: 'text-center' },
     { title: 'Phần trăm khuyến mãi', dataIndex: 'percent', key: 'percent', width: '10%', className: 'text-center' },
     { title: 'Tôi đa', dataIndex: 'amount_limit', key: 'amount_limit', width: '10%', className: 'text-center' },
@@ -228,20 +336,59 @@ const handleCloseEditModalDetail = () => {
               onClick={(event) => handleEditClickDetail(event, record)}
           />
       ),
-  },
+  },,{
+    title: 'Xóa',
+    key: 'delete',
+    width: '5%',
+    className: 'text-center',
+    render: (text, record) => (
+      <MdDelete
+        style={{ color: 'Black', cursor: 'pointer' }}
+        size={25}
+        onClick={(event) =>   {loading ? (
+          <ClipLoader size={30} color="#2392D0" loading={loading} />
+      ) :(handleDeleteClickDetail(event, record))}}
+      />
+    ),
+  }
   ];
 
-  const handleRowClickLine = (promotionHeader) => {
-    const promotionLine = Array.isArray(promotionHeader.lines) ? promotionHeader.lines : [];
-    setPromotionLine(promotionLine);
-    setIsModalOpenLine(true);
-    selectCurrentHeader(promotionHeader);
+  // const handleRowClickLine = (promotionHeader) => {
+  //   const promotionLine = Array.isArray(promotionHeader.lines) ? promotionHeader.lines : [];
+  //   setPromotionLine(promotionLine);
+  //   setIsModalOpenLine(true);
+  //   selectCurrentHeader(promotionHeader);
+  // };
+  const statusMaping = {
+    'active': 'Hoạt động',
+    'pauseactive': 'Ngưng hoạt động',
+    'inactive': 'Không hoạt động',
   };
-
   const closeModalLine = () => {
-    setIsModalOpenLine(false);
+    setIsOpenNewLine(false);
   };
 
+  const handleAddLine=(item)=>{
+    selectCurrentHeader(item);
+    setIsOpenNewLine(true)
+  }
+  const onChangeDetail = (item)=> {
+    console.log(item)
+    setIsModalOpenDetail(false);
+    const promotionH = Array.isArray(item) ? item : [];
+    console.log(promotionH)
+    if(promotionH)
+    {
+      const promotionL =  Array.isArray(promotionH.lines) ? promotionH.lines : [];
+      if(promotionL) {
+        const promotionDetail = Array.isArray(currentLine.details) ? currentLine.details : [];
+        console.log(promotionDetail)
+        if(promotionDetail)
+          setPromotionDetail(promotionDetail)
+      }
+    }
+    setIsModalOpenDetail(true);
+  }
   const handleRowClickDetail = (promotionLine) => {
 
     const promotionDetail = Array.isArray(promotionLine.details) ? promotionLine.details : [];
@@ -250,7 +397,6 @@ const handleCloseEditModalDetail = () => {
     setPromotionDetail(promotionDetail);
     setIsModalOpenDetail(true);
   }
-
   const closeModalDetail = () => {
     setIsModalOpenDetail(false);
   }
@@ -264,6 +410,7 @@ const handleCloseEditModalDetail = () => {
         columns={promotionHeaderColumn}
         onRowClick={handleRowClickDetail}
         columnLine={promotionLineColumn}
+        onAddLine={handleAddLine}
         renderModal={(onClose) => (
           <AddPromotionHeader
             isOpen={true}
@@ -321,6 +468,13 @@ const handleCloseEditModalDetail = () => {
           )}
         />
       </Modal>
+      {IsOpenNewLine && (
+         <AddPromotionLine
+          isOpen={IsOpenNewLine}
+          onClose={handleCloseAddModalLine}
+          promotionHeader={currentHeader}
+       />
+      )}
       {isEditModalOpen && (
                 <Modal
                 title={`Cập nhật ${currentHeader.description}`}
@@ -336,7 +490,7 @@ const handleCloseEditModalDetail = () => {
             )}
              {isEditModalLineOpen && (
                 <Modal
-                title={`Cập nhật ${currentHeader.description}`}
+                title={`Cập nhật dòng`}
                     isOpen={isEditModalLineOpen}
                     onClose={handleCloseEditModalLine}
                     width={'30%'}
@@ -359,6 +513,7 @@ const handleCloseEditModalDetail = () => {
                         promotionLine={currentLine}
                         promotionDetail={currentDetail}
                         onClose={handleCloseEditModalDetail}
+                        onChangeDetail={onChangeDetail}
                     />
                 </Modal>
             )}

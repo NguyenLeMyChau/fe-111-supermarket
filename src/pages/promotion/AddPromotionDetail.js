@@ -19,6 +19,7 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
   const [unitItem, setUnitItem] = useState(units);
   const [unitItemDonate, setUnitItemDonate] = useState(units);
   const [errors, setErrors] = useState({});
+  console.log(promotionLine)
   const [productId, setProductId] = useState({
     item_code: "",
     unit_id: "",
@@ -32,14 +33,16 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
   const [products, setProducts] = useState([]);
   const [productItem, setProductItem] = useState([]);
   const [promotionDetailData, setPromotionDetailData] = useState({
-    product_id: "",
+    product_id: null,
     quantity: "",
-    product_donate: "",
+    product_donate: null,
     quantity_donate: "",
     amount_sales: "",
     amount_donate: "",
     percent: "",
     amount_limit: "",
+    unit_id: null,
+    unit_id_donate: null,
     promotionLine_id: promotionLine._id,
   });
 
@@ -95,7 +98,7 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
 
   const handleDropdownChangeProduct = (name, value) => {
     if (name === "unit_id") {
-      setProductId((prevData) => ({ ...prevData, unit_id: value }));
+      setPromotionDetailData((prevData) => ({ ...prevData, unit_id: value }));
     }
     if (name === "item_code" || name === "name") {
       const selectedProduct = products.find(
@@ -106,8 +109,8 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
         // Get the unit IDs for the selected product
         const unitIds = products
           .filter((product) => product.item_code === selectedProduct.item_code)
-          .map((product) => product.unit_id);
-
+          .flatMap((product) => product.unit_convert.map((unit) => unit.unit));
+        console.log(unitIds);
         if (unitIds) {
           setUnitItem(unitIds);
         }
@@ -116,27 +119,25 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
           ...prevData,
           name: selectedProduct.name,
           item_code: selectedProduct.item_code,
-          unit_id:'',
         }));
       }
     }
-    if (productId.item_code && productId.name && productId.unit_id) {
-      const product_id = products.find(
+    if (name === "item_code") {
+      const product_id= products.find(
         (product) =>
-          product.item_code === productId.item_code &&
-          product.unit_id._id === productId.unit_id
-      );
-      console.log(product_id)
-      console.log(promotionDetailData)
-  if(product_id)
+          product.item_code === value
+      )?._id;
+
       setPromotionDetailData((prevData) => ({
         ...prevData,
-        product_id:product_id._id,
+        product_id,
       }));
     }
   };
   const handleDropdownChangeProductDonate = (name, value) => {
-    setProductDonate((prevData) => ({ ...prevData, [name]: value }));
+    if (name === "unit_id") {
+      setPromotionDetailData((prevData) => ({ ...prevData, unit_id_donate: value }));
+    }
     if (name === "item_code" || name === "name") {
       const selectedProductDonate = products.find(
         (product) => product.name === value || product.item_code === value
@@ -145,10 +146,8 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
         // Get the unit IDs for the selected product
         const unitIds = products
           .filter((product) => product.item_code === selectedProductDonate.item_code)
-          .map((product) => product.unit_id);
-
-  
-
+          .flatMap((product) => product.unit_convert.map((unit) => unit.unit));
+        console.log(unitIds);
         if (unitIds) {
           setUnitItemDonate(unitIds);
         }
@@ -157,15 +156,14 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
           ...prevData,
           name: selectedProductDonate.name,
           item_code: selectedProductDonate.item_code,
-          unit_id:'',
+         
         }));
       }
     }
-    if (productDonate.item_code && productDonate.name && productDonate.unit_id) {
+    if (name === "item_code") {
         const product_donate = products.find(
           (product) =>
-            product.item_code === productDonate.item_code &&
-            product.unit_id._id === productDonate.unit_id
+            product.item_code === value
         )?._id;
   
         setPromotionDetailData((prevData) => ({
@@ -186,6 +184,7 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
     try {
       const response = await addPromotionDetail(
         { ...promotionDetailData },
+        dispatch,
         accessToken,
         axiosJWT
       );
@@ -199,6 +198,7 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
           amount_sales: "",
           amount_donate: "",
           percent: "",
+          unit_id_donate:"",
           amount_limit: "",
           promotionLine_id: promotionLine._id,
           description: "",
@@ -206,7 +206,6 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
         setErrors({});
         alert("Đã thêm chi tiết khuyến mãi thành công");
         onClose(); // Đóng modal
-        window.location.reload();
       }
     } catch (error) {
       console.error("Failed to add promotion detail:", error);

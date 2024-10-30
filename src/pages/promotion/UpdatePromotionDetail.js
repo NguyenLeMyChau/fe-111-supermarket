@@ -8,7 +8,7 @@ import Dropdownpicker from '../../components/dropdownpicker/dropdownpicker';
 import { getAllProducts } from '../../services/productRequest';
 import { useDispatch, useSelector } from 'react-redux';
 
-const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
+const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine ,onChangeDetail}) => {
     const axiosJWT = useAxiosJWT();
     const accessToken = useAccessToken();
     const dispatch = useDispatch();
@@ -21,9 +21,9 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
     const [productItem, setProductItem] = useState([]);
     console.log(promotionDetail)
     const [productId, setProductId] = useState({
-        item_code: promotionDetail.product.item_code,
-        unit_id:promotionDetail.product.unit_id._id,
-        name: promotionDetail.product.name,
+        item_code: promotionDetail.product?.item_code,
+        unit_id:promotionDetail?.product?.unit_id._id,
+        name: promotionDetail?.product?.name,
       });
       const [productDonate, setProductDonate] = useState({
         item_code: promotionDetail.product_donate?.item_code,
@@ -31,16 +31,18 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
         name: promotionDetail.product_donate?.name,
       });
     const [formData, setFormData] = useState({
-        product_id: promotionDetail.product._id || '',
+        product_id: promotionDetail.product?._id || '',
         quantity: promotionDetail.quantity || '',
-        product_donate: promotionDetail.product_donate?._id || '',
+        product_donate: promotionDetail.product_donate?._id || null,
         quantity_donate: promotionDetail.quantity_donate || '',
         amount_sales: promotionDetail.amount_sales || '',
         amount_donate: promotionDetail.amount_donate || '',
         percent: promotionDetail.percent || '',
         amount_limit: promotionDetail.amount_limit || '',
         promotionLine_id: promotionDetail.promotionLine_id,
-        description: promotionDetail.description,
+        description: promotionDetail.description|| '',
+        unit_id: promotionDetail.unit_id?._id||'',
+        unit_id_donate: promotionDetail.unit_id_donate?._id||null,
     });
 
     const fetchProducts = async () => {
@@ -89,9 +91,10 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
     const handleDropdownChange = (name, value) => {
         setFormData((prevData) => ({ ...prevData, [name]: value }));
     };
+   
     const handleDropdownChangeProduct = (name, value) => {
         if (name === "unit_id") {
-          setProductId((prevData) => ({ ...prevData, unit_id: value }));
+          setFormData((prevData) => ({ ...prevData, unit_id: value }));
         }
         if (name === "item_code" || name === "name") {
           const selectedProduct = products.find(
@@ -102,11 +105,12 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
             // Get the unit IDs for the selected product
             const unitIds = products
               .filter((product) => product.item_code === selectedProduct.item_code)
-              .map((product) => product.unit_id);
-    
+              .flatMap((product) => product.unit_convert.map((unit) => unit.unit));
+            console.log(unitIds);
             if (unitIds) {
               setUnitItem(unitIds);
             }
+    
             setProductId((prevData) => ({
               ...prevData,
               name: selectedProduct.name,
@@ -114,22 +118,22 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
             }));
           }
         }
-        if (productId.item_code && productId.name && productId.unit_id) {
-          const product_id = products.find(
+        if (name === "item_code") {
+          const product_id= products.find(
             (product) =>
-              product.item_code === productId.item_code &&
-              product.unit_id._id === productId.unit_id
-          );
-          console.log(product_id)      
-          if(product_id)
+              product.item_code === value
+          )?._id;
+    
           setFormData((prevData) => ({
             ...prevData,
-            product_id:product_id._id,
+            product_id,
           }));
         }
       };
       const handleDropdownChangeProductDonate = (name, value) => {
-        setProductDonate((prevData) => ({ ...prevData, [name]: value }));
+        if (name === "unit_id") {
+          setFormData((prevData) => ({ ...prevData, unit_id_donate: value }));
+        }
         if (name === "item_code" || name === "name") {
           const selectedProductDonate = products.find(
             (product) => product.name === value || product.item_code === value
@@ -138,10 +142,8 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
             // Get the unit IDs for the selected product
             const unitIds = products
               .filter((product) => product.item_code === selectedProductDonate.item_code)
-              .map((product) => product.unit_id);
-    
-      
-    
+              .flatMap((product) => product.unit_convert.map((unit) => unit.unit));
+            console.log(unitIds);
             if (unitIds) {
               setUnitItemDonate(unitIds);
             }
@@ -150,55 +152,49 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
               ...prevData,
               name: selectedProductDonate.name,
               item_code: selectedProductDonate.item_code,
+             
             }));
           }
         }
-        if (productDonate.item_code && productDonate.name && productDonate.unit_id) {
+        if (name === "item_code") {
             const product_donate = products.find(
               (product) =>
-                product.item_code === productDonate.item_code &&
-                product.unit_id._id === productDonate.unit_id
+                product.item_code === value
             )?._id;
       
-            setErrors((prevData) => ({
+            setFormData((prevData) => ({
               ...prevData,
               product_donate,
             }));
           }
-      };
-
-    const handleSubmit = async (e) => {
+      };    
+      const handleSubmit = async (e) => {
         e.preventDefault();
         const validationErrors = validatePromotionDetailData(formData);
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
-            alert(errors)
+            alert(JSON.stringify(errors))
             return;
         }
         try {
             setIsLoading(true);
-            await updatePromotionDetail(promotionDetail._id, formData, accessToken, axiosJWT);
+            const promotions = await updatePromotionDetail(promotionDetail._id, formData,dispatch, accessToken, axiosJWT);
+            setIsLoading(false);
             alert('Cập nhật chi tiết khuyến mãi thành công');
-            onClose();
-            window.location.reload()
+            onChangeDetail(promotions.data)
+            onClose(); 
         } catch (error) {
-            alert('Cập nhật chi tiết khuyến mãi thất bại: ' + error.message);
+            alert('Cập nhật chi tiết khuyến mãi thất bại: ');
         } finally {
             setIsLoading(false);
         }
     };
 
     // Kiểm tra xem promotionLine.isActive có phải là true không
-    const isActive = promotionLine.isActive;
+    const status = promotionLine?.status || 'inactive';
 
     return (
-        <div className="flex-column-center">
-            {isActive ? (
-               <div className="promotion-message">
-               <p>Chi tiết khuyến mãi không thể được sửa đổi vì chương trình đang hoạt động.</p>
-               <Button text="Đóng" onClick={onClose} />
-             </div>
-            ) : (
+        <div className="flex-column-center">         
                 <form onSubmit={handleSubmit}>
                     {promotionLine.type === 'percentage' && (
                         <>
@@ -210,6 +206,7 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
                 value={formData.description}
                 onChange={handleChange}
                 error={errors.description}
+                disabled={status !== 'inactive'}
               />
               <Input
                 className="promotion-input"
@@ -219,6 +216,7 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
                 value={formData.amount_sales}
                 onChange={handleChange}
                 error={errors.amount_sales}
+                disabled={status !== 'inactive'}
               />
               <Input
                 className="promotion-input"
@@ -228,6 +226,7 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
                 value={formData.percent}
                 onChange={handleChange}
                 error={errors.percent}
+                disabled={status !== 'inactive'}
               />
               <Input
                 className="promotion-input"
@@ -237,6 +236,7 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
                 value={formData.amount_limit}
                 onChange={handleChange}
                 error={errors.amount_limit}
+                disabled={status !== 'inactive'}
               />
             </>
                     )}
@@ -251,6 +251,7 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
                 value={formData.description}
                 onChange={handleChange}
                 error={errors.description}
+                disabled={status !== 'inactive'}
               />
               <Dropdownpicker
                 className="promotion-dropdown"
@@ -264,6 +265,7 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
                   handleDropdownChangeProduct("item_code", value)
                 }
                 error={errors.item_code}
+                disabled={status !== 'inactive'}
               />
               <Dropdownpicker
                 className="promotion-dropdown"
@@ -275,6 +277,7 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
                 value={productId.name}
                 onChange={(value) => handleDropdownChangeProduct("name", value)}
                 error={errors.product_id}
+                disabled={status !== 'inactive'}
               />
               <Dropdownpicker
                 className="promotion-dropdown"
@@ -287,6 +290,7 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
                 onChange={(value) =>
                   handleDropdownChangeProduct("unit_id", value)
                 }
+                disabled={status !== 'inactive'}
               />
               <Input
                 className="promotion-input"
@@ -296,6 +300,7 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
                 value={formData.quantity}
                 onChange={handleChange}
                 error={errors.quantity}
+                disabled={status !== 'inactive'}
               />
               <Input
                 className="promotion-input"
@@ -305,6 +310,7 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
                 value={formData.amount_donate}
                 onChange={handleChange}
                 error={errors.amount_donate}
+                disabled={status !== 'inactive'}
               />
             </>
                     )}
@@ -319,6 +325,7 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
                 value={formData.description}
                 onChange={handleChange}
                 error={errors.description}
+                disabled={status !== 'inactive'}
               />
               <Dropdownpicker
                 className="promotion-dropdown"
@@ -332,6 +339,7 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
                   handleDropdownChangeProduct("item_code", value)
                 }
                 error={errors.item_code}
+                disabled={status !== 'inactive'}
               />
               <Dropdownpicker
                 className="promotion-dropdown"
@@ -343,6 +351,7 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
                 value={productId.name}
                 onChange={(value) => handleDropdownChangeProduct("name", value)}
                 error={errors.product_id}
+                disabled={status !== 'inactive'}
               />
               <Dropdownpicker
                 className="promotion-dropdown"
@@ -355,6 +364,7 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
                 onChange={(value) =>
                   handleDropdownChangeProduct("unit_id", value)
                 }
+                disabled={status !== 'inactive'}
               />
               <Input
                 className="promotion-input"
@@ -364,6 +374,7 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
                 value={formData.quantity}
                 onChange={handleChange}
                 error={errors.quantity}
+                disabled={status !== 'inactive'}
               />
               <Dropdownpicker
                 className="promotion-dropdown"
@@ -377,6 +388,7 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
                   handleDropdownChangeProductDonate("item_code", value)
                 }
                 error={errors.item_code}
+                disabled={status !== 'inactive'}
               />
               <Dropdownpicker
                 className="promotion-dropdown"
@@ -390,6 +402,7 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
                   handleDropdownChangeProductDonate("name", value)
                 }
                 error={errors.product_id}
+                disabled={status !== 'inactive'}
               />
               <Dropdownpicker
                 className="promotion-dropdown"
@@ -402,6 +415,7 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
                 onChange={(value) =>
                   handleDropdownChangeProductDonate("unit_id", value)
                 }
+                disabled={status !== 'inactive'}
               />
               <Input
                 className="promotion-input"
@@ -411,6 +425,7 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
                 value={formData.quantity_donate}
                 onChange={handleChange}
                 error={errors.quantity_donate}
+                disabled={status !== 'inactive'}
               />
             </>
                     )}
@@ -420,12 +435,13 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine }) => {
                             <Button
                                 type="submit"
                                 text={isLoading ? 'Đang cập nhật...' : 'Cập nhật chi tiết khuyến mãi'}
-                                disabled={isLoading}
+                               
+                                disabled={status !== 'inactive' ||isLoading}
                             />
                         </div>
                     </div>
                 </form>
-            )}
+            
         </div>
     );
 };

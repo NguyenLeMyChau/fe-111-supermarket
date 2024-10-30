@@ -4,18 +4,20 @@ import Input from '../../components/input/Input';
 import { updatePromotionLine } from '../../services/promotionRequest';
 import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
 import { validatePromotionLineData } from '../../utils/validation';
+import { useDispatch } from 'react-redux';
 
 const UpdatePromotionLine = ({ promotionLine, onClose, promotionHeader }) => {
     const axiosJWT = useAxiosJWT();
     const accessToken = useAccessToken();
+    const dispatch = useDispatch();
     const [errors, setErrors] = useState({});
     const [isLoading, setIsLoading] = useState(false);
-
+    console.log(promotionLine,promotionHeader)
     const [formData, setFormData] = useState({
-        description: promotionLine.description || '',
+        description: promotionLine?.description || '',
         startDate: '',
         endDate: '',
-        isActive: promotionLine.isActive || false,
+        status: promotionLine.status || '',
         type: promotionLine.type || '',
         promotionHeader_id: promotionLine.promotionHeader_id,
     });
@@ -40,11 +42,20 @@ const UpdatePromotionLine = ({ promotionLine, onClose, promotionHeader }) => {
     };
 
     const handleCheckboxChange = (e) => {
-        setFormData({
-            ...formData,
-            isActive: e.target.checked,
-        });
-    };
+        const { checked } = e.target;
+      
+        if (promotionLine.status === 'inactive') {
+          setFormData((prevData) => ({
+            ...prevData,
+            status: checked ? 'active' : 'inactive', // Update status based on checkbox
+          }));
+        } else {
+            setFormData((prevData) => ({
+            ...prevData,
+            status: checked ? 'active' : 'pauseactive', // Update status based on checkbox
+          }));
+        }
+      };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -56,12 +67,13 @@ const UpdatePromotionLine = ({ promotionLine, onClose, promotionHeader }) => {
         }
         try {
             setIsLoading(true);
-            await updatePromotionLine(promotionLine._id, formData, accessToken, axiosJWT);
-            alert('Cập nhật dòng khuyến mãi thành công');
-            onClose();
-            window.location.reload()
+            const updateLine =  await updatePromotionLine(promotionLine._id,dispatch, formData, accessToken, axiosJWT);
+            if(!updateLine)
+            alert(updateLine.message);
+        else {alert(updateLine.message);
+            onClose();}
         } catch (error) {
-            alert('Cập nhật dòng khuyến mãi thất bại: ' + error.message);
+            alert('Cập nhật dòng khuyến mãi thất bại');
         } finally {
             setIsLoading(false);
         }
@@ -79,6 +91,7 @@ const UpdatePromotionLine = ({ promotionLine, onClose, promotionHeader }) => {
                     value={formData.description}
                     onChange={handleChange}
                     error={errors.description}
+                    disabled={promotionLine.status !== 'inactive'}
                 />
 
                 <Input
@@ -88,7 +101,7 @@ const UpdatePromotionLine = ({ promotionLine, onClose, promotionHeader }) => {
                     value={formData.startDate}
                     type="date"
                     onChange={handleChange}
-                    disabled={promotionHeader.isActive}
+                    disabled={promotionLine.status !== 'inactive'}
                     min={formData.startDate}
                     max={formData.endDate}
                     error={errors.startDate}
@@ -104,22 +117,22 @@ const UpdatePromotionLine = ({ promotionLine, onClose, promotionHeader }) => {
                     min={today > formData.startDate ? today : formData.startDate}
                     max={formData.endDate}
                     error={errors.endDate}
+                    disabled={promotionLine.status !== 'inactive'}
                 />
 
                 <Input
-                    label="Trạng thái"
-                    name="status"
-                    type="checkbox"
-                    defaultChecked={formData.isActive}
-                    onChange={handleCheckboxChange}
-                    error={errors.status}
-                />
+                label='Trạng thái'
+                name='status'
+                type='checkbox'
+                defaultChecked={formData.status==='active'}
+                onChange={handleCheckboxChange}
+      />
 
                 <div className="flex-row-center">
                     <div className="login-button" style={{ width: 200 }}>
                         <Button
                             type="submit"
-                            text={isLoading ? 'Đang cập nhật...' : 'Cập nhật dòng khuyến mãi'}
+                            text={isLoading ? 'Đang cập nhật...' : 'Cập nhật'}
                             disabled={isLoading}
                         />
                     </div>

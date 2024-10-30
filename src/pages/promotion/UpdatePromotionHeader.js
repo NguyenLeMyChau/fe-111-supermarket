@@ -4,12 +4,15 @@ import Input from '../../components/input/Input';
 import { updatePromotionHeader } from '../../services/promotionRequest';
 import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
 import { validatePromotionHeaderData } from '../../utils/validation';
+import ClipLoader from 'react-spinners/ClipLoader';
+import { useDispatch } from 'react-redux';
 
 const UpdatePromotionHeader = ({ promotionHeader, onClose }) => {
     const axiosJWT = useAxiosJWT();
     const accessToken = useAccessToken();
     const [errors, setErrors] = useState({});
-
+    const dispatch = useDispatch();
+    const [loading, setLoading] = useState(false); 
     const [formData, setFormData] = useState({
         description: promotionHeader.description || '',
         startDate: '',
@@ -47,17 +50,19 @@ const UpdatePromotionHeader = ({ promotionHeader, onClose }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true)
         const validationErrors = validatePromotionHeaderData(formData);
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
             alert(errors);
+            setLoading(false)
             return;
         }
         try {
-            await updatePromotionHeader(promotionHeader._id, formData, accessToken, axiosJWT);
+            await updatePromotionHeader(promotionHeader._id, formData, dispatch,accessToken, axiosJWT);
             alert('Cập nhật thành công khuyến mãi');
+            setLoading(false)
             onClose();
-            window.location.reload()
         } catch (error) {
             alert('Cập nhật khuyến mãi thất bại: ' + error);
         }
@@ -84,7 +89,7 @@ const UpdatePromotionHeader = ({ promotionHeader, onClose }) => {
                     value={formData.startDate}
                     type='date'
                     onChange={handleChange}
-                    disabled={promotionHeader.isActive} // Disable if promotion is active
+                    disabled={true} // Disable if promotion is active
                 />
                 
                 <Input
@@ -94,24 +99,26 @@ const UpdatePromotionHeader = ({ promotionHeader, onClose }) => {
                     value={formData.endDate}
                     type='date'
                     onChange={handleChange}
-                    min={today > formData.startDate ? today : formData.startDate} // Min is today or start date
+                     min={formData.startDate} // Min is today or start date
                 />
                 
-                <Input
+                {/* <Input
                     label='Trạng thái'
                     name='isActive'
                     type='checkbox'
                     defaultChecked={formData.isActive}
                     onChange={handleCheckboxChange}
-                />
+                /> */}
                 
                 <div className='flex-row-center'>
-                    <div className='login-button' style={{ width: 200 }}>
-                        <Button
-                            type='submit'
-                            text='Cập nhật khuyến mãi'
-                        />
-                    </div>
+                  
+                    {loading ? (
+          <ClipLoader size={30} color="#2392D0" loading={loading} />
+        ) : (
+            <div className='login-button' style={{ width: 200 }}>      
+              <Button type='submit' text='Cập nhật' disabled={loading}/>
+            </div>
+          )}
                 </div>
             </form>
         </div>

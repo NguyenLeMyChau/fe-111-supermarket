@@ -11,6 +11,7 @@ const promotionSlice = createSlice({
     initialState,
     reducers: {
         getPromotionStart(state) {
+            state.promotions = null;
             state.isFetching = true;
             state.error = false;
         },

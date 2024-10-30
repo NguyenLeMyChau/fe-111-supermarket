@@ -1,4 +1,9 @@
 // Promotion.scss
+
+@import '../../components/styles/text.scss';
+@import '../../components/styles/layout.scss';
+
+
 .promotion-form-container {
   display: flex;
   flex-direction: column;
@@ -160,3 +165,82 @@
   background-color: #bd2130; /* Darker red on hover */
 }
 
+
+
+
+
+.tablepromotionth:hover {
+  background-color: var(--default-color);
+}
+.tableexpandedRowsth:hover{
+  background-color: var(--menu-color);
+}
+// .table_promotion tbody tr:hover {
+//   background-color: var(--default-color);
+//   color: var(--white-color);
+//   transition: background-color 0.3s ease;
+// }
+.tablepromotion th {
+  position: sticky;
+  top: 0;
+ 
+  z-index: 1;
+}
+.tablepromotion {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tablepromotion th,
+.tablepromotion td {
+  @extend .text-sm;
+  border-bottom: 1px solid #F0F1F3;
+  padding: 10px 20px;
+  text-align: left;
+}
+
+.tablepromotion th.text-center,
+.tablepromotion td.text-center {
+  text-align: center;
+}
+
+.tablepromotion th.text-right,
+.tablepromotion td.text-right {
+  text-align: right;
+}
+
+.tablepromotion td.text-right-td {
+  text-align: right;
+}
+.tablepromotionLine th {
+  position: sticky;
+  top: 0;
+ 
+  z-index: 1;
+}
+.tablepromotionLine {
+  width: 90%;
+  border-collapse: collapse;
+}
+
+.tablepromotionLine th,
+.tablepromotionLine td {
+  @extend .text-sm;
+  border-bottom: 1px solid #F0F1F3;
+  padding: 10px 20px;
+  text-align: left;
+}
+
+.tablepromotionLine th.text-center,
+.tablepromotionLine td.text-center {
+  text-align: center;
+}
+
+.tablepromotionLine th.text-right,
+.tablepromotionLine td.text-right {
+  text-align: right;
+}
+
+.tablepromotionLine td.text-right-td {
+  text-align: right;
+}
