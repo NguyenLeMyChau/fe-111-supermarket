@@ -12,23 +12,13 @@ export default function ProductWarehouse({ isModalOpen, closeModal, products, pr
 
     return (
         <Modal
-            title={'Sản phẩm trong danh mục'}
+            title={'Giao dịch sản phẩm'}
             isOpen={isModalOpen}
             onClose={closeModal}
         >
             {
                 products ? (
                     <>
-                        {/* <div className="warehouse-container">
-                            <div className="warehouse-button">
-                                <Button
-                                    text='Đặt hàng'
-                                    backgroundColor='#1366D9'
-                                    onClick={() => handleOrderClick(products)}
-
-                                />
-                            </div>
-                        </div> */}
                         <FrameData
                             data={products}
                             columns={productColumns}
