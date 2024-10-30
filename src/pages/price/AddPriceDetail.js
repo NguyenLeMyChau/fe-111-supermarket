@@ -12,6 +12,7 @@ import Dropdownpicker from "../../components/dropdownpicker/dropdownpicker";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllProducts } from "../../services/productRequest";
 import { useNavigate } from "react-router";
+import ClipLoader from "react-spinners/ClipLoader";
 
 export default function AddProductPriceDetail({
   isOpen,
@@ -27,7 +28,7 @@ export default function AddProductPriceDetail({
   const units = useSelector((state) => state.unit?.units) || [];
   const [unitItem, setUnitItem] = useState(units);
   const [products, setProducts] = useState([]);
-  console.log(onClose,isOpen)
+  const [loading, setLoading] = useState(false);
   const [productPriceData, setProductPriceData] = useState({
     name:"",
     item_code: "",
@@ -65,7 +66,7 @@ export default function AddProductPriceDetail({
   };
   const handleDropdownChangeProduct = (name, value) => {
     if (name === "unit_id") {
-      setProductPriceData((prevData) => ({ ...prevData, unit_id: value }));
+      setProductPriceData((prevData) => ({ ...prevData, unit_id: value ,price:""}));
       const productPrice = productPriceHeader.productPrices.find(
         (product) =>
           product.item_code === productPriceData.item_code &&
@@ -78,6 +79,10 @@ export default function AddProductPriceDetail({
           ...prevData,
           price: productPrice.price,
         }));
+       else   setProductPriceData((prevData) => ({
+        ...prevData,
+        price: "",
+      }));
     }
     if (name === "item_code" || name === "name") {
       const selectedProduct = products.find(
@@ -118,11 +123,12 @@ export default function AddProductPriceDetail({
   };
   const handleAddProductPrice = async (e) => {
     e.preventDefault();
-
+setLoading(true)
     const validationErrors = validatePriceDetailData(productPriceData);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       alert(JSON.stringify(validationErrors)); // Displaying the validation errors properly
+      setLoading(false)
       return;
     }
 
@@ -143,6 +149,7 @@ export default function AddProductPriceDetail({
           productPriceHeader_id: productPriceHeader._id,
         });
         setErrors({});
+        setLoading(false)
         alert(addedPrice.message);
         const updatedProductPriceHeader = addedPrice.data.find(
           (item) => item._id === productPriceData.productPriceHeader_id
@@ -154,11 +161,13 @@ export default function AddProductPriceDetail({
           console.log("Product Detail:", productDetail);
           updateProductPriceHeader(updatedProductPriceHeader)
           updateProductPriceDetail(productDetail)
+          setLoading(false)
           onClose();
         }
       }
     } catch (error) {
       console.error("Failed to add product price:", error);
+      setLoading(false)
       alert(error);
     }
   };
@@ -217,9 +226,13 @@ export default function AddProductPriceDetail({
           />
 
           <div className="flex-row-center">
+          {loading ? (
+            <ClipLoader size={30} color="#2392D0" loading={loading} />
+          ) : (
             <div className="login-button" style={{ width: 200 }}>
-              <Button type="submit" text="Thêm chương trình giá" />
+            <Button type="submit" text="Thêm" />
             </div>
+          )}
           </div>
         </form>
       </div>

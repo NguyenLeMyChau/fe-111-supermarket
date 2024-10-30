@@ -11,6 +11,7 @@ import Select from "react-dropdown-select";
 import { deleteProductPriceDetail } from "../../services/priceRequest";
 import { MdDelete } from "react-icons/md";
 import { useAccessToken, useAxiosJWT } from "../../utils/axiosInstance";
+import ClipLoader from "react-spinners/ClipLoader";
 
 export default function PriceDetail() {
   const dispatch = useDispatch();
@@ -24,39 +25,42 @@ export default function PriceDetail() {
   const [isEditModalDetailOpen, setIsEditModalDetailOpen] = useState(false);
   const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
   const [isOpenNewPrice,setIsOpenNewPrice]= useState(false);
+  const [loading, setLoading] = useState(false); 
+
   // Filter state
   const [filters, setFilters] = useState({
     productName: "",
     unit: "",
-    minPrice: "",
-    maxPrice: "",
+    category:"",
   });
 console.log(productDetail,productPriceHeader)
 
 
 const handleDeleteClick = async (event, productPriceHeader) => {
   event.stopPropagation();
-
+if(filteredProductHeader?.status !== "inactive") return
   const confirmDelete = window.confirm("Có chắn chắn xóa giá sản phẩm");
   if (!confirmDelete) return; // Exit if user cancels
-
+    setLoading(true)
 
     const deletedPriceDetail = await deleteProductPriceDetail(accessToken, axiosJWT, dispatch, productPriceHeader._id);
     if(deletedPriceDetail) {
+      setLoading(false)
       alert(deletedPriceDetail.message)
       const updatedProductPriceHeader = deletedPriceDetail.allProductPrices?.find(
         (item) => item._id === productPriceHeader.productPriceHeader_id
       );
-      console.log(deletedPriceDetail.allProductPrices)
-      console.log(productPriceHeader)
-      console.log(updatedProductPriceHeader)
     if (updatedProductPriceHeader) {
+      setLoading(false)
       const productDetail = updatedProductPriceHeader.productPrices || [];
       updateProductPriceHeader(updatedProductPriceHeader)
       updateProductPriceDetail(productDetail)
     }
   }
-    else alert(deletedPriceDetail.message)
+  
+    else {
+      setLoading(false)
+      alert(deletedPriceDetail.message)}
  
 };
 
@@ -130,12 +134,17 @@ useState(productPriceHeader);
       width: '5%',
       className: 'text-center',
       render: (text, record) => (
-        <MdDelete
-          style={{ color: 'red', cursor: 'pointer' }}
-          size={25}
-          onClick={(event) => handleDeleteClick(event, record)}
-        />
+        loading ? (
+          <ClipLoader size={25} color="#2392D0" loading={loading} />
+        ) : (
+          <MdDelete
+            style={{ color: 'red', cursor: 'pointer' }}
+            size={25}
+            onClick={(event) => handleDeleteClick(event, record)}
+          />
+        )
       ),
+      
     },];
   const handleEditDetailClick = (event, productPriceDetail) => {
     event.stopPropagation();
@@ -174,29 +183,18 @@ useState(productPriceHeader);
 
     if (filters.unit) {
       filteredData = filteredData.filter((detail) =>
-        detail.product?.unit_id.description
+        detail.unit_id.description
           ?.toLowerCase()
           .includes(filters.unit.toLowerCase())
       );
     }
 
-    if (filters.minPrice) {
-      filteredData = filteredData.filter(
-        (detail) => detail.price >= Number(filters.minPrice)
-      );
-    }
 
-    if (filters.maxPrice) {
-      filteredData = filteredData.filter(
-        (detail) => detail.price <= Number(filters.maxPrice)
-      );
-    }
-
-    if (filters.itemCode) {
+    if (filters.item_code) {
       filteredData = filteredData.filter((detail) =>
-        detail.product?.item_code
+        detail.item_code
           ?.toLowerCase()
-          .includes(filters.itemCode.toLowerCase())
+          .includes(filters.item_code.toLowerCase())
       );
     }
 
@@ -218,7 +216,7 @@ useState(productPriceHeader);
       unit: "",
       minPrice: "",
       maxPrice: "",
-      itemCode: "",
+      item_code: "",
       productType: "",
     });
     setFilteredProductDetails(productDetail);
@@ -299,8 +297,8 @@ useState(productPriceHeader);
             <label>Mã hàng:</label>
             <input
               type="text"
-              name="itemCode"
-              value={filters.itemCode}
+              name="item_code"
+              value={filters.item_code}
               onChange={handleFilterChange}
             />
           </div>
@@ -337,26 +335,6 @@ useState(productPriceHeader);
                 label: unit.description,
               }))}
               placeholder="Chọn đơn vị tính"
-            />
-          </div>
-
-          <div className="filter-item">
-            <label>Giá tối thiểu:</label>
-            <input
-              type="number"
-              name="minPrice"
-              value={filters.minPrice}
-              onChange={handleFilterChange}
-            />
-          </div>
-
-          <div className="filter-item">
-            <label>Giá tối đa:</label>
-            <input
-              type="number"
-              name="maxPrice"
-              value={filters.maxPrice}
-              onChange={handleFilterChange}
             />
           </div>
 

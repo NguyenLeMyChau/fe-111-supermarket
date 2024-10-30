@@ -17,6 +17,23 @@ const getAllPrices = async (accessToken, axiosJWT, dispatch) => {
 };
 
 export { getAllPrices };
+const getAllPriceDetail = async (accessToken, axiosJWT, dispatch) => {
+    dispatch(getPriceStart());
+    try {
+        const response = await axiosJWT.get(`/api/price/productPriceDetail`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        dispatch(getPriceSuccess(response.data));
+        return response.data;
+    } catch (error) {
+        console.error('Get all prices failed:', error);
+        dispatch(getPriceFailed());
+    }
+};
+
+export { getAllPriceDetail };
 
 const addProductPrice = async (accessToken, axiosJWT,dispatch, newPriceData) => {
     dispatch(getPriceStart());

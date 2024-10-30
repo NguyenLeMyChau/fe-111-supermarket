@@ -6,18 +6,20 @@ import { format } from 'date-fns';
 import { validatePriceHeaderData } from '../../utils/validation';
 import { updateProductPrice } from '../../services/priceRequest';
 import { useDispatch } from 'react-redux';
+import ClipLoader from 'react-spinners/ClipLoader';
 
 export default function EditProductPrice({ onClose, priceId, initialData }) {
   const axiosJWT = useAxiosJWT();
   const accessToken = useAccessToken();
   const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false); 
 
   const [productPriceData, setProductPriceData] = useState(initialData || {
     productPriceHeaderId:'',
     description: '',
     startDate: format(new Date(), 'dd-MM-yyyy'), 
     endDate: '',
-    status: 'inactive',
+    status: 'pauseactive',
   });
 
   useEffect(() => {
@@ -41,18 +43,28 @@ export default function EditProductPrice({ onClose, priceId, initialData }) {
   };
   const handleCheckboxChange = (e) => {
     const { checked } = e.target;
-    setProductPriceData((prevData) => ({
-      ...prevData,
-      status: checked ? 'active' : 'inactive', // Update status based on checkbox
-    }));
+  
+    if (initialData.status === 'inactive') {
+      setProductPriceData((prevData) => ({
+        ...prevData,
+        status: checked ? 'active' : 'inactive', // Update status based on checkbox
+      }));
+    } else {
+      setProductPriceData((prevData) => ({
+        ...prevData,
+        status: checked ? 'active' : 'pauseactive', // Update status based on checkbox
+      }));
+    }
   };
+  
   const handleUpdateProductPrice = async (e) => {
     e.preventDefault();
-
+    setLoading(true)
     const validationErrors = validatePriceHeaderData(productPriceData);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
         alert(errors)
+        setLoading(false)
       return;
     }
 
@@ -62,11 +74,15 @@ export default function EditProductPrice({ onClose, priceId, initialData }) {
       if (updatedPrice) {
         console.log('Product price updated:', updatedPrice);
         alert('Cập nhật chương trình giá thành công');
+        setLoading(false)
         onClose()      
-      }else alert(messages.join('\n'));
+      }else {
+        setLoading(false)
+        alert(messages.join('\n'));}
     } catch (error) {
       console.error('Failed to update product price:', error);
-      // alert('Lỗi khi cập nhật sản phẩm');
+      setLoading(false)
+      alert('Lỗi khi cập nhật sản phẩm');
     }
   };
 
@@ -88,7 +104,7 @@ export default function EditProductPrice({ onClose, priceId, initialData }) {
             value={productPriceData.description}
             onChange={handleChange}
             error={errors.description}
-            disabled={initialData.status === 'active'}
+            disabled={initialData.status !== 'inactive'}
           />
 
           <Input
@@ -99,7 +115,7 @@ export default function EditProductPrice({ onClose, priceId, initialData }) {
             onChange={handleChange}
             error={errors.startDate}
             // min={initialData.status !== 'active' ? format(new Date(), 'yyyy-MM-dd') : null}
-            disabled={initialData.status === 'active'}
+            disabled={initialData.status !== 'inactive'}
           />
 
           <Input
@@ -110,7 +126,7 @@ export default function EditProductPrice({ onClose, priceId, initialData }) {
             onChange={handleChange}
             error={errors.endDate}
             min={initialData.status === 'active' ? format(new Date(), 'yyyy-MM-dd') : productPriceData.startDate} // Set min to today if status is active
-            disabled={initialData.status === 'active'}
+            disabled={initialData.status !== 'inactive'}
             />
           <Input
                     label='Trạng thái'
@@ -120,9 +136,13 @@ export default function EditProductPrice({ onClose, priceId, initialData }) {
                     onChange={handleCheckboxChange}
           />
           <div className='flex-row-center'>
-            <div className='login-button' style={{ width: 200 }}>
-              <Button type='submit' text='Cập nhật chương trình giá' />
+          {loading ? ( <ClipLoader size={30} color="#2392D0" loading={loading} />
+        ) : (
+            <div className='login-button' style={{ width: 200 }}>      
+            <Button type='submit' text='Cập nhật' />
             </div>
+          )}
+           
           </div>
         </form>
       </div>

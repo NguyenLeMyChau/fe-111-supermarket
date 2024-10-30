@@ -152,7 +152,7 @@ export const validatePriceHeaderData = (priceHeaderData) => {
     }
 
     // Check if status is valid ('active' or 'inactive')
-    if (!['active', 'inactive'].includes(priceHeaderData.status)) {
+    if (!['active', 'inactive','pauseactive'].includes(priceHeaderData.status)) {
         return  errors = 'Trạng thái không hợp lệ';
     }
 

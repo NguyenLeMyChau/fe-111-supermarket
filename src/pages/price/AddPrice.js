@@ -7,6 +7,7 @@ import { format } from 'date-fns';
 import { validatePriceHeaderData } from '../../utils/validation';
 import { addProductPrice, copyProductPrice } from '../../services/priceRequest';
 import { useDispatch } from 'react-redux';
+import ClipLoader from 'react-spinners/ClipLoader';
 
 export default function AddProductPrice({ isOpen, onClose ,productPriceHeader,title}) {
   const axiosJWT = useAxiosJWT();
@@ -18,7 +19,7 @@ console.log(productPriceHeader)
     description: '',
     startDate: format(new Date(), 'yyyy-MM-dd'), // Default to today
     endDate: '',
-    status: 'active',
+    status: 'inactive',
   });
 
   const [errors, setErrors] = useState({});
@@ -37,11 +38,12 @@ console.log(productPriceHeader)
         setErrors(validationErrors);
         console.log(validationErrors)
         alert(errors);
+        setLoading(false)
         return;
     }
     try {
       let addedPrice=null
-      if(productPriceHeader._id){
+      if(productPriceHeader){
           addedPrice = await copyProductPrice(accessToken, axiosJWT,dispatch, productPriceData,productPriceHeader._id);
       }else {  addedPrice = await addProductPrice(accessToken, axiosJWT,dispatch, productPriceData);}
       if (addedPrice) {
@@ -93,10 +95,15 @@ console.log(productPriceHeader)
           />
 
           <div className='flex-row-center'>
-            <div className='login-button' style={{ width: 200 }}>
-              <Button type='submit' text='Thêm chương trình giá' disabled={loading}/>
+            {loading ? (
+          <ClipLoader size={30} color="#2392D0" loading={loading} />
+        ) : (
+            <div className='login-button' style={{ width: 200 }}>      
+              <Button type='submit' text='Thêm' disabled={loading}/>
             </div>
+          )}
           </div>
+     
         </form>
       </div>
     </Modal>
