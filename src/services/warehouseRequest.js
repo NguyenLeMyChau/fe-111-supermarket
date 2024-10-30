@@ -153,6 +153,28 @@ const cancelBill = async (billId, cancel_reason, accessToken, axiosJWT) => {
     }
 }
 
+const addStocktaking = async (stocktakingData, navigate, accessToken, axiosJWT) => {
+    const { accountId, stocktakingId, reason, productList } = stocktakingData;
+    try {
+        const response = await axiosJWT.post(`/api/warehouse/add-stocktaking`, {
+            accountId,
+            stocktakingId,
+            reason,
+            productList,
+        }, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        alert('Nhập phiếu kiểm kê kho thành công!');
+        navigate('/admin/stocktaking');
+        return response.data;
+    } catch (error) {
+        console.error('Add stocktaking failed:', error);
+        alert(error.response ? error.response.data.message : error.message);
+    }
+}
+
 export {
     getAllWarehouse,
     getAllOrder,
@@ -162,5 +184,6 @@ export {
     getAllBill,
     updateBill,
     getAllTransaction,
-    cancelBill
+    cancelBill,
+    addStocktaking
 };

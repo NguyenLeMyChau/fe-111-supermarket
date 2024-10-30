@@ -14,6 +14,7 @@ import { AiOutlineTag, AiOutlineTransaction } from "react-icons/ai";
 import { PiInvoice } from "react-icons/pi";
 import { DiUnitySmall } from "react-icons/di";
 import { IoPersonCircleOutline } from "react-icons/io5";
+import { LiaFileInvoiceSolid } from "react-icons/lia";
 
 import { createAxiosInstance } from '../utils/util';
 import { logoutSuccess } from '../store/reducers/authSlice';
@@ -92,6 +93,7 @@ const useMenuItems = (onchange) => {
                         { Icon: MdOutlineInventory2, label: "Inventory", text: "Kho", path: '/admin/inventory' },
                         { Icon: BsFileBarGraph, label: "Bill", text: "Nhập kho", path: '/admin/bill' },
                         { Icon: AiOutlineTransaction, label: "Transaction", text: "Giao dịch", path: '/admin/transaction' },
+                        { Icon: LiaFileInvoiceSolid, label: "Stocktaking", text: "Kiểm kê", path: '/admin/stocktaking' },
                     ]
                 },
                 {

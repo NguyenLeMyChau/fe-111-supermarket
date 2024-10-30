@@ -33,9 +33,14 @@ const BillDetail = ({ bill }) => {
 
                 {bill.status === false && (
                     <div className='flex-row'>
-                        <div className="info-group" style={{ width: '100%', marginLeft: 50 }}>
-                            <label>Lý do huỷ phiếu:</label>
+                        <div className="info-group" style={{ width: 450, marginLeft: 50 }}>
+                            <label>Lý do huỷ:</label>
                             <span className="cancel-reason">{bill.cancel_reason}</span>
+                        </div>
+
+                        <div className="info-group">
+                            <label>Ngày huỷ phiếu:</label>
+                            <span className="cancel-reason">{formatDate(bill.updatedAt)}</span>
                         </div>
                     </div>
                 )}
