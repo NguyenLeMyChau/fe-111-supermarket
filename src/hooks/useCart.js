@@ -14,7 +14,7 @@ const useCart = () => {
     const user = useSelector((state) => state.auth?.login?.currentUser) || {};
     const [setLoadingCart] = useState(false);
 
-    const addCart = async (productId, unitId, quantity, total) => {
+    const addCart = async (productId, unitId,quantity, total) => {
         await addProductToCart(accessToken, axiosJWT, user.id, productId, unitId, quantity, total);
         // await fetchDataCart(setLoadingCart);
     }

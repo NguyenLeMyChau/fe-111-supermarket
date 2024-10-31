@@ -13,6 +13,7 @@ export default function CategoryCustomer() {
     const { fetchDataShop } = useCommonDataCustomer();
     const [loadingShop, setLoadingShop] = useState(true);
     const categoriesCustomer = useSelector((state) => state.categoryCustomer?.categoriesCustomer) || [];
+    console.log(categoriesCustomer)
 
 
     // useEffect to fetch shop data
@@ -75,8 +76,8 @@ export default function CategoryCustomer() {
                             className='product-category'
                             onClick={() => navigate(`/customer/product`, { state: { category } })}
                         >
-                            <img src={category.img} alt={category.name} />
-                            <span>{category.name}</span>
+                            <img src={category.category.img} alt={category.category.name} />
+                            <span>{category.category.name}</span>
                             <p>{category.products.length} sản phẩm</p>
                         </div>
                     ))}

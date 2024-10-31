@@ -19,8 +19,9 @@ export default function Cart() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const cart = useSelector(state => state.cart?.carts);
+    const user = useSelector((state) => state.auth?.login?.currentUser) || {};
     console.log('cart', cart);
-
+    console.log('user', user);
     useEffect(() => {
         const loadCartData = async () => {
             await fetchDataCart(setIsLoading);

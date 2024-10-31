@@ -2,7 +2,7 @@ import React from 'react';
 import Dropdown from 'react-dropdown-select';
 import './Dropdownpicker.scss';
 
-export default function Dropdownpicker({ label, options, value, onChange, error }) {
+export default function Dropdownpicker({ label, options, value, onChange, error,disabled }) {
     // Chuyển đổi dữ liệu tùy chọn thành định dạng phù hợp cho react-dropdown-select
     const formattedOptions = options.map(option => ({
         value: option.value,
@@ -15,7 +15,7 @@ export default function Dropdownpicker({ label, options, value, onChange, error 
                 <label className="dropdown-label">{label}</label>
                 <Dropdown 
                 style={{ width: 300,fontSize:12}}
-                    
+                    // disabled={disabled}
                     options={formattedOptions}
                     onChange={values => onChange(values[0]?.value)}
                     values={formattedOptions.filter(option => option.value === value)} // Giá trị đã chọn
@@ -23,6 +23,7 @@ export default function Dropdownpicker({ label, options, value, onChange, error 
                     searchable
                     clearable
                     className={`dropdown-select ${error ? 'dropdown-error' : ''}`} // Thêm class cho CSS
+                    disabled={disabled}
                 />
             </div>
             {error && <div className="error-message"><span className="error-icon">!</span>{error}</div>}

@@ -170,12 +170,15 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine ,onChan
       };    
       const handleSubmit = async (e) => {
         e.preventDefault();
-        const validationErrors = validatePromotionDetailData(formData);
-        if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors);
-            alert(JSON.stringify(errors))
-            return;
-        }
+    setIsLoading(true)
+    const validationErrors = validatePromotionDetailData(formData,promotionLine.type);
+    console.log(validationErrors)
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      setIsLoading(false)
+      alert(validationErrors)
+      return;
+    }
         try {
             setIsLoading(true);
             const promotions = await updatePromotionDetail(promotionDetail._id, formData,dispatch, accessToken, axiosJWT);
@@ -434,7 +437,7 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine ,onChan
                         <div className="login-button" style={{ width: 200 }}>
                             <Button
                                 type="submit"
-                                text={isLoading ? 'Đang cập nhật...' : 'Cập nhật chi tiết khuyến mãi'}
+                                text={isLoading ? 'Đang cập nhật...' : 'Cập nhật'}
                                
                                 disabled={status !== 'inactive' ||isLoading}
                             />

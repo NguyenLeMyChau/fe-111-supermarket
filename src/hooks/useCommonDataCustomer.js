@@ -24,6 +24,7 @@ const useCommonDataCustomer = () => {
 
     const fetchDataCart = async (setLoading) => {
         try {
+            console.log(user)
             setLoading(true); // Bắt đầu loading
             await getCartById(dispatch, accessToken, axiosJWT, user.id);
         } catch (error) {

@@ -36,7 +36,7 @@ export default function Promotion() {
   const [isEditModalDetailOpen, setIsEditModalDetailOpen] = useState(false);
   const [loading, setLoading] = useState(false); // Trạng thái loading
   const [IsOpenNewLine, setIsOpenNewLine] = useState(false);
-
+  const [isOpenNewDetail,setIsOpenNewDetail]= useState(false);
 console.log(promotions)
   const typeMapping = {
     'amount': 'Giảm giá sản phẩm',
@@ -459,15 +459,23 @@ const handleDeleteClickDetail = async (event, promotionDetail) => {
               ? promotionDetailColumnAmount
               : promotionDetailColumnPer
           }          itemsPerPage={8}
-          renderModal={(onClose) => (
-            <AddPromotionDetail
-              isOpen={true}
-              onClose={onClose}
-              promotionLine={currentLine}
-            />
-          )}
+          onButtonClick={() => setIsOpenNewDetail(true)}
+          // renderModal={(onClose) => (
+          //   <AddPromotionDetail
+          //     isOpen={true}
+          //     onClose={onClose}
+          //     promotionLine={currentLine}
+          //   />
+          // )}
         />
       </Modal>
+
+      {isOpenNewDetail && currentLine?.status === "inactive" ? (<AddPromotionDetail
+                  isOpen={isOpenNewDetail}
+                  onClose={() => setIsOpenNewDetail(false)}       
+                  promotionLine={currentLine}
+                />):null}
+
       {IsOpenNewLine && (
          <AddPromotionLine
           isOpen={IsOpenNewLine}

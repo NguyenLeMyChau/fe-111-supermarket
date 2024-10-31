@@ -11,20 +11,13 @@ export default function ProductDetailCustomer() {
     const navigate = useNavigate();
     const { product } = location.state || {};
     const containerRef = useRef(null);
-
     const categoriesCustomer = useSelector((state) => state.categoryCustomer?.categoriesCustomer) || [];
     const { getUnitDescription } = useAddBill();
-
     const [selectedUnit, setSelectedUnit] = useState(null);
     const [relatedProducts, setRelatedProducts] = useState([]);
     const [isDragging, setIsDragging] = useState(false);
     const [startX, setStartX] = useState(0);
     const [scrollLeft, setScrollLeft] = useState(0);
-
-    const promotionPrice = 35000;
-    const originalPrice = 50000;
-    const normalPrice = 60000;
-    const promotionDescription = 'Giảm giá 30%';
 
     const handleSelectUnit = (unit) => {
         setSelectedUnit(unit);
@@ -48,22 +41,42 @@ export default function ProductDetailCustomer() {
     const handleMouseLeave = () => setIsDragging(false);
 
     useEffect(() => {
-        if (product.unit_convert.length > 0) {
+        if (product?.unit_convert?.length > 0) {
             setSelectedUnit(product.unit_convert[0]);
         }
-    }, [product.unit_convert]);
+    }, [product]);
 
     useEffect(() => {
-        if (product.category_id) {
-            const filteredProducts = categoriesCustomer?.find(p => p._id === product.category_id);
+        if (product?.category_id) {
+            const filteredProducts = categoriesCustomer.find(c => c.category._id === product.category_id);
             const related = filteredProducts?.products.filter(p => p._id !== product._id) || [];
             setRelatedProducts(related);
         }
-    }, [product.category_id, categoriesCustomer, product._id]);
+    }, [product, categoriesCustomer]);
 
     if (!product) {
         return <div>Không tìm thấy sản phẩm</div>;
     }
+
+    const findPriceByUnitAndCode = (unitId, itemCode) => {
+        for (const category of categoriesCustomer) {
+            const productMatch = category.products.find(p => p.item_code === itemCode && p.unit_id._id === unitId);
+            if (productMatch) {
+                return productMatch.price;
+            }
+        }
+        return null;
+    };
+
+    const pricePromotionByItem = (unitId, itemCode) => {
+        for (const category of categoriesCustomer) {
+            const productMatch = category.products.find(p => p.item_code === itemCode && p.unit_id._id === unitId);
+            if (productMatch) {
+                return productMatch.promotions || [];
+            }
+        }
+        return null;
+    };
 
     return (
         <div className='cart-customer-container'>
@@ -74,7 +87,7 @@ export default function ProductDetailCustomer() {
                 <div className='main-header'>
                     <div className='product-customer-header-content'>
                         <IoChevronBackOutline size={25} onClick={() => navigate(-1)} />
-                        <h3>{product.name}</h3>
+                        <h3>{product.name} - {product.unit_id.description}</h3>
                     </div>
                 </div>
 
@@ -85,38 +98,46 @@ export default function ProductDetailCustomer() {
 
                     <div className="right">
                         <ul className='unit-list'>
-                            {product.unit_convert.map((unit) => (
-                                <li key={unit.unit} className='unit-item'>
-                                    <img src={unit.img} alt={unit.name} className='unit-img' />
-                                    <div className='unit-details'>
-                                        <p>{getUnitDescription(unit.unit)}</p>
-                                    </div>
-
-                                    <input
-                                        type="checkbox"
-                                        checked={selectedUnit === unit}
-                                        onChange={() => handleSelectUnit(unit)}
-                                        style={{ width: 20, height: 20 }}
-                                    />
-
-                                    <div className="price">
-                                        {promotionPrice ? (
-                                            <>
-                                                <div style={{ textAlign: "center" }}>
-                                                    <span className="promotion-price">{formatCurrency(promotionPrice)}</span>
+                            {product.unit_convert.map((unit) => {
+                                const promotions = pricePromotionByItem(unit.unit, product.item_code);
+                                const originalPrice = findPriceByUnitAndCode(unit.unit, product.item_code);
+                                
+                                return (
+                                    <li key={unit.unit} className='unit-item'>
+                                        <img src={unit.img} alt={unit.name} className='unit-img' />
+                                        <div className='unit-details'>
+                                            <p>{getUnitDescription(unit.unit)}</p>
+                                        </div>
+                                        <input
+                                            type="checkbox"
+                                            checked={selectedUnit === unit}
+                                            onChange={() => handleSelectUnit(unit)}
+                                            style={{ width: 20, height: 20 }}
+                                        />
+                                        <div className="price">
+                                            {promotions?.some(promo => promo.type === "amount") ? (
+                                                <>
+                                                    <span className="promotion-price">
+                                                        {formatCurrency(originalPrice - promotions.find(promo => promo.type === "amount")?.amount_donate)}
+                                                    </span>
                                                     <br />
                                                     <span className="original-price">{formatCurrency(originalPrice)}</span>
-                                                </div>
-                                            </>
-                                        ) : (
-                                            <span className="normal-price">{formatCurrency(normalPrice)}</span>
+                                                </>
+                                            ) : promotions?.some(promo => promo.type === "quantity") ? (
+                                                <span className="original-price">{formatCurrency(originalPrice)}</span>
+                                            ) : (
+                                                <span className="normal-price">{formatCurrency(originalPrice)}</span>
+                                            )}
+                                        </div>
+                                        {promotions && (
+                                            <p className="promotion-description">
+                                                {promotions[0]?.description}
+                                            </p>
                                         )}
-                                    </div>
-                                    {promotionDescription && <p className="promotion-description">{promotionDescription}</p>}
-                                </li>
-                            ))}
+                                    </li>
+                                );
+                            })}
                         </ul>
-
                         <button className="buy-button" style={{ width: '100%' }}>MUA</button>
                     </div>
                 </div>

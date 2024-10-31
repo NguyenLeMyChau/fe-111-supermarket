@@ -74,9 +74,7 @@ const UpdatePromotionLine = ({ promotionLine, onClose, promotionHeader }) => {
             onClose();}
         } catch (error) {
             alert('Cập nhật dòng khuyến mãi thất bại');
-        } finally {
-            setIsLoading(false);
-        }
+        } 
     };
 
     const today = new Date().toISOString().slice(0, 10);

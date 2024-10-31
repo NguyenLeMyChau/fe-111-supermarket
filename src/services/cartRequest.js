@@ -10,6 +10,7 @@ const getCartById = async (dispatch, accessToken, axiosJWT, accountId) => {
                 Authorization: `Bearer ${accessToken}`,
             },
         });
+        console.log(response.data)
         dispatch(getCartSuccess(response.data));
         return response.data;
     } catch (error) {
@@ -20,7 +21,6 @@ const getCartById = async (dispatch, accessToken, axiosJWT, accountId) => {
 const getPromotionByProductId = async (product_id) => {
     try {
         const response = await axios.post(`http://localhost:5000/api/auth/get-promotion-by-product`, { product_id });
-        console.log(response.data)
         return response.data;
     } catch (error) {
         console.error('Get get-promotion-by-product failed:', error);

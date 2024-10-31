@@ -32,6 +32,7 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
   });
   const [products, setProducts] = useState([]);
   const [productItem, setProductItem] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [promotionDetailData, setPromotionDetailData] = useState({
     product_id: null,
     quantity: "",
@@ -44,6 +45,7 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
     unit_id: null,
     unit_id_donate: null,
     promotionLine_id: promotionLine._id,
+    description:"",
   });
 
   const fetchProducts = async () => {
@@ -86,10 +88,6 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
       setProductItem(filteredProductItem);
     }
   }, [products]);
-  
-  
-  console.log(products);
-  console.log(productItem);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -173,11 +171,15 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
       }
   };
   const handleAddPromotionDetail = async (e) => {
+   
     e.preventDefault();
-
-    const validationErrors = validatePromotionDetailData(promotionDetailData);
+    setIsLoading(true)
+    const validationErrors = validatePromotionDetailData(promotionDetailData,promotionLine.type);
+    console.log(validationErrors)
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
+      setIsLoading(false)
+      alert(validationErrors)
       return;
     }
 
@@ -441,9 +443,14 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
           )}
 
           <div className="flex-row-center">
-            <div className="login-button" style={{ width: 200 }}>
-              <Button type="submit" text="Thêm dòng khuyến mãi" />
-            </div>
+          <div className="login-button" style={{ width: 200 }}>
+                            <Button
+                                type="submit"
+                                text={isLoading ? 'Đang thêm...' : 'Thêm'}
+                               
+                                
+                            />
+                        </div>
           </div>
         </form>
       </div>

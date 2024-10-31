@@ -14,7 +14,7 @@ export default function HeaderCustomer() {
     const login = useSelector((state) => state.auth?.login?.currentUser);
     const axiosJWT = createAxiosInstance(login, dispatch, logoutSuccess);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
+console.log(login)
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
     };
