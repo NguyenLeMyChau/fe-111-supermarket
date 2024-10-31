@@ -1,4 +1,5 @@
 import { getOrderFailed, getOrderStart, getOrderSuccess } from "../store/reducers/orderSlice";
+import { getStocktakingFailed, getStocktakingStart, getStocktakingSuccess } from "../store/reducers/stocktakingSlice";
 import { getTransactionFailed, getTransactionStart, getTransactionSuccess } from "../store/reducers/transactionSlice";
 import { getWarehouseFailed, getWarehouseStart, getWarehouseSuccess } from "../store/reducers/warehouseSlice";
 
@@ -175,6 +176,23 @@ const addStocktaking = async (stocktakingData, navigate, accessToken, axiosJWT) 
     }
 }
 
+const getAllStocktaking = async (accessToken, axiosJWT, dispatch) => {
+    dispatch(getStocktakingStart());
+    try {
+        const response = await axiosJWT.get(`/api/warehouse/get-all-stocktaking`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        dispatch(getStocktakingSuccess(response.data));
+        return response.data;
+    } catch (error) {
+        dispatch(getStocktakingFailed());
+        console.error('Get all stocktaking failed:', error);
+        alert(error.response ? error.response.data.message : error.message);
+    }
+}
+
 export {
     getAllWarehouse,
     getAllOrder,
@@ -185,5 +203,6 @@ export {
     updateBill,
     getAllTransaction,
     cancelBill,
-    addStocktaking
+    addStocktaking,
+    getAllStocktaking
 };

@@ -7,102 +7,63 @@ import { useSelector } from 'react-redux';
 import Modal from '../../components/modal/Modal';
 import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
-import { MdAutoDelete, MdCancel, MdCheckCircle } from "react-icons/md";
-import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
-import ClipLoader from 'react-spinners/ClipLoader'; // Import ClipLoader
+import StocktakingDetail from './StocktakingDetail';
 
 export default function Stocktaking() {
     const navigate = useNavigate();
     const location = useLocation();
-    const accessToken = useAccessToken();
-    const axiosJWT = useAxiosJWT();
 
-    const orders = useSelector((state) => state.order?.orders);
-    const sortedOrders = [...orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    const stocktakings = useSelector((state) => state.stocktaking?.stocktakings) || [];
+    const sortedOrders = Array.isArray(stocktakings) ? [...stocktakings].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) : [];
+    console.log('stocktakings', stocktakings);
 
     const isAddBill = location.pathname.includes('add-stocktaking');
     const [isBillDetail, setIsBillDetail] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [loadingBillId, setLoadingBillId] = useState(null); // State to track the currently loading bill ID
-    const [isCancelModalOpen, setIsCancelModalOpen] = useState(false); // State to control the cancel reason modal
-    const [cancelBillId, setCancelBillId] = useState(null); // State to track the bill ID being canceled
 
     const orderColumn = [
         {
-            title: 'Mã phiếu nhập kho',
-            dataIndex: 'bill_id',
-            key: 'bill_id',
+            title: 'Mã phiếu kiểm kê',
+            dataIndex: 'stocktaking_id',
+            key: 'stocktaking_id',
             width: '15%',
+            render: (text, record) => record.stocktakingHeader ? record.stocktakingHeader.stocktaking_id : 'Không xác định'
         },
         {
-            title: 'Người nhập phiếu',
+            title: 'Người kiểm kê',
             dataIndex: 'employeeName',
             key: 'employeeName',
             width: '20%',
             render: (text, record) => record.employee ? record.employee.name : 'Không xác định'
         },
         {
-            title: 'Ngày nhập phiếu',
+            title: 'Lý do',
+            dataIndex: 'reason',
+            key: 'reason',
+            width: '40%',
+            render: (text, record) => record.stocktakingHeader ? record.stocktakingHeader.reason : 'Không xác định'
+
+        },
+        {
+            title: 'Ngày tạo phiếu',
             dataIndex: 'createdAt',
             key: 'createdAt',
             width: '15%',
-            render: (date) => (
-                <div>
-                    <div>{formatDate(date)}</div>
-                    <div style={{ fontSize: '12px', color: 'gray' }}>
-                        {formatDistanceToNow(new Date(date), { addSuffix: true, locale: vi })}
+            render: (text, record) => {
+                const validDate = record.stocktakingHeader.createdAt;
+                return validDate ? (
+                    <div>
+                        <div>{formatDate(validDate)}</div>
+                        <div style={{ fontSize: '12px', color: 'gray' }}>
+                            {formatDistanceToNow(validDate, { addSuffix: true, locale: vi })}
+                        </div>
                     </div>
-                </div>
-            )
-        },
-        {
-            title: 'Huỷ phiếu',
-            key: 'edit',
-            width: '10%',
-            className: 'text-center',
-            render: (text, record) => (
-                record.status ? (
-                    loading && loadingBillId === record._id ? (
-                        <ClipLoader size={30} color="#2392D0" loading={loading} />
-                    ) : (
-                        <MdAutoDelete
-                            style={{ color: 'red', cursor: 'pointer' }}
-                            size={25}
-                            onClick={(event) => {
-                                event.stopPropagation(); // Ngăn chặn sự kiện click của hàng bảng
-                                setCancelBillId(record._id); // Set the bill ID to be canceled
-                                setIsCancelModalOpen(true); // Open the cancel reason modal
-                            }}
-                        />
-                    )
                 ) : (
-                    <MdAutoDelete
-                        style={{ color: 'gray', cursor: 'not-allowed' }}
-                        size={25}
-                    />
-                )
-            ),
+                    <div>Không xác định</div>
+                );
+            }
         },
-        {
-            title: 'Trạng thái',
-            key: 'status',
-            width: '10%',
-            className: 'text-center',
-            render: (text, record) => (
-                record.status ? (
-                    <MdCheckCircle
-                        style={{ color: 'green', cursor: 'pointer' }}
-                        size={25}
-                    />
-                ) : (
-                    <MdCancel
-                        style={{ color: 'red', cursor: 'pointer' }}
-                        size={25}
-                    />
-                )
-            ),
-        },
+
     ];
 
 
@@ -124,7 +85,7 @@ export default function Stocktaking() {
                         onClose={() => setIsBillDetail(false)}
                         width={'60%'}
                     >
-                        {/* <BillDetail bill={selectedOrder} /> */}
+                        <StocktakingDetail bill={selectedOrder} />
                     </Modal>
                 ) : (
                     <>

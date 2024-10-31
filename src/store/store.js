@@ -23,6 +23,7 @@ import cartReducer from './reducers/cartSlice';
 import categoryCustomer from './reducers/categoryCustomerSlice';
 import productCustomer from './reducers/productCustomerSlice';
 import invoiceCustomer from './reducers/invoiceCustomerSlice';
+import stocktakingReducer from './reducers/stocktakingSlice';
 
 
 const persistConfig = {
@@ -49,7 +50,8 @@ const rootReducer = combineReducers(
         cart: cartReducer,
         categoryCustomer: categoryCustomer,
         productCustomer: productCustomer,
-        invoiceCustomer: invoiceCustomer
+        invoiceCustomer: invoiceCustomer,
+        stocktaking: stocktakingReducer,
     });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

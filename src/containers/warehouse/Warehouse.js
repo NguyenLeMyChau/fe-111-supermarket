@@ -8,6 +8,8 @@ import ProductWarehouse from './ProductWarehouse';
 import Modal from '../../components/modal/Modal';
 import Button from '../../components/button/Button';
 import Select from 'react-select';
+import { formatDate } from '../../utils/fotmatDate';
+import useAddBill from '../../hooks/useAddBill';
 
 export default function Warehouse() {
     const navigate = useNavigate();
@@ -15,6 +17,8 @@ export default function Warehouse() {
 
     const warehouses = useSelector((state) => state.warehouse?.warehouse);
     const productList = useSelector((state) => state.product?.products) || [];
+    const transactions = useSelector((state) => state.transaction?.transactions) || [];
+    const { getUnitDescription } = useAddBill();
 
     const [products, setProducts] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -29,6 +33,7 @@ export default function Warehouse() {
 
     const [filteredWarehouses, setFilteredWarehouses] = useState(warehouses);
     console.log('filteredWarehouses', filteredWarehouses);
+    const [filteredTransactions, setFilteredTransactions] = useState([]); // State for filtered transactions
 
     const warehouseColumn = [
         { title: 'Mã hàng', dataIndex: 'item_code', key: 'item_code', width: '10%', className: 'text-center' },
@@ -72,37 +77,34 @@ export default function Warehouse() {
         },
     ];
 
-    const productColumns = [
-        { title: 'Mã hàng', dataIndex: 'item_code', key: 'item_code', width: '10%', className: 'text-center' },
-        // {
-        //     title: 'Tên sản phẩm',
-        //     dataIndex: 'product',
-        //     key: 'product_name',
-        //     width: '30%',
-        // },
-        { title: 'Tồn kho', dataIndex: 'stock_quantity', key: 'stock_quantity', width: '15%', className: 'text-center' },
+    const transactionColumn = [
+        { title: 'Mã giao dịch', dataIndex: '_id', key: '_id', width: '25%' },
+        { title: 'Kiểu', dataIndex: 'type', key: 'type', width: '15%' },
+        { title: 'Đơn vị tính', dataIndex: 'unit_id', key: 'unit_id', width: '15%', render: (unit) => getUnitDescription(unit) },
+        {
+            title: 'Ngày giao dịch',
+            dataIndex: 'createdAt',
+            key: 'createdAt',
+            width: '15%',
+            className: 'text-center',
+            render: (date) => formatDate(date)
+        },
+        { title: 'Số lượng', dataIndex: 'quantity', key: 'quantity', width: '15%', className: 'text-center' },
     ];
 
     const handleRowClick = async (warehouse) => {
         const pathPrev = location.pathname + location.search;
         sessionStorage.setItem('previousWarehousePath', pathPrev);
 
-        // Lọc sản phẩm từ warehouse theo supplier_id
-        if (warehouse && warehouse?.product) {
-            const supplierId = warehouse.product.supplier_id;
+        // Lọc các giao dịch có item_code và unit_id giống với warehouse
+        const filteredTrans = transactions.filter(transaction => {
+            const productFind = productList.find(product => product._id === transaction.product_id);
+            return productFind && productFind.item_code === warehouse.item_code && transaction.unit_id === warehouse.unit_id;
+        });
+        setFilteredTransactions(filteredTrans);
 
-            // Lọc sản phẩm từ warehouses theo supplier_id
-            const filteredProducts = warehouses.filter(item => item.product && item.product.supplier_id === supplierId);
-
-            // Cập nhật state với danh sách sản phẩm đã lọc
-            setProducts(filteredProducts);
-            navigate('/admin/inventory/' + warehouse._id + '/product');
-            setIsModalOpen(true);
-
-        } else {
-            console.error("Warehouse or product is null", warehouse);
-        }
-
+        navigate('/admin/inventory/' + warehouse._id + '/product');
+        setIsModalOpen(true);
     };
 
     const closeModal = () => {
@@ -184,8 +186,8 @@ export default function Warehouse() {
             <ProductWarehouse
                 isModalOpen={isModalOpen}
                 closeModal={closeModal}
-                products={products}
-                productColumns={productColumns}
+                products={filteredTransactions}
+                productColumns={transactionColumn}
             />
 
             <Modal

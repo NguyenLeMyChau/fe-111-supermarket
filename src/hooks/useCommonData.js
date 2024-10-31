@@ -7,7 +7,7 @@ import { useLocation, useNavigate } from 'react-router';
 import { getAllCategories, getAllProducts } from '../services/productRequest';
 import { getAllCustomer, getAllEmployees } from '../services/employeeRequest';
 import { getAllPromotions } from '../services/promotionRequest';
-import { getAllBill, getAllTransaction, getAllWarehouse } from '../services/warehouseRequest';
+import { getAllBill, getAllStocktaking, getAllTransaction, getAllWarehouse } from '../services/warehouseRequest';
 import { getAllUnit } from '../services/unitRequest';
 import { getAllPrices } from '../services/priceRequest'
 import { getAllInvoices } from '../services/invoiceRequest';
@@ -34,6 +34,7 @@ const useCommonData = () => {
         '/admin/customer': getAllCustomer,
         '/admin/unit': getAllUnit,
         '/admin/transaction': getAllTransaction,
+        '/admin/stocktaking': getAllStocktaking,
     }), []);
 
     useEffect(() => {
