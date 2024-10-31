@@ -21,7 +21,8 @@ export default function Cart() {
     const cart = useSelector(state => state.cart?.carts);
     const user = useSelector((state) => state.auth?.login?.currentUser) || {};
     console.log('cart', cart);
-    console.log('user', user);
+    console.log('user', user.user);
+    const [userInfo,setUserInfo]=useState({}); 
     useEffect(() => {
         const loadCartData = async () => {
             await fetchDataCart(setIsLoading);
@@ -29,20 +30,29 @@ export default function Cart() {
 
         loadCartData();
     }, []);
+    useEffect(() => {
+       if(user)
+            setUserInfo({
+                name: user.user.name,
+        phone: user.user.phone,
+         address: `${ user.user.address.street}, ${ user.user.address.ward}, ${ user.user.address.district}, ${ user.user.address.city}`
+            })
+    }, [user]);
+   console.log(userInfo)
 
-    const [userInfo] = useState({
-        name: 'Nguyễn Văn A',
-        phone: '0123456789',
-        address: '485 Hương Lộ 3, Phường Bình Hưng Hòa, Quận Bình Tân, TP. Hồ Chí Minh'
-    });
 
-    const [products, setProducts] = useState([
-        { id: 1, name: 'Coca chai 1L', promotion: 'Mua 2 tặng 1', unit: 'Chai', price: 15000, pricePromotion: 10000, quantity: 2, img: 'https://res.cloudinary.com/detikvnbw/image/upload/v1728208433/h5s4ci4bdqwbevsgieho.jpg' },
-        { id: 2, name: 'Pepsi chai 390ml', unit: 'Chai', price: 8000, quantity: 1, img: 'https://res.cloudinary.com/detikvnbw/image/upload/v1728208434/bh7iwikjjhpnvam09epu.jpg' },
-        { id: 3, name: 'Pepsi chai 390ml', unit: 'Chai', price: 8000, quantity: 1, img: 'https://res.cloudinary.com/detikvnbw/image/upload/v1728208434/bh7iwikjjhpnvam09epu.jpg' },
-    ]);
-    // const [products, setProducts] = useState([]);
+    // const [products, setProducts] = useState([
+    //     { id: 1, name: 'Coca chai 1L', promotion: 'Mua 2 tặng 1', unit: 'Chai', price: 15000, pricePromotion: 10000, quantity: 2, img: 'https://res.cloudinary.com/detikvnbw/image/upload/v1728208433/h5s4ci4bdqwbevsgieho.jpg' },
+    //     { id: 2, name: 'Pepsi chai 390ml', unit: 'Chai', price: 8000, quantity: 1, img: 'https://res.cloudinary.com/detikvnbw/image/upload/v1728208434/bh7iwikjjhpnvam09epu.jpg' },
+    //     { id: 3, name: 'Pepsi chai 390ml', unit: 'Chai', price: 8000, quantity: 1, img: 'https://res.cloudinary.com/detikvnbw/image/upload/v1728208434/bh7iwikjjhpnvam09epu.jpg' },
+    // ]);
+     const [products, setProducts] = useState([cart]);
 
+     useEffect(() => {
+        if(cart)
+            setProducts(cart)
+     }, [cart]);
+     console.log(products)
     const handleIncrease = (id) => {
         setProducts(products.map(product =>
             product.id === id ? { ...product, quantity: product.quantity + 1 } : product
@@ -79,7 +89,7 @@ export default function Cart() {
 
             <main className='main'>
                 {
-                    products.length > 0 ? (
+                     cart.length > 0 ? (
                         <>
                             <div className='main-header'>
                                 <h3>Giỏ hàng</h3>
@@ -120,7 +130,7 @@ export default function Cart() {
                             <div className='cart-items'>
                                 <h3>Giỏ hàng</h3>
                                 <div className='items'>
-                                    {products.map(product => (
+                                    {products?.map(product => (
                                         <div key={product.id} className='cart-item'>
                                             {/* Nút xoá sản phẩm */}
                                             <button className='delete-button' onClick={() => handleDelete(product.id)}>
@@ -130,8 +140,8 @@ export default function Cart() {
                                             <div className='item-details'>
                                                 <div>
                                                     <h4>{product.name}</h4>
-                                                    <span>{product.unit}</span> <br />
-                                                    <span style={{ color: '#dc3545', fontWeight: 600 }}>{product.promotion}</span>
+                                                    <span>{product?.unit?.description}</span> <br />
+                                                    {/* <span style={{ color: '#dc3545', fontWeight: 600 }}>{product.promotion}</span> */}
                                                 </div>
 
                                                 <div className='item-price'>
@@ -142,7 +152,7 @@ export default function Cart() {
                                                             <p className='promotion-price'>{product.price} đ</p>
                                                         </>
                                                     ) : (
-                                                        <p className='original-price'>{product.price} đ</p>
+                                                        <p className='original-price'>{product?.price?.price} đ</p>
                                                     )}
 
                                                     <div className='quantity-control'>
