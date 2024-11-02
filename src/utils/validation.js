@@ -26,6 +26,18 @@ export const validateEmployeeData = (employeeData) => {
   return errors;
 };
 
+export const validateCustomerData = (employeeData) => {
+  let errors = {};
+
+  if (!employeeData.name.trim()) {
+    errors.name = "Tên không được để trống";
+  }
+  if (!employeeData.phone.trim()) {
+    errors.phone = "Số điện thoại không được để trống";
+  }
+  return errors;
+};
+
 export const validateSupplierData = (supplierData) => {
   let errors = {};
   if (!supplierData.name) errors.name = "Tên nhà cung cấp không được để trống";
@@ -156,15 +168,15 @@ export const validatePromotionDetailData = (promotionDetailData, type) => {
     else if (parseFloat(promotionDetailData.quantity_donate) <= 0) {
       return (errors = "số lượng tặng kèm phải lớn hơn 0");
     }
-    if (type === "amount")
-        if (!promotionDetailData.amount_donate)
-          return (errors = "Vui lòng nhập số tiền tặng");
-        else if (isNaN(promotionDetailData.amount_donate))
-          return (errors = "số tiền tặng kèm phải là số");
-        else if (parseFloat(promotionDetailData.amount_donate) <= 0) {
-          return (errors = "số tiền tặng phải lớn hơn 0");
-        }
-    
+  if (type === "amount")
+    if (!promotionDetailData.amount_donate)
+      return (errors = "Vui lòng nhập số tiền tặng");
+    else if (isNaN(promotionDetailData.amount_donate))
+      return (errors = "số tiền tặng kèm phải là số");
+    else if (parseFloat(promotionDetailData.amount_donate) <= 0) {
+      return (errors = "số tiền tặng phải lớn hơn 0");
+    }
+
   return errors;
 };
 

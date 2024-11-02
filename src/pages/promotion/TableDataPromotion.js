@@ -64,7 +64,7 @@ export default function TableDataPromotion({
                 {expandedRows[index] && (
                   <React.Fragment>
                     {/* Expanded Header Row */}
-                    <tr style={{ backgroundColor: "gray" }}>
+                    <tr style={{ backgroundColor: "#ddd" }}>
                       <td colSpan={columns.length + 1} style={{ padding: 0 }}>
                         <tr style={{ backgroundColor: "orange" }}>
                           {columnLine.map((column) => (

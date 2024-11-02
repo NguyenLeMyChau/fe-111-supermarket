@@ -1,5 +1,6 @@
 import { getEmployeeFailed, getEmployeeStart, getEmployeeSuccess } from "../store/reducers/employeeSlice";
 import { getCustomerFailed, getCustomerStart, getCustomerSuccess } from "../store/reducers/customerSlice";
+import axios from "axios";
 
 const getAllEmployees = async (accessToken, axiosJWT, dispatch) => {
     dispatch(getEmployeeStart());
@@ -64,6 +65,17 @@ const getAllCustomer = async (accessToken, axiosJWT, dispatch) => {
     }
 };
 
+const registerCustomer = async (registerData) => {
+    try {
+        const response = await axios.post(`/api/auth/register-customer`, registerData);
+        alert('Đăng ký khách hàng thành công');
+        return response.data;
+    } catch (error) {
+        console.error('Resign customer failed:', error);
+        alert(error.response ? error.response.data.message : error.message);
+    }
+}
+
 const updateCustomer = async (customerId, customerData, accessToken, axiosJWT) => {
     try {
         const response = await axiosJWT.put(`/api/employee/update-customer/${customerId}`, customerData, {
@@ -79,4 +91,4 @@ const updateCustomer = async (customerId, customerData, accessToken, axiosJWT) =
     }
 }
 
-export { getAllEmployees, registerEmployee, updateEmployee, getAllCustomer, updateCustomer };
+export { getAllEmployees, registerEmployee, updateEmployee, getAllCustomer, updateCustomer, registerCustomer };

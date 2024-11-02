@@ -24,6 +24,7 @@ export default function Employee() {
     };
 
     const employeeColumns = [
+        { title: 'Mã nhân viên', dataIndex: 'employee_id', key: 'employee_id', width: '20%' },
         { title: 'Họ và tên', dataIndex: 'name', key: 'name', width: '20%' },
         { title: 'Số điện thoại', dataIndex: 'phone', key: 'phone', width: '10%' },
         { title: 'Email', dataIndex: 'email', key: 'email', width: '10%' },

@@ -2,13 +2,10 @@ import React, { useState } from 'react';
 import Modal from '../../components/modal/Modal';
 import Input from '../../components/input/Input';
 import Button from '../../components/button/Button';
-import { registerEmployee } from '../../services/employeeRequest';
-import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
-import { validateEmployeeData } from '../../utils/validation';
+import { registerCustomer } from '../../services/employeeRequest';
+import { validateCustomerData } from '../../utils/validation';
 
 export default function AddCustomer({ isOpen, onClose }) {
-    const axiosJWT = useAxiosJWT();
-    const accessToken = useAccessToken();
 
     const [errors, setErrors] = useState({});
     const [employeeData, setEmployeeData] = useState({
@@ -22,15 +19,18 @@ export default function AddCustomer({ isOpen, onClose }) {
             district: '',
             city: '',
         },
-        role: 'staff',
-        password: '123456789',
+        role: 'customer',
+        password: '',
     });
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setEmployeeData((prevData) => ({ ...prevData, [name]: value }));
+        setEmployeeData((prevData) => ({
+            ...prevData,
+            [name]: value,
+            password: name === 'phone' ? value : prevData.password,
+        }));
     };
-
     const handleAddressChange = (e) => {
         const { name, value } = e.target;
         setEmployeeData((prevData) => ({
@@ -51,8 +51,7 @@ export default function AddCustomer({ isOpen, onClose }) {
 
     const handleAddEmployee = async (e) => {
         e.preventDefault();
-
-        const validationErrors = validateEmployeeData(employeeData);
+        const validationErrors = validateCustomerData(employeeData);
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
             alert('Vui lòng kiểm tra lại thông tin.');
@@ -60,20 +59,19 @@ export default function AddCustomer({ isOpen, onClose }) {
         }
 
         try {
-            const response = await registerEmployee(employeeData, accessToken, axiosJWT);
+            const response = await registerCustomer(employeeData);
             if (response) {
-                console.log('Employee registered:', response);
+                console.log('Customer registered:', response);
                 setEmployeeData({
                     name: '',
                     phone: '',
                     email: '',
                     gender: false,
                     address: { street: '', ward: '', district: '', city: '' },
-                    role: 'staff',
-                    password: '123456789',
+                    role: 'customer',
+                    password: '',
                 });
                 setErrors({});
-                alert('Đăng ký nhân viên thành công');
             }
         } catch (error) {
             console.error('Failed to register employee:', error);
