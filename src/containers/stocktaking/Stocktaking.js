@@ -14,8 +14,12 @@ export default function Stocktaking() {
     const location = useLocation();
 
     const stocktakings = useSelector((state) => state.stocktaking?.stocktakings) || [];
-    const sortedOrders = Array.isArray(stocktakings) ? [...stocktakings].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) : [];
-    console.log('stocktakings', stocktakings);
+    const sortedOrders = Array.isArray(stocktakings)
+        ? [...stocktakings].sort((a, b) => new Date(b.stocktakingHeader.createdAt) - new Date(a.stocktakingHeader.createdAt))
+        : [];
+
+
+        console.log(sortedOrders.map(item => item.stocktakingHeader?.createdAt));
 
     const isAddBill = location.pathname.includes('add-stocktaking');
     const [isBillDetail, setIsBillDetail] = useState(false);
@@ -55,7 +59,7 @@ export default function Stocktaking() {
                     <div>
                         <div>{formatDate(validDate)}</div>
                         <div style={{ fontSize: '12px', color: 'gray' }}>
-                            {formatDistanceToNow(validDate, { addSuffix: true, locale: vi })}
+                            {formatDistanceToNow(new Date(validDate), { addSuffix: true, locale: vi })}
                         </div>
                     </div>
                 ) : (

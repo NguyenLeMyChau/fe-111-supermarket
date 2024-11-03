@@ -37,12 +37,12 @@ export default function Warehouse() {
 
     const warehouseColumn = [
         { title: 'Mã hàng', dataIndex: 'item_code', key: 'item_code', width: '10%', className: 'text-center' },
-        // {
-        //     title: 'Tên sản phẩm',
-        //     dataIndex: 'product',
-        //     key: 'product_name',
-        //     width: '30%',
-        // },
+        {
+            title: 'Tên sản phẩm',
+            dataIndex: 'product',
+            key: 'product_name',
+            width: '30%',
+        },
         {
             title: 'Đơn vị tính', dataIndex: 'unit', key: 'unit', width: '10%', render: (text, record) => record.unit ? record.unit.description : ''
         },

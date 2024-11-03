@@ -76,9 +76,9 @@ export default function CategoryCustomer() {
                             className='product-category'
                             onClick={() => navigate(`/customer/product`, { state: { category } })}
                         >
-                            <img src={category.category.img} alt={category.category.name} />
-                            <span>{category.category.name}</span>
-                            <p>{category.products.length} sản phẩm</p>
+                            <img src={category?.category?.img} alt={category?.category?.name} />
+                            <span>{category?.category?.name}</span>
+                            <p>{category?.products?.length} sản phẩm</p>
                         </div>
                     ))}
                 </div>
