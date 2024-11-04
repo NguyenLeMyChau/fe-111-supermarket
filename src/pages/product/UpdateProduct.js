@@ -8,6 +8,7 @@ import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
 import { updateProduct } from '../../services/productRequest';
 import { uploadImageVideo } from '../../services/uploadRequest';
 import { getProductsByBarcodeInUnitConvert } from '../../services/authRequest';
+import { TiDelete } from 'react-icons/ti';
 
 const UpdateProduct = ({ product }) => {
     const axiosJWT = useAxiosJWT();
@@ -20,7 +21,11 @@ const UpdateProduct = ({ product }) => {
 
     const [loading, setLoading] = useState(false); // Trạng thái loading
     const [isLoadingImage, setIsLoadingImage] = useState(false); // Trạng thái tải ảnh
-    const [conversionUnits, setConversionUnits] = useState(product.unit_convert); // Array of conversion units
+    const [conversionUnits, setConversionUnits] = useState(product.unit_convert.map(unit => ({
+        ...unit,
+        unit: unit.unit._id // Chỉ lấy _id của unit
+    })));
+    console.log('conversionUnits', conversionUnits);
 
     const [formData, setFormData] = useState({
         item_code: product.item_code,
@@ -37,19 +42,26 @@ const UpdateProduct = ({ product }) => {
     const handleAddConversionUnit = () => {
         setConversionUnits([
             ...conversionUnits,
-            { unit: '', quantity: '', barcode: '', img: '' },
+            { unit: '', quantity: '', barcode: '', img: '', checkBaseUnit: false, status: true },
         ]);
     };
 
-    const handleConversionUnitChange = (index, field, value) => {
-        const updatedUnits = conversionUnits.map((unit, i) =>
-            i === index ? { ...unit, [field]: value } : unit
+    const handleConversionUnitChange = (unitId, field, value) => {
+        const updatedUnits = conversionUnits.map((unit) =>
+            unit.unit === unitId ? { ...unit, [field]: value } : unit
         );
         setConversionUnits(updatedUnits);
     };
 
+    const handleDeleteConversionUnit = (index) => {
+        setConversionUnits((prevUnits) => {
+            const newUnits = [...prevUnits];
+            newUnits.splice(index, 1); // Remove the item at the specified index
+            return newUnits;
+        });
+    };
 
-    const handleImageChangeForUnit = async (index, e) => {
+    const handleImageChangeForUnit = async (unitId, e) => {
         const file = e.target.files[0];
         if (file) {
             const fileTypes = /jpeg|jpg|png/; // Chỉ cho phép các loại file hình ảnh
@@ -63,7 +75,7 @@ const UpdateProduct = ({ product }) => {
             setIsLoadingImage(true); // Bắt đầu loading ảnh
             try {
                 const uploadedImageUrl = await uploadImageVideo(file);
-                handleConversionUnitChange(index, 'img', uploadedImageUrl.avatar);
+                handleConversionUnitChange(unitId, 'img', uploadedImageUrl.avatar);
             } catch (error) {
                 console.error('Failed to upload image:', error);
             } finally {
@@ -106,26 +118,29 @@ const UpdateProduct = ({ product }) => {
         e.preventDefault();
         setLoading(true); // Bắt đầu loading
         try {
+            // Lọc các đơn vị quy đổi để loại bỏ những đơn vị có status là false
+            const filteredConversionUnits = conversionUnits.filter(unit => unit.status);
 
-            // Kiểm tra xem barcode đã tồn tại chưa trong conversionUnits
-            for (const unit of conversionUnits) {
-                if (!unit.barcode) {
-                    continue; // Skip the check if barcode is null or empty
-                }
-                const existingProduct = await getProductsByBarcodeInUnitConvert(unit.barcode, accessToken, axiosJWT);
-                console.log('existingProduct', existingProduct);
+            // // Kiểm tra xem barcode đã tồn tại chưa trong conversionUnits
+            // for (const unit of conversionUnits) {
+            //     if (!unit.barcode) {
+            //         continue; // Skip the check if barcode is null or empty
+            //     }
+            //     const existingProduct = await getProductsByBarcodeInUnitConvert(unit.barcode, accessToken, axiosJWT);
+            //     console.log('existingProduct', existingProduct);
 
-                // Nếu sản phẩm đã tồn tại và không phải là sản phẩm hiện tại, hiển thị thông báo và dừng lại
-                if (existingProduct && existingProduct[0]._id !== product._id) {
-                    alert(`Sản phẩm với mã vạch ${unit.barcode} đã tồn tại.`);
-                    setLoading(false); // Kết thúc loading
-                    return; // Dừng lại nếu sản phẩm đã tồn tại và không phải là sản phẩm hiện tại
-                }
-            }
-            // Cập nhật formData để bao gồm conversionUnits
+            //     // Nếu sản phẩm đã tồn tại và không phải là sản phẩm hiện tại, hiển thị thông báo và dừng lại
+            //     if (existingProduct && existingProduct[0]._id !== product._id) {
+            //         alert(`Sản phẩm với mã vạch ${unit.barcode} đã tồn tại.`);
+            //         setLoading(false); // Kết thúc loading
+            //         return; // Dừng lại nếu sản phẩm đã tồn tại và không phải là sản phẩm hiện tại
+            //     }
+            // }
+
+            // Cập nhật formData để bao gồm filteredConversionUnits
             const updatedformData = {
                 ...formData,
-                unit_convert: conversionUnits,
+                unit_convert: filteredConversionUnits,
             };
             console.log('updatedformData', updatedformData);
             await updateProduct(product._id, updatedformData, accessToken, axiosJWT);
@@ -227,7 +242,7 @@ const UpdateProduct = ({ product }) => {
                 </div>
 
                 {/* Conversion units table */}
-                {conversionUnits.length > 0 && (
+                {conversionUnits.filter(unit => unit.status).length > 0 && ( // Chỉ hiển thị các đơn vị có trạng thái true
                     <table style={{ marginTop: '20px', width: '100%', borderCollapse: 'collapse' }}>
                         <thead>
                             <tr>
@@ -236,16 +251,17 @@ const UpdateProduct = ({ product }) => {
                                 <th style={{ padding: '10px' }}>Barcode</th>
                                 <th style={{ padding: '10px' }}>Hình ảnh</th>
                                 <th style={{ padding: '10px' }}>Đơn vị cơ bản</th>
+                                <th style={{ padding: '10px' }}>Hành động</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {conversionUnits.map((unit, index) => (
+                            {conversionUnits.filter(unit => unit.status).map((unit, index) => ( // Chỉ hiển thị các đơn vị có trạng thái true
                                 <tr key={index}>
                                     <td style={{ padding: '10px' }}>
                                         <Select
                                             options={units.map(unit => ({ value: unit._id, label: unit.description }))}
-                                            values={unit.unit._id ? [{ value: unit.unit._id, label: units.find(u => u._id === unit.unit._id)?.description }] : []}
-                                            onChange={(selected) => handleConversionUnitChange(index, 'unit', selected[0]?.value)}
+                                            values={unit.unit ? [{ value: unit.unit, label: units.find(u => u._id === unit.unit)?.description }] : []}
+                                            onChange={(selected) => handleConversionUnitChange(unit.unit, 'unit', selected[0]?.value)}
                                             placeholder="Chọn đơn vị"
                                             styles={{
                                                 control: (provided) => ({
@@ -261,7 +277,7 @@ const UpdateProduct = ({ product }) => {
                                             name="quantity"
                                             placeholder="Số lượng"
                                             value={unit.quantity}
-                                            onChange={(e) => handleConversionUnitChange(index, 'quantity', e.target.value)}
+                                            onChange={(e) => handleConversionUnitChange(unit.unit, 'quantity', e.target.value)}
                                             style={{ width: '80px', height: '30px', margin: '0 auto', textAlign: 'center' }}
                                             disabled={unit.checkBaseUnit} // Vô hiệu hóa ô nhập liệu khi checkbox được chọn
                                         />
@@ -272,7 +288,7 @@ const UpdateProduct = ({ product }) => {
                                             name="barcode"
                                             placeholder="Barcode"
                                             value={unit.barcode}
-                                            onChange={(e) => handleConversionUnitChange(index, 'barcode', e.target.value)}
+                                            onChange={(e) => handleConversionUnitChange(unit.unit, 'barcode', e.target.value)}
                                             style={{ width: '170px', height: '30px', margin: '0 auto', paddingLeft: 20 }}
                                         />
                                     </td>
@@ -299,7 +315,7 @@ const UpdateProduct = ({ product }) => {
                                                 id={`image-${index}`}
                                                 accept="image/*"
                                                 style={{ display: 'none' }}
-                                                onChange={(e) => handleImageChangeForUnit(index, e)}
+                                                onChange={(e) => handleImageChangeForUnit(unit.unit, e)}
                                             />
                                         </label>
                                     </td>
@@ -310,6 +326,15 @@ const UpdateProduct = ({ product }) => {
                                             checked={unit.checkBaseUnit}
                                             onChange={() => handleCheckboxChange(index)}
                                             style={{ width: '15px', height: '15px' }}
+                                        />
+                                    </td>
+
+                                    <td style={{ textAlign: 'center' }}>
+                                        <TiDelete
+                                            size={30}
+                                            color="red"
+                                            style={{ cursor: 'pointer' }}
+                                            onClick={() => handleDeleteConversionUnit(index)}
                                         />
                                     </td>
                                 </tr>

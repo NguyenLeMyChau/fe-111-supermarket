@@ -161,15 +161,15 @@ export default function AddProduct({ isOpen, onClose }) {
 
         setLoading(true); // Bắt đầu loading
         try {
-            // Kiểm tra xem barcode đã tồn tại chưa trong conversionUnits
-            for (const unit of conversionUnits) {
-                const existingProduct = await getProductsByBarcodeInUnitConvert(unit.barcode, accessToken, axiosJWT);
-
-                if (existingProduct) {
-                    alert(`Sản phẩm với mã vạch ${unit.barcode} đã tồn tại.`);
-                    return; // Dừng lại nếu sản phẩm đã tồn tại
-                }
-            }
+            // // Kiểm tra xem barcode đã tồn tại chưa trong conversionUnits
+            // for (const unit of conversionUnits) {
+            //     const existingProduct = await getProductsByBarcodeInUnitConvert(unit.barcode, accessToken, axiosJWT);
+            //     console.log('Existing product:', existingProduct);
+            //     if (existingProduct) {
+            //         alert(`Sản phẩm với mã vạch ${unit.barcode} đã tồn tại.`);
+            //         return; // Dừng lại nếu sản phẩm đã tồn tại
+            //     }
+            // }
 
             // Cập nhật productData để bao gồm conversionUnits
             const updatedProductData = {

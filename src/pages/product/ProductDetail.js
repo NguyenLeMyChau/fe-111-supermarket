@@ -63,6 +63,7 @@ export default function ProductDetail() {
         },
         { title: 'Số lượng', dataIndex: 'quantity', key: 'quantity', width: '15%', className: 'text-center' },
     ];
+    const sortedTransactions = [...data.transactions].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     return (
         <div className='product-detail-container'>
@@ -154,7 +155,7 @@ export default function ProductDetail() {
                         <h3>Danh sách giao dịch</h3>
                     </div>
                     <TableData
-                        data={data.transactions}
+                        data={sortedTransactions}
                         columns={transactionColumn}
                     />
                 </CustomTabPanel>
