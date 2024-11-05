@@ -1,5 +1,6 @@
 import axios from "axios";
 import { getCartFailed, getCartStart, getCartSuccess } from "../store/reducers/cartSlice";
+import { clearCustomer, setCustomer } from "../store/reducers/productPaySlice";
 
 
 const getCartById = async (dispatch, accessToken, axiosJWT, accountId) => {
@@ -169,6 +170,18 @@ const getProductsByBarcodeInUnitConvert = async (barcode, accessToken, axiosJWT)
         alert(error.response ? error.response.data.message : error.message);
     }
 }
+const getCustomerByPhone = async (phone, accessToken, axiosJWT) => {
+    try {
+        const response = await axiosJWT.get(`/api/auth/get-customer-by-phone/${phone}`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        return response.data.data;
+    } catch (error) {
+        console.error('Get customer failed:', error);
+    }
+};
 
 
 export {
@@ -181,5 +194,6 @@ export {
     getPromotionByProductId,
     checkStockQuantityInCart,
     getPromotions,
-    getProductsByBarcodeInUnitConvert
+    getProductsByBarcodeInUnitConvert,
+    getCustomerByPhone
 }

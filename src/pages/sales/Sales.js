@@ -7,6 +7,7 @@ import { getProductsByBarcodeInUnitConvert } from "../../services/cartRequest.js
 import { useDispatch, useSelector } from "react-redux";
 import { useAccessToken, useAxiosJWT } from "../../utils/axiosInstance.js";
 import { clearProductPay, setProductPay } from "../../store/reducers/productPaySlice.js";
+import CustomerInfoModal from "./CustomerInfoModal/CustomerInfoModal.js";
 
 const Sales = () => {
   const navigate = useNavigate();
@@ -22,6 +23,9 @@ const Sales = () => {
   const [total, setTotal] = useState(); // Initial total based on sample product
   const productList = useSelector((state) => state.productPay.productPay);
 
+  const [customerInfoModalOpen, setCustomerInfoModalOpen] = useState(false);
+  const [customerInfo, setCustomerInfo] = useState( useSelector((state) => state.productPay.customer));
+console.log(customerInfo)
   useEffect(() => {
     console.log(productList)
     if (productList && productList.length > 0) {
@@ -45,7 +49,11 @@ const Sales = () => {
   const handleLogout = () => {
     navigate('/admin/user');
   };
-  
+
+  const handleCustomerInfoSubmit = (info) => {
+    setCustomerInfo(info);
+    console.log("Customer Info Submitted: ", info);
+  };
 
   // Handle selecting a product
   const handleRowClick = (product) => {
@@ -239,6 +247,7 @@ const getPriceByBarcode = (product, barcode) => {
       <div className="row-bottom">
         <div className="function-section">
           <button onClick={handleLogout}>Đăng xuất</button>
+          <button onClick={() => setCustomerInfoModalOpen(true)}>Nhập thông tin khách hàng</button>
           {/* <button>Bán</button>
           <button>Trả hàng</button>
           <button>In lại hóa đơn</button> */}
@@ -287,6 +296,11 @@ const getPriceByBarcode = (product, barcode) => {
         onRequestClose={() => setQuantityModalOpen(false)}
         product={selectedProduct}
         onUpdateQuantity={handleUpdateQuantity}
+      />
+       <CustomerInfoModal
+        isOpen={customerInfoModalOpen}
+        onRequestClose={() => setCustomerInfoModalOpen(false)}
+        onSubmit={handleCustomerInfoSubmit}
       />
     </div>
   );

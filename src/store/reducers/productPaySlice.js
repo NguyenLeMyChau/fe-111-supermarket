@@ -5,7 +5,7 @@ const productPaySlice = createSlice({
   initialState: {
     productPay: [],
     totalAmount: 0,
-    customer: {},
+    customer: null,
   },
   reducers: {
     setCustomer: (state, action) => {
@@ -20,7 +20,7 @@ const productPaySlice = createSlice({
       state.totalAmount = 0;
     },
     clearCustomer: (state) => {
-      state.customer = {};
+      state.customer = null;
     },
   },
 });

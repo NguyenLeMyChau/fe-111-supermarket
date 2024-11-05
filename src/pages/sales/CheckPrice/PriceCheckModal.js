@@ -64,7 +64,7 @@ const PriceCheckModal = ({ isOpen, onRequestClose, checkPriceByBarcode }) => {
           <p>Giá: {priceInfo.price?.price}đ</p>
         </div>
       )}
-      <button onClick={onRequestClose}>Close</button>
+      <button onClick={onRequestClose}>Đóng</button>
     </Modal>
   );
 };
