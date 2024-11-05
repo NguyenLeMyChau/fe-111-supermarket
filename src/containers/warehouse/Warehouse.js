@@ -136,7 +136,8 @@ export default function Warehouse() {
 
         if (filters.productName) {
             filteredData = filteredData.filter(warehouse =>
-                warehouse.product?.name?.toLowerCase().includes(filters.productName.toLowerCase()));
+                console.log('warehose', warehouse) ||
+                warehouse.product?.toLowerCase().includes(filters.productName.toLowerCase()));
         }
 
         if (filters.stockQuantity) {
