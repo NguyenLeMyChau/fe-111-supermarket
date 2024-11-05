@@ -1,18 +1,43 @@
-// PriceCheckModal.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import "./PriceCheckModal.scss"; // Ensure you create and import the necessary styles
 
 Modal.setAppElement("#root"); // For accessibility
 
-const PriceCheckModal = ({ isOpen, onRequestClose, onCheckPrice }) => {
+const PriceCheckModal = ({ isOpen, onRequestClose, checkPriceByBarcode }) => {
   const [barcode, setBarcode] = useState("");
-  const [price, setPrice] = useState(null);
+  const [priceInfo, setPriceInfo] = useState(null);
+  const [error, setError] = useState(null);
+
+  // Reset state when modal opens
+  useEffect(() => {
+    if (isOpen) {
+      setBarcode("");
+      setPriceInfo(null);
+      setError(null);
+    }
+  }, [isOpen]);
 
   const handleCheckPrice = async () => {
-    // Implement the logic to fetch the product price based on the barcode
-    const fetchedPrice = await onCheckPrice(barcode);
-    setPrice(fetchedPrice);
+    if (!barcode) {
+      setError("Vui lòng nhập barcode");
+      return;
+    }
+
+    setError(null); // Reset error message
+    try {
+      const fetchedPrice = await checkPriceByBarcode(barcode);
+      if (fetchedPrice) {
+        console.log(fetchedPrice);
+        setPriceInfo(fetchedPrice);
+      } else {
+        setPriceInfo(null);
+        setError("Không tìm thấy sản phẩm");
+      }
+    } catch (err) {
+      console.error("Error fetching price:", err);
+      setError("Có lỗi xảy ra");
+    }
   };
 
   return (
@@ -23,17 +48,20 @@ const PriceCheckModal = ({ isOpen, onRequestClose, onCheckPrice }) => {
       className="price-check-modal"
       overlayClassName="price-check-overlay"
     >
-      <h2>Check Price</h2>
+      <h2>Kiểm tra giá</h2>
       <input
         type="text"
         value={barcode}
         onChange={(e) => setBarcode(e.target.value)}
-        placeholder="Enter barcode"
+        placeholder="Nhập barcode"
       />
-      <button onClick={handleCheckPrice}>Check Price</button>
-      {price !== null && (
-        <div>
-          <p>Price: {price}</p>
+      <button onClick={handleCheckPrice}>Kiểm tra giá</button>
+      {error && <div className="error-message">{error}</div>}
+      {priceInfo && (
+        <div className="price-info">
+          <p>Tên sản phẩm: {priceInfo.product.name}</p>
+          <p>Đơn vị: {priceInfo.price?.unit.description}</p>
+          <p>Giá: {priceInfo.price?.price}đ</p>
         </div>
       )}
       <button onClick={onRequestClose}>Close</button>

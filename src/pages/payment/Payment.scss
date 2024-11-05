@@ -1,132 +1,240 @@
 .payment-container {
-    display: flex;
-    height: 100vh;
-    padding: 20px;
-    background-color: var(--default-color);
-    color: var(--black-color);
-  }
-  
-  .left-section {
-    width: 60%;
-    margin-right: 20px;
-  }
-  
-  .payment-product-table {
-    width: 100%;
-    height: 90vh;
-    border-collapse: collapse;
-    background-color: var(--light-color);
-    table-layout: fixed; 
-    tbody {
-        height: 100%; /* Allow tbody to take up remaining height */
-        display: block; /* Enable explicit height control */
-        overflow-y: auto; /* Make tbody scrollable if content overflows */
-      }
-      thead, tr {
-        display: table;
-        width: 100%; /* Ensure thead and tr take up full width */
-        table-layout: fixed;
-      }
-    th, td {
-        font-size: 18px;
-        padding: 5px;
-        text-align: left;
-        border: 1px solid #ddd;
-        color: var(--black-color);
-    }
-    th {
-      background-color: var(--warning-color);
-      color: var(--black-color);
-    }
-    th:first-child, 
-  td:first-child {
-    width: 50px; /* Small width for the "STT" column */
-  }
+  display: flex;
+  height: 100vh;
+  padding-right: 20px;
+  padding-left: 20px;
+  color: var(--black-color);
+}
 
-  th:nth-child(2), 
-  td:nth-child(2) {
-    width: 30%; /* Larger width for the "Tên sản phẩm" column */
-  }
-  }
+.left-section {
+  width: 60%;
+  margin-right: 20px;
+}
+
+.payment-product-table {
+  width: 100%;
+  height: auto; /* Allow height to adjust based on content */
+  max-height: 85vh; /* Set max height */
+  overflow-y: auto; /* Allow vertical scroll if needed */
+  border-collapse: collapse;
+  background-color: var(--light-color);
+  table-layout: fixed;
+}
+
+.payment-product-table thead {
+  font-size: 16px; /* Adjusted font size */
+}
+
+.payment-product-table th,
+.payment-product-table td {
+  font-size: 16px; /* Adjusted font size */
+  padding: 5px; /* Reduced padding */
+  text-align: left;
+  border: 1px solid #ddd;
+  color: var(--black-color);
+  vertical-align: top; /* Ensure contents align at the top */
+}
+
+.payment-product-table th {
+  background-color: var(--warning-color);
+  color: var(--black-color);
+}
+
+.payment-product-table th:first-child, 
+.payment-product-table td:first-child {
+  width: 40px; 
+}
+
+.payment-product-table th:nth-child(2), 
+.payment-product-table td:nth-child(2) {
+  width: 43%; 
+}
+
+.payment-product-table th:nth-child(3), 
+.payment-product-table td:nth-child(3) {
+  width: 10%; 
+}
+
+.payment-product-table th:nth-child(4), 
+.payment-product-table td:nth-child(4) {
+  width: 15%; 
+}
+
+.payment-product-table th:nth-child(5), 
+.payment-product-table td:nth-child(5) {
+  width: 15%; 
+}
+.payment-product-table th:nth-child(6), 
+.payment-product-table td:nth-child(6) {
+  width: 15%; 
+}
+
+.empty-cart {
+  text-align: center;
+  font-style: italic;
+  color: #999;
+}
+
+.right-section {
+  width: 40%;
+  display: flex;
+  flex-direction: column;
   
-  .right-section {
-    width: 40%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  
-  .payment-info {
-    margin-bottom: 20px;
-    p {
-      margin: 10px 0;
-      font-size: 1.1rem;
-    }
-  }
-  
-  .payment-method-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-top: 10px;
-  }
-  
-  .payment-method-btn {
-    padding: 15px;
-    font-size: 1rem;
-    background-color: #e0e0e0;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .payment-method-btn.selected {
-    background-color: #4caf50;
-    color: white;
-  }
-  
-  .payment-keypad-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .payment-keypad-input {
-    width: 100%;
-    height: 40px;
-    font-size: 1.2rem;
-    text-align: right;
-    margin-bottom: 10px;
-  }
-  
-  .payment-keypad {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-  }
-  
-  .payment-button {
-    padding: 15px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    border-radius: 5px;
-    background-color: #4caf50;
-    color: white;
-    border: none;
-  }
-  
-  button:hover {
-    opacity: 0.8;
-  }
-  
-  .back-btn {
-    margin-top: 20px;
-    padding: 10px 20px;
-    font-size: 1rem;
-    background-color: #f44336;
-    color: white;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-  }
-  
+}
+
+.payment-info {
+  margin-bottom: 20px;
+}
+
+.payment-info p {
+  margin: 10px 0;
+  font-size: 1rem;
+}
+
+.payment-method-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.payment-method-btn {
+  padding: 10px; /* Adjusted padding */
+  font-size: 0.9rem; /* Adjusted font size */
+  background-color: #e0e0e0;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.payment-method-btn.selected {
+  background-color: #4caf50;
+  color: white;
+}
+
+.payment-keypad-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.payment-keypad-input {
+  width: 100%;
+  height: 40px;
+  font-size: 1.1rem;
+  text-align: right;
+  margin-bottom: 10px;
+}
+
+.payment-keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px; /* Adjusted gap */
+}
+
+.payment-button {
+  padding: 12px; /* Adjusted padding */
+  font-size: 1rem; /* Adjusted font size */
+  cursor: pointer;
+  border-radius: 5px;
+  background-color: #e0e0e0;
+  color: white;
+  border: none;
+}
+
+.payment-button-pay {
+  padding: 12px; /* Adjusted padding */
+  font-size: 1rem; /* Adjusted font size */
+  cursor: pointer;
+  border-radius: 5px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+}
+
+button:hover {
+  opacity: 0.8;
+}
+
+.back-btn {
+  margin-top: 10px; /* Adjusted margin */
+  padding: 8px 15px; /* Adjusted padding */
+  font-size: 1rem;
+  background-color: #f44336;
+  color: white;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+
+.ineligible-modal {
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  max-width: 1000px;
+  max-height: 500px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.ineligible-modal h2 {
+  color: #333;
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.ineligible-modal table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.ineligible-modal th, .ineligible-modal td {
+  padding: 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.ineligible-modal th {
+  background-color: #f5f5f5;
+  color: #333;
+  font-weight: bold;
+}
+
+.ineligible-modal tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.ineligible-modal button {
+  padding: 10px 20px;
+  font-size: 14px;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.ineligible-modal button:hover {
+  background-color: #0056b3;
+}
+.table-container {
+  max-height: 400px; 
+  overflow-y: auto; 
+  margin-bottom: 20px; 
+}
+
+.payment-line {
+  display: flex;
+  justify-content: space-between;
+ 
+}
+
+.payment-line .amount {
+  font-weight: bold;
+  text-align: right;
+}
+
+.total-due .amount {
+  color: #d9534f; /* Change color to highlight the total amount to be paid */
+}

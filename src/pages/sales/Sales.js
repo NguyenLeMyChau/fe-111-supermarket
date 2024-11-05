@@ -1,105 +1,192 @@
-// Sales.js
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Sales.scss";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import PriceCheckModal from "./CheckPrice/PriceCheckModal.js"; // Import the modal
 import QuantityModal from "./Quantity/QuantityModal.js";
+import { getProductsByBarcodeInUnitConvert } from "../../services/cartRequest.js";
+import { useDispatch, useSelector } from "react-redux";
+import { useAccessToken, useAxiosJWT } from "../../utils/axiosInstance.js";
+import { clearProductPay, setProductPay } from "../../store/reducers/productPaySlice.js";
 
 const Sales = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const axiosJWT = useAxiosJWT();
+  const accessToken = useAccessToken();
   const [product, setProduct] = useState();
-  const [barcode, setBarcode] = useState();
+  const [barcode, setBarcode] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [quantityModalOpen, setQuantityModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [cart, setCart] = useState([]);
   const [total, setTotal] = useState(); // Initial total based on sample product
+  const productList = useSelector((state) => state.productPay.productPay);
+
+  useEffect(() => {
+    console.log(productList)
+    if (productList && productList.length > 0) {
+      setCart(productList);
+      setTotal(productList.reduce((sum, item) => sum + item.total, 0));
+    }
+  }, [productList]);
 
   const handleKeyPress = (value) => {
-    setBarcode((prev) => parseInt(`${prev}${value}`));
+    if (!value) {
+      setBarcode(''); // Set barcode to an empty string if value is empty
+    } else {
+      setBarcode((prev) => `${prev}${value}`); // Otherwise, append value to barcode
+    }
+  };
+  const handleClear = () => {
+    setBarcode(''); // Clear the barcode
   };
 
-  const handleClear = () => {
-    setBarcode(0);
+  // Handle logout
+  const handleLogout = () => {
+    navigate('/admin/user');
   };
+  
 
   // Handle selecting a product
   const handleRowClick = (product) => {
+    console.log(product)
     setSelectedProduct(product);
   };
-  // Open modal
+
+  // Open quantity modal
   const openQuantityModal = () => {
+
     if (selectedProduct) {
       setQuantityModalOpen(true);
     }
   };
-  const handleUpdateQuantity = (productId, newQuantity) => {
-    setCart(prevCart =>
-      prevCart.map(item =>
-        item.id === productId
-          ? { ...item, quantity: newQuantity, total: item.price * newQuantity - item.discount }
+
+  const handleUpdateQuantity = (productId,unit_id, newQuantity) => {
+    console.log(unit_id)
+    setCart((prevCart) =>
+      prevCart.map((item) =>
+        item._id === productId &&item.price.unit._id=== unit_id
+          ? { ...item, quantity: newQuantity, total: item.price.price * newQuantity }
           : item
       )
     );
-    setTotal(prevTotal =>
-      prevTotal + cart.find(item => item.id === productId).price * (newQuantity - cart.find(item => item.id === productId).quantity)
-    );
-  };
-  const handleDelete = () => {
-    setBarcode(prevBarcode => {
-      const newBarcode = prevBarcode.toString().slice(0, -1);
-      return newBarcode ? Number(newBarcode) : 0;
+  
+    // Update the total cost based on the price difference due to quantity change
+    setTotal((prevTotal) => {
+      const item = cart.find((item) => item._id === productId && item.price.unit._id=== unit_id);
+      if (item) {
+        const priceDifference = item.price.price * (newQuantity - item.quantity);
+        return prevTotal + priceDifference;
+      }
+      return prevTotal;
     });
   };
+  
+  const handleDelete = () => {
+    setBarcode((prevBarcode) => {
+      const newBarcode = prevBarcode.slice(0, -1); // Remove the last character
+      return newBarcode; // Return the updated barcode as a string
+    });
+  };
+  
+  const addProduct = async () => {
+    if (barcode) {
+        console.log(barcode);
+        const product = await getProductsByBarcodeInUnitConvert(barcode, accessToken, axiosJWT);
+        console.log(product);
+        if (product && !product.message) {
+          const price = getPriceByBarcode(product, barcode); // Lấy giá theo barcode
+            setCart((prevCart) => {
+                console.log(prevCart);
+                const existingProduct = prevCart.find((item) => item._id === product._id && item.unit._id === product.unit_id._id);
 
-  const addProduct = () => {
-    if (product) {
-      setCart([...cart, product]);
-      setTotal(total + (product.price * product.quantity - product.discount));
+                if (existingProduct) {
+                    // Cập nhật số lượng nếu sản phẩm đã có trong giỏ
+                    return prevCart.map((item) => {
+                        return item._id === product._id && item.unit._id === product.unit_id._id
+                            ? { ...item, unit:price.unit,quantity: item.quantity + 1,price:price, total: price.price*(item.quantity + 1) }
+                            : item;
+                    });
+                } else {
+                    // Thêm sản phẩm mới vào giỏ hàng
+                    return [
+                        ...prevCart,
+                        { ...product,unit:price.unit,price:price, quantity: 1, total:  price.price },
+                    ];
+                }
+            });
+
+            // Cập nhật tổng số tiền trong giỏ hàng
+            setTotal((prevTotal) => prevTotal + (price.price || 0)); // Sử dụng giá hoặc 0 nếu không tìm thấy
+            setBarcode(''); // Xóa dữ liệu trong ô nhập barcode sau khi thêm sản phẩm
+        } else {
+            alert(product.message);
+            setBarcode('');
+        }
+    }
+};
+
+// Hàm lấy giá theo barcode
+const getPriceByBarcode = (product, barcode) => {
+    const unit = product.unit_converts.find(unit => unit.barcode === barcode);
+    console.log(unit)
+    return unit?unit:null; // Trả về giá hoặc null nếu không tìm thấy
+};
+
+
+  // Delete selected product
+  const handleDeleteProduct = () => {
+    if (selectedProduct) {
+      console.log(selectedProduct);
+      
+      // Filter out the item if both id and unit match
+      setCart(cart.filter((item) => !(item.id === selectedProduct.id && item.unit === selectedProduct.unit)));
+      
+      // Adjust the total by subtracting the total of the selected product
+      setTotal(total - selectedProduct.total);
+      
+      // Clear the selected product
+      setSelectedProduct(null);
+    }
+  };
+  
+
+  // Delete all products
+  const handleDeleteAll = () => {
+    const confirmDeleteAll = window.confirm("Bạn có chắc muốn xóa hết tất cả sản phẩm không?");
+    if (confirmDeleteAll) {
+      setCart([]);
+      setTotal(0);
+      dispatch(clearProductPay());
+      setSelectedProduct(null);
     }
   };
 
- // Delete selected product
- const handleDeleteProduct = () => {
-  if (selectedProduct) {
-    setCart(cart.filter(item => item.id !== selectedProduct.id)); // Remove selected product
-    setTotal(total - selectedProduct.total); // Update total
-    setSelectedProduct(null); // Deselect the product
-  }
-};
-
- // Delete all products
- const handleDeleteAll = () => {
-  // Add confirmation dialog
-  const confirmDeleteAll = window.confirm("Bạn có chắc muốn xóa hết tất cả sản phẩm không?");
-  if (confirmDeleteAll) {
-    setCart([]); // Clear cart
-    setTotal(0); // Reset total to 0
-    setSelectedProduct(null); // Deselect any selected product
-  }
-};
-
-// Handle cancel button to reset the screen
-const handleCancel = () => {
-  // Add confirmation dialog
-  const confirmCancel = window.confirm("Bạn có chắc muốn hủy toàn bộ và đặt lại màn hình không?");
-  if (confirmCancel) {
-    setCart([]); // Clear cart
-    setTotal(0); // Reset total to 0
-    setSelectedProduct(null); // Deselect any selected product
-    setQuantityModalOpen(false); // Optionally reset modal visibility
-  }
-};
-
-  const handlePay = () => {
-    navigate('/frame-staff/payment', { state: { productList: cart, totalAmount: total } });
+  // Handle cancel button to reset the screen
+  const handleCancel = () => {
+    const confirmCancel = window.confirm("Bạn có chắc muốn hủy toàn bộ và đặt lại màn hình không?");
+    if (confirmCancel) {
+      setCart([]);
+      setTotal(0);
+      setSelectedProduct(null);
+      setQuantityModalOpen(false);
+    }
   };
 
-  // const checkPrice = async (barcode) => {
-  //   // Simulate an API call to fetch the product price
-  //   const fetchedProduct = await api.getProductByBarcode(barcode);
-  //   return fetchedProduct ? fetchedProduct.price : "Not found";
-  // };
+  const handlePay = () => {
+    dispatch(clearProductPay()); 
+    dispatch(setProductPay({ productPay: cart, totalAmount: total }));
+    navigate('/frame-staff/payment');
+  };
+  
+  const checkPriceByBarcode = async (barcode) => {
+    const product = await getProductsByBarcodeInUnitConvert(barcode, accessToken, axiosJWT);
+    if (product && !product.message) {
+        const priceDetails = getPriceByBarcode(product, barcode);
+        return { price: priceDetails, product }; // Return an object with price and product details
+    }
+    return null; // Return null if the product is not found
+};
 
   return (
     <div className="sales-container">
@@ -110,24 +197,26 @@ const handleCancel = () => {
               <tr>
                 <th>STT</th>
                 <th>Tên sản phẩm</th>
+                <th>Đơn vị</th>
                 <th>Giá bán</th>
                 <th>Số lượng</th>
-                <th>Giảm giá</th>
+                {/* <th>Giảm giá</th> */}
                 <th>Số tiền</th>
               </tr>
             </thead>
             <tbody>
               {cart.map((item, index) => (
-               <tr
-               key={item.id}
-               onClick={() => handleRowClick(item)} // Set the selected product on row click
-               className={`clickable-row ${selectedProduct?.id === item.id ? 'selected' : ''}`} // Highlight selected row
-             >
+                <tr
+                  key={item._id}
+                  onClick={() => handleRowClick(item)}
+                  className={`clickable-row ${selectedProduct?._id === item._id && selectedProduct?.unit===item.unit? 'selected' : ''}`}
+                >
                   <td>{index + 1}</td>
                   <td>{item.name}</td>
-                  <td>{item.price}</td>
+                  <td>{item.unit.description}</td>
+                  <td>{item.price.price}</td>
                   <td>{item.quantity}</td>
-                  <td>{item.discount || 0}</td>
+                  {/* <td>{item.discount || 0}</td> */}
                   <td>{item.total}</td>
                 </tr>
               ))}
@@ -139,22 +228,22 @@ const handleCancel = () => {
         </div>
 
         <div className="buttons-right">
-          <button onClick={handlePay}>Pay</button>
-          <button onClick={openQuantityModal} disabled={!selectedProduct}>Quantity</button> {/* Open modal */}
-          <button onClick={handleDeleteProduct} disabled={!selectedProduct}>Delete</button> {/* Delete selected product */}
-          <button onClick={handleDeleteAll} disabled={cart.length === 0}>DeleteAll</button> {/* Delete all products */}
-          <button onClick={handleCancel}>Cancel</button>
+          <button onClick={handlePay}>Thanh toán</button>
+          <button onClick={openQuantityModal} disabled={!selectedProduct}>Số lượng</button>
+          <button onClick={handleDeleteProduct} disabled={!selectedProduct}>Xóa</button>
+          <button onClick={handleDeleteAll} disabled={cart.length === 0}>Xóa hết</button>
+          {/* <button onClick={handleCancel}>Cancel</button> */}
         </div>
       </div>
 
       <div className="row-bottom">
         <div className="function-section">
-          <button>Đăng xuất</button>
-          <button>Bán</button>
+          <button onClick={handleLogout}>Đăng xuất</button>
+          {/* <button>Bán</button>
           <button>Trả hàng</button>
-          <button>In lại hóa đơn</button>
-          <button onClick={() => setIsModalOpen(true)}>Check Price</button>
-          <button>Cash</button>
+          <button>In lại hóa đơn</button> */}
+          <button onClick={() => setIsModalOpen(true)}>Kiểm tra giá</button>
+          {/* <button>Cash</button> */}
         </div>
 
         <div className="keypad-section">
@@ -162,14 +251,11 @@ const handleCancel = () => {
             <input
               value={barcode}
               onChange={(e) => setBarcode(e.target.value)}
-              type="number"
+              type="text"
               className="keypad-input"
-              placeholder="Nhập giá trị"
+              placeholder="Nhập barcode"
             />
-            <button
-              onClick={addProduct}
-              className="submit-btn"
-            >
+            <button onClick={addProduct} className="submit-btn">
               Nhập
             </button>
           </div>
@@ -194,7 +280,7 @@ const handleCancel = () => {
       <PriceCheckModal
         isOpen={isModalOpen}
         onRequestClose={() => setIsModalOpen(false)}
-        // onCheckPrice={checkPrice}
+        checkPriceByBarcode={checkPriceByBarcode}
       />
       <QuantityModal
         isOpen={quantityModalOpen}

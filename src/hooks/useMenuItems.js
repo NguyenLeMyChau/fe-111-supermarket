@@ -107,6 +107,7 @@ const useMenuItems = (onchange) => {
                     ]
                 },
                 { Icon: FaUsers, label: "Suppliers", text: "Nhà cung cấp", path: '/admin/supplier' },
+                { Icon: FaCashRegister, label: "Stall", text: "Quầy thu ngân"},
             ],
         },
         {

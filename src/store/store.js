@@ -24,6 +24,7 @@ import categoryCustomer from './reducers/categoryCustomerSlice';
 import productCustomer from './reducers/productCustomerSlice';
 import invoiceCustomer from './reducers/invoiceCustomerSlice';
 import stocktakingReducer from './reducers/stocktakingSlice';
+import productPayReducer from './reducers/productPaySlice';
 
 
 const persistConfig = {
@@ -52,6 +53,7 @@ const rootReducer = combineReducers(
         productCustomer: productCustomer,
         invoiceCustomer: invoiceCustomer,
         stocktaking: stocktakingReducer,
+        productPay: productPayReducer,
     });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

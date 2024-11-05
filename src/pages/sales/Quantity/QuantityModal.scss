@@ -1,59 +1,99 @@
-/* QuantityModal.scss */
 .quantity-overlay {
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1000;
+  background: rgba(0, 0, 0, 0.7); /* Darker overlay for better contrast */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000; /* Ensure the overlay is on top */
+}
+
+.quantity-modal {
+  padding: 24px; /* Increased padding for more spacious feel */
+  background: #ffffff; /* White background */
+  border-radius: 10px; /* More pronounced rounded corners */
+  max-width: 400px; /* Maximum width */
+  width: 100%; /* Responsive width */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Deeper shadow for a floating effect */
+  animation: fadeIn 0.3s ease; /* Optional fade-in effect */
+}
+
+.quantity-modal__title {
+  margin-bottom: 20px; /* Space below the title */
+  font-size: 1.6rem; /* Slightly larger title font size */
+  color: #333; /* Title color */
+  text-align: center; /* Center title text */
+  font-weight: bold; /* Bold title */
+}
+
+.quantity-modal__content {
+  display: flex; /* Flexbox for column layout */
+  flex-direction: column; /* Stack children vertically */
+}
+
+.quantity-modal__input-group {
+  margin-bottom: 16px; /* Space between input groups */
+}
+
+.quantity-modal__input {
+  width: 90%; /* Full width for input */
+  padding: 12px; /* Increased padding for input */
+  margin-bottom: 8px; /* Space below input */
+  border: 1px solid #ddd; /* Light border */
+  border-radius: 5px; /* Slightly rounded corners */
+  font-size: 1rem; /* Input font size */
+  transition: border-color 0.2s ease; /* Smooth transition for border color */
+}
+
+.quantity-modal__input:focus {
+  border-color: #007bff; /* Change border color on focus */
+  outline: none; /* Remove default outline */
+}
+
+.quantity-modal__button {
+  background-color: #007bff; /* Primary button color */
+  border: none; /* Remove border */
+  color: #ffffff; /* Button text color */
+  padding: 12px; /* Padding inside buttons */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+  font-size: 1rem; /* Button font size */
+  margin-right: 10px; /* Space between buttons */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition for hover */
+}
+
+.quantity-modal__button--update {
+  background-color: #28a745; /* Green for update button */
+}
+
+.quantity-modal__button--cancel {
+  background-color: #dc3545; /* Red for cancel button */
+}
+
+.quantity-modal__button:hover {
+  background-color: #0056b3; /* Darker shade on hover */
+  transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+.quantity-modal__button--update:hover {
+  background-color: #218838; /* Darker green on hover */
+}
+
+.quantity-modal__button--cancel:hover {
+  background-color: #c82333; /* Darker red on hover */
+}
+
+/* Optional animation for modal fade-in */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
   }
-  
-  .quantity-modal {
-    padding: 20px;
-    background: #fff;
-    border-radius: 8px;
-    max-width: 400px;
-    width: 100%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  .quantity-modal h2 {
-    margin-bottom: 16px;
-    font-size: 1.5rem;
-    color: #333;
-  }
-  
-  .quantity-modal .modal-content {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .quantity-modal input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 12px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
-  }
-  
-  .quantity-modal button {
-    background-color: #007bff;
-    border: none;
-    color: #fff;
-    padding: 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
-    margin-right: 10px;
-    transition: background-color 0.3s ease;
-  }
-  
-  .quantity-modal button:hover {
-    background-color: #0056b3;
-  }
-  
+}

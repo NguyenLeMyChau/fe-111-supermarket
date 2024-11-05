@@ -62,6 +62,9 @@ function AppRoutes() {
                         <Route path="supplier" element={<Supplier />}>
                             <Route path=":supplierId/product" element={<ProductSupplier />} />
                         </Route>
+                        <Route path="stall" element={<Stall />}>
+                            <Route path=":stall/payment" element={<Payment />} />
+                        </Route>
                         {/* <Route path="order" element={<Orders />} >
                         <Route path="add-order" element={<AddOrder />} />
                     </Route> */}
@@ -75,6 +78,7 @@ function AppRoutes() {
 
                         <Route path="unit" element={<Unit />} />
                         <Route path="invoice" element={<Invoice />} />
+                       
                     </Route>
 
                     <Route path="/frame-staff" element={<FrameStaff />} />
