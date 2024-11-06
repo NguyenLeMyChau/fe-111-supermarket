@@ -17,17 +17,34 @@ const Payment = () => {
   const [totalAmount, setTotalAmount] = useState(
     useSelector((state) => state.productPay.totalAmount)
   );
-  const customer = useSelector((state) => state.productPay.customer) || {};
+  const customer = useSelector((state) => state.productPay.customer);
   console.log(customer)
   const [promotion, setPromotion] = useState([]);
   const [customerPaid, setCustomerPaid] = useState(null);
-  const [paymentMethod, setPaymentMethod] = useState("Cash");
+  const [paymentMethod, setPaymentMethod] = useState("Tiền mặt");
   const [productWithPromotions, setProductWithPromotions] = useState([]);
   const change = customerPaid > totalAmount ? customerPaid - totalAmount : 0;
   const [showIneligibleModal, setShowIneligibleModal] = useState(false); // State to show/hide modal
   const [discountedTotal, setDiscountedTotal] = useState(totalAmount);
   const [appliedPromotion, setAppliedPromotion] = useState(null);
   const [ineligiblePromotions, setIneligiblePromotions] = useState([]);
+  const [paymentInfo,setPaymenInfo] = useState({
+    name:'',
+    gender:'',
+    phone:'',
+    address:null,
+  });
+  useEffect(() => {
+    if (customer) {
+    console.log(customer)
+      setPaymenInfo({
+        name: customer.name,
+        gender: customer.gender,
+        phone: customer.phone,
+        address: customer.address,
+      });
+    }
+  }, [customer]); // Chạy effect mỗi khi customer thay đổi
 
   useEffect(() => {
     const fetchPromotions = async () => {
@@ -216,19 +233,17 @@ const Payment = () => {
   const handlePayment = async () => {
     const isConfirmed = window.confirm('Bạn có chắc chắn thanh toán');
     if (!isConfirmed) return;
-
+console.log(paymentInfo);
     if (customerPaid < totalAmount) {
       alert("Số tiền trả không đủ.");
       return;
     }
 
-    const paymentInfo = null;
-    console.log(productWithPromotions)
     try {
       const response = await payCart(
         accessToken,
         axiosJWT,
-        customer?._id,
+        customer?._id|| {},
         productWithPromotions,
         paymentMethod,
         paymentInfo,
@@ -320,6 +335,19 @@ console.log(response)
       <div className="right-section">
   <h3>Thanh toán</h3>
   <div className="payment-info">
+  {customer && (
+    <>
+      <div className="payment-line" style={{color:'blue'}}>
+        <p ><strong>Khách hàng:</strong></p>
+        <p className="amount">{customer.name}</p>
+      </div>
+      <div className="payment-line" style={{color:'blue'}}>
+       <p><strong>Số điện thoại:</strong></p>
+       <p className="amount">{customer.phone}</p>
+     </div>
+     </>
+    )}
+
     <div className="payment-line">
       <p><strong>Tổng số tiền sản phẩm:</strong></p>
       <p className="amount">{totalAmount} đ</p>
@@ -349,7 +377,7 @@ console.log(response)
 
 
           <div className="payment-method-grid">
-            {["Cash", "ZaloPay", "VNPay", "Momo", "Card", "ShopeePay"].map(
+            {["Tiền mặt"].map(
               (method) => (
                 <button
                   key={method}

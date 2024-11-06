@@ -6,7 +6,7 @@ import QuantityModal from "./Quantity/QuantityModal.js";
 import { getProductsByBarcodeInUnitConvert } from "../../services/cartRequest.js";
 import { useDispatch, useSelector } from "react-redux";
 import { useAccessToken, useAxiosJWT } from "../../utils/axiosInstance.js";
-import { clearProductPay, setProductPay } from "../../store/reducers/productPaySlice.js";
+import { clearCustomer, clearProductPay, setProductPay } from "../../store/reducers/productPaySlice.js";
 import CustomerInfoModal from "./CustomerInfoModal/CustomerInfoModal.js";
 
 const Sales = () => {
@@ -166,6 +166,7 @@ const getPriceByBarcode = (product, barcode) => {
       setCart([]);
       setTotal(0);
       dispatch(clearProductPay());
+      dispatch(clearCustomer());
       setSelectedProduct(null);
     }
   };
@@ -239,7 +240,7 @@ const getPriceByBarcode = (product, barcode) => {
           <button onClick={handlePay}>Thanh toán</button>
           <button onClick={openQuantityModal} disabled={!selectedProduct}>Số lượng</button>
           <button onClick={handleDeleteProduct} disabled={!selectedProduct}>Xóa</button>
-          <button onClick={handleDeleteAll} disabled={cart.length === 0}>Xóa hết</button>
+          <button onClick={handleDeleteAll}>Xóa hết</button>
           {/* <button onClick={handleCancel}>Cancel</button> */}
         </div>
       </div>
