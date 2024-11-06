@@ -1,13 +1,12 @@
 import React from "react";
 import "./Receipt.scss";
 const Receipt = ({ data }) => {
+  console.log(data);
   return (
     <div className="receipt">
       <h2>Hóa Đơn Thanh Toán</h2>
-      <p><strong>Nhân viên:</strong> {data.cashierName}</p>
-      <p><strong>Thời gian:</strong> {new Date(data.transactionTime).toLocaleString()}</p>
-      <p><strong>Số hóa đơn:</strong> {data.receiptNumber}</p>
-
+      <p><strong>Nhân viên:</strong> {data.invoice.employee_id.name}</p>
+      <p><strong>Thời gian:</strong> {new Date(data.invoice.createdAt).toLocaleString()}</p>
       <h3>Chi tiết sản phẩm</h3>
       <table>
         <thead>
@@ -18,19 +17,18 @@ const Receipt = ({ data }) => {
           </tr>
         </thead>
         <tbody>
-          {data.items.map((item, index) => (
+          {data.invoiceDetails.products.map((item, index) => (
             <tr key={index}>
-              <td>{item.name}</td>
-              <td>{item.quantity}</td>
-              <td>{item.price}đ</td>
+              <td>{item.product.name}</td>
+              <td>{item.product.quantity}</td>
+              <td>{item.product.price}đ</td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      <p><strong>Tổng tiền:</strong> {data.total}đ</p>
-      <p><strong>Phương thức thanh toán:</strong> {data.paymentMethod}</p>
-      <p><strong>Mật khẩu WiFi:</strong> {data.wifiPassword}</p>
+      <p><strong>Tổng tiền:</strong> {data.invoice.paymentAmount}đ</p>
+      <p><strong>Phương thức thanh toán:</strong> {data.invoice.paymentMethod}</p>
 
       <div className="footer">
         <p>Cảm ơn quý khách đã mua sắm tại cửa hàng chúng tôi!</p>

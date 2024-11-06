@@ -64,10 +64,11 @@ const addProductToCart = async (accessToken, axiosJWT, accountId, productId, uni
     }
 }
 
-const payCart = async ( accessToken, axiosJWT, customerId, products, paymentMethod, paymentInfo, paymentAmount) => {
+const payCart = async ( accessToken, axiosJWT,employee, customerId, products, paymentMethod, paymentInfo, paymentAmount) => {
     try {
-        console.log(customerId, products, paymentMethod, paymentInfo, paymentAmount)
+        console.log(employee,customerId, products, paymentMethod, paymentInfo, paymentAmount)
         const response = await axiosJWT.post(`/api/auth/pay-cart-web`, {
+            employee,
             customerId,
             products,
             paymentMethod,
@@ -84,6 +85,18 @@ const payCart = async ( accessToken, axiosJWT, customerId, products, paymentMeth
         console.error('Pay cart failed:', error);
     }
 
+}
+const getInvoiceById=async (accessToken, axiosJWT, invoiceId)=>{
+    try {
+        const response = await axiosJWT.get(`/api/auth/getInvoices/${invoiceId}`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Get getInvoiceById failed:', error);
+    }
 }
 
 const updateCart = async (accountId, productList, accessToken, axiosJWT) => {
@@ -195,5 +208,6 @@ export {
     checkStockQuantityInCart,
     getPromotions,
     getProductsByBarcodeInUnitConvert,
-    getCustomerByPhone
+    getCustomerByPhone,
+    getInvoiceById
 }

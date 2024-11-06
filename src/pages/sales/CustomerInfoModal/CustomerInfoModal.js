@@ -5,7 +5,7 @@ import { useAccessToken, useAxiosJWT } from "../../../utils/axiosInstance";
 import { clearCustomer, setCustomer } from "../../../store/reducers/productPaySlice";
 import { useDispatch, useSelector } from "react-redux";
 
-const CustomerInfoModal = ({ isOpen, onRequestClose, onSubmit }) => {
+const CustomerInfoModal = ({ isOpen, onRequestClose, onSubmit,invoiceData }) => {
   const [customerInfo, setCustomerInfo] = useState(null);
   const [phone, setPhone] = useState("");
   const [error, setError] = useState(null);

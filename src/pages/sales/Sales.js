@@ -241,7 +241,7 @@ const getPriceByBarcode = (product, barcode) => {
         </div>
 
         <div className="buttons-right">
-          <button onClick={handlePay}>Thanh toán</button>
+          <button onClick={handlePay} disabled={cart.length===0}>Thanh toán</button >
           <button onClick={openQuantityModal} disabled={!selectedProduct}>Số lượng</button>
           <button onClick={handleDeleteProduct} disabled={!selectedProduct}>Xóa</button>
           <button onClick={handleDeleteAll}>Xóa hết</button>

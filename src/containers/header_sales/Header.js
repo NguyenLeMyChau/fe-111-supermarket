@@ -6,7 +6,7 @@ const Header = ({ supermarketName, address, employeeName }) => {
   const currentUser = useSelector((state) => state.auth.login?.currentUser);
   const customer = useSelector((state) => state.productPay.customer); // Lấy thông tin khách hàng từ Redux
   const [customerInfo, setCustomerInfo] = useState(null);
-
+console.log(currentUser)
   useEffect(() => {
     // Cập nhật thông tin khách hàng mỗi khi thông tin khách hàng trong Redux thay đổi
     if (customer) {

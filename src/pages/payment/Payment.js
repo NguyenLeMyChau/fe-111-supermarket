@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./Payment.scss";
 import { useDispatch, useSelector } from "react-redux";
-import { clearProductPay } from "../../store/reducers/productPaySlice";
+import { clearCustomer, clearProductPay } from "../../store/reducers/productPaySlice";
 import axios from "axios";
 import { getPromotionByProductId, getPromotions, payCart } from "../../services/cartRequest";
 import ModalComponent from "../../components/modal/Modal";
@@ -18,20 +18,21 @@ const Payment = () => {
   const axiosJWT = useAxiosJWT();
   const accessToken = useAccessToken();
   const productList = useSelector((state) => state.productPay.productPay);
-  const [totalAmount, setTotalAmount] = useState(
-    useSelector((state) => state.productPay.totalAmount)
-  );
+  const totalAmountPay =  useSelector((state) => state.productPay.totalAmount);
+  const [totalAmount, setTotalAmount] = useState( useSelector((state) => state.productPay.totalAmount));
   const customer = useSelector((state) => state.productPay.customer);
-  console.log(customer)
+  console.log(totalAmount)
   const [promotion, setPromotion] = useState([]);
   const [customerPaid, setCustomerPaid] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("Tiền mặt");
   const [productWithPromotions, setProductWithPromotions] = useState([]);
   const change = customerPaid > totalAmount ? customerPaid - totalAmount : 0;
   const [showIneligibleModal, setShowIneligibleModal] = useState(false); // State to show/hide modal
-  const [discountedTotal, setDiscountedTotal] = useState(totalAmount);
+  const [discountedTotal, setDiscountedTotal] = useState(totalAmount || 0);
   const [appliedPromotion, setAppliedPromotion] = useState(null);
   const [ineligiblePromotions, setIneligiblePromotions] = useState([]);
+  const currentUser = useSelector((state) => state.auth.login?.currentUser);
+  const [dataInvoices,setDataInvoices] = useState(); 
 
   const [isPaid, setIsPaid] = useState(false);
 
@@ -60,7 +61,12 @@ const Payment = () => {
       });
     }
   }, [customer]); // Chạy effect mỗi khi customer thay đổi
-
+  useEffect(() => {
+    if (totalAmountPay) {
+    console.log(totalAmountPay)
+    setTotalAmount(totalAmountPay );
+    }
+  }, [totalAmountPay]); 
   useEffect(() => {
     const fetchPromotions = async () => {
       try {
@@ -241,6 +247,7 @@ const Payment = () => {
   };
   const closeModalPay = () => {
     setIsPaid(false);
+    dispatch(clearCustomer());
     dispatch(clearProductPay());
     navigate("/frame-staff/stall");
   };
@@ -258,21 +265,22 @@ console.log(paymentInfo);
       alert("Số tiền trả không đủ.");
       return;
     }
- 
     try {
       const response = await payCart(
         accessToken,
         axiosJWT,
-        customer?._id,
+        currentUser.user,
+        customer?.account_id,
         productWithPromotions,
         paymentMethod,
         paymentInfo,
         discountedTotal
       );
-        console.log(response)
+        console.log(response.data)
       if (response?.success) {
         alert("Thanh toán thành công!");
         setIsPaid(true);
+        setDataInvoices(response.data);
       } else {
         alert(response?.message || "Thanh toán thất bại!");
       }
@@ -461,7 +469,7 @@ console.log(paymentInfo);
             <button className="payment-button" onClick={handleClear}>
               C
             </button>
-            <button className="payment-button-pay"  onClick={handlePayment}>
+            <button className="payment-button-pay"  onClick={handlePayment} disabled={productWithPromotions.length===0}>
               Thanh toán
             </button>
           </div>
@@ -471,7 +479,7 @@ console.log(paymentInfo);
         </div>
       </div>
      
-      {isPaid && <PaymentModal isPaid={isPaid} closeModal={closeModalPay} />}
+      {isPaid && dataInvoices && <PaymentModal isPaid={isPaid} closeModal={closeModalPay} accessToken={accessToken} axiosJWT={axiosJWT} invoiceId={dataInvoices.invoiceCode}/>}
       <ModalComponent
         title={'Sản phẩm không đủ điều kiện khuyến mãi'}
         isOpen={showIneligibleModal}
