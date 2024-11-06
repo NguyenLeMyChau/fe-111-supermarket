@@ -4,9 +4,9 @@ import { loginFailed, loginStart, loginSuccess, logoutFailed, logoutStart, logou
 
 const loginUser = async (loginData, dispatch, navigate) => {
     dispatch(loginStart());
-    console.log('process.env.REACT_APP_API_URL', process.env.REACT_APP_API_URL);
+    
     try {
-        const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/login`, loginData);
+        const response = await axios.post(`https://be-111-supermarket.vercel.app/api/auth/login`, loginData);
 
         const { accessToken, refreshToken } = response.data;
 

@@ -20,8 +20,8 @@ export default function Bill() {
     const accessToken = useAccessToken();
     const axiosJWT = useAxiosJWT();
 
-    const orders = useSelector((state) => state.order?.orders);
-    const sortedOrders = [...orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    const orders = useSelector((state) => state.order?.orders) || [];
+    const sortedOrders = Array.isArray(orders) ? [...orders].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)) : [];
 
     const isAddBill = location.pathname.includes('add-bill');
     const [isBillDetail, setIsBillDetail] = useState(false);
