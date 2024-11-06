@@ -2,7 +2,6 @@ import Modal from "../../components/modal/Modal";
 import { formatCurrency, formatDate } from "../../utils/fotmatDate";
 import ShowPromotion from "./ShowPromotion";
 
-
 export default function ProductInvoice({ isModalOpen, closeModal, products, selectedInvoice }) {
     return (
         <Modal
@@ -20,34 +19,41 @@ export default function ProductInvoice({ isModalOpen, closeModal, products, sele
                     <div className="invoice-table">
                         <table>
                             <tbody>
-                                <tr>
-                                    <th>Mã đơn hàng:</th>
-                                    <td>{selectedInvoice?._id}</td>
-                                    <th>Khách hàng:</th>
-                                    <td>{selectedInvoice?.customerName}</td>
-                                </tr>
-                                <tr>
-                                    <th>Người nhận:</th>
-                                    <td>{selectedInvoice?.paymentInfo?.name}</td>
-                                    <th>Số điện thoại nhận:</th>
-                                    <td>{selectedInvoice?.paymentInfo?.phone}</td>
-                                </tr>
-                                <tr>
-                                    <th>Ngày đặt hàng:</th>
-                                    <td>{formatDate(selectedInvoice?.createdAt)}</td>
-                                    <th>Tổng tiền:</th>
-                                    <td>{formatCurrency(selectedInvoice?.paymentAmount)}</td>
-                                </tr>
-
-                                <tr>
-                                    <th>Địa chỉ giao hàng:</th>
-                                    <td colSpan={3}>
-                                        {[selectedInvoice?.paymentInfo?.address?.street,
-                                        selectedInvoice?.paymentInfo?.address?.ward,
-                                        selectedInvoice?.paymentInfo?.address?.district,
-                                        selectedInvoice?.paymentInfo?.address?.city].filter(Boolean).join(', ')}
-                                    </td>
-                                </tr>
+                                {selectedInvoice?.invoiceCode && (
+                                    <tr>
+                                        <th>Mã đơn hàng:</th>
+                                        <td>{selectedInvoice.invoiceCode}</td>
+                                        <th>Khách hàng:</th>
+                                        <td>{selectedInvoice.customerName}</td>
+                                    </tr>
+                                )}
+                                {selectedInvoice?.paymentInfo?.name && (
+                                    <tr>
+                                        <th>Người nhận:</th>
+                                        <td>{selectedInvoice.paymentInfo.name}</td>
+                                        <th>Số điện thoại nhận:</th>
+                                        <td>{selectedInvoice.paymentInfo.phone}</td>
+                                    </tr>
+                                )}
+                                {selectedInvoice?.createdAt && (
+                                    <tr>
+                                        <th>Ngày đặt hàng:</th>
+                                        <td>{formatDate(selectedInvoice.createdAt)}</td>
+                                        <th>Tổng tiền:</th>
+                                        <td>{formatCurrency(selectedInvoice.paymentAmount)}</td>
+                                    </tr>
+                                )}
+                                {selectedInvoice?.paymentInfo?.address && (
+                                    <tr>
+                                        <th>Địa chỉ giao hàng:</th>
+                                        <td colSpan={3}>
+                                            {[selectedInvoice.paymentInfo.address.street,
+                                            selectedInvoice.paymentInfo.address.ward,
+                                            selectedInvoice.paymentInfo.address.district,
+                                            selectedInvoice.paymentInfo.address.city].filter(Boolean).join(', ')}
+                                        </td>
+                                    </tr>
+                                )}
                             </tbody>
                         </table>
                     </div>
@@ -67,23 +73,23 @@ export default function ProductInvoice({ isModalOpen, closeModal, products, sele
                                     <th style={{ textAlign: 'center', width: '10%' }}>Số lượng</th>
                                     <th style={{ textAlign: 'center', width: '10%' }}>Giá gốc</th>
                                     <th style={{ textAlign: 'center', width: '10%' }}>Giá tổng</th>
-                                    {/* <th style={{ textAlign: 'center', width: '15%' }}>Khuyến mãi</th> */}
                                     <th style={{ textAlign: 'center', width: '70%' }}>Khuyến mãi</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {products.map((product) => (
                                     <tr key={product._id}>
-                                        <td>
-                                            <img src={product.productImg} alt={product.productName} />
-                                        </td>
-                                        <td>{product.item_code}</td>
-                                        <td>{product.productName}</td>
-                                        <td>{product.unitName}</td>
-                                        <td style={{ textAlign: 'center' }}>{product.quantity}</td>
-                                        <td style={{ textAlign: 'right' }}>{formatCurrency(product.price)}</td>
-                                        <td style={{ textAlign: 'right' }}>{formatCurrency(product.total)}</td>
-                                        {/* <td>{product.promotion?.description}</td> */}
+                                        {product.productImg && (
+                                            <td>
+                                                <img src={product.productImg} alt={product.productName} />
+                                            </td>
+                                        )}
+                                        {product.item_code && <td>{product.item_code}</td>}
+                                        {product.productName && <td>{product.productName}</td>}
+                                        {product.unitName && <td>{product.unitName}</td>}
+                                        {product.quantity && <td style={{ textAlign: 'center' }}>{product.quantity}</td>}
+                                        {product.price && <td style={{ textAlign: 'right' }}>{formatCurrency(product.price)}</td>}
+                                        {product.total && <td style={{ textAlign: 'right' }}>{formatCurrency(product.total)}</td>}
                                         <td> <ShowPromotion promotion={product.promotion} /></td>
                                     </tr>
                                 ))}

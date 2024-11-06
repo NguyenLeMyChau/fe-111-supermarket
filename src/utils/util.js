@@ -5,7 +5,7 @@ const refreshToken = async () => {
     try {
         const refreshToken = sessionStorage.getItem('refreshToken');
 
-        const response = await axios.post(`https://be-111-supermarket.vercel.app/api/auth/refresh`, { refreshToken });
+        const response = await axios.post(`${process.env.REACT_APP_API_URL}/api/auth/refresh`, { refreshToken });
 
         sessionStorage.setItem('refreshToken', response.data.refreshToken);
 
@@ -18,7 +18,7 @@ const refreshToken = async () => {
 
 export const createAxiosInstance = (user, dispatch, stateSuccess) => {
     const newInstance = axios.create({
-        baseURL: 'https://be-111-supermarket.vercel.app'
+        baseURL: process.env.REACT_APP_API_URL
     });
 
     newInstance.interceptors.request.use(
