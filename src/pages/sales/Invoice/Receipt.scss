@@ -1,0 +1,128 @@
+.receipt {
+  width: 300px;
+  margin: 0px auto;
+  font-family: 'Arial', sans-serif;
+  font-size: 14px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+  text-align: left;
+}
+
+.receipt h2 {
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.receipt p {
+  margin: 8px 0;
+  color: #555;
+}
+
+.receipt p strong {
+  font-weight: bold;
+}
+
+.receipt table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 15px 0;
+}
+
+.receipt table th, .receipt table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.receipt table th {
+  background-color: #f8f8f8;
+}
+
+.receipt table td {
+  text-align: center;
+}
+
+.receipt .total {
+  font-weight: bold;
+  margin-top: 20px;
+  text-align: right;
+}
+
+.receipt .footer {
+  font-size: 12px;
+  margin-top: 20px;
+  text-align: center;
+  color: #777;
+}
+
+.receipt .footer p {
+  margin: 5px 0;
+}
+/* CSS cho chế độ in */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  
+  #receiptToPrint, #receiptToPrint * {
+    visibility: visible;
+  }
+
+  #receiptToPrint {
+    width: 340px;
+    margin: 0px auto;
+    font-family: 'Arial', sans-serif;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+    text-align: left;
+  }
+
+  #receiptToPrint h2 {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  #receiptToPrint table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+  }
+
+  #receiptToPrint table th, #receiptToPrint table td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+  }
+
+  #receiptToPrint table th {
+    background-color: #f4f4f4;
+  }
+
+  #receiptToPrint table td {
+    text-align: center;
+  }
+
+  #receiptToPrint .total {
+    font-weight: bold;
+    margin-top: 20px;
+    text-align: right;
+  }
+
+  #receiptToPrint .footer {
+    font-size: 12px;
+    margin-top: 20px;
+    text-align: center;
+    color: #777;
+  }
+}

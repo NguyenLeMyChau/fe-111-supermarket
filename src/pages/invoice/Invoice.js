@@ -17,7 +17,7 @@ export default function Invoice() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [products, setProducts] = useState(null);
     const [selectedInvoice, setSelectedInvoice] = useState(null);
-
+console.log(invoices)
     // Tạo bản sao của mảng invoices trước khi sắp xếp
     const sortedInvoices = [...invoices].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
@@ -43,14 +43,14 @@ export default function Invoice() {
             dataIndex: 'paymentInfo',
             key: 'paymentInfo_name', // Sử dụng một khóa duy nhất
             width: '10%',
-            render: (paymentInfo) => paymentInfo.name
+            render: (paymentInfo) => paymentInfo?.name
         },
         {
             title: 'Số điện thoại nhận',
             dataIndex: 'paymentInfo',
             key: 'paymentInfo_phone', // Sử dụng một khóa duy nhất
             width: '15%',
-            render: (paymentInfo) => paymentInfo.phone
+            render: (paymentInfo) => paymentInfo?.phone
         },
         {
             title: 'Tổng tiền',

@@ -5,9 +5,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { clearProductPay } from "../../store/reducers/productPaySlice";
 import axios from "axios";
 import { getPromotionByProductId, getPromotions, payCart } from "../../services/cartRequest";
-import Modal from "../../components/modal/Modal";
+import ModalComponent from "../../components/modal/Modal";
 import { green } from "@mui/material/colors";
 import { useAccessToken, useAxiosJWT } from "../../utils/axiosInstance";
+import Receipt from "../sales/Invoice/Receipt";
+import Modal from 'react-modal';
+import PaymentModal from "../sales/Invoice/PaymentModal";
+
 const Payment = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -28,12 +32,23 @@ const Payment = () => {
   const [discountedTotal, setDiscountedTotal] = useState(totalAmount);
   const [appliedPromotion, setAppliedPromotion] = useState(null);
   const [ineligiblePromotions, setIneligiblePromotions] = useState([]);
-  const [paymentInfo,setPaymenInfo] = useState({
-    name:'',
-    gender:'',
-    phone:'',
-    address:null,
-  });
+
+  const [isPaid, setIsPaid] = useState(false);
+
+  const [paymentInfo,setPaymenInfo] = useState(null);
+  const sampleData = {
+    cashierName: 'Trần Dương Uyển Vũ',
+    transactionTime: '2021-05-29T07:31:00Z',
+    receiptNumber: 'CH8502-11801-001-0008',
+    items: [
+      { name: 'Tra Lai Dac Thom (L)', quantity: 1, price: 55000 },
+      { name: 'PL Tea Latte Cold (L)', quantity: 1, price: 50000 },
+      { name: 'Banh Flan', quantity: 1, price: 20000 },
+    ],
+    total: 125000,
+    paymentMethod: 'CASH',
+    wifiPassword: 'Luckytea',
+  };
   useEffect(() => {
     if (customer) {
     console.log(customer)
@@ -224,6 +239,11 @@ const Payment = () => {
   const closeModal = () => {
     setShowIneligibleModal(false);
   };
+  const closeModalPay = () => {
+    setIsPaid(false);
+    dispatch(clearProductPay());
+    navigate("/frame-staff/stall");
+  };
   // Xử lý quay lại trang bán hàng
   const handleBack = () => {
     navigate("/frame-staff/stall");
@@ -238,22 +258,21 @@ console.log(paymentInfo);
       alert("Số tiền trả không đủ.");
       return;
     }
-
+ 
     try {
       const response = await payCart(
         accessToken,
         axiosJWT,
-        customer?._id|| {},
+        customer?._id,
         productWithPromotions,
         paymentMethod,
         paymentInfo,
         discountedTotal
       );
-console.log(response)
+        console.log(response)
       if (response?.success) {
         alert("Thanh toán thành công!");
-        dispatch(clearProductPay());
-        navigate("/frame-staff/stall");
+        setIsPaid(true);
       } else {
         alert(response?.message || "Thanh toán thất bại!");
       }
@@ -451,8 +470,9 @@ console.log(response)
           </button>
         </div>
       </div>
-
-      <Modal
+     
+      {isPaid && <PaymentModal isPaid={isPaid} closeModal={closeModalPay} />}
+      <ModalComponent
         title={'Sản phẩm không đủ điều kiện khuyến mãi'}
         isOpen={showIneligibleModal}
         onRequestClose={closeModal}
@@ -483,7 +503,7 @@ console.log(response)
         <button onClick={closeModal}>Đóng</button>
         </div>
         </div>
-      </Modal>
+      </ModalComponent>
     </div>
   );
 };

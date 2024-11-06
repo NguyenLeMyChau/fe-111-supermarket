@@ -22,7 +22,7 @@ const Sales = () => {
   const [cart, setCart] = useState([]);
   const [total, setTotal] = useState(); // Initial total based on sample product
   const productList = useSelector((state) => state.productPay.productPay);
-
+  const currentUser = useSelector((state) => state.auth.login?.currentUser);
   const [customerInfoModalOpen, setCustomerInfoModalOpen] = useState(false);
   const [customerInfo, setCustomerInfo] = useState( useSelector((state) => state.productPay.customer));
 console.log(customerInfo)
@@ -47,7 +47,11 @@ console.log(customerInfo)
 
   // Handle logout
   const handleLogout = () => {
+    if(currentUser.role ==="manager") {
     navigate('/admin/user');
+    }else if(currentUser.role ==="staff") {
+    navigate('/frame-staff');
+    }
   };
 
   const handleCustomerInfoSubmit = (info) => {
@@ -247,7 +251,7 @@ const getPriceByBarcode = (product, barcode) => {
 
       <div className="row-bottom">
         <div className="function-section">
-          <button onClick={handleLogout}>Đăng xuất</button>
+          <button onClick={handleLogout}>Thoát</button>
           <button onClick={() => setCustomerInfoModalOpen(true)}>Nhập thông tin khách hàng</button>
           {/* <button>Bán</button>
           <button>Trả hàng</button>
