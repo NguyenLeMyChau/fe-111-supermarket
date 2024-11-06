@@ -160,14 +160,14 @@ export default function Warehouse() {
     };
 
     // Lọc các giá trị không trùng nhau cho productOptions
-    const uniqueProductOptions = Array.from(new Set(productList.map(product => product.name)))
+    const uniqueProductOptions = Array.from(new Set(productList?.map(product => product.name)))
         .map(name => ({
             value: name,
             label: name
         }));
 
     // Lọc các giá trị không trùng nhau cho itemCodeOptions
-    const uniqueItemCodeOptions = Array.from(new Set(productList.map(product => product.item_code)))
+    const uniqueItemCodeOptions = Array.from(new Set(productList?.map(product => product.item_code)))
         .map(item_code => ({
             value: item_code,
             label: item_code
