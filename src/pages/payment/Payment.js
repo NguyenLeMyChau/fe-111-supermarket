@@ -21,7 +21,6 @@ const Payment = () => {
   const totalAmountPay =  useSelector((state) => state.productPay.totalAmount);
   const [totalAmount, setTotalAmount] = useState( useSelector((state) => state.productPay.totalAmount));
   const customer = useSelector((state) => state.productPay.customer);
-  console.log(totalAmount)
   const [promotion, setPromotion] = useState([]);
   const [customerPaid, setCustomerPaid] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("Tiền mặt");
@@ -52,7 +51,6 @@ const Payment = () => {
   };
   useEffect(() => {
     if (customer) {
-    console.log(customer)
       setPaymenInfo({
         name: customer.name,
         gender: customer.gender,
@@ -63,7 +61,6 @@ const Payment = () => {
   }, [customer]); // Chạy effect mỗi khi customer thay đổi
   useEffect(() => {
     if (totalAmountPay) {
-    console.log(totalAmountPay)
     setTotalAmount(totalAmountPay );
     }
   }, [totalAmountPay]); 
@@ -76,7 +73,6 @@ const Payment = () => {
           const percentagePromotions = response.filter(
             (promo) => promo.promotionLine_id.type === "percentage"
           );
-          console.log(percentagePromotions)
           setPromotion(percentagePromotions);
         }
       } catch (error) {
@@ -94,8 +90,6 @@ const Payment = () => {
           product._id,
           product.unit._id
         );
-        console.log(product)
-        console.log(promotions)
         if (promotions && promotions.length > 0) {
           const applicablePromotions = promotions.map((promotion) => {
             console.log(promotion)
@@ -193,7 +187,6 @@ const Payment = () => {
       });
 
       const productsWithPromotions = await Promise.all(productPromises);
-      console.log(productsWithPromotions)
       setProductWithPromotions(productsWithPromotions.flat());
       setIneligiblePromotions(ineligible);
       setShowIneligibleModal(ineligible.length > 0?true:false);
@@ -225,12 +218,9 @@ const Payment = () => {
           currentTotal = totalAmount;
         }
 
-        console.log(currentTotal);
         return currentTotal;
       });
       const minTotal = Math.min(...finalTotals);
-      console.log(minTotal);
-      console.log(totalAmount);
       if (minTotal === totalAmount) {
         setDiscountedTotal(totalAmount);
         setAppliedPromotion(null);
@@ -260,7 +250,6 @@ const Payment = () => {
   const handlePayment = async () => {
     const isConfirmed = window.confirm('Bạn có chắc chắn thanh toán');
     if (!isConfirmed) return;
-console.log(paymentInfo);
     if (customerPaid < totalAmount) {
       alert("Số tiền trả không đủ.");
       return;

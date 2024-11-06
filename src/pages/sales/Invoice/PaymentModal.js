@@ -7,13 +7,14 @@ import { getInvoiceById } from "../../../services/cartRequest";
 const PaymentModal = ({ isPaid, closeModal, accessToken, axiosJWT, invoiceId }) => {
   const [isPrinted, setIsPrinted] = useState(false);
   const [data, setData] = useState(null);
-
+console.log(invoiceId)
+console.log(isPaid)
   // Gọi API để lấy dữ liệu hóa đơn khi modal mở
   useEffect(() => {
     if (isPaid && invoiceId) {
       const fetchInvoice = async () => {
         try {
-          const invoiceData = await getInvoiceById(accessToken, axiosJWT, invoiceId);
+          const invoiceData = await getInvoiceById(accessToken, axiosJWT, invoiceId);     
           console.log(invoiceData)
           setData(invoiceData);
         } catch (error) {

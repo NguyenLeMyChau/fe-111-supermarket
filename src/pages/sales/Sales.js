@@ -3,11 +3,13 @@ import "./Sales.scss";
 import { useLocation, useNavigate } from "react-router-dom";
 import PriceCheckModal from "./CheckPrice/PriceCheckModal.js"; // Import the modal
 import QuantityModal from "./Quantity/QuantityModal.js";
-import { getProductsByBarcodeInUnitConvert } from "../../services/cartRequest.js";
+import { getInvoiceById, getInvoiceLast, getProductsByBarcodeInUnitConvert } from "../../services/cartRequest.js";
 import { useDispatch, useSelector } from "react-redux";
 import { useAccessToken, useAxiosJWT } from "../../utils/axiosInstance.js";
 import { clearCustomer, clearProductPay, setProductPay } from "../../store/reducers/productPaySlice.js";
 import CustomerInfoModal from "./CustomerInfoModal/CustomerInfoModal.js";
+import ReprintModal from "./Reprint/ReprintModal.js";
+import PaymentModal from "./Invoice/PaymentModal.js";
 
 const Sales = () => {
   const navigate = useNavigate();
@@ -17,6 +19,7 @@ const Sales = () => {
   const [product, setProduct] = useState();
   const [barcode, setBarcode] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpenReprint, setIsModalOpenReprint] = useState(false);
   const [quantityModalOpen, setQuantityModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [cart, setCart] = useState([]);
@@ -25,6 +28,8 @@ const Sales = () => {
   const currentUser = useSelector((state) => state.auth.login?.currentUser);
   const [customerInfoModalOpen, setCustomerInfoModalOpen] = useState(false);
   const [customerInfo, setCustomerInfo] = useState( useSelector((state) => state.productPay.customer));
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+  const [invoiceInfo, setInvoiceInfo] = useState(null);
 console.log(customerInfo)
   useEffect(() => {
     console.log(productList)
@@ -170,7 +175,6 @@ const getPriceByBarcode = (product, barcode) => {
       setCart([]);
       setTotal(0);
       dispatch(clearProductPay());
-      dispatch(clearCustomer());
       setSelectedProduct(null);
     }
   };
@@ -181,8 +185,9 @@ const getPriceByBarcode = (product, barcode) => {
     if (confirmCancel) {
       setCart([]);
       setTotal(0);
+      dispatch(clearProductPay());
+      dispatch(clearCustomer());
       setSelectedProduct(null);
-      setQuantityModalOpen(false);
     }
   };
 
@@ -200,7 +205,27 @@ const getPriceByBarcode = (product, barcode) => {
     }
     return null; // Return null if the product is not found
 };
-
+const getInvoice = async (invoiceCode) => {
+  const invoiceData = await getInvoiceById(accessToken, axiosJWT, invoiceCode);     
+  if (invoiceData.invoice) {
+      return invoiceData.invoice.invoiceCode; // Return an object with price and product details
+  }
+  return null; // Return null if the product is not found
+};
+const handleReprint= async ()=>{
+  const invoiceData = await getInvoiceLast(accessToken, axiosJWT);
+  console.log(invoiceData)
+  if (invoiceData) {
+    console.log(invoiceData.invoiceCode)
+    setInvoiceInfo(invoiceData.invoiceCode)
+    setIsPaymentModalOpen(true)
+}
+return null; // Return null if the product is not found
+}
+const closePaymentModal = ()=>{
+  setIsPaymentModalOpen(false);
+  setInvoiceInfo(null);
+}
   return (
     <div className="sales-container">
       <div className="row-top">
@@ -244,20 +269,18 @@ const getPriceByBarcode = (product, barcode) => {
           <button onClick={handlePay} disabled={cart.length===0}>Thanh toán</button >
           <button onClick={openQuantityModal} disabled={!selectedProduct}>Số lượng</button>
           <button onClick={handleDeleteProduct} disabled={!selectedProduct}>Xóa</button>
-          <button onClick={handleDeleteAll}>Xóa hết</button>
-          {/* <button onClick={handleCancel}>Cancel</button> */}
+          <button onClick={handleDeleteAll} disabled={cart.length===0}>Xóa hết</button>
+          <button onClick={handleCancel}>Hủy</button>
         </div>
       </div>
 
       <div className="row-bottom">
         <div className="function-section">
-          <button onClick={handleLogout}>Thoát</button>
+          <button onClick={handleLogout} disabled={cart.length!==0}>Thoát</button>
           <button onClick={() => setCustomerInfoModalOpen(true)}>Nhập thông tin khách hàng</button>
-          {/* <button>Bán</button>
-          <button>Trả hàng</button>
-          <button>In lại hóa đơn</button> */}
           <button onClick={() => setIsModalOpen(true)}>Kiểm tra giá</button>
-          {/* <button>Cash</button> */}
+          <button onClick={() => setIsModalOpenReprint(true)}>In lại hóa đơn</button> 
+          <button onClick={handleReprint}>In lại giao dịch cuối</button> 
         </div>
 
         <div className="keypad-section">
@@ -295,6 +318,22 @@ const getPriceByBarcode = (product, barcode) => {
         isOpen={isModalOpen}
         onRequestClose={() => setIsModalOpen(false)}
         checkPriceByBarcode={checkPriceByBarcode}
+      />
+      {isPaymentModalOpen && invoiceInfo && (
+        <PaymentModal
+          isPaid={isPaymentModalOpen}
+          closeModal={closePaymentModal}
+          accessToken={accessToken}
+          axiosJWT={axiosJWT}
+          invoiceId={invoiceInfo} // Truyền mã hóa đơn vào invoiceId
+        />
+      )}
+       <ReprintModal
+        isOpen={isModalOpenReprint}
+        onRequestClose={() => setIsModalOpenReprint(false)}
+        getInvoice={getInvoice}
+        accessToken={accessToken}
+        axiosJWT ={axiosJWT}
       />
       <QuantityModal
         isOpen={quantityModalOpen}

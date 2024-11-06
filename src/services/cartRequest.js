@@ -98,7 +98,18 @@ const getInvoiceById=async (accessToken, axiosJWT, invoiceId)=>{
         console.error('Get getInvoiceById failed:', error);
     }
 }
-
+const getInvoiceLast=async (accessToken, axiosJWT)=>{
+    try {
+        const response = await axiosJWT.get(`/api/auth/lastInvoice`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Get getInvoiceLast failed:', error);
+    }
+}
 const updateCart = async (accountId, productList, accessToken, axiosJWT) => {
     try {
         const response = await axiosJWT.post(`/api/customer/update-cart`, {
@@ -209,5 +220,6 @@ export {
     getPromotions,
     getProductsByBarcodeInUnitConvert,
     getCustomerByPhone,
-    getInvoiceById
+    getInvoiceById,
+    getInvoiceLast
 }
