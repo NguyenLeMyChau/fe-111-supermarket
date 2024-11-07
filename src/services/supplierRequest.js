@@ -46,4 +46,19 @@ const updateSupplier = async (supplierId, supplierData, accessToken, axiosJWT) =
     }
 }
 
-export { getAllSuppliers, addSupplier, updateSupplier };
+const deleteSupplier = async (supplierId, accessToken, axiosJWT) => {
+    try {
+        const response = await axiosJWT.delete(`/api/supplier/delete-supplier/${supplierId}`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        alert('Xóa thành công nhà cung cấp');
+        return response.data;
+    }
+    catch (error) {
+        console.error('Delete supplier failed:', error);
+    }
+}
+
+export { getAllSuppliers, addSupplier, updateSupplier, deleteSupplier };
