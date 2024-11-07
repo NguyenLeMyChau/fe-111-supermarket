@@ -7,10 +7,15 @@ import { CiEdit } from 'react-icons/ci';
 import Modal from '../../components/modal/Modal';
 import UpdateSupplier from './UpdateSupplier';
 import AddSuplier from './AddSupplier';
+import { MdDelete } from 'react-icons/md';
+import { deleteSupplier } from '../../services/supplierRequest';
+import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
 
 export default function Supplier() {
     const navigate = useNavigate();
     const location = useLocation();
+    const accessToken = useAccessToken();
+    const axiosJWT = useAxiosJWT();
 
     const suppliers = useSelector((state) => state.supplier?.suppliers) || [];
     const enhancedSuppliers = suppliers.map((supplier) => ({
@@ -36,6 +41,24 @@ export default function Supplier() {
         setSelectedSupplier(null);
     };
 
+    const handleDeleteClick = async (event, supplier) => {
+        event.stopPropagation(); // Ngăn chặn sự kiện click của hàng bảng
+        if (supplier.productCount > 0) {
+            console.log('Không thể xóa nhà cung cấp có sản phẩm.');
+            alert('Không thể xóa nhà cung cấp khi vẫn còn sản phẩm');
+            return;
+        }
+        if (window.confirm(`Bạn có chắc chắn muốn xóa nhà cung cấp "${supplier.name}"?`)) {
+            try {
+                console.log('Đang xóa danh mục:', supplier);
+                await deleteSupplier(supplier._id, accessToken, axiosJWT, navigate);
+            } catch (error) {
+                console.error('Failed to delete category:', error);
+                alert('Có lỗi xảy ra khi xóa nhà cung cấp.');
+            }
+        }
+    }
+
     const supplierColumns = [
         { title: 'Nhà cung cấp', dataIndex: 'name', key: 'name', width: '20%' },
         { title: 'Số điện thoại', dataIndex: 'phone', key: 'phone', width: '5%' },
@@ -56,6 +79,27 @@ export default function Supplier() {
                 />
             ),
         },
+        {
+            title: 'Xóa',
+            key: 'delete',
+            width: '10%',
+            className: 'text-center',
+            render: (text, record) => (
+                record.productCount === 0 ? (
+                    <MdDelete
+                        style={{ color: 'red', cursor: 'pointer' }}
+                        size={25}
+                        onClick={(event) => handleDeleteClick(event, record)}
+                    />
+                ) : (
+                    <MdDelete
+                        style={{ color: 'grey', cursor: 'not-allowed' }}
+                        size={25}
+                        title="Không thể xóa danh mục có sản phẩm"
+                    />
+                )
+            ),
+        }
     ];
 
     const productColumns = [
@@ -93,6 +137,7 @@ export default function Supplier() {
             sessionStorage.removeItem('previousSupplierPath');
         }
     };
+
 
     return (
         <div>

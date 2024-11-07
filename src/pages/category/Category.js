@@ -6,8 +6,16 @@ import TableData from '../../containers/tableData/tableData';
 import AddCategory from './AddCategory';
 import { CiEdit } from 'react-icons/ci';
 import UpdateCategory from './UpdateCategory';
+import { MdDelete } from 'react-icons/md';
+import { deleteCategory } from '../../services/productRequest';
+import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
+import { useNavigate } from 'react-router';
 
 export default function Category() {
+    const accessToken = useAccessToken();
+    const axiosJWT = useAxiosJWT();
+    const navigate = useNavigate();
+
     const categories = useSelector((state) => state.category?.categories) || [];
     const enhancedCategories = categories.map((category) => ({
         ...category,
@@ -34,6 +42,24 @@ export default function Category() {
         setSelectedCategory(null);
     };
 
+    const handleDeleteClick = async (event, category) => {
+        event.stopPropagation(); // Ngăn chặn sự kiện click của hàng bảng
+        if (category.productCount > 0) {
+            console.log('Không thể xóa danh mục có sản phẩm.');
+            alert('Không thể xóa danh mục khi vẫn còn sản phẩm');
+            return;
+        }
+        // Thực hiện logic xóa, ví dụ: dispatch action để xóa danh mục
+        if (window.confirm(`Bạn có chắc chắn muốn xóa đơn vị "${category.name}"?`)) {
+            try {
+                console.log('Đang xóa danh mục:', category);
+                await deleteCategory(category._id, accessToken, axiosJWT, navigate);
+            } catch (error) {
+                console.error('Failed to delete category:', error);
+                alert('Có lỗi xảy ra khi xóa loại sản phẩm.');
+            }
+        }
+    };
 
     const categoryColumn = [
         {
@@ -62,6 +88,27 @@ export default function Category() {
                 />
             ),
         },
+        {
+            title: 'Xóa',
+            key: 'delete',
+            width: '10%',
+            className: 'text-center',
+            render: (text, record) => (
+                record.productCount === 0 ? (
+                    <MdDelete
+                        style={{ color: 'red', cursor: 'pointer' }}
+                        size={25}
+                        onClick={(event) => handleDeleteClick(event, record)}
+                    />
+                ) : (
+                    <MdDelete
+                        style={{ color: 'grey', cursor: 'not-allowed' }}
+                        size={25}
+                        title="Không thể xóa danh mục có sản phẩm"
+                    />
+                )
+            ),
+        }
     ];
 
 

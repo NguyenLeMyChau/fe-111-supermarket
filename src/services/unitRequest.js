@@ -58,4 +58,19 @@ const updateUnit = async (unitId, unitData, accessToken, axiosJWT, navigate) => 
     }
 }
 
-export { getAllUnit, getUnitById, addUnit, updateUnit };
+const deleteUnit = async (unitId, accessToken, axiosJWT, navigate) => {
+    try {
+        const response = await axiosJWT.delete(`/api/unit/delete-unit/${unitId}`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        alert('Xóa đơn vị tính thành công');
+        navigate('/admin/unit');
+        return response.data;
+    } catch (error) {
+        console.error('Delete unit failed:', error);
+    }
+}
+
+export { getAllUnit, getUnitById, addUnit, updateUnit, deleteUnit };

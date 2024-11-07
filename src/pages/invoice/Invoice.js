@@ -8,7 +8,6 @@ import './Invoice.scss';
 import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
 
-
 export default function Invoice() {
     const navigate = useNavigate();
     const location = useLocation();
@@ -17,13 +16,16 @@ export default function Invoice() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [products, setProducts] = useState(null);
     const [selectedInvoice, setSelectedInvoice] = useState(null);
-console.log(invoices)
+    console.log(invoices)
     // Tạo bản sao của mảng invoices trước khi sắp xếp
     const sortedInvoices = [...invoices].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
     const invoiceColumn = [
-        { title: 'Mã đơn hàng', dataIndex: '_id', key: '_id', width: '10%' },
-        { title: 'Khách hàng', dataIndex: 'customerName', key: 'customerName', width: '10%' },
+        { title: 'Mã đơn hàng', dataIndex: 'invoiceCode', key: 'invoiceCode', width: '10%' },
+        {
+            title: 'Khách hàng', dataIndex: 'customerName', key: 'customerName', width: '10%',
+            render: (customerName) => customerName ? customerName : 'Không cập nhật'
+        },
         {
             title: 'Ngày đặt hàng',
             dataIndex: 'createdAt',
@@ -43,14 +45,14 @@ console.log(invoices)
             dataIndex: 'paymentInfo',
             key: 'paymentInfo_name', // Sử dụng một khóa duy nhất
             width: '10%',
-            render: (paymentInfo) => paymentInfo?.name
+            render: (paymentInfo) => paymentInfo?.name ? paymentInfo.name : 'Không cập nhật'
         },
         {
             title: 'Số điện thoại nhận',
             dataIndex: 'paymentInfo',
             key: 'paymentInfo_phone', // Sử dụng một khóa duy nhất
             width: '15%',
-            render: (paymentInfo) => paymentInfo?.phone
+            render: (paymentInfo) => paymentInfo?.phone ? paymentInfo.phone : 'Không cập nhật'
         },
         {
             title: 'Tổng tiền',

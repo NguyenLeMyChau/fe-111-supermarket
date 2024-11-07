@@ -5,16 +5,20 @@ import { CiEdit } from 'react-icons/ci';
 import Modal from '../../components/modal/Modal';
 import Input from '../../components/input/Input';
 import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
-import { addUnit, updateUnit } from '../../services/unitRequest';
+import { addUnit, deleteUnit, updateUnit } from '../../services/unitRequest';
 import Button from '../../components/button/Button';
 import ClipLoader from 'react-spinners/ClipLoader';
 import { useNavigate } from 'react-router';
+import { MdDelete } from 'react-icons/md';
 
 export default function Unit() {
     const units = useSelector((state) => state.unit?.units) || [];
+    const products = useSelector((state) => state.product?.products) || [];
     const accessToken = useAccessToken();
     const axiosJWT = useAxiosJWT();
     const navigate = useNavigate();
+    console.log('units', units);
+    console.log('products', products);
 
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedUnit, setSelectedUnit] = useState(null);
@@ -22,6 +26,19 @@ export default function Unit() {
     const [isOpenNewUnit, setIsOpenNewUnit] = useState(false);
     const [unit, setUnit] = useState({ description: '' });
     const [loading, setLoading] = useState(false);
+
+    // Đếm số sản phẩm có sử dụng từng unit
+    const productCountByUnit = units.map((unit) => {
+        const count = products.filter((product) =>
+            product.unit_convert.some((uc) => uc.unit._id === unit._id)
+        ).length;
+
+        return {
+            unitId: unit._id,
+            unitName: unit.description,
+            productCount: count,
+        };
+    });
 
     const handleEditClick = (event, unit) => {
         event.stopPropagation(); // Ngăn chặn sự kiện click của hàng bảng
@@ -35,8 +52,40 @@ export default function Unit() {
         setSelectedUnit(null);
     };
 
+    const handleDeleteClick = async (unit) => {
+        const unitData = productCountByUnit.find(item => item.unitId === unit._id);
+        if (unitData && unitData.productCount > 0) {
+            alert(`Không thể xóa đơn vị "${unit.description}" vì có sản phẩm sử dụng.`);
+            return;
+        }
+
+        if (window.confirm(`Bạn có chắc chắn muốn xóa đơn vị "${unit.description}"?`)) {
+            setLoading(true);
+            try {
+                await deleteUnit(unit._id, accessToken, axiosJWT, navigate);
+            } catch (error) {
+                console.error('Failed to delete unit:', error);
+                alert('Có lỗi xảy ra khi xóa đơn vị tính.');
+            } finally {
+                setLoading(false);
+            }
+        }
+    };
+
+
+
     const unitColumn = [
-        { title: 'Đơn vị tính', dataIndex: 'description', key: 'description', width: '50%' },
+        { title: 'Đơn vị tính', dataIndex: 'description', key: 'description', width: '10%' },
+        {
+            title: 'Số lượng sản phẩm',
+            key: 'productCount',
+            width: '20%',
+            className: 'text-center',
+            render: (text, record) => {
+                const unitData = productCountByUnit.find(item => item.unitId === record._id);
+                return unitData ? unitData.productCount : 0;
+            }
+        },
         {
             title: 'Chỉnh sửa',
             key: 'edit',
@@ -50,6 +99,30 @@ export default function Unit() {
                 />
             ),
         },
+        // Thêm render cho nút xóa với điều kiện
+        {
+            title: 'Xóa',
+            key: 'delete',
+            width: '10%',
+            className: 'text-center',
+            render: (text, record) => {
+                const unitData = productCountByUnit.find(item => item.unitId === record._id);
+                return unitData && unitData.productCount === 0 ? (
+                    <MdDelete
+                        style={{ color: 'red', cursor: 'pointer' }}
+                        size={25}
+                        onClick={() => handleDeleteClick(record)}
+                    />
+                ) : (
+                    <MdDelete
+                        style={{ color: 'grey', cursor: 'not-allowed' }}
+                        size={25}
+                        title="Không thể xóa đơn vị có sản phẩm"
+                    />
+                );
+            }
+        }
+
     ];
 
     const handleAddUnit = async (e) => {
