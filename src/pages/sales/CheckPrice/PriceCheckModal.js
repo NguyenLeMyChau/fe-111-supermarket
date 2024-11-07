@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Modal from "react-modal";
 import "./PriceCheckModal.scss"; // Ensure you create and import the necessary styles
+import { formatCurrency } from "../../../utils/fotmatDate";
 
 Modal.setAppElement("#root"); // For accessibility
 
@@ -61,7 +62,7 @@ const PriceCheckModal = ({ isOpen, onRequestClose, checkPriceByBarcode }) => {
         <div className="price-info">
           <p>Tên sản phẩm: {priceInfo.product.name}</p>
           <p>Đơn vị: {priceInfo.price?.unit.description}</p>
-          <p>Giá: {priceInfo.price?.price}đ</p>
+          <p>Giá: {formatCurrency(priceInfo.price?.price)}</p>
         </div>
       )}
       <button onClick={onRequestClose}>Đóng</button>

@@ -20,7 +20,7 @@ const QuantityModal = ({ isOpen, onRequestClose, product, onUpdateQuantity }) =>
   };
 
   const handleUpdateQuantity = () => {
-    onUpdateQuantity(product._id,product.price.unit._id, parseInt(quantity, 10)); // Ensure quantity is a number
+    onUpdateQuantity(product._id,product.unit._id, parseInt(quantity, 10)); // Ensure quantity is a number
 
     onRequestClose();
   };

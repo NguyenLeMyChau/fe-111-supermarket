@@ -11,6 +11,7 @@ import { useAccessToken, useAxiosJWT } from "../../utils/axiosInstance";
 import Receipt from "../sales/Invoice/Receipt";
 import Modal from 'react-modal';
 import PaymentModal from "../sales/Invoice/PaymentModal";
+import { formatCurrency } from "../../utils/fotmatDate";
 
 const Payment = () => {
   const navigate = useNavigate();
@@ -36,19 +37,6 @@ const Payment = () => {
   const [isPaid, setIsPaid] = useState(false);
 
   const [paymentInfo,setPaymenInfo] = useState(null);
-  const sampleData = {
-    cashierName: 'Trần Dương Uyển Vũ',
-    transactionTime: '2021-05-29T07:31:00Z',
-    receiptNumber: 'CH8502-11801-001-0008',
-    items: [
-      { name: 'Tra Lai Dac Thom (L)', quantity: 1, price: 55000 },
-      { name: 'PL Tea Latte Cold (L)', quantity: 1, price: 50000 },
-      { name: 'Banh Flan', quantity: 1, price: 20000 },
-    ],
-    total: 125000,
-    paymentMethod: 'CASH',
-    wifiPassword: 'Luckytea',
-  };
   useEffect(() => {
     if (customer) {
       setPaymenInfo({
@@ -112,8 +100,8 @@ const Payment = () => {
                     });
                     return { ...product, promotion: null }; // Không có khuyến mãi
                   }
-                  updatedTotalAmount -=product.price.price* eligibleQuantity
-                  return { ...product, promotion,discountAmount:product.price.price* eligibleQuantity}; // Có khuyến mãi
+                  updatedTotalAmount -=product.price* eligibleQuantity
+                  return { ...product, promotion,discountAmount:product.price* eligibleQuantity}; // Có khuyến mãi
   
                 // Trường hợp 2: product_id === promotion.product_id và product_id !== promotion.product_donate
                 } else if (product._id === promotion.product_id && product._id !== promotion.product_donate) {
@@ -154,8 +142,8 @@ const Payment = () => {
                     });
                     return { ...product, promotion: null }; // Không có khuyến mãi
                   }
-                  updatedTotalAmount -=product.price.price* eligibleQuantity
-                  return { ...product, promotion,discountAmount:product.price.price* eligibleQuantity}; // Có khuyến mãi
+                  updatedTotalAmount -=product.price* eligibleQuantity
+                  return { ...product, promotion,discountAmount:product.price* eligibleQuantity}; // Có khuyến mãi
 
                 }
               }
@@ -319,9 +307,9 @@ const Payment = () => {
                     <td>{index + 1}</td>
                     <td>{product.name}</td>
                     <td>{product.unit.description}</td>
-                    <td>{product.price.price}đ</td>
+                    <td>{formatCurrency(product.price)}</td>
                     <td>{product.quantity}</td>
-                    <td>{product.price.price * product.quantity}đ</td>
+                    <td>{formatCurrency(product.price * product.quantity)}</td>
                   </tr>
                   {product.promotion && ( // Kiểm tra xem có khuyến mãi không
                     <tr>
@@ -366,29 +354,29 @@ const Payment = () => {
 
     <div className="payment-line">
       <p><strong>Tổng số tiền sản phẩm:</strong></p>
-      <p className="amount">{totalAmount} đ</p>
+      <p className="amount">{formatCurrency(totalAmount)}</p>
     </div>
 
     {appliedPromotion && (
       <div className="payment-line">
         <p><strong>Khuyến mãi ({appliedPromotion.description}):</strong></p>
-        <p className="amount">- {totalAmount-discountedTotal} đ</p>
+        <p className="amount">- {formatCurrency(totalAmount-discountedTotal)} </p>
       </div>
     )}
 
     <div className="payment-line total-due">
       <p><strong>Tổng số tiền thanh toán:</strong></p>
-      <p className="amount">{discountedTotal} đ</p>
+      <p className="amount">{formatCurrency(discountedTotal)}</p>
     </div>
 
     <div className="payment-line">
       <p><strong>Số tiền khách đưa:</strong></p>
-      <p className="amount">{customerPaid} đ</p>
+      <p className="amount">{formatCurrency(customerPaid)}</p>
     </div>
 
     <div className="payment-line">
       <p><strong>Số tiền thối lại:</strong></p>
-      <p className="amount">{change} đ</p>
+      <p className="amount">{formatCurrency(change)}</p>
     </div>
 
 
@@ -412,7 +400,7 @@ const Payment = () => {
         <div className="payment-keypad-section">
           <input
             type="text"
-            value={customerPaid}
+            value={formatCurrency(customerPaid)}
             readOnly
             className="payment-keypad-input"
             placeholder="Nhập số tiền khách trả"

@@ -203,3 +203,29 @@
 /* Other existing styles */
 
 }
+/* Style the select dropdown inside table cells (td) */
+td select {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-size: 14px;
+  width: 100%; /* Makes the select element fill the td */
+  box-sizing: border-box;
+}
+
+/* Style the select dropdown when focused */
+td select:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* Change background and border on hover */
+td select:hover {
+  border-color: #0056b3;
+}
+
+/* Style the select dropdown options (optional) */
+td select option {
+  padding: 5px;
+}

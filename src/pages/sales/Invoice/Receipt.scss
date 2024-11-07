@@ -126,3 +126,118 @@
     color: #777;
   }
 }
+
+.receipt {
+  width: 80%;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+  color: #333;
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+  .receipt-header {
+    text-align: center;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+
+    h2 {
+      font-size: 24px;
+      margin-bottom: 5px;
+      color: #333;
+    }
+
+    p {
+      font-size: 14px;
+      margin: 4px 0;
+    }
+  }
+
+  .receipt-details {
+    h3 {
+      font-size: 18px;
+      color: #666;
+      margin-bottom: 10px;
+    }
+  }
+
+  
+
+  .receipt-footer {
+    border-top: 2px solid #ddd;
+    padding-top: 10px;
+
+    p {
+      font-size: 16px;
+      margin: 8px 0;
+    }
+
+    .footer-message {
+      margin-top: 20px;
+      text-align: center;
+      color: #777;
+
+      p {
+        font-size: 14px;
+      }
+    }
+  }
+}
+.product-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+
+  th,
+  td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+    font-size: 0.9em;
+  }
+
+  th {
+    background-color: #f5f5f5;
+    color: #333;
+    font-weight: bold;
+    text-align: center;
+  } 
+  th:nth-child(1),
+  td:nth-child(1) {
+    width: 10%; /* Tăng chiều rộng của cột Tên sản phẩm */
+  }
+
+  /* Thiết lập chiều rộng cột */
+  th:nth-child(2),
+  td:nth-child(2) {
+    width: 40%; /* Tăng chiều rộng của cột Tên sản phẩm */
+  }
+  th:nth-child(3),
+  td:nth-child(3) {
+    width: 10%; /* Tăng chiều rộng của cột Tên sản phẩm */
+  }
+  th:nth-child(4),
+  td:nth-child(4) {
+    width: 10%; /* Tăng chiều rộng của cột Tên sản phẩm */
+  }
+  th:nth-child(5),
+  td:nth-child(5) {
+    width: 10%; /* Tăng chiều rộng của cột Tên sản phẩm */
+  }
+
+  td:nth-child(1) {
+    text-align: center;
+    font-weight: bold;
+  }
+
+  .promotion-row {
+    background-color: #eafaf1;
+    color: #27ae60;
+
+    td {
+      font-style: italic;
+    }
+  }
+}

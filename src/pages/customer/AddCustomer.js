@@ -5,7 +5,7 @@ import Button from '../../components/button/Button';
 import { registerCustomer } from '../../services/employeeRequest';
 import { validateCustomerData } from '../../utils/validation';
 
-export default function AddCustomer({ isOpen, onClose }) {
+export default function AddCustomer({ isOpen, onClose,onSubmit }) {
 
     const [errors, setErrors] = useState({});
     const [employeeData, setEmployeeData] = useState({
@@ -72,6 +72,7 @@ export default function AddCustomer({ isOpen, onClose }) {
                     password: '',
                 });
                 setErrors({});
+                onSubmit(response.user)
             }
         } catch (error) {
             console.error('Failed to register employee:', error);
