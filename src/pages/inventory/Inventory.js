@@ -6,7 +6,7 @@ import Warehouse from '../../containers/warehouse/Warehouse';
 export default function Inventory() {
     return (
         <div className='inventory-container'>
-            <Overall />
+            {/* <Overall /> */}
             <Warehouse />
         </div>
     );
