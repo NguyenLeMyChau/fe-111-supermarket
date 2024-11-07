@@ -54,14 +54,12 @@ export default function Unit() {
 
     const handleDeleteClick = async (unit) => {
         const unitData = productCountByUnit.find(item => item.unitId === unit._id);
-        console.log('productCountByUnit', productCountByUnit);
-
         if (unitData && unitData.productCount > 0) {
-            alert(`Không thể xoá đơn vị "${unit.description}" vì có sản phẩm sử dụng.`);
+            alert(`Không thể xóa đơn vị "${unit.description}" vì có sản phẩm sử dụng.`);
             return;
         }
 
-        if (window.confirm(`Bạn có chắc chắn muốn xóa đơn vị tính "${unit.description}"?`)) {
+        if (window.confirm(`Bạn có chắc chắn muốn xóa đơn vị "${unit.description}"?`)) {
             setLoading(true);
             try {
                 await deleteUnit(unit._id, accessToken, axiosJWT, navigate);
@@ -73,6 +71,7 @@ export default function Unit() {
             }
         }
     };
+
 
 
     const unitColumn = [
@@ -100,19 +99,30 @@ export default function Unit() {
                 />
             ),
         },
+        // Thêm render cho nút xóa với điều kiện
         {
             title: 'Xóa',
             key: 'delete',
             width: '10%',
             className: 'text-center',
-            render: (text, record) => (
-                <MdDelete
-                    style={{ color: 'red', cursor: 'pointer' }}
-                    size={25}
-                    onClick={() => handleDeleteClick(record)}
-                />
-            ),
+            render: (text, record) => {
+                const unitData = productCountByUnit.find(item => item.unitId === record._id);
+                return unitData && unitData.productCount === 0 ? (
+                    <MdDelete
+                        style={{ color: 'red', cursor: 'pointer' }}
+                        size={25}
+                        onClick={() => handleDeleteClick(record)}
+                    />
+                ) : (
+                    <MdDelete
+                        style={{ color: 'grey', cursor: 'not-allowed' }}
+                        size={25}
+                        title="Không thể xóa đơn vị có sản phẩm"
+                    />
+                );
+            }
         }
+
     ];
 
     const handleAddUnit = async (e) => {

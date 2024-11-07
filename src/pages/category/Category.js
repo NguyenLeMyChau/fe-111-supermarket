@@ -6,6 +6,7 @@ import TableData from '../../containers/tableData/tableData';
 import AddCategory from './AddCategory';
 import { CiEdit } from 'react-icons/ci';
 import UpdateCategory from './UpdateCategory';
+import { MdDelete } from 'react-icons/md';
 
 export default function Category() {
     const categories = useSelector((state) => state.category?.categories) || [];
@@ -34,6 +35,16 @@ export default function Category() {
         setSelectedCategory(null);
     };
 
+    const handleDeleteClick = (event, category) => {
+        event.stopPropagation(); // Ngăn chặn sự kiện click của hàng bảng
+        if (category.productCount > 0) {
+            console.log('Không thể xóa danh mục có sản phẩm.');
+            alert('Không thể xóa danh mục khi vẫn còn sản phẩm');
+            return;
+        }
+        // Thực hiện logic xóa, ví dụ: dispatch action để xóa danh mục
+        console.log('Đang xóa danh mục:', category);
+    };
 
     const categoryColumn = [
         {
@@ -62,6 +73,27 @@ export default function Category() {
                 />
             ),
         },
+        {
+            title: 'Xóa',
+            key: 'delete',
+            width: '10%',
+            className: 'text-center',
+            render: (text, record) => (
+                record.productCount === 0 ? (
+                    <MdDelete
+                        style={{ color: 'red', cursor: 'pointer' }}
+                        size={25}
+                        onClick={(event) => handleDeleteClick(event, record)}
+                    />
+                ) : (
+                    <MdDelete
+                        style={{ color: 'grey', cursor: 'not-allowed' }}
+                        size={25}
+                        title="Không thể xóa danh mục có sản phẩm"
+                    />
+                )
+            ),
+        }
     ];
 
 

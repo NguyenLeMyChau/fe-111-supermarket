@@ -17,6 +17,22 @@ const getAllCategories = async (accessToken, axiosJWT, dispatch) => {
     }
 };
 
+const deleteCategory = async (categoryId, accessToken, axiosJWT, navigate) => {
+    try {
+        const response = await axiosJWT.delete(`/api/product/delete-category/${categoryId}`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        alert('Xóa thành công loại sản phẩm');
+        navigate('/admin/category');
+        return response.data;
+    }
+    catch (error) {
+        console.error('Delete category failed:', error);
+    }
+}
+
 const addCategory = async (categoryData, accessToken, axiosJWT) => {
     try {
         const response = await axiosJWT.post(`/api/product/add-category`, categoryData, {
@@ -123,6 +139,6 @@ const updateProduct = async (productId, productData, accessToken, axiosJWT) => {
 }
 
 export {
-    getAllCategories, addCategory, updateCategory,
-    getAllProducts, getProductsDetail, addProductWithWarehouse, updateProduct,getAllProductsWithPriceAndPRomotionNoCategory
+    getAllCategories, deleteCategory, addCategory, updateCategory,
+    getAllProducts, getProductsDetail, addProductWithWarehouse, updateProduct, getAllProductsWithPriceAndPRomotionNoCategory
 };
