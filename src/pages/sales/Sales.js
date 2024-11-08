@@ -191,6 +191,7 @@ const getPriceByBarcode = (product, barcode) => {
       setCart([]);
       setTotal(0);
       dispatch(clearProductPay());
+      
       setSelectedProduct(null);
     }
   };

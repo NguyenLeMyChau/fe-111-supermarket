@@ -46,10 +46,21 @@ console.log(promotions)
   };
 
   const handleEditClick = (event, promotionHeader) => {
-    event.stopPropagation(); 
+    event.stopPropagation();
+  
+    // Check if the endDate is before the current date
+    const currentDate = new Date();
+    const endDate = new Date(promotionHeader.endDate); // Make sure endDate is in Date format
+    if (endDate < currentDate) {
+      alert("Không thể chỉnh sửa chương trình khuyến mãi vì ngày kết thúc đã qua.");
+      return; // Exit if the end date has passed
+    }
+  
+    // Proceed with editing if the endDate is valid
     selectCurrentHeader(promotionHeader);
     setIsEditModalOpen(true);
-};
+  };
+  
 const handleCloseEditModal = () => {
   setIsEditModalOpen(false);
   selectCurrentHeader(null);
@@ -57,6 +68,14 @@ const handleCloseEditModal = () => {
 
 const handleEditClickLine = (event, promotionLine) => {
   event.stopPropagation(); 
+  const currentDate = new Date();
+  const endDate = new Date(promotionLine.endDate); // Make sure endDate is in Date format
+  if (endDate < currentDate) {
+    alert("Không thể chỉnh sửa chương trình khuyến mãi vì ngày kết thúc đã qua.");
+    return; // Exit if the end date has passed
+  }
+  
+  
   selectCurrentLine(promotionLine);
   setIsEditModalLineOpen(true);
 };
@@ -80,7 +99,13 @@ const handleCloseAddModalLine = () => {
 const handleDeleteClick = async (event, promotionLine) => {
   event.stopPropagation();
   if(promotionLine.status!=="inactive") return;
-  const confirmDelete = window.confirm("Có chắn chắn xóa giá sản phẩm");
+  const currentDate = new Date();
+  const endDate = new Date(promotionLine.endDate); // Make sure endDate is in Date format
+  if (endDate < currentDate) {
+    alert("Không thể xóa chương trình khuyến mãi vì ngày kết thúc đã qua.");
+    return; // Exit if the end date has passed
+  }
+  const confirmDelete = window.confirm("Có chắn chắn xóa");
   if (!confirmDelete) return; // Exit if user cancels
   setLoading(true)
     const deleteHeader = await deletePromotionLine(promotionLine._id, accessToken, dispatch, axiosJWT);
@@ -91,20 +116,38 @@ const handleDeleteClick = async (event, promotionLine) => {
 };
 const handleDeleteClickHeader = async (event, promotionHeader) => {
   event.stopPropagation();
-   const confirmDelete = window.confirm("Có chắn chắn xóa giá sản phẩm");
-   if (!confirmDelete) return; // Exit if user cancels
-   setLoading(true)
-     const deleteHeader = await deletePromotionHeader(promotionHeader._id, accessToken, dispatch, axiosJWT);
-    
-     setLoading(false)
-     if(deleteHeader) 
-       alert(deleteHeader.message)
-     else alert(deleteHeader.message)
+
+  // Check if the endDate is before the current date
+  const currentDate = new Date();
+  const endDate = new Date(promotionHeader.endDate); // Make sure endDate is in Date format
+  if (endDate < currentDate) {
+    alert("Không thể xóa chương trình khuyến mãi vì ngày kết thúc đã qua.");
+    return; // Exit if the end date has passed
+  }
+
+  const confirmDelete = window.confirm("Có chắn chắn xóa?");
+  if (!confirmDelete) return; // Exit if user cancels
+
+  setLoading(true);
+
+  try {
+    // Call the delete function and pass the required parameters
+    const deleteHeader = await deletePromotionHeader(promotionHeader._id, accessToken, dispatch, axiosJWT);
+
+    // Handle response
+    setLoading(false);
+    alert(deleteHeader.message);
+
+  } catch (error) {
+    setLoading(false);
+    alert("Đã có lỗi xảy ra khi xóa chương trình khuyến mãi.");
+  }
 };
+
 const handleDeleteClickDetail = async (event, promotionDetail) => {
   event.stopPropagation();
   if(currentLine.status!=="inactive") return;
-   const confirmDelete = window.confirm("Có chắn chắn xóa giá sản phẩm");
+   const confirmDelete = window.confirm("Có chắn chắn xóa");
    if (!confirmDelete) return; // Exit if user cancels
    
    setLoading(true)
@@ -147,21 +190,21 @@ const handleDeleteClickDetail = async (event, promotionDetail) => {
           />
       ),
   },
-  // {
-  //   title: 'Xóa',
-  //   key: 'delete',
-  //   width: '8%',
-  //   className: 'text-center',
-  //   render: (text, record) => (
-  //     <MdDelete
-  //       style={{ color: 'Black', cursor: 'pointer' }}
-  //       size={25}
-  //       onClick={(event) =>   {loading ? (
-  //         <ClipLoader size={30} color="#2392D0" loading={loading} />
-  //     ) :(handleDeleteClickHeader(event, record))}}
-  //     />
-  //   ),
-  // }
+  {
+    title: 'Xóa',
+    key: 'delete',
+    width: '8%',
+    className: 'text-center',
+    render: (text, record) => (
+      <MdDelete
+        style={{ color: 'Black', cursor: 'pointer' }}
+        size={25}
+        onClick={(event) =>   {loading ? (
+          <ClipLoader size={30} color="#2392D0" loading={loading} />
+      ) :(handleDeleteClickHeader(event, record))}}
+      />
+    ),
+  }
 ];
 
   const promotionLineColumn = [
@@ -194,10 +237,10 @@ const handleDeleteClickDetail = async (event, promotionDetail) => {
       className: 'text-center',
       render: (status) => (
         <>
-          {status==='pauseactive' && <MdDoDisturbOn style={{ color: 'yellow',marginRight:5 }} size={15} />}
+          
           {status==='active' && <IoIosCheckmarkCircleOutline style={{ color: 'green',marginRight:5 }} size={15} />}
           {status==='inactive' && <MdDoNotDisturbAlt style={{ color: 'red',marginRight:5 }} size={15} />}
-          {statusMaping[status]}
+
         </>
       ),
     }, {
@@ -359,16 +402,29 @@ const handleDeleteClickDetail = async (event, promotionDetail) => {
   //   setIsModalOpenLine(true);
   //   selectCurrentHeader(promotionHeader);
   // };
-  const statusMaping = {
-    'active': 'Hoạt động',
-    'pauseactive': 'Ngưng hoạt động',
-    'inactive': 'Không hoạt động',
-  };
+  
   const closeModalLine = () => {
     setIsOpenNewLine(false);
   };
-
+  const handleAddDetail=()=>{
+    // Check if the endDate is before the current date
+  const currentDate = new Date();
+  const endDate = new Date(currentLine.endDate); // Make sure endDate is in Date format
+  if (endDate < currentDate) {
+    alert("Chương trình đã kết thúc");
+    return; // Exit if the end date has passed
+  }
+    setIsOpenNewDetail(true)
+    
+  }
   const handleAddLine=(item)=>{
+    // Check if the endDate is before the current date
+  const currentDate = new Date();
+  const endDate = new Date(item.endDate); // Make sure endDate is in Date format
+  if (endDate < currentDate) {
+    alert("Chương trình đã kết thúc");
+    return; // Exit if the end date has passed
+  }
     selectCurrentHeader(item);
     setIsOpenNewLine(true)
   }
@@ -459,7 +515,7 @@ const handleDeleteClickDetail = async (event, promotionDetail) => {
               ? promotionDetailColumnAmount
               : promotionDetailColumnPer
           }          itemsPerPage={8}
-          onButtonClick={() => setIsOpenNewDetail(true)}
+          onButtonClick={handleAddDetail}
           // renderModal={(onClose) => (
           //   <AddPromotionDetail
           //     isOpen={true}
@@ -470,11 +526,11 @@ const handleDeleteClickDetail = async (event, promotionDetail) => {
         />
       </Modal>
 
-      {isOpenNewDetail && currentLine?.status === "inactive" ? (<AddPromotionDetail
+      {isOpenNewDetail && currentLine.status === "inactive" && (<AddPromotionDetail
                   isOpen={isOpenNewDetail}
                   onClose={() => setIsOpenNewDetail(false)}       
                   promotionLine={currentLine}
-                />):null}
+                />)}
 
       {IsOpenNewLine && (
          <AddPromotionLine

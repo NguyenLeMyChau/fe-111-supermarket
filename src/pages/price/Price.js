@@ -29,11 +29,7 @@ export default function Price() {
   const [isOpenCopyPrice, setIsOpenCopyPrice] = useState(false);
   const [loading, setLoading] = useState(false); // Trạng thái loading
 
-  const typeMapping = {
-    'active': 'Hoạt động',
-    'pauseactive': 'Ngưng hoạt động',
-    'inactive': 'Không hoạt động',
-  };
+ 
 
  const handleEditClick = (event, productPriceHeader) => {
     event.stopPropagation(); 
@@ -104,10 +100,10 @@ const handleRowClickDetail = async (productPriceHeader) => {
       className: 'text-left',
       render: (status) => (
         <>
-          {status==='pauseactive' && <MdDoDisturbOn style={{ color: 'yellow',marginRight:5 }} size={15} />}
+          
           {status==='active' && <IoIosCheckmarkCircleOutline style={{ color: 'green',marginRight:5 }} size={15} />}
           {status==='inactive' && <MdDoNotDisturbAlt style={{ color: 'red',marginRight:5 }} size={15} />}
-          {typeMapping[status]}
+         
         </>
       ),
     },

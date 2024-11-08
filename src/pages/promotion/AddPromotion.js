@@ -21,7 +21,7 @@ export default function AddPromotionHeader({ isOpen, onClose }) {
         description: '',
         startDate: format(new Date(), 'yyyy-MM-dd'), // Default to today
         endDate: '',
-        isActive: false,
+       
     });
 
     // Update the end date min whenever the start date changes

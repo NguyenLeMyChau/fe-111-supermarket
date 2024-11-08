@@ -52,7 +52,7 @@ const UpdatePromotionLine = ({ promotionLine, onClose, promotionHeader }) => {
         } else {
             setFormData((prevData) => ({
             ...prevData,
-            status: checked ? 'active' : 'pauseactive', // Update status based on checkbox
+            status: checked ? 'active' : 'inactive', // Update status based on checkbox
           }));
         }
       };

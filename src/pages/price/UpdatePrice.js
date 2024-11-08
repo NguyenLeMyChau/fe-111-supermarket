@@ -19,7 +19,7 @@ export default function EditProductPrice({ onClose, priceId, initialData }) {
     description: '',
     startDate: format(new Date(), 'dd-MM-yyyy'), 
     endDate: '',
-    status: 'pauseactive',
+    status: 'inactive',
   });
 
   useEffect(() => {
@@ -52,7 +52,7 @@ export default function EditProductPrice({ onClose, priceId, initialData }) {
     } else {
       setProductPriceData((prevData) => ({
         ...prevData,
-        status: checked ? 'active' : 'pauseactive', // Update status based on checkbox
+        status: checked ? 'active' : 'inactive', // Update status based on checkbox
       }));
     }
   };
@@ -125,8 +125,12 @@ export default function EditProductPrice({ onClose, priceId, initialData }) {
             value={productPriceData.endDate}
             onChange={handleChange}
             error={errors.endDate}
-            min={initialData.status === 'active' ? format(new Date(), 'yyyy-MM-dd') : productPriceData.startDate} // Set min to today if status is active
-            disabled={initialData.status !== 'inactive'}
+            min={productPriceData.endDate < format(new Date(), 'yyyy-MM-dd')
+              ? productPriceData.endDate
+              : format(new Date(), 'yyyy-MM-dd')}            
+              max={productPriceData.endDate < format(new Date(), 'yyyy-MM-dd')
+                ? productPriceData.endDate
+                : null}  
             />
           <Input
                     label='Trạng thái'
