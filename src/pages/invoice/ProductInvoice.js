@@ -1,8 +1,22 @@
+import { useSelector } from "react-redux";
 import Modal from "../../components/modal/Modal";
 import { formatCurrency, formatDate } from "../../utils/fotmatDate";
 import ShowPromotion from "./ShowPromotion";
 
 export default function ProductInvoice({ isModalOpen, closeModal, products, selectedInvoice }) {
+    console.log('selectedInvoice', selectedInvoice)
+    const user = useSelector((state) => state.auth?.login?.currentUser?.user);
+    const employees = useSelector((state) => state.employee?.employees) || [];
+
+    // Lọc thông tin nhân viên dựa vào employee_id
+    let employee = employees.find(emp => emp._id === selectedInvoice?.employee_id);
+
+    // Nếu không tìm thấy employee trong employees, kiểm tra user
+    console.log('user', user);
+    if (!employee && user?._id === selectedInvoice?.employee_id) {
+        employee = user;
+    }
+
     return (
         <Modal
             title={'Chi tiết đơn hàng khách hàng'}
@@ -14,7 +28,7 @@ export default function ProductInvoice({ isModalOpen, closeModal, products, sele
 
             <div className="invoice-container">
                 <div className="invoice-row">
-                    <h3 style={{ marginBottom: -10, textAlign: 'center' }}>Thông tin đặt hàng</h3>
+                    <h3 style={{ marginBottom: -10, textAlign: 'center' }}>Thông tin đơn hàng</h3>
 
                     <div className="invoice-table">
                         <table>
@@ -35,14 +49,14 @@ export default function ProductInvoice({ isModalOpen, closeModal, products, sele
                                         <td>{selectedInvoice.paymentInfo.phone}</td>
                                     </tr>
                                 )}
-                                {selectedInvoice?.createdAt && (
+                                {/* {selectedInvoice?.createdAt && (
                                     <tr>
                                         <th>Ngày đặt hàng:</th>
                                         <td>{formatDate(selectedInvoice.createdAt)}</td>
-                                        <th>Tổng tiền:</th>
-                                        <td>{formatCurrency(selectedInvoice.paymentAmount)}</td>
+
                                     </tr>
-                                )}
+                                )} */}
+
                                 {selectedInvoice?.paymentInfo?.address && (
                                     <tr>
                                         <th>Địa chỉ giao hàng:</th>
@@ -54,6 +68,21 @@ export default function ProductInvoice({ isModalOpen, closeModal, products, sele
                                         </td>
                                     </tr>
                                 )}
+                                {employee && (
+                                    <tr>
+                                        <th>Mã nhân viên:</th>
+                                        <td>{employee.employee_id}</td>
+                                        <th>Tên nhân viên:</th>
+                                        <td>{employee.name}</td>
+                                    </tr>
+                                )}
+
+                                <tr>
+                                    <th>Phương thức thanh toán:</th>
+                                    <td>{selectedInvoice.paymentMethod}</td>
+                                    <th>Tổng tiền:</th>
+                                    <td>{formatCurrency(selectedInvoice.paymentAmount)}</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>

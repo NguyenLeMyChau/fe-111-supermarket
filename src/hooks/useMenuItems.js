@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { GoHome } from "react-icons/go";
-import { MdOutlineInventory2, MdProductionQuantityLimits } from "react-icons/md";
+import { MdOutlineInventory2, MdProductionQuantityLimits, MdOutlineToday } from "react-icons/md";
 import { BsFileBarGraph, BsPersonVcard } from "react-icons/bs";
 import { FaRegUser, FaCashRegister, FaUsers } from "react-icons/fa";
 import { SlSettings } from "react-icons/sl";
@@ -15,6 +15,7 @@ import { PiInvoice } from "react-icons/pi";
 import { DiUnitySmall } from "react-icons/di";
 import { IoPersonCircleOutline } from "react-icons/io5";
 import { LiaFileInvoiceSolid } from "react-icons/lia";
+import { HiOutlineDocumentReport } from "react-icons/hi";
 
 import { createAxiosInstance } from '../utils/util';
 import { logoutSuccess } from '../store/reducers/authSlice';
@@ -106,8 +107,18 @@ const useMenuItems = (onchange) => {
                         { Icon: PiInvoice, label: "Invoice", text: "Hoá đơn khách", path: '/admin/invoice' },
                     ]
                 },
+                {
+                    Icon: HiOutlineDocumentReport,
+                    label: "Report",
+                    text: "Thống kê",
+                    subItems: [
+                        { Icon: MdOutlineToday, label: "ReportDay", text: "DSBH ngày", path: '/admin/employee' },
+                        { Icon: IoPersonCircleOutline, label: "ReportCustomer", text: "DSBH KH", path: '/admin/customer' },
+                        { Icon: PiInvoice, label: "ReportPromotion", text: "Khuyến mãi", path: '/admin/invoice' },
+                    ]
+                },
                 { Icon: FaUsers, label: "Suppliers", text: "Nhà cung cấp", path: '/admin/supplier' },
-                { Icon: FaCashRegister, label: "Stall", text: "Quầy thu ngân"},
+                { Icon: FaCashRegister, label: "Stall", text: "Quầy thu ngân" },
             ],
         },
         {

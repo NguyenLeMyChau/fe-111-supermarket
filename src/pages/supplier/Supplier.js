@@ -63,7 +63,17 @@ export default function Supplier() {
         { title: 'Nhà cung cấp', dataIndex: 'name', key: 'name', width: '20%' },
         { title: 'Số điện thoại', dataIndex: 'phone', key: 'phone', width: '5%' },
         { title: 'Email', dataIndex: 'email', key: 'email', width: '5%' },
-        { title: 'Địa chỉ', dataIndex: 'address', key: 'address', width: '30%' },
+        {
+            title: 'Địa chỉ',
+            dataIndex: 'address',
+            key: 'address',
+            width: '30%',
+            render: (address) => {
+                if (!address) return '';
+                const { street, ward, district, city } = address;
+                return `${street}, ${ward}, ${district}, ${city}`;
+            }
+        },
         { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '20%' },
         { title: 'Số lượng sản phẩm', dataIndex: 'productCount', key: 'productCount', width: '10%', className: 'text-center' },
         {
@@ -170,7 +180,7 @@ export default function Supplier() {
                     title='Cập nhật nhà cung cấp'
                     isOpen={isEditModalOpen}
                     onClose={handleCloseEditModal}
-                    width={'50%'}
+                    width={'30%'}
                 >
                     <UpdateSupplier
                         supplier={selectedSupplier}

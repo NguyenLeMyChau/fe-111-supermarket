@@ -10,7 +10,20 @@ export default function AddSuplier({ isOpen, onClose }) {
     const axiosJWT = useAxiosJWT();
     const accessToken = useAccessToken();
 
-    const [supplierData, setSupplierData] = useState({ name: '', description: '', phone: '', email: '', address: '' });
+    const [supplierData, setSupplierData] = useState(
+        {
+            name: '',
+            description: '',
+            phone: '',
+            email: '',
+            address: {
+                street: '',
+                ward: '',
+                district: '',
+                city: '',
+            },
+        }
+    );
     const [errors, setErrors] = useState({});
 
     const handleChange = (e) => {
@@ -25,6 +38,17 @@ export default function AddSuplier({ isOpen, onClose }) {
         });
     };
 
+    const handleAddressChange = (e) => {
+        const { name, value } = e.target;
+        setSupplierData((prevData) => ({
+            ...prevData,
+            address: {
+                ...prevData.address,
+                [name]: value,
+            },
+        }));
+    };
+
     const handleAddSupplier = async (e) => {
         e.preventDefault();
         const newErrors = validateSupplierData(supplierData);
@@ -36,7 +60,13 @@ export default function AddSuplier({ isOpen, onClose }) {
         try {
             const response = await addSupplier(supplierData, accessToken, axiosJWT);
             if (response) {
-                setSupplierData({ name: '', description: '', phone: '', email: '', address: '' });
+                setSupplierData({
+                    name: '',
+                    description: '',
+                    phone: '',
+                    email: '',
+                    address: { street: '', ward: '', district: '', city: '' },
+                });
                 setErrors({});
             }
         } catch (error) {
@@ -94,15 +124,37 @@ export default function AddSuplier({ isOpen, onClose }) {
                     />
 
                     <Input
-                        label='Địa chỉ'
-                        name='address'
-                        placeholder='Nhập địa chỉ'
-                        value={supplierData.address}
-                        onChange={handleChange}
-                        error={errors.address}
+                        label="Số nhà và tên đường"
+                        placeholder="Nhập số nhà và tên đường"
+                        name="street"
+                        value={supplierData.address.street}
+                        onChange={handleAddressChange}
+                        error={errors.address?.street}
                     />
-
-
+                    <Input
+                        label="Phường/Xã"
+                        placeholder="Nhập phường/xã"
+                        name="ward"
+                        value={supplierData.address.ward}
+                        onChange={handleAddressChange}
+                        error={errors.address?.ward}
+                    />
+                    <Input
+                        label="Quận/Huyện"
+                        placeholder="Nhập quận/huyện"
+                        name="district"
+                        value={supplierData.address.district}
+                        onChange={handleAddressChange}
+                        error={errors.address?.district}
+                    />
+                    <Input
+                        label="Tỉnh/Thành phố"
+                        placeholder="Nhập tỉnh/thành phố"
+                        name="city"
+                        value={supplierData.address.city}
+                        onChange={handleAddressChange}
+                        error={errors.address?.city}
+                    />
 
                     <div className='flex-row-center'>
                         <div className='login-button' style={{ width: 200 }}>

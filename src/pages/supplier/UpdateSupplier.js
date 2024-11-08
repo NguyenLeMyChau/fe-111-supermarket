@@ -12,7 +12,12 @@ const UpdateSupplier = ({ supplier }) => {
         name: supplier.name,
         phone: supplier.phone,
         email: supplier.email,
-        address: supplier.address,
+        address: {
+            street: supplier.address?.street || '',
+            ward: supplier.address?.ward || '',
+            district: supplier.address?.district || '',
+            city: supplier.address?.city || '',
+        },
         description: supplier.description,
     });
 
@@ -22,6 +27,17 @@ const UpdateSupplier = ({ supplier }) => {
             ...formData,
             [name]: value,
         });
+    };
+
+    const handleAddressChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prevData) => ({
+            ...prevData,
+            address: {
+                ...prevData.address,
+                [name]: value,
+            },
+        }));
     };
 
     const handleSubmit = async (e) => {
@@ -41,34 +57,6 @@ const UpdateSupplier = ({ supplier }) => {
                     placeholder='Nhập tên nhà cung cấp'
                     value={formData.name}
                     onChange={handleChange}
-                    width={500}
-                />
-
-                <Input
-                    label='Số điện thoại'
-                    name='phone'
-                    placeholder='Nhập số điện thoại'
-                    value={formData.phone}
-                    onChange={handleChange}
-                    width={500}
-                />
-
-                <Input
-                    label='Email'
-                    placeholder='Nhập email'
-                    name='email'
-                    value={formData.email}
-                    onChange={handleChange}
-                    width={500}
-                />
-
-                <Input
-                    label='Địa chỉ'
-                    name='address'
-                    placeholder='Nhập địa chỉ'
-                    value={formData.address}
-                    onChange={handleChange}
-                    width={500}
                 />
 
                 <Input
@@ -77,8 +65,30 @@ const UpdateSupplier = ({ supplier }) => {
                     placeholder='Nhập mô tả'
                     value={formData.description}
                     onChange={handleChange}
-                    width={500}
                 />
+
+                <Input
+                    label='Số điện thoại'
+                    name='phone'
+                    placeholder='Nhập số điện thoại'
+                    value={formData.phone}
+                    onChange={handleChange}
+                />
+
+                <Input
+                    label='Email'
+                    placeholder='Nhập email'
+                    name='email'
+                    value={formData.email}
+                    onChange={handleChange}
+                />
+
+                <Input label='Số nhà, tên đường' placeholder='Nhập số nhà và tên đường' name='street' value={formData.address.street} onChange={handleAddressChange} />
+                <Input label='Phường/Xã' placeholder='Nhập phường/xã' name='ward' value={formData.address.ward} onChange={handleAddressChange} />
+                <Input label='Quận/Huyện' placeholder='Nhập quận/huyện' name='district' value={formData.address.district} onChange={handleAddressChange} />
+                <Input label='Tỉnh/Thành phố' placeholder='Nhập tỉnh/thành phố' name='city' value={formData.address.city} onChange={handleAddressChange} />
+
+
 
                 <div className='flex-row-center'>
                     <div className='login-button' style={{ width: 200 }}>
