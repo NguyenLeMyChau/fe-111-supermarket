@@ -65,6 +65,8 @@ export default function ProductDetail() {
     ];
     const sortedTransactions = [...data.transactions].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
+    const filteredUnits = data.unit_convert.filter(unit => unit.status);
+
     return (
         <div className='product-detail-container'>
             <h2>{data.name}</h2>
@@ -134,7 +136,7 @@ export default function ProductDetail() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {data.unit_convert.map((item, index) => (
+                                {filteredUnits.map((item, index) => (
                                     <tr key={index}>
                                         <td>{getUnitDescription(item.unit)}</td>
                                         <td>{item.quantity}</td>

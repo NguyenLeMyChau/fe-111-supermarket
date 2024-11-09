@@ -136,6 +136,12 @@ const AddStocktaking = () => {
                                             value={product.item_code ? { value: product.item_code, label: product.item_code } : null}
                                             onChange={(selectedOption) => handleProductSelectWithReset(index, selectedOption)}
                                             options={productOptions}
+                                            styles={{
+                                                container: (provided) => ({
+                                                    ...provided,
+                                                    width: '150px',
+                                                }),
+                                            }}
                                         />
                                     </td>
                                     <td>{product.name}</td>
@@ -144,6 +150,12 @@ const AddStocktaking = () => {
                                             value={units[index] ? { value: units[index], label: getUnitDescription(units[index]) } : null}
                                             onChange={(selectedOption) => handleUnitSelect(index, selectedOption)}
                                             options={unitOptions(product)}
+                                            styles={{
+                                                container: (provided) => ({
+                                                    ...provided,
+                                                    width: '150px',
+                                                }),
+                                            }}
                                         />
                                     </td>
                                     <td style={{ textAlign: 'center' }}>{stockQuantities[index]}</td>

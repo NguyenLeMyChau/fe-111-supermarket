@@ -123,16 +123,20 @@ const useAddBill = () => {
             }));
     }, [productList]);
 
-
     const unitOptions = (product) => {
-        // Truy xuất unitProduct từ các sản phẩm tìm thấy
-        const unitOptions = product?.unit_convert?.map(unitProduct => ({
+        // Lọc các đơn vị có status là true
+        const filteredUnits = product?.unit_convert?.filter(unitProduct => unitProduct.status === true);
+        console.log('filteredUnits', filteredUnits);
+
+        // Truy xuất unitProduct từ các đơn vị đã được lọc
+        const unitOptions = filteredUnits?.map(unitProduct => ({
             value: unitProduct?.unit._id,
             label: unitProduct?.unit.description,
         }));
 
         return unitOptions;
     };
+
 
     const handleOrder = async () => {
         const isConfirmed = window.confirm('Bạn có chắc chắn muốn nhập phiếu không?');
