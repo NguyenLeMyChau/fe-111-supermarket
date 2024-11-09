@@ -95,14 +95,14 @@ export default function ProductInvoice({ isModalOpen, closeModal, products, sele
                         <table className="product-table">
                             <thead>
                                 <tr>
-                                    <th style={{ width: '10%' }}>Hình ảnh</th>
-                                    <th style={{ width: '10%' }}>Mã hàng</th>
-                                    <th style={{ width: '15%' }}>Tên sản phẩm</th>
-                                    <th style={{ width: '10%' }}>Đơn vị</th>
-                                    <th style={{ textAlign: 'center', width: '10%' }}>Số lượng</th>
-                                    <th style={{ textAlign: 'center', width: '10%' }}>Giá gốc</th>
-                                    <th style={{ textAlign: 'center', width: '10%' }}>Giá tổng</th>
-                                    <th style={{ textAlign: 'center', width: '70%' }}>Khuyến mãi</th>
+                                    <th>Hình ảnh</th>
+                                    <th>Mã hàng</th>
+                                    <th>Tên sản phẩm</th>
+                                    <th>Đơn vị</th>
+                                    <th style={{ textAlign: 'center' }}>Số lượng</th>
+                                    <th style={{ textAlign: 'center' }}>Giá gốc</th>
+                                    <th style={{ textAlign: 'center' }}>Giá tổng</th>
+                                    <th style={{ textAlign: 'center' }}>Khuyến mãi</th>
                                 </tr>
                             </thead>
                             <tbody>

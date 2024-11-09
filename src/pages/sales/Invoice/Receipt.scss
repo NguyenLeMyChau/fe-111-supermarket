@@ -34,7 +34,8 @@
   margin: 15px 0;
 }
 
-.receipt table th, .receipt table td {
+.receipt table th,
+.receipt table td {
   border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
@@ -64,13 +65,15 @@
 .receipt .footer p {
   margin: 5px 0;
 }
+
 /* CSS cho chế độ in */
 @media print {
   body * {
     visibility: hidden;
   }
-  
-  #receiptToPrint, #receiptToPrint * {
+
+  #receiptToPrint,
+  #receiptToPrint * {
     visibility: visible;
   }
 
@@ -99,7 +102,8 @@
     margin: 10px 0;
   }
 
-  #receiptToPrint table th, #receiptToPrint table td {
+  #receiptToPrint table th,
+  #receiptToPrint table td {
     border: 1px solid #ccc;
     padding: 8px;
     text-align: left;
@@ -163,7 +167,7 @@
     }
   }
 
-  
+
 
   .receipt-footer {
     border-top: 2px solid #ddd;
@@ -185,7 +189,8 @@
     }
   }
 }
-.product-table {
+
+.product-table-receipt {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 20px;
@@ -203,28 +208,37 @@
     color: #333;
     font-weight: bold;
     text-align: center;
-  } 
+  }
+
   th:nth-child(1),
   td:nth-child(1) {
-    width: 10%; /* Tăng chiều rộng của cột Tên sản phẩm */
+    width: 10%;
+    /* Tăng chiều rộng của cột Tên sản phẩm */
   }
 
   /* Thiết lập chiều rộng cột */
   th:nth-child(2),
   td:nth-child(2) {
-    width: 40%; /* Tăng chiều rộng của cột Tên sản phẩm */
+    width: 40%;
+    /* Tăng chiều rộng của cột Tên sản phẩm */
   }
+
   th:nth-child(3),
   td:nth-child(3) {
-    width: 10%; /* Tăng chiều rộng của cột Tên sản phẩm */
+    width: 10%;
+    /* Tăng chiều rộng của cột Tên sản phẩm */
   }
+
   th:nth-child(4),
   td:nth-child(4) {
-    width: 10%; /* Tăng chiều rộng của cột Tên sản phẩm */
+    width: 10%;
+    /* Tăng chiều rộng của cột Tên sản phẩm */
   }
+
   th:nth-child(5),
   td:nth-child(5) {
-    width: 10%; /* Tăng chiều rộng của cột Tên sản phẩm */
+    width: 10%;
+    /* Tăng chiều rộng của cột Tên sản phẩm */
   }
 
   td:nth-child(1) {

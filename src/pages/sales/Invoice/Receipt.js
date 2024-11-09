@@ -35,7 +35,7 @@ const Receipt = ({ data }) => {
 
       <section className="receipt-details">
         <h3>Chi tiết sản phẩm</h3>
-        <table className="product-table">
+        <table className="product-table-receipt">
           <thead>
             <tr>
               <th>STT</th>
