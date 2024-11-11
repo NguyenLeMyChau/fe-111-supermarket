@@ -243,31 +243,41 @@ const closePaymentModal = ()=>{
   setIsPaymentModalOpen(false);
   setInvoiceInfo(null);
 }
-const handleUnitChange = (productId, unitId) => {
+const handleUnitChange = (productId, unitChange,unit_id) => {
+  console.log(productId, unitChange,unit_id)
   setCart((prevCart) => {
     const existingItemIndex = prevCart.findIndex(
-      (item) => item._id === productId && item.unit._id === unitId
+      (item) => item._id === productId && item.unit._id === unitChange
     );
-
+console.log(existingItemIndex)
     return prevCart
       .map((item, index) => {
         if (item._id === productId) {
-          const selectedUnit = item.unit_converts.find((unit) => unit.unit._id === unitId);
-
-          if (existingItemIndex !== -1) {
+          const selectedUnit = item.unit_converts.find((unit) => unit.unit._id === unitChange);
+ console.log(selectedUnit)
+          if (existingItemIndex !== -1 && selectedUnit) {
             // Merge quantities and update total for the existing item at existingItemIndex
-            if (index !== existingItemIndex) {
+            if (item.unit._id === unit_id) {
+              if(selectedUnit.unit._id === unitChange) {
+                console.log('112',item.unit._id)
               return {
                 ...item,
                 unit: selectedUnit.unit,
                 price: selectedUnit.price,
                 quantity: item.quantity + prevCart[existingItemIndex].quantity,
                 total: selectedUnit.price * (item.quantity + prevCart[existingItemIndex].quantity),
-              };
+              }};
             }else
+              if(item.unit._id === unitChange){
+                 console.log('nul')
+                return null;
+              }else{
             // Return null to mark the item for removal after merging
-            return null;
-          } else if (item.unit._id !== unitId) {
+             console.log('item')
+            return item;
+              }
+          } else if (item.unit._id === unit_id) {
+            console.log('223',item.unit._id)
             // If changing to a different unit, update unit, price, and total
             return {
               ...item,
