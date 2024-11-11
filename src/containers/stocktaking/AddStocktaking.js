@@ -102,7 +102,7 @@ const AddStocktaking = () => {
 
                 <div className='flex-row'>
                     <div className="info-group" style={{ width: 500, marginLeft: 150 }}>
-                        <label>Tên người kiểm:</label>
+                        <label>Người kiểm kê:</label>
                         <span>{ordererName}</span>
                     </div>
 

@@ -19,8 +19,8 @@ const Payment = () => {
   const axiosJWT = useAxiosJWT();
   const accessToken = useAccessToken();
   const productList = useSelector((state) => state.productPay.productPay);
-  const totalAmountPay =  useSelector((state) => state.productPay.totalAmount);
-  const [totalAmount, setTotalAmount] = useState( useSelector((state) => state.productPay.totalAmount));
+  const totalAmountPay = useSelector((state) => state.productPay.totalAmount);
+  const [totalAmount, setTotalAmount] = useState(useSelector((state) => state.productPay.totalAmount));
   const customer = useSelector((state) => state.productPay.customer);
   const [promotion, setPromotion] = useState([]);
   const [customerPaid, setCustomerPaid] = useState(null);
@@ -32,11 +32,11 @@ const Payment = () => {
   const [appliedPromotion, setAppliedPromotion] = useState(null);
   const [ineligiblePromotions, setIneligiblePromotions] = useState([]);
   const currentUser = useSelector((state) => state.auth.login?.currentUser);
-  const [dataInvoices,setDataInvoices] = useState(); 
+  const [dataInvoices, setDataInvoices] = useState();
 
   const [isPaid, setIsPaid] = useState(false);
 
-  const [paymentInfo,setPaymenInfo] = useState(null);
+  const [paymentInfo, setPaymenInfo] = useState(null);
   useEffect(() => {
     if (customer) {
       setPaymenInfo({
@@ -49,9 +49,9 @@ const Payment = () => {
   }, [customer]); // Chạy effect mỗi khi customer thay đổi
   useEffect(() => {
     if (totalAmountPay) {
-    setTotalAmount(totalAmountPay );
+      setTotalAmount(totalAmountPay);
     }
-  }, [totalAmountPay]); 
+  }, [totalAmountPay]);
   useEffect(() => {
     const fetchPromotions = async () => {
       try {
@@ -89,7 +89,7 @@ const Payment = () => {
                   const totalQuantity = promotion.quantity + promotion.quantity_donate;
                   const eligibleQuantity = Math.floor(product.quantity / totalQuantity);
                   console.log('Eligible Quantity (same product):', eligibleQuantity);
-                  
+
                   if (eligibleQuantity < 1) {
                     // Thêm vào danh sách không đủ điều kiện
                     ineligible.push({
@@ -100,15 +100,15 @@ const Payment = () => {
                     });
                     return { ...product, promotion: null }; // Không có khuyến mãi
                   }
-                  updatedTotalAmount -=product.price* eligibleQuantity
-                  return { ...product, promotion,discountAmount:product.price* eligibleQuantity}; // Có khuyến mãi
-  
-                // Trường hợp 2: product_id === promotion.product_id và product_id !== promotion.product_donate
+                  updatedTotalAmount -= product.price * eligibleQuantity
+                  return { ...product, promotion, discountAmount: product.price * eligibleQuantity }; // Có khuyến mãi
+
+                  // Trường hợp 2: product_id === promotion.product_id và product_id !== promotion.product_donate
                 } else if (product._id === promotion.product_id && product._id !== promotion.product_donate) {
                   const eligibleQuantity = Math.floor(product.quantity / promotion.quantity);
                   const donateProductExists = productList.some(p => p._id === promotion.product_donate && p.unit === promotion.unit_id_donate);
                   console.log('Eligible Quantity (different donate product):', eligibleQuantity);
-  
+
                   if (!donateProductExists) {
                     // Thêm vào danh sách không đủ điều kiện
                     ineligible.push({
@@ -117,23 +117,24 @@ const Payment = () => {
                       requiredQuantity: promotion.quantity_donate,
                     });
                     return { ...product, promotion: null }; // Không có khuyến mãi
-                  }else if (eligibleQuantity < 1 ) {
+                  } else if (eligibleQuantity < 1) {
                     // Thêm vào danh sách không đủ điều kiện
                     ineligible.push({
                       ...product,
                       promotion,
                       requiredQuantity: promotion.quantity,
                     });
-                    return { ...product, promotion: null };}
+                    return { ...product, promotion: null };
+                  }
                   else
-                  return { ...product, promotion:null }; // Có khuyến mãi
-  
-                // Trường hợp 3: product_id !== promotion.product_id và product_id === promotion.product_donate
+                    return { ...product, promotion: null }; // Có khuyến mãi
+
+                  // Trường hợp 3: product_id !== promotion.product_id và product_id === promotion.product_donate
                 } else if (product._id !== promotion.product_id && product._id === promotion.product_donate) {
-                  const promotionProductExists = productList.some(p => p._id === promotion.product_id&& p.unit===promotion.unit_id);
+                  const promotionProductExists = productList.some(p => p._id === promotion.product_id && p.unit === promotion.unit_id);
                   const eligibleQuantity = Math.floor(product.quantity / promotion.quantity);
                   console.log('Eligible Quantity (donate product):', eligibleQuantity);
-  
+
                   if (!promotionProductExists || eligibleQuantity < 1) {
                     ineligible.push({
                       ...promotionProductExists,
@@ -142,33 +143,34 @@ const Payment = () => {
                     });
                     return { ...product, promotion: null }; // Không có khuyến mãi
                   }
-                  updatedTotalAmount -=product.price* eligibleQuantity
-                  return { ...product, promotion,discountAmount:product.price* eligibleQuantity}; // Có khuyến mãi
+                  updatedTotalAmount -= product.price * eligibleQuantity
+                  return { ...product, promotion, discountAmount: product.price * eligibleQuantity }; // Có khuyến mãi
 
                 }
               }
-            if (promotionLine.type === "amount") {
-              const eligibleQuantity = Math.floor(
-                product.quantity / promotion.quantity
-              );
-              const discountAmount =
-                eligibleQuantity >= 1
-                  ? eligibleQuantity * promotion.amount_donate
-                  : 0;
+              if (promotionLine.type === "amount") {
+                const eligibleQuantity = Math.floor(
+                  product.quantity / promotion.quantity
+                );
+                const discountAmount =
+                  eligibleQuantity >= 1
+                    ? eligibleQuantity * promotion.amount_donate
+                    : 0;
 
-              if (eligibleQuantity >= 1) {
-                updatedTotalAmount -= discountAmount; // Trừ discount vào tổng tiền
-                return { ...product, promotion, discountAmount };
-              } else {
-                ineligible.push({
-                  ...product,
-                  promotion,
-                  requiredQuantity: promotion.quantity,
-                });
+                if (eligibleQuantity >= 1) {
+                  updatedTotalAmount -= discountAmount; // Trừ discount vào tổng tiền
+                  return { ...product, promotion, discountAmount };
+                } else {
+                  ineligible.push({
+                    ...product,
+                    promotion,
+                    requiredQuantity: promotion.quantity,
+                  });
+                }
               }
+              return { ...product, promotion: null };
             }
-            return { ...product, promotion: null };
-        }});
+          });
           return applicablePromotions;
         }
         return [{ ...product, promotion: null }];
@@ -177,8 +179,8 @@ const Payment = () => {
       const productsWithPromotions = await Promise.all(productPromises);
       setProductWithPromotions(productsWithPromotions.flat());
       setIneligiblePromotions(ineligible);
-      setShowIneligibleModal(ineligible.length > 0?true:false);
-      setTotalAmount(updatedTotalAmount); 
+      setShowIneligibleModal(ineligible.length > 0 ? true : false);
+      setTotalAmount(updatedTotalAmount);
     };
 
     fetchProductPromotions();
@@ -212,11 +214,12 @@ const Payment = () => {
       if (minTotal === totalAmount) {
         setDiscountedTotal(totalAmount);
         setAppliedPromotion(null);
-      }else{  
-        
+      } else {
+
         setDiscountedTotal(minTotal);
         const bestPromotion = promotion[finalTotals.indexOf(minTotal)];
-        setAppliedPromotion(bestPromotion);}
+        setAppliedPromotion(bestPromotion);
+      }
     }
   }, [promotion, totalAmount]);
 
@@ -238,7 +241,7 @@ const Payment = () => {
   const handlePayment = async () => {
     const isConfirmed = window.confirm('Bạn có chắc chắn thanh toán');
     if (!isConfirmed) return;
-    if (customerPaid < totalAmount) {
+    if (customerPaid < discountedTotal) {
       alert("Số tiền trả không đủ.");
       return;
     }
@@ -253,7 +256,7 @@ const Payment = () => {
         paymentInfo,
         discountedTotal
       );
-        console.log(response.data)
+      console.log('pay cart response:', response.data);
       if (response?.success) {
         alert("Thanh toán thành công!");
         setIsPaid(true);
@@ -265,7 +268,7 @@ const Payment = () => {
       console.error("Payment error:", error);
       alert("Có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại.");
     }
-};
+  };
 
 
   // Xử lý bàn phím để nhập số tiền khách trả
@@ -296,7 +299,7 @@ const Payment = () => {
               <th>Giá bán</th>
               <th>Số lượng</th>
               <th>Thành tiền</th>
-             
+
             </tr>
           </thead>
           <tbody>
@@ -320,7 +323,7 @@ const Payment = () => {
                       <td colSpan="1"></td>
                       <td colSpan="1"></td>
                       <td colSpan="1"></td>
-                    <td>-{product.discountAmount}đ</td>
+                      <td>-{formatCurrency(product.discountAmount)}</td>
                     </tr>
                   )}
                 </React.Fragment>
@@ -337,47 +340,47 @@ const Payment = () => {
       </div>
 
       <div className="right-section">
-  <h3>Thanh toán</h3>
-  <div className="payment-info">
-  {customer && (
-    <>
-      <div className="payment-line" style={{color:'blue'}}>
-        <p ><strong>Khách hàng:</strong></p>
-        <p className="amount">{customer.name}</p>
-      </div>
-      <div className="payment-line" style={{color:'blue'}}>
-       <p><strong>Số điện thoại:</strong></p>
-       <p className="amount">{customer.phone}</p>
-     </div>
-     </>
-    )}
+        <h3>Thanh toán</h3>
+        <div className="payment-info">
+          {customer && (
+            <>
+              <div className="payment-line" style={{ color: 'blue' }}>
+                <p ><strong>Khách hàng:</strong></p>
+                <p className="amount">{customer.name}</p>
+              </div>
+              <div className="payment-line" style={{ color: 'blue' }}>
+                <p><strong>Số điện thoại:</strong></p>
+                <p className="amount">{customer.phone}</p>
+              </div>
+            </>
+          )}
 
-    <div className="payment-line">
-      <p><strong>Tổng số tiền sản phẩm:</strong></p>
-      <p className="amount">{formatCurrency(totalAmount)}</p>
-    </div>
+          <div className="payment-line">
+            <p><strong>Tổng số tiền sản phẩm:</strong></p>
+            <p className="amount">{formatCurrency(totalAmount)}</p>
+          </div>
 
-    {appliedPromotion && (
-      <div className="payment-line">
-        <p><strong>Khuyến mãi ({appliedPromotion.description}):</strong></p>
-        <p className="amount">- {formatCurrency(totalAmount-discountedTotal)} </p>
-      </div>
-    )}
+          {appliedPromotion && (
+            <div className="payment-line">
+              <p><strong>Khuyến mãi ({appliedPromotion.description}):</strong></p>
+              <p className="amount">- {formatCurrency(totalAmount - discountedTotal)} </p>
+            </div>
+          )}
 
-    <div className="payment-line total-due">
-      <p><strong>Tổng số tiền thanh toán:</strong></p>
-      <p className="amount">{formatCurrency(discountedTotal)}</p>
-    </div>
+          <div className="payment-line total-due">
+            <p><strong>Tổng số tiền thanh toán:</strong></p>
+            <p className="amount">{formatCurrency(discountedTotal)}</p>
+          </div>
 
-    <div className="payment-line">
-      <p><strong>Số tiền khách đưa:</strong></p>
-      <p className="amount">{formatCurrency(customerPaid)}</p>
-    </div>
+          <div className="payment-line">
+            <p><strong>Số tiền khách đưa:</strong></p>
+            <p className="amount">{formatCurrency(customerPaid)}</p>
+          </div>
 
-    <div className="payment-line">
-      <p><strong>Số tiền thối lại:</strong></p>
-      <p className="amount">{formatCurrency(change)}</p>
-    </div>
+          <div className="payment-line">
+            <p><strong>Số tiền thối lại:</strong></p>
+            <p className="amount">{formatCurrency(change)}</p>
+          </div>
 
 
           <div className="payment-method-grid">
@@ -385,9 +388,8 @@ const Payment = () => {
               (method) => (
                 <button
                   key={method}
-                  className={`payment-method-btn ${
-                    paymentMethod === method ? "selected" : ""
-                  }`}
+                  className={`payment-method-btn ${paymentMethod === method ? "selected" : ""
+                    }`}
                   onClick={() => setPaymentMethod(method)}
                 >
                   {method}
@@ -446,7 +448,7 @@ const Payment = () => {
             <button className="payment-button" onClick={handleClear}>
               C
             </button>
-            <button className="payment-button-pay"  onClick={handlePayment} disabled={productWithPromotions.length===0}>
+            <button className="payment-button-pay" onClick={handlePayment} disabled={productWithPromotions.length === 0}>
               Thanh toán
             </button>
           </div>
@@ -455,8 +457,8 @@ const Payment = () => {
           </button>
         </div>
       </div>
-     
-      {isPaid && dataInvoices && <PaymentModal isPaid={isPaid} closeModal={closeModalPay} accessToken={accessToken} axiosJWT={axiosJWT} invoiceId={dataInvoices.invoiceCode}/>}
+
+      {isPaid && dataInvoices && <PaymentModal isPaid={isPaid} closeModal={closeModalPay} accessToken={accessToken} axiosJWT={axiosJWT} invoiceId={dataInvoices.invoiceCode} />}
       <ModalComponent
         title={'Sản phẩm không đủ điều kiện khuyến mãi'}
         isOpen={showIneligibleModal}
@@ -464,29 +466,29 @@ const Payment = () => {
         width={1000}
       >
         <div className="ineligible-modal">
-        <div className="table-container">
-        <table>
-          <thead>
-            <tr>
-              <th>Tên sản phẩm</th>
-              <th>Đơn vị</th>
-              <th>Số lượng yêu cầu</th>
-              <th>Tên chương trình khuyến mãi</th>
-            </tr>
-          </thead>
-          <tbody>
-            {ineligiblePromotions.map((product, index) => (
-              <tr key={index}>
-                <td>{product.name}</td>
-                <td>{product.unit.description}</td>
-                <td>{product.requiredQuantity}</td>
-                <td>{product.promotion.description}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <button onClick={closeModal}>Đóng</button>
-        </div>
+          <div className="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Tên sản phẩm</th>
+                  <th>Đơn vị</th>
+                  <th>Số lượng yêu cầu</th>
+                  <th>Tên chương trình khuyến mãi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ineligiblePromotions.map((product, index) => (
+                  <tr key={index}>
+                    <td>{product.name}</td>
+                    <td>{product.unit.description}</td>
+                    <td>{product.requiredQuantity}</td>
+                    <td>{product.promotion.description}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <button onClick={closeModal}>Đóng</button>
+          </div>
         </div>
       </ModalComponent>
     </div>

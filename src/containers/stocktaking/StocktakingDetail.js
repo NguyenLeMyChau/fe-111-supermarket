@@ -22,7 +22,7 @@ const StocktakingDetail = ({ bill }) => {
 
                 <div className='flex-row'>
                     <div className="info-group" style={{ width: 450, marginLeft: 50 }}>
-                        <label>Tên kiểm kê:</label>
+                        <label>Người kiểm kê:</label>
                         <span>{bill.employee.name}</span>
                     </div>
                     <div className="info-group">
