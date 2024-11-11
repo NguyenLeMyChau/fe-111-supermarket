@@ -10,6 +10,8 @@ export default function ProductInvoice({ isModalOpen, closeModal, products, sele
 
     // Lọc thông tin nhân viên dựa vào employee_id
     let employee = employees.find(emp => emp._id === selectedInvoice?.employee_id);
+    const productList = useSelector((state) => state.product?.products) || [];
+
 
     // Nếu không tìm thấy employee trong employees, kiểm tra user
     console.log('user', user);
@@ -92,6 +94,7 @@ export default function ProductInvoice({ isModalOpen, closeModal, products, sele
                     <h3 style={{ textAlign: 'center' }}>Sản phẩm đặt hàng</h3>
 
                     {products.length > 0 && (
+
                         <table className="product-table">
                             <thead>
                                 <tr>
@@ -106,23 +109,33 @@ export default function ProductInvoice({ isModalOpen, closeModal, products, sele
                                 </tr>
                             </thead>
                             <tbody>
-                                {products.map((product) => (
-                                    <tr key={product._id}>
-                                        {product.productImg && (
+                                {products.map((product) => {
+                                    // Find the product in the productList based on item_code
+                                    const productFind = productList.find(p => p.item_code === product.item_code);
+                                    // If productFind exists, search for the unit in unit_convert based on unit._id
+                                    const unitImage = productFind?.unit_convert?.find(u => u.unit._id === product.unit._id)?.img || null;
+
+                                    return (
+                                        <tr key={product._id}>
                                             <td>
-                                                <img src={product.productImg} alt={product.productName} />
+                                                {unitImage ? (
+                                                    <img src={unitImage ? unitImage : product.productImg} alt={product.productName} />
+                                                ) : (
+                                                    <img src={product.productImg} alt={product.productName} /> // Fallback if no unit image is found
+                                                )}
                                             </td>
-                                        )}
-                                        {product.item_code && <td>{product.item_code}</td>}
-                                        {product.productName && <td>{product.productName}</td>}
-                                        {product.unitName && <td>{product.unitName}</td>}
-                                        {product.quantity && <td style={{ textAlign: 'center' }}>{product.quantity}</td>}
-                                        {product.price && <td style={{ textAlign: 'right' }}>{formatCurrency(product.price)}</td>}
-                                        {product.total && <td style={{ textAlign: 'right' }}>{formatCurrency(product.total)}</td>}
-                                        <td> <ShowPromotion promotion={product.promotion} /></td>
-                                    </tr>
-                                ))}
+                                            {product.item_code && <td>{product.item_code}</td>}
+                                            {product.productName && <td>{product.productName}</td>}
+                                            {product.unit.description && <td>{product.unit.description}</td>}
+                                            {product.quantity && <td style={{ textAlign: 'center' }}>{product.quantity}</td>}
+                                            {product.price && <td style={{ textAlign: 'right' }}>{formatCurrency(product.price)}</td>}
+                                            {product.total && <td style={{ textAlign: 'right' }}>{formatCurrency(product.total)}</td>}
+                                            <td> <ShowPromotion promotion={product.promotion} /></td>
+                                        </tr>
+                                    );
+                                })}
                             </tbody>
+
                         </table>
                     )}
                 </div>
