@@ -29,7 +29,7 @@ export default function Invoice() {
         { value: 'Chờ xử lý', label: 'Chờ xử lý', color: '#FFA500' },
         { value: 'Chuẩn bị hàng', label: 'Chuẩn bị hàng', color: '#D2691E' },
         { value: 'Đang giao hàng', label: 'Đang giao hàng', color: '#0000FF' },
-        { value: 'Đã giao hàng', label: 'Đã giao hàng', color: '#800080' },
+        { value: 'Đã nhận hàng', label: 'Đã nhận hàng', color: '#800080' },
         // { value: 'Bị từ chối', label: 'Bị từ chối', color: '#FF0000' },
         // { value: 'Đã hủy', label: 'Đã hủy', color: '#A9A9A9' },
     ];
