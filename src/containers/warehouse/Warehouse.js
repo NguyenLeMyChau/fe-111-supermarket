@@ -20,7 +20,6 @@ export default function Warehouse() {
     const transactions = useSelector((state) => state.transaction?.transactions) || [];
     const { getUnitDescription } = useAddBill();
 
-    const [products, setProducts] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
 
@@ -75,6 +74,18 @@ export default function Warehouse() {
                 return quantityBasic; // Định dạng theo nhu cầu
             }
         },
+        // {
+        //     title: 'Trạng thái',
+        //     dataIndex: 'status',
+        //     key: 'status',
+        //     width: '10%',
+        //     className: 'text-center',
+        //     render: (text, record) => {
+        //         const unitConvert = record.unit_convert.find(item => item.unit === record.unit._id && item.status === true);
+        //         return unitConvert ? 'Đã cập nhật' : 'Chưa cập nhật';
+
+        //     }
+        // },
     ];
 
     const transactionColumn = [
