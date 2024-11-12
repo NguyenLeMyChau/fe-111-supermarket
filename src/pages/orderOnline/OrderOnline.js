@@ -73,7 +73,7 @@ export default function OrderOnline() {
         { value: 'Chờ xử lý', label: 'Chờ xử lý', color: '#FFA500' },
         { value: 'Chuẩn bị hàng', label: 'Chuẩn bị hàng', color: '#D2691E' },
         { value: 'Đang giao hàng', label: 'Đang giao hàng', color: '#0000FF' },
-        { value: 'Đã giao hàng', label: 'Đã giao hàng', color: '#800080' },
+        { value: 'Đã nhận hàng', label: 'Đã nhận hàng', color: '#800080' },
         // { value: 'Bị từ chối', label: 'Bị từ chối', color: '#FF0000' },
         // { value: 'Đã hủy', label: 'Đã hủy', color: '#A9A9A9' },
     ];
@@ -88,7 +88,7 @@ export default function OrderOnline() {
         console.log('invoice:', invoice);
         const matchedStatus = orderStatuses.find(status => status.value === invoice.status);
         console.log('matchedStatus:', matchedStatus);
-        const booleanStatus = ['Đã giao hàng'].includes(matchedStatus.value);
+        const booleanStatus = ['Đã nhận hàng'].includes(matchedStatus.value);
         if (booleanStatus)
             setOrderStatus(true);
         else setOrderStatus(false);

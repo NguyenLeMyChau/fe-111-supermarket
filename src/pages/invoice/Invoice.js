@@ -20,6 +20,20 @@ export default function Invoice() {
     // Tạo bản sao của mảng invoices trước khi sắp xếp
     const sortedInvoices = [...invoices].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
+    const getStatusColor = (status) => {
+        const matchedStatus = orderStatuses.find(s => s.value === status);
+        return matchedStatus ? matchedStatus.color : '#000000';
+    };
+
+    const orderStatuses = [
+        { value: 'Chờ xử lý', label: 'Chờ xử lý', color: '#FFA500' },
+        { value: 'Chuẩn bị hàng', label: 'Chuẩn bị hàng', color: '#D2691E' },
+        { value: 'Đang giao hàng', label: 'Đang giao hàng', color: '#0000FF' },
+        { value: 'Đã giao hàng', label: 'Đã giao hàng', color: '#800080' },
+        // { value: 'Bị từ chối', label: 'Bị từ chối', color: '#FF0000' },
+        // { value: 'Đã hủy', label: 'Đã hủy', color: '#A9A9A9' },
+    ];
+
     const invoiceColumn = [
         { title: 'Mã đơn hàng', dataIndex: 'invoiceCode', key: 'invoiceCode', width: '10%' },
         {
@@ -41,26 +55,24 @@ export default function Invoice() {
             )
         },
         {
-            title: 'Người nhận',
-            dataIndex: 'paymentInfo',
-            key: 'paymentInfo_name', // Sử dụng một khóa duy nhất
-            width: '10%',
-            render: (paymentInfo) => paymentInfo?.name ? paymentInfo.name : 'Không cập nhật'
-        },
-        {
-            title: 'Số điện thoại nhận',
-            dataIndex: 'paymentInfo',
-            key: 'paymentInfo_phone', // Sử dụng một khóa duy nhất
-            width: '15%',
-            render: (paymentInfo) => paymentInfo?.phone ? paymentInfo.phone : 'Không cập nhật'
-        },
-        {
             title: 'Tổng tiền',
             dataIndex: 'paymentAmount',
             key: 'paymentAmount', // Sử dụng một khóa duy nhất
             width: '5%',
             className: 'text-right',
             render: (total) => formatCurrency(total)
+        },
+        {
+            title: 'Trạng thái',
+            dataIndex: 'status',
+            key: 'status', // Sử dụng một khóa duy nhất
+            width: '15%',
+            className: 'text-center',
+            render: (status) => (
+                <span style={{ color: getStatusColor(status), fontSize: 14, fontWeight: 500 }}>
+                    {status}
+                </span>
+            ),
         },
     ];
 
