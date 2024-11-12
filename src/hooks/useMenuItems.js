@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { GoHome } from "react-icons/go";
-import { MdOutlineInventory2, MdProductionQuantityLimits, MdOutlineToday } from "react-icons/md";
+import { MdOutlineInventory2, MdProductionQuantityLimits, MdOutlineToday, MdOutlinePayment } from "react-icons/md";
 import { BsFileBarGraph, BsPersonVcard } from "react-icons/bs";
 import { FaRegUser, FaCashRegister, FaUsers } from "react-icons/fa";
 import { SlSettings } from "react-icons/sl";
@@ -117,8 +117,16 @@ const useMenuItems = (onchange) => {
                         { Icon: PiInvoice, label: "ReportPromotion", text: "Khuyến mãi", path: '/admin/invoice' },
                     ]
                 },
+                {
+                    Icon: MdOutlinePayment,
+                    label: "Payment",
+                    text: "Thanh toán",
+                    subItems: [
+                        { Icon: FaCashRegister, label: "Stall", text: "Quầy thu ngân" },
+                        { Icon: TbReport, label: "Online", text: "Đơn hàng online", path: '/admin/order-online' },
+                    ]
+                },
                 { Icon: FaUsers, label: "Suppliers", text: "Nhà cung cấp", path: '/admin/supplier' },
-                { Icon: FaCashRegister, label: "Stall", text: "Quầy thu ngân" },
             ],
         },
         {

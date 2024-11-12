@@ -35,6 +35,7 @@ const useCommonData = () => {
         '/admin/unit': getAllUnit,
         '/admin/transaction': getAllTransaction,
         '/admin/stocktaking': getAllStocktaking,
+        '/admin/order-online': getAllInvoices,
     }), []);
 
     useEffect(() => {

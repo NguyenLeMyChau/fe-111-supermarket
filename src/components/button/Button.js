@@ -14,6 +14,8 @@ export default function Button(props) {
                 backgroundColor: props.backgroundColor || 'transparent',
                 backgroundImage: props.backgroundImage,
                 border: props.border,
+                alignSelf: props.alignSelf,
+                marginTop: props.marginTop,
             }}
             onClick={props.onClick}
             disabled={props.disabled}

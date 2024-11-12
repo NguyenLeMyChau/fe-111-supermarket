@@ -33,6 +33,7 @@ import OrderDetailCustomer from '../pages/userCustomer/OrderDetailCustomer.js';
 import ProductDetailCustomer from '../pages/home/ProductDetailCustomer.js';
 import AddStocktaking from '../containers/stocktaking/AddStocktaking.js';
 import Stocktaking from '../containers/stocktaking/Stocktaking.js';
+import OrderOnline from '../pages/orderOnline/OrderOnline.js';
 
 function AppRoutes() {
     return (
@@ -78,7 +79,8 @@ function AppRoutes() {
 
                         <Route path="unit" element={<Unit />} />
                         <Route path="invoice" element={<Invoice />} />
-                       
+
+                        <Route path="order-online" element={<OrderOnline />} />
                     </Route>
 
                     <Route path="/frame-staff" element={<FrameStaff />} />

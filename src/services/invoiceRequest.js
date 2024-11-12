@@ -17,4 +17,21 @@ const getAllInvoices = async (accessToken, axiosJWT, dispatch) => {
     }
 };
 
-export { getAllInvoices };
+const updateStatusOrder = async (accessToken, axiosJWT, toast, navigate, invoice_id, status) => {
+    try {
+        await axiosJWT.put(`/api/invoice/update-status-order`, {
+            invoice_id,
+            status
+        }, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        toast.success('Cập nhật trạng thái đơn hàng thành công');
+        navigate('/admin/order-online');
+    } catch (error) {
+        console.error('Update status order failed:', error);
+    }
+};
+
+export { getAllInvoices, updateStatusOrder };
