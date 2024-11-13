@@ -6,6 +6,9 @@ const productPaySlice = createSlice({
     productPay: [],
     totalAmount: 0,
     customer: null,
+    producRefund: [],
+    totalRefund:0,
+    invoiceCode:"",
   },
   reducers: {
     setCustomer: (state, action) => {
@@ -22,10 +25,20 @@ const productPaySlice = createSlice({
     clearCustomer: (state) => {
       state.customer = null;
     },
+    setProductRefund: (state, action) => {
+      state.producRefund = action.payload.productRefund;
+      state.totalRefund = action.payload.totalRefund;
+      state.invoiceCode = action.payload.invoiceCode;
+    },
+    clearProductRefund: (state) => {
+      state.producRefund = [];
+      state.totalRefund = 0;
+      state.invoiceCode = "";
+    },
   },
 });
 
 // Export all actions
-export const { setProductPay, clearProductPay, setCustomer, clearCustomer } = productPaySlice.actions;
+export const { setProductPay, clearProductPay, setCustomer, clearCustomer,setProductRefund,clearProductRefund } = productPaySlice.actions;
 
 export default productPaySlice.reducer;

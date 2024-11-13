@@ -86,9 +86,40 @@ const payCart = async ( accessToken, axiosJWT,employee, customerId, products, pa
     }
 
 }
+const refundCart = async ( accessToken, axiosJWT,employee,invoiceCode) => {
+    try {
+        console.log(employee,invoiceCode)
+        const response = await axiosJWT.post(`/api/auth/refund-cart-web`, {
+            employee,
+            invoiceCode
+        }, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        console.log(response.data)
+        return response.data;
+    } catch (error) {
+        console.error('Refund cart failed:', error);
+    }
+
+}
 const getInvoiceById=async (accessToken, axiosJWT, invoiceId)=>{
     try {
         const response = await axiosJWT.get(`/api/auth/getInvoices/${invoiceId}`, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        console.log(response.data)
+        return response.data;
+    } catch (error) {
+        console.error('Get getInvoiceById failed:', error);
+    }
+}
+const getInvoiceRefundById=async (accessToken, axiosJWT, invoiceId)=>{
+    try {
+        const response = await axiosJWT.get(`/api/auth/getInvoicesRefund/${invoiceId}`, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
@@ -222,5 +253,7 @@ export {
     getProductsByBarcodeInUnitConvert,
     getCustomerByPhone,
     getInvoiceById,
-    getInvoiceLast
+    getInvoiceLast,
+    refundCart,
+    getInvoiceRefundById
 }

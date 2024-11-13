@@ -3,11 +3,11 @@ import "./Receipt.scss";
 import { formatCurrency } from "../../../utils/fotmatDate";
 import { getPromotions } from "../../../services/cartRequest";
 
-const Receipt = ({ data }) => {
+const ReceiptRefund = ({ data }) => {
   const [promotion, setPromotion] = useState([]);
   const [discountTotal, setDiscountedTotal] = useState();
   const [appliedPromotion, setAppliedPromotion] = useState(null);
-
+console.log(data)
   // Fetch promotions on component mount
   useEffect(() => {
     const fetchPromotions = async () => {
@@ -78,10 +78,11 @@ const Receipt = ({ data }) => {
   return (
     <div className="receipt">
       <header className="receipt-header">
-        <h2>Phiếu Thanh Toán Capy Smart</h2>
+        <h2>Phiếu Hoàn Trả Capy Smart</h2>
         <p><strong>Nhân viên:</strong> {data.invoice.employee_id?.name}</p>
         <p><strong>Thời gian:</strong> {new Date(data.invoice.createdAt).toLocaleString()}</p>
-        <p><strong>Mã hóa đơn:</strong> {data.invoice.invoiceCode}</p>
+        <p><strong>Mã hóa đơn thanh toán:</strong> {data.invoice.invoiceCode}</p>
+        <p><strong>Mã hóa đơn hoàn trả:</strong> {data.invoice.invoiceCodeSale}</p>
       </header>
 
       <section className="receipt-details">
@@ -136,7 +137,7 @@ const Receipt = ({ data }) => {
           </div>
         )}
         <div className="payment-line">
-          <p><strong>Thành tiền:</strong></p>
+          <p><strong>Trả lại:</strong></p>
           <p className="amount">{formatCurrency(discountTotal)}</p>
         </div>
         <div className="payment-line">
@@ -153,4 +154,4 @@ const Receipt = ({ data }) => {
   );
 };
 
-export default Receipt;
+export default ReceiptRefund;

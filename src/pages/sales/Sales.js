@@ -13,6 +13,7 @@ import PaymentModal from "./Invoice/PaymentModal.js";
 import AddCustomerModal from "./AddCustomerModal/AddCustomerModal.js";
 import AddCustomer from "../customer/AddCustomer.js";
 import { formatCurrency } from "../../utils/fotmatDate.js";
+import RefundModal from "./Refund/RefundModal.js";
 
 const Sales = () => {
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ const Sales = () => {
   const [barcode, setBarcode] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalOpenReprint, setIsModalOpenReprint] = useState(false);
+  const [isModalOpenRefund, setIsModalOpenRefund] = useState(false);
   const [quantityModalOpen, setQuantityModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [cart, setCart] = useState([]);
@@ -229,6 +231,13 @@ const getInvoice = async (invoiceCode) => {
   }
   return null; // Return null if the product is not found
 };
+const getInvoiceRefund = async (invoiceCode) => {
+  const invoiceData = await getInvoiceById(accessToken, axiosJWT, invoiceCode);     
+  if (invoiceData) {
+      return invoiceData; // Return an object with price and product details
+  }
+  return null; // Return null if the product is not found
+};
 const handleReprint= async ()=>{
   const invoiceData = await getInvoiceLast(accessToken, axiosJWT);
   console.log(invoiceData)
@@ -334,7 +343,7 @@ console.log(existingItemIndex)
                 </select>
               ) : (
                 // Display unit name if not selected
-                `${item.unit.description}`
+                `${item.unit?.description}`
               )}
             </td>
                   {/* <td>{item.unit.description}</td> */}
@@ -364,8 +373,9 @@ console.log(existingItemIndex)
           <button onClick={() => setCustomerInfoModalOpen(true)}>Nhập thông tin khách hàng</button>
           <button onClick={handleAddCustomerClick}>Thêm khách hàng</button>
           <button onClick={() => setIsModalOpen(true)}>Kiểm tra giá</button>
-          <button onClick={() => setIsModalOpenReprint(true)}>In lại hóa đơn</button> 
-          <button onClick={handleReprint}>In lại giao dịch cuối</button> 
+          <button onClick={() => setIsModalOpenReprint(true)} disabled={cart.length!==0}>In lại hóa đơn</button> 
+          <button onClick={handleReprint} disabled={cart.length!==0}>In lại giao dịch cuối</button> 
+          <button onClick={() => setIsModalOpenRefund(true)} disabled={cart.length!==0}>Trả hàng</button>
           <button onClick={handleLogout} disabled={cart.length!==0}>Thoát</button>
         </div>
 
@@ -420,6 +430,14 @@ console.log(existingItemIndex)
         getInvoice={getInvoice}
         accessToken={accessToken}
         axiosJWT ={axiosJWT}
+      />
+      <RefundModal
+        isOpen={isModalOpenRefund}
+        onRequestClose={() => setIsModalOpenRefund(false)}
+        getInvoice={getInvoiceRefund}
+        accessToken={accessToken}
+        axiosJWT ={axiosJWT}
+        dispatch={dispatch}
       />
       <QuantityModal
         isOpen={quantityModalOpen}

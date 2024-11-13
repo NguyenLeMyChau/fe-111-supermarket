@@ -30,9 +30,11 @@ const ReprintModal = ({ isOpen, onRequestClose, getInvoice, accessToken, axiosJW
     setError(null); // Reset error message
     try {
       const fetchedInvoice = await getInvoice(invoiceCode);
+     
       if (fetchedInvoice) {
         setInvoiceInfo(fetchedInvoice);
         setIsPaymentModalOpen(true); // Open PaymentModal if invoice is found
+        onRequestClose(); // Close ReprintModal
       } else {
         setInvoiceInfo(null);
         setError("Không tìm thấy hóa đơn");
@@ -72,7 +74,7 @@ const ReprintModal = ({ isOpen, onRequestClose, getInvoice, accessToken, axiosJW
           closeModal={() => setIsPaymentModalOpen(false)}
           accessToken={accessToken}
           axiosJWT={axiosJWT}
-          invoiceId={invoiceInfo} // Truyền mã hóa đơn vào invoiceId
+          invoiceId={invoiceInfo}
         />
       )}
     </>

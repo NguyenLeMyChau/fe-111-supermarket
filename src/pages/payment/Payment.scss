@@ -42,6 +42,7 @@
 
 .payment-product-table th:first-child, 
 .payment-product-table td:first-child {
+  text-align: center;
   width: 40px; 
 }
 
@@ -52,20 +53,24 @@
 
 .payment-product-table th:nth-child(3), 
 .payment-product-table td:nth-child(3) {
+  text-align: center;
   width: 10%; 
 }
 
 .payment-product-table th:nth-child(4), 
 .payment-product-table td:nth-child(4) {
+  text-align:right;
   width: 15%; 
 }
 
 .payment-product-table th:nth-child(5), 
 .payment-product-table td:nth-child(5) {
+  text-align:right;
   width: 15%; 
 }
 .payment-product-table th:nth-child(6), 
 .payment-product-table td:nth-child(6) {
+  text-align:right;
   width: 15%; 
 }
 
@@ -227,7 +232,6 @@ button:hover {
 .payment-line {
   display: flex;
   justify-content: space-between;
- 
 }
 
 .payment-line .amount {
@@ -237,4 +241,32 @@ button:hover {
 
 .total-due .amount {
   color: #d9534f; /* Change color to highlight the total amount to be paid */
+}
+
+.refund-button-confirm {
+  width: 100px;
+  padding: 12px; /* Adjusted padding */
+  font-size: 1rem; /* Adjusted font size */
+  cursor: pointer;
+  border-radius: 5px;
+  background-color: #acb1ac;
+  color: white;
+  border: none;
+  margin: 10px;
+}
+.refund-button-cancel {
+  width: 100px;
+  padding: 12px; /* Adjusted padding */
+  font-size: 1rem; /* Adjusted font size */
+  cursor: pointer;
+  border-radius: 5px;
+  background-color: #d9534f;
+  color: white;
+  border: none;
+  margin: 10px;
+}
+.refund-line {
+  display: flex;
+  justify-content: center;
+ 
 }

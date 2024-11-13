@@ -34,6 +34,7 @@ import ProductDetailCustomer from '../pages/home/ProductDetailCustomer.js';
 import AddStocktaking from '../containers/stocktaking/AddStocktaking.js';
 import Stocktaking from '../containers/stocktaking/Stocktaking.js';
 import OrderOnline from '../pages/orderOnline/OrderOnline.js';
+import Refund from '../pages/payment/Refund.js';
 
 function AppRoutes() {
     return (
@@ -65,6 +66,7 @@ function AppRoutes() {
                         </Route>
                         <Route path="stall" element={<Stall />}>
                             <Route path=":stall/payment" element={<Payment />} />
+                            <Route path=":stall/refund" element={<Refund />} />
                         </Route>
                         {/* <Route path="order" element={<Orders />} >
                         <Route path="add-order" element={<AddOrder />} />
@@ -86,7 +88,7 @@ function AppRoutes() {
                     <Route path="/frame-staff" element={<FrameStaff />} />
                     <Route path="/frame-staff/stall" element={<Stall />} />
                     <Route path="/frame-staff/payment" element={<Payment />} />
-
+                    <Route path="/frame-staff/refund" element={<Refund />} />
                     <Route path="/home" element={<Home />} />
 
                     <Route path="/customer">
