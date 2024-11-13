@@ -10,7 +10,7 @@ import { getAllPromotions } from '../services/promotionRequest';
 import { getAllBill, getAllStocktaking, getAllTransaction, getAllWarehouse } from '../services/warehouseRequest';
 import { getAllUnit } from '../services/unitRequest';
 import { getAllPrices } from '../services/priceRequest'
-import { getAllInvoices } from '../services/invoiceRequest';
+import { getAllInvoices, getAllInvoicesRefund } from '../services/invoiceRequest';
 
 const useCommonData = () => {
     const dispatch = useDispatch();
@@ -31,6 +31,7 @@ const useCommonData = () => {
         '/admin/promotion': getAllPromotions,
         '/admin/price': getAllPrices,
         '/admin/invoice': getAllInvoices,
+        '/admin/refund-invoice': getAllInvoicesRefund,
         '/admin/customer': getAllCustomer,
         '/admin/unit': getAllUnit,
         '/admin/transaction': getAllTransaction,

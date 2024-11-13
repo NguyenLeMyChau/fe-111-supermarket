@@ -104,7 +104,8 @@ const useMenuItems = (onchange) => {
                     subItems: [
                         { Icon: BsPersonVcard, label: "Employee", text: "Nhân viên", path: '/admin/employee' },
                         { Icon: IoPersonCircleOutline, label: "Customer", text: "Khách hàng", path: '/admin/customer' },
-                        { Icon: PiInvoice, label: "Invoice", text: "Hoá đơn khách", path: '/admin/invoice' },
+                        { Icon: PiInvoice, label: "Invoice", text: "Hoá đơn bán", path: '/admin/invoice' },
+                        { Icon: PiInvoice, label: "Refund", text: "Hoá đơn trả", path: '/admin/refund-invoice' },
                     ]
                 },
                 {

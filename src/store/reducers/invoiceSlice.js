@@ -11,6 +11,7 @@ const invoiceSlice = createSlice({
     initialState,
     reducers: {
         getInvoiceStart(state) {
+            state.invoices =null;
             state.isFetching = true;
             state.error = false;
         },
