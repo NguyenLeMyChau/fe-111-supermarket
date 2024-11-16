@@ -7,9 +7,8 @@ import ProductInvoice from '../invoice/ProductInvoice';
 import '../invoice/Invoice.scss';
 import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
-import { CiEdit } from 'react-icons/ci';
 import Button from '../../components/button/Button';
-import Select from 'react-select'
+import Select from 'react-select';
 import Modal from '../../components/modal/Modal';
 import { toast } from 'react-toastify';
 import { updateStatusOrder } from '../../services/invoiceRequest';
@@ -18,6 +17,7 @@ import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
+import { BiSolidSkipNextCircle } from "react-icons/bi";
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -83,22 +83,35 @@ export default function OrderOnline() {
         return matchedStatus ? matchedStatus.color : '#000000';
     };
 
-    const handleEditClick = (event, invoice) => {
-        event.stopPropagation();
-        console.log('invoice:', invoice);
-        const matchedStatus = orderStatuses.find(status => status.value === invoice.status);
-        console.log('matchedStatus:', matchedStatus);
-        const booleanStatus = ['Đã nhận hàng'].includes(matchedStatus.value);
-        if (booleanStatus)
-            setOrderStatus(true);
-        else setOrderStatus(false);
-
-        setSelectedInvoice({
-            ...invoice,
-            status: matchedStatus
-        });
-        setIsEditModalOpen(true);
+    const getNextStatus = (currentStatus) => {
+        const currentIndex = orderStatuses.findIndex((status) => status.value === currentStatus);
+        if (currentIndex === -1 || currentIndex === orderStatuses.length - 1 || currentStatus === 'Đã nhận hàng') {
+            return currentStatus; // Giữ nguyên trạng thái nếu không có trạng thái tiếp theo
+        }
+        return orderStatuses[currentIndex + 1].value;
     };
+
+    const handleEditClick = async (event, invoice) => {
+        event.stopPropagation();
+
+        const nextStatus = getNextStatus(invoice.status);
+        if (nextStatus === invoice.status) return; // Không cho phép chuyển trạng thái nếu đã là 'Đã nhận hàng'
+
+        try {
+            await updateStatusOrder(
+                accessToken,
+                axiosJWT,
+                toast,
+                navigate,
+                invoice._id,
+                nextStatus
+            );
+        } catch (error) {
+            console.error('Cập nhật trạng thái thất bại:', error);
+            toast.error('Cập nhật trạng thái thất bại');
+        }
+    };
+
 
     const handleCloseEditModal = () => {
         setIsEditModalOpen(false);
@@ -115,60 +128,67 @@ export default function OrderOnline() {
         return acc;
     }, {});
 
-    const invoiceColumn = [
-        { title: 'Mã đơn hàng', dataIndex: 'invoiceCode', key: 'invoiceCode', width: '10%' },
-        {
-            title: 'Khách hàng', dataIndex: 'customerName', key: 'customerName', width: '10%',
-            render: (customerName) => customerName ? customerName : 'Không cập nhật'
-        },
-        {
-            title: 'Ngày đặt hàng',
-            dataIndex: 'createdAt',
-            key: 'createdAt',
-            width: '15%',
-            render: (date) => (
-                <div>
-                    <div>{formatDate(date)}</div>
-                    <div style={{ fontSize: '12px', color: 'gray' }}>
-                        {formatDistanceToNow(new Date(date), { addSuffix: true, locale: vi })}
+    const getInvoiceColumns = (status) => {
+        const columns = [
+            { title: 'Mã đơn hàng', dataIndex: 'invoiceCode', key: 'invoiceCode', width: '10%' },
+            {
+                title: 'Khách hàng', dataIndex: 'customerName', key: 'customerName', width: '10%',
+                render: (customerName) => customerName ? customerName : 'Không cập nhật'
+            },
+            {
+                title: 'Ngày đặt hàng',
+                dataIndex: 'createdAt',
+                key: 'createdAt',
+                width: '15%',
+                render: (date) => (
+                    <div>
+                        <div>{formatDate(date)}</div>
+                        <div style={{ fontSize: '12px', color: 'gray' }}>
+                            {formatDistanceToNow(new Date(date), { addSuffix: true, locale: vi })}
+                        </div>
                     </div>
-                </div>
-            )
-        },
-        {
-            title: 'Tổng tiền',
-            dataIndex: 'paymentAmount',
-            key: 'paymentAmount', // Sử dụng một khóa duy nhất
-            width: '5%',
-            className: 'text-right',
-            render: (total) => formatCurrency(total)
-        },
-        {
-            title: 'Trạng thái',
-            dataIndex: 'status',
-            key: 'status', // Sử dụng một khóa duy nhất
-            width: '15%',
-            className: 'text-center',
-            render: (status) => (
-                <span style={{ color: getStatusColor(status), fontSize: 14, fontWeight: 500 }}>
-                    {status}
-                </span>
-            ),
-        },
-        {
-            title: 'Cập nhật',
-            key: 'edit',
-            width: '10%',
-            className: 'text-center',
-            render: (text, record) => (
-                <CiEdit
-                    style={{ color: 'blue', cursor: 'pointer' }}
-                    size={25}
-                    onClick={(event) => handleEditClick(event, record)}
-                />
-            ),
-        },
-    ];
+                )
+            },
+            {
+                title: 'Tổng tiền',
+                dataIndex: 'paymentAmount',
+                key: 'paymentAmount',
+                width: '5%',
+                className: 'text-right',
+                render: (total) => formatCurrency(total)
+            },
+            {
+                title: 'Trạng thái',
+                dataIndex: 'status',
+                key: 'status',
+                width: '15%',
+                className: 'text-center',
+                render: (status) => (
+                    <span style={{ color: getStatusColor(status), fontSize: 14, fontWeight: 500 }}>
+                        {status}
+                    </span>
+                ),
+            },
+        ];
+
+        if (status !== 'Đang giao hàng' && status !== 'Đã nhận hàng') {
+            columns.push({
+                title: 'Cập nhật',
+                key: 'edit',
+                width: '10%',
+                className: 'text-center',
+                render: (text, record) => (
+                    <BiSolidSkipNextCircle
+                        style={{ color: 'red', cursor: 'pointer' }}
+                        size={30}
+                        onClick={(event) => handleEditClick(event, record)}
+                    />
+                ),
+            });
+        }
+
+        return columns;
+    };
 
     const invoiceDetailColumn = [
         { title: 'Tên sản phẩm', dataIndex: 'productName', key: 'productName', width: '30%' },
@@ -224,7 +244,7 @@ export default function OrderOnline() {
     return (
         <>
             <div className='product-detail-container'>
-                <Tabs value={selectedTab} onChange={handleTabChange} aria-label="invoice status tabs" style={{marginTop: 20, marginLeft: 30}}>
+                <Tabs value={selectedTab} onChange={handleTabChange} aria-label="invoice status tabs" style={{ marginTop: 20, marginLeft: 30 }}>
                     {orderStatuses.map((status, index) => (
                         <Tab key={status.value} label={status.label} {...a11yProps(index)} />
                     ))}
@@ -235,7 +255,7 @@ export default function OrderOnline() {
                         <FrameData
                             title={`Hoá đơn ${status.label}`}
                             data={invoicesByStatus[status.value]}
-                            columns={invoiceColumn}
+                            columns={getInvoiceColumns(status.value)}
                             onRowClick={handleRowClick}
                             itemsPerPage={5}
                         />
