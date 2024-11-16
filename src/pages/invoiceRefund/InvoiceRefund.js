@@ -12,7 +12,7 @@ export default function InvoiceRefund() {
     const navigate = useNavigate();
     const location = useLocation();
 
-    const invoices = useSelector((state) => state.invoice?.invoices) || [];
+    const invoices = useSelector((state) => state.invoice?.invoiceRefund) || [];
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [products, setProducts] = useState(null);
     const [selectedInvoice, setSelectedInvoice] = useState(null);
@@ -35,8 +35,8 @@ export default function InvoiceRefund() {
     ];
 
     const invoiceColumn = [
-        { title: 'Mã hóa đơn bán', dataIndex: 'invoiceCodeSale', key: 'invoiceCodeSale', width: '10%' },
         { title: 'Mã hóa đơn trả', dataIndex: 'invoiceCode', key: 'invoiceCode', width: '10%' },
+        { title: 'Mã hóa đơn bán', dataIndex: 'invoiceCodeSale', key: 'invoiceCodeSale', width: '10%' },
         {
             title: 'Khách hàng', dataIndex: 'customerName', key: 'customerName', width: '10%',
             render: (customerName) => customerName ? customerName : 'Không cập nhật'
@@ -101,7 +101,7 @@ export default function InvoiceRefund() {
     return (
         <>
             <FrameData
-                title="Danh sách hoá đơn"
+                title="Danh sách hoá đơn trả"
                 data={sortedInvoices}
                 columns={invoiceColumn}
                 onRowClick={handleRowClick}

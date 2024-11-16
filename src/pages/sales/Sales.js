@@ -32,7 +32,7 @@ const Sales = () => {
   const productList = useSelector((state) => state.productPay.productPay);
   const currentUser = useSelector((state) => state.auth.login?.currentUser);
   const [customerInfoModalOpen, setCustomerInfoModalOpen] = useState(false);
-  const [customerInfo, setCustomerInfo] = useState( useSelector((state) => state.productPay.customer));
+  const [customerInfo, setCustomerInfo] = useState(useSelector((state) => state.productPay.customer));
   const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
   const [invoiceInfo, setInvoiceInfo] = useState(null);
   const [isAddCustomerModalOpen, setIsAddCustomerModalOpen] = useState(false);
@@ -43,9 +43,9 @@ const Sales = () => {
       setTotal(productList.reduce((sum, item) => sum + item.total, 0));
     }
   }, [productList]);
-  useEffect(()=>{
+  useEffect(() => {
     setTotal(cart.reduce((sum, item) => sum + item.total, 0));
-  },[cart])
+  }, [cart])
 
   const handleKeyPress = (value) => {
     if (!value) {
@@ -60,10 +60,10 @@ const Sales = () => {
 
   // Handle logout
   const handleLogout = () => {
-    if(currentUser.role ==="manager") {
-    navigate('/admin/user');
-    }else if(currentUser.role ==="staff") {
-    navigate('/frame-staff');
+    if (currentUser.role === "manager") {
+      navigate('/admin/user');
+    } else if (currentUser.role === "staff") {
+      navigate('/frame-staff');
     }
   };
   const handleAddCustomerClick = () => {
@@ -96,19 +96,19 @@ const Sales = () => {
     }
   };
 
-  const handleUpdateQuantity = (productId,unit_id, newQuantity) => {
+  const handleUpdateQuantity = (productId, unit_id, newQuantity) => {
     console.log(unit_id)
     setCart((prevCart) =>
       prevCart.map((item) =>
-        item._id === productId &&item.unit._id=== unit_id
+        item._id === productId && item.unit._id === unit_id
           ? { ...item, quantity: newQuantity, total: item.price * newQuantity }
           : item
       )
     );
-  
+
     // Update the total cost based on the price difference due to quantity change
     setTotal((prevTotal) => {
-      const item = cart.find((item) => item._id === productId && item.unit._id=== unit_id);
+      const item = cart.find((item) => item._id === productId && item.unit._id === unit_id);
       if (item) {
         const priceDifference = item.price * (newQuantity - item.quantity);
         return prevTotal + priceDifference;
@@ -116,75 +116,75 @@ const Sales = () => {
       return prevTotal;
     });
   };
-  
+
   const handleDelete = () => {
     setBarcode((prevBarcode) => {
       const newBarcode = prevBarcode.slice(0, -1); // Remove the last character
       return newBarcode; // Return the updated barcode as a string
     });
   };
-  
+
   const addProduct = async () => {
     if (barcode) {
-        console.log(barcode);
-        const product = await getProductsByBarcodeInUnitConvert(barcode, accessToken, axiosJWT);
-        console.log(product);
-        if (product && !product.message) {
-          const price = getPriceByBarcode(product, barcode); // Lấy giá theo barcode
-            setCart((prevCart) => {
-                console.log(prevCart);
-                const existingProduct = prevCart.find((item) => item._id === product._id && item.unit._id === product.unit_id._id);
+      console.log(barcode);
+      const product = await getProductsByBarcodeInUnitConvert(barcode, accessToken, axiosJWT);
+      console.log(product);
+      if (product && !product.message) {
+        const price = getPriceByBarcode(product, barcode); // Lấy giá theo barcode
+        setCart((prevCart) => {
+          console.log(prevCart);
+          const existingProduct = prevCart.find((item) => item._id === product._id && item.unit._id === product.unit_id._id);
 
-                if (existingProduct) {
-                    // Cập nhật số lượng nếu sản phẩm đã có trong giỏ
-                    return prevCart.map((item) => {
-                        return item._id === product._id && item.unit._id === product.unit_id._id
-                            ? { ...item, unit:price.unit,quantity: item.quantity + 1,price:price.price, total: price.price*(item.quantity + 1) }
-                            : item;
-                    });
-                } else {
-                    // Thêm sản phẩm mới vào giỏ hàng
-                    return [
-                        ...prevCart,
-                        { ...product,unit:price.unit,price:price.price, quantity: 1, total:  price.price },
-                    ];
-                }
+          if (existingProduct) {
+            // Cập nhật số lượng nếu sản phẩm đã có trong giỏ
+            return prevCart.map((item) => {
+              return item._id === product._id && item.unit._id === product.unit_id._id
+                ? { ...item, unit: price.unit, quantity: item.quantity + 1, price: price.price, total: price.price * (item.quantity + 1) }
+                : item;
             });
+          } else {
+            // Thêm sản phẩm mới vào giỏ hàng
+            return [
+              ...prevCart,
+              { ...product, unit: price.unit, price: price.price, quantity: 1, total: price.price },
+            ];
+          }
+        });
 
-            // Cập nhật tổng số tiền trong giỏ hàng
-            setTotal((prevTotal) => prevTotal + (price.price || 0)); // Sử dụng giá hoặc 0 nếu không tìm thấy
-            setBarcode(''); // Xóa dữ liệu trong ô nhập barcode sau khi thêm sản phẩm
-        } else {
-            alert(product?.message);
-            setBarcode('');
-        }
+        // Cập nhật tổng số tiền trong giỏ hàng
+        setTotal((prevTotal) => prevTotal + (price.price || 0)); // Sử dụng giá hoặc 0 nếu không tìm thấy
+        setBarcode(''); // Xóa dữ liệu trong ô nhập barcode sau khi thêm sản phẩm
+      } else {
+        alert(product?.message);
+        setBarcode('');
+      }
     }
-};
+  };
 
-// Hàm lấy giá theo barcode
-const getPriceByBarcode = (product, barcode) => {
+  // Hàm lấy giá theo barcode
+  const getPriceByBarcode = (product, barcode) => {
     const unit = product.unit_converts.find(unit => unit.barcode === barcode);
     console.log(unit)
-    return unit?unit:null; // Trả về giá hoặc null nếu không tìm thấy
-};
+    return unit ? unit : null; // Trả về giá hoặc null nếu không tìm thấy
+  };
 
 
   // Delete selected product
   const handleDeleteProduct = () => {
     if (selectedProduct) {
       console.log(selectedProduct);
-      
+
       // Filter out the item if both id and unit match
       setCart(cart.filter((item) => !(item.id === selectedProduct.id && item.unit === selectedProduct.unit)));
-      
+
       // Adjust the total by subtracting the total of the selected product
       setTotal(total - selectedProduct.total);
-      
+
       // Clear the selected product
       setSelectedProduct(null);
     }
   };
-  
+
 
   // Delete all products
   const handleDeleteAll = () => {
@@ -193,7 +193,7 @@ const getPriceByBarcode = (product, barcode) => {
       setCart([]);
       setTotal(0);
       dispatch(clearProductPay());
-      
+
       setSelectedProduct(null);
     }
   };
@@ -211,96 +211,97 @@ const getPriceByBarcode = (product, barcode) => {
   };
 
   const handlePay = () => {
-    dispatch(clearProductPay()); 
+    dispatch(clearProductPay());
     dispatch(setProductPay({ productPay: cart, totalAmount: total }));
     navigate('/frame-staff/payment');
   };
-  
+
   const checkPriceByBarcode = async (barcode) => {
     const product = await getProductsByBarcodeInUnitConvert(barcode, accessToken, axiosJWT);
     if (product && !product.message) {
-        const priceDetails = getPriceByBarcode(product, barcode);
-        return { price: priceDetails, product }; // Return an object with price and product details
+      const priceDetails = getPriceByBarcode(product, barcode);
+      return { price: priceDetails, product }; // Return an object with price and product details
     }
     return null; // Return null if the product is not found
-};
-const getInvoice = async (invoiceCode) => {
-  const invoiceData = await getInvoiceById(accessToken, axiosJWT, invoiceCode);     
-  if (invoiceData.invoice) {
+  };
+  const getInvoice = async (invoiceCode) => {
+    const invoiceData = await getInvoiceById(accessToken, axiosJWT, invoiceCode);
+    if (invoiceData.invoice) {
       return invoiceData.invoice.invoiceCode; // Return an object with price and product details
-  }
-  return null; // Return null if the product is not found
-};
-const getInvoiceRefund = async (invoiceCode) => {
-  const invoiceData = await getInvoiceById(accessToken, axiosJWT, invoiceCode);     
-  if (invoiceData) {
+    }
+    return null; // Return null if the product is not found
+  };
+  const getInvoiceRefund = async (invoiceCode) => {
+    const invoiceData = await getInvoiceById(accessToken, axiosJWT, invoiceCode);
+    if (invoiceData) {
       return invoiceData; // Return an object with price and product details
+    }
+    return null; // Return null if the product is not found
+  };
+  const handleReprint = async () => {
+    const invoiceData = await getInvoiceLast(accessToken, axiosJWT);
+    console.log(invoiceData)
+    if (invoiceData) {
+      console.log(invoiceData.invoiceCode)
+      setInvoiceInfo(invoiceData.invoiceCode)
+      setIsPaymentModalOpen(true)
+    }
+    return null; // Return null if the product is not found
   }
-  return null; // Return null if the product is not found
-};
-const handleReprint= async ()=>{
-  const invoiceData = await getInvoiceLast(accessToken, axiosJWT);
-  console.log(invoiceData)
-  if (invoiceData) {
-    console.log(invoiceData.invoiceCode)
-    setInvoiceInfo(invoiceData.invoiceCode)
-    setIsPaymentModalOpen(true)
-}
-return null; // Return null if the product is not found
-}
-const closePaymentModal = ()=>{
-  setIsPaymentModalOpen(false);
-  setInvoiceInfo(null);
-}
-const handleUnitChange = (productId, unitChange,unit_id) => {
-  console.log(productId, unitChange,unit_id)
-  setCart((prevCart) => {
-    const existingItemIndex = prevCart.findIndex(
-      (item) => item._id === productId && item.unit._id === unitChange
-    );
-console.log(existingItemIndex)
-    return prevCart
-      .map((item, index) => {
-        if (item._id === productId) {
-          const selectedUnit = item.unit_converts.find((unit) => unit.unit._id === unitChange);
- console.log(selectedUnit)
-          if (existingItemIndex !== -1 && selectedUnit) {
-            // Merge quantities and update total for the existing item at existingItemIndex
-            if (item.unit._id === unit_id) {
-              if(selectedUnit.unit._id === unitChange) {
-                console.log('112',item.unit._id)
+  const closePaymentModal = () => {
+    setIsPaymentModalOpen(false);
+    setInvoiceInfo(null);
+  }
+  const handleUnitChange = (productId, unitChange, unit_id) => {
+    console.log(productId, unitChange, unit_id)
+    setCart((prevCart) => {
+      const existingItemIndex = prevCart.findIndex(
+        (item) => item._id === productId && item.unit._id === unitChange
+      );
+      console.log(existingItemIndex)
+      return prevCart
+        .map((item, index) => {
+          if (item._id === productId) {
+            const selectedUnit = item.unit_converts.find((unit) => unit.unit._id === unitChange);
+            console.log(selectedUnit)
+            if (existingItemIndex !== -1 && selectedUnit) {
+              // Merge quantities and update total for the existing item at existingItemIndex
+              if (item.unit._id === unit_id) {
+                if (selectedUnit.unit._id === unitChange) {
+                  console.log('112', item.unit._id)
+                  return {
+                    ...item,
+                    unit: selectedUnit.unit,
+                    price: selectedUnit.price,
+                    quantity: item.quantity + prevCart[existingItemIndex].quantity,
+                    total: selectedUnit.price * (item.quantity + prevCart[existingItemIndex].quantity),
+                  }
+                };
+              } else
+                if (item.unit._id === unitChange) {
+                  console.log('nul')
+                  return null;
+                } else {
+                  // Return null to mark the item for removal after merging
+                  console.log('item')
+                  return item;
+                }
+            } else if (item.unit._id === unit_id) {
+              console.log('223', item.unit._id)
+              // If changing to a different unit, update unit, price, and total
               return {
                 ...item,
                 unit: selectedUnit.unit,
                 price: selectedUnit.price,
-                quantity: item.quantity + prevCart[existingItemIndex].quantity,
-                total: selectedUnit.price * (item.quantity + prevCart[existingItemIndex].quantity),
-              }};
-            }else
-              if(item.unit._id === unitChange){
-                 console.log('nul')
-                return null;
-              }else{
-            // Return null to mark the item for removal after merging
-             console.log('item')
-            return item;
-              }
-          } else if (item.unit._id === unit_id) {
-            console.log('223',item.unit._id)
-            // If changing to a different unit, update unit, price, and total
-            return {
-              ...item,
-              unit: selectedUnit.unit,
-              price: selectedUnit.price,
-              total: selectedUnit.price * item.quantity,
-            };
+                total: selectedUnit.price * item.quantity,
+              };
+            }
           }
-        }
-        return item;
-      })
-      .filter((item) => item !== null); // Remove null items (duplicates after merging)
-  });
-};
+          return item;
+        })
+        .filter((item) => item !== null); // Remove null items (duplicates after merging)
+    });
+  };
 
 
 
@@ -324,28 +325,28 @@ console.log(existingItemIndex)
                 <tr
                   key={item._id}
                   onClick={() => handleRowClick(item)}
-                  className={`clickable-row ${selectedProduct?._id === item._id && selectedProduct?.unit===item.unit? 'selected' : ''}`}
+                  className={`clickable-row ${selectedProduct?._id === item._id && selectedProduct?.unit === item.unit ? 'selected' : ''}`}
                 >
                   <td>{index + 1}</td>
                   <td>{item.name}</td>
                   <td>
-              {selectedProduct?._id === item._id && selectedProduct?.unit===item.unit? (
-                // Show the unit select dropdown if this row is selected
-                <select
-                  value={item.unit._id}
-                  onChange={(e) => handleUnitChange(item._id, e.target.value,item.unit._id)}
-                >
-                  {item.unit_converts.map((unit) => (
-                    <option key={unit.unit._id} value={unit.unit._id}>
-                      {unit.unit.description}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                // Display unit name if not selected
-                `${item.unit?.description}`
-              )}
-            </td>
+                    {selectedProduct?._id === item._id && selectedProduct?.unit === item.unit ? (
+                      // Show the unit select dropdown if this row is selected
+                      <select
+                        value={item.unit._id}
+                        onChange={(e) => handleUnitChange(item._id, e.target.value, item.unit._id)}
+                      >
+                        {item.unit_converts.map((unit) => (
+                          <option key={unit.unit._id} value={unit.unit._id}>
+                            {unit.unit.description}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      // Display unit name if not selected
+                      `${item.unit?.description}`
+                    )}
+                  </td>
                   {/* <td>{item.unit.description}</td> */}
                   <td>{formatCurrency(item.price)}</td>
                   <td>{item.quantity}</td>
@@ -360,10 +361,10 @@ console.log(existingItemIndex)
         </div>
 
         <div className="buttons-right">
-          <button onClick={handlePay} disabled={cart.length===0}>Thanh toán</button >
+          <button onClick={handlePay} disabled={cart.length === 0}>Thanh toán</button >
           <button onClick={openQuantityModal} disabled={!selectedProduct}>Số lượng</button>
           <button onClick={handleDeleteProduct} disabled={!selectedProduct}>Xóa</button>
-          <button onClick={handleDeleteAll} disabled={cart.length===0}>Xóa hết</button>
+          <button onClick={handleDeleteAll} disabled={cart.length === 0}>Xóa hết</button>
           <button onClick={handleCancel}>Hủy</button>
         </div>
       </div>
@@ -373,10 +374,10 @@ console.log(existingItemIndex)
           <button onClick={() => setCustomerInfoModalOpen(true)}>Nhập thông tin khách hàng</button>
           <button onClick={handleAddCustomerClick}>Thêm khách hàng</button>
           <button onClick={() => setIsModalOpen(true)}>Kiểm tra giá</button>
-          <button onClick={() => setIsModalOpenReprint(true)} disabled={cart.length!==0}>In lại hóa đơn</button> 
-          <button onClick={handleReprint} disabled={cart.length!==0}>In lại giao dịch cuối</button> 
-          <button onClick={() => setIsModalOpenRefund(true)} disabled={cart.length!==0}>Trả hàng</button>
-          <button onClick={handleLogout} disabled={cart.length!==0}>Thoát</button>
+          <button onClick={() => setIsModalOpenReprint(true)} disabled={cart.length !== 0}>In lại hóa đơn</button>
+          <button onClick={handleReprint} disabled={cart.length !== 0}>In lại giao dịch cuối</button>
+          <button onClick={() => setIsModalOpenRefund(true)} disabled={cart.length !== 0}>Trả hàng</button>
+          <button onClick={handleLogout} disabled={cart.length !== 0} style={{ backgroundColor: 'red' }}>Thoát</button>
         </div>
 
         <div className="keypad-section">
@@ -424,19 +425,19 @@ console.log(existingItemIndex)
           invoiceId={invoiceInfo} // Truyền mã hóa đơn vào invoiceId
         />
       )}
-       <ReprintModal
+      <ReprintModal
         isOpen={isModalOpenReprint}
         onRequestClose={() => setIsModalOpenReprint(false)}
         getInvoice={getInvoice}
         accessToken={accessToken}
-        axiosJWT ={axiosJWT}
+        axiosJWT={axiosJWT}
       />
       <RefundModal
         isOpen={isModalOpenRefund}
         onRequestClose={() => setIsModalOpenRefund(false)}
         getInvoice={getInvoiceRefund}
         accessToken={accessToken}
-        axiosJWT ={axiosJWT}
+        axiosJWT={axiosJWT}
         dispatch={dispatch}
       />
       <QuantityModal
@@ -445,12 +446,12 @@ console.log(existingItemIndex)
         product={selectedProduct}
         onUpdateQuantity={handleUpdateQuantity}
       />
-       <CustomerInfoModal
+      <CustomerInfoModal
         isOpen={customerInfoModalOpen}
         onRequestClose={() => setCustomerInfoModalOpen(false)}
         onSubmit={handleCustomerInfoSubmit}
       />
-       <AddCustomer
+      <AddCustomer
         isOpen={isAddCustomerModalOpen}
         onClose={handleCloseAddCustomerModal}
         onSubmit={handleAddCustomerSubmit}

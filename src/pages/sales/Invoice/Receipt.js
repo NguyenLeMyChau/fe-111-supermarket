@@ -101,16 +101,16 @@ const Receipt = ({ data }) => {
               <React.Fragment key={index}>
                 <tr>
                   <td>{index + 1}</td>
-                  <td>{item.product.name}</td>
-                  <td>{item.quantity}</td>
-                  <td>{formatCurrency(item.price)}</td>
-                  <td>{formatCurrency(item.quantity * item.price)}</td>
+                  <td>{item?.product?.name}</td>
+                  <td>{item?.quantity}</td>
+                  <td>{formatCurrency(item?.price)}</td>
+                  <td>{formatCurrency(item?.quantity * item?.price)}</td>
                 </tr>
                 {item.promotion && (
                   <tr className="promotion-row">
                     <td>KM</td>
-                    <td>{item.promotion.product_donate.name}</td>
-                    <td colSpan={2}>{item.promotion.description}</td>
+                    <td>{item?.promotion?.product_donate?.name}</td>
+                    <td colSpan={2}>{item?.promotion?.description}</td>
                     <td>
                       -{formatCurrency(
                         calculateDiscountedPrice(item) || calculateDiscountedPriceAmount(item)

@@ -35,7 +35,7 @@ export default function Invoice() {
     ];
 
     const invoiceColumn = [
-        { title: 'Mã đơn hàng', dataIndex: 'invoiceCode', key: 'invoiceCode', width: '10%' },
+        { title: 'Mã hoá đơn bán', dataIndex: 'invoiceCode', key: 'invoiceCode', width: '10%' },
         {
             title: 'Khách hàng', dataIndex: 'customerName', key: 'customerName', width: '10%',
             render: (customerName) => customerName ? customerName : 'Không cập nhật'
@@ -111,7 +111,7 @@ export default function Invoice() {
     return (
         <>
             <FrameData
-                title="Danh sách hoá đơn"
+                title="Danh sách hoá đơn bán"
                 data={sortedInvoices}
                 columns={invoiceColumn}
                 onRowClick={handleRowClick}

@@ -156,7 +156,7 @@ export default function OrderOnline() {
             ),
         },
         {
-            title: 'Chỉnh sửa',
+            title: 'Cập nhật',
             key: 'edit',
             width: '10%',
             className: 'text-center',

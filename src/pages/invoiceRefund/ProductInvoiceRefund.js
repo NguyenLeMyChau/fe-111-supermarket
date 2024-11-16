@@ -37,7 +37,7 @@ export default function ProductInvoiceRefund({ isModalOpen, closeModal, products
                             <tbody>
                                 {selectedInvoice?.invoiceCode && (
                                     <tr>
-                                        <th>Mã đơn hàng:</th>
+                                        <th>Mã hoá đơn trả:</th>
                                         <td>{selectedInvoice.invoiceCode}</td>
                                         <th>Khách hàng:</th>
                                         <td>{selectedInvoice.customerName}</td>

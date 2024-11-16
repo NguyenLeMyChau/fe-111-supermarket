@@ -37,7 +37,7 @@ export default function ProductInvoice({ isModalOpen, closeModal, products, sele
                             <tbody>
                                 {selectedInvoice?.invoiceCode && (
                                     <tr>
-                                        <th>Mã đơn hàng:</th>
+                                        <th>Mã hoá đơn bán:</th>
                                         <td>{selectedInvoice.invoiceCode}</td>
                                         <th>Khách hàng:</th>
                                         <td>{selectedInvoice.customerName}</td>

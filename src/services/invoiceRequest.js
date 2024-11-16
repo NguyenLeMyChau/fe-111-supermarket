@@ -1,4 +1,4 @@
-import { getInvoiceFailed, getInvoiceStart, getInvoiceSuccess, resetInvoice } from "../store/reducers/invoiceSlice";
+import { getInvoiceFailed, getInvoiceRefundStart, getInvoiceRefundSuccess, getInvoiceStart, getInvoiceSuccess, resetInvoice } from "../store/reducers/invoiceSlice";
 
 
 const getAllInvoices = async (accessToken, axiosJWT, dispatch) => {
@@ -18,16 +18,16 @@ const getAllInvoices = async (accessToken, axiosJWT, dispatch) => {
     }
 };
 const getAllInvoicesRefund = async (accessToken, axiosJWT, dispatch) => {
-    dispatch(resetInvoice());
+    
     try {
-        dispatch(getInvoiceStart());
+        dispatch(getInvoiceRefundStart());
         const response = await axiosJWT.get(`/api/invoice/get-all-invoice-refund`, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
         });
         console.log(response.data)
-        dispatch(getInvoiceSuccess(response.data));
+        dispatch(getInvoiceRefundSuccess(response.data));
         return response.data;
     } catch (error) {
         console.error('Get all invoices refund failed:', error);
