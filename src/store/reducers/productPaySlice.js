@@ -9,6 +9,7 @@ const productPaySlice = createSlice({
     producRefund: [],
     totalRefund:0,
     invoiceCode:"",
+    invoiceRefund: {},
   },
   reducers: {
     setCustomer: (state, action) => {
@@ -29,11 +30,13 @@ const productPaySlice = createSlice({
       state.producRefund = action.payload.productRefund;
       state.totalRefund = action.payload.totalRefund;
       state.invoiceCode = action.payload.invoiceCode;
+      state.invoiceRefund= action.payload.invoiceRefund;
     },
     clearProductRefund: (state) => {
       state.producRefund = [];
       state.totalRefund = 0;
       state.invoiceCode = "";
+      state.invoiceRefund= {};
     },
   },
 });

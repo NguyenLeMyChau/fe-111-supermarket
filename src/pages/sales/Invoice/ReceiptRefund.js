@@ -33,27 +33,52 @@ console.log(data)
     }, 0);
   }, [data.invoiceDetails.products]);
 
-  const calculateDiscountedPrice = (item) => {
+  const calculateDiscount = (item) => {
     if (item.promotion) {
-      const discountQuantity = Math.floor(item.quantity / (item.promotion.quantity + item.promotion.quantity_donate));
-      return (item.quantity - discountQuantity) * item.price;
+      const discountQuantity = Math.floor(
+        item.quantity / (item.promotion.quantity + item.promotion.quantity_donate)
+      );
+      const quantity= item.quantity - discountQuantity;
+      const discountedPrice = discountQuantity * item.price;
+      return {
+        quantity,
+        discountedPrice,
+        discountQuantity,
+        price: item.price
+      };
     }
-    return 0;
+    return {quantity:0, discountedPrice: 0, discountQuantity: 0 , price: 0};
+  };
+  const calculateDiscountAmount = (item) => {
+    if (item.promotion && item.promotion.product_id?._id === item.product._id) {
+      const discountQuantity = Math.floor(
+        item.quantity / item.promotion.quantity
+      );
+      const discountedPrice = discountQuantity * item.promotion.amount_donate;
+      return {
+        quantity: item.quantity,
+        discountedPrice,
+        discountQuantity,
+        price: item.promotion.amount_donate
+      };
+    }
+    return {quantity:0, discountedPrice: 0, discountQuantity: 0 ,price: item.promotion.amount_donate};
   };
 
-  const calculateDiscountedPriceAmount = (item) => {
-    if (item.promotion && item.promotion.product_id?._id === item.product._id) {
-      const discountQuantity = Math.floor(item.quantity / item.promotion.quantity);
-      return discountQuantity * item.promotion.amount_donate;
-    }
-    return 0;
-  };
 
   const totalDiscountAmount = useMemo(() => {
     return data.invoiceDetails.products.reduce((total, item) => {
-      return total + (calculateDiscountedPrice(item) || calculateDiscountedPriceAmount(item));
+      if (item.promotion?.promotionLine_id?.type === "quantity") {
+        // Tính giảm giá cho khuyến mãi số lượng
+        return total + calculateDiscount(item).discountedPrice;
+      } else if (item.promotion?.promotionLine_id?.type === "amount") {
+        // Tính giảm giá cho khuyến mãi giá trị
+        return total + calculateDiscountAmount(item).discountedPrice;
+      }
+      return total; // Không có khuyến mãi
     }, 0);
   }, [data.invoiceDetails.products]);
+  
 
   const finalPaymentAmount = totalProductPrice - totalDiscountAmount;
 
@@ -62,8 +87,12 @@ console.log(data)
       let currentTotal = finalPaymentAmount;
       const finalTotals = promotion.map((applicablePromotion) => {
         if (currentTotal > applicablePromotion.amount_sales) {
-          const discountAmount = (currentTotal * applicablePromotion.percent) / 100;
-          const limitedDiscount = Math.min(discountAmount, applicablePromotion.amount_limit);
+          const discountAmount =
+            (currentTotal * applicablePromotion.percent) / 100;
+          const limitedDiscount = Math.min(
+            discountAmount,
+            applicablePromotion.amount_limit
+          );
           currentTotal -= limitedDiscount;
         }
         return currentTotal;
@@ -71,18 +100,28 @@ console.log(data)
 
       const minTotal = Math.min(...finalTotals);
       setDiscountedTotal(minTotal);
-      setAppliedPromotion(minTotal !== finalPaymentAmount ? promotion[finalTotals.indexOf(minTotal)] : null);
+      setAppliedPromotion(
+        minTotal !== finalPaymentAmount
+          ? promotion[finalTotals.indexOf(minTotal)]
+          : null
+      );
     }
   }, [promotion, finalPaymentAmount]);
 
   return (
     <div className="receipt">
       <header className="receipt-header">
-        <h2>Phiếu Hoàn Trả Capy Smart</h2>
-        <p><strong>Nhân viên:</strong> {data.invoice.employee_id?.name}</p>
-        <p><strong>Thời gian:</strong> {new Date(data.invoice.createdAt).toLocaleString()}</p>
-        <p><strong>Mã hóa đơn thanh toán:</strong> {data.invoice.invoiceCode}</p>
-        <p><strong>Mã hóa đơn hoàn trả:</strong> {data.invoice.invoiceCodeSale}</p>
+        <h2>Phiếu Thanh Toán Capy Smart</h2>
+        <p>
+          <strong>Nhân viên:</strong> {data.invoice.employee_id?.name}
+        </p>
+        <p>
+          <strong>Thời gian:</strong>{" "}
+          {new Date(data.invoice.createdAt).toLocaleString()}
+        </p>
+        <p>
+          <strong>Mã hóa đơn:</strong> {data.invoice.invoiceCode}
+        </p>
       </header>
 
       <section className="receipt-details">
@@ -91,34 +130,67 @@ console.log(data)
           <thead>
             <tr>
               <th>STT</th>
-              <th>Tên sản phẩm</th>
+              <th>Đơn vị</th>
               <th>Số lượng</th>
-              <th>Giá</th>
+              <th>Đơn giá</th>
               <th>Thành tiền</th>
+  
             </tr>
           </thead>
           <tbody>
             {data.invoiceDetails.products.map((item, index) => (
               <React.Fragment key={index}>
-                <tr>
+                
+                {item.promotion ? (
+                  <>
+                   <tr>
                   <td>{index + 1}</td>
-                  <td>{item.product.name}</td>
-                  <td>{item.quantity}</td>
-                  <td>{formatCurrency(item.price)}</td>
-                  <td>{formatCurrency(item.quantity * item.price)}</td>
+                  <td colSpan={4}>{item?.product?.name}</td>
                 </tr>
-                {item.promotion && (
+                <tr>
+                  <td></td>
+                  <td>{item.unit_id.description}</td>
+                  <td>{item.promotion.promotionLine_id.type==="amount"?item?.quantity:calculateDiscount(item).quantity}</td>
+                 
+                  <td>{formatCurrency(item?.price)}</td>
+                  <td>{item.promotion.promotionLine_id.type==="amount"?item?.quantity*item.price:calculateDiscount(item).quantity*item.price}</td>
+               
+                </tr>
+                   <tr className="promotion-row">
+                   <td>KM</td>
+                   <td colSpan={4}>{item?.promotion?.description} : {item?.product?.name}</td>
+                 </tr>
                   <tr className="promotion-row">
-                    <td>KM</td>
-                    <td>{item.promotion.product_donate.name}</td>
-                    <td colSpan={2}>{item.promotion.description}</td>
+                    <td></td>
+                    <td>{item.promotion?.promotionLine_id.type==="amount"?item.promotion?.unit_id?.description:item.promotion?.unit_id_donate?.description}</td>
+                    <td>{item.promotion.promotionLine_id.type==="amount"? calculateDiscountAmount(item).discountQuantity :
+                        calculateDiscount(item).discountQuantity}</td>
+                   <td>
+                      {item.promotion?.promotionLine_id?.type === "amount"
+      ? `-${formatCurrency(calculateDiscountAmount(item).price)}`
+      : formatCurrency(0)}
+                      </td>
                     <td>
-                      -{formatCurrency(
-                        calculateDiscountedPrice(item) || calculateDiscountedPriceAmount(item)
-                      )}
+                      
+                    {item.promotion?.promotionLine_id?.type === "amount"
+    ? `-${formatCurrency(calculateDiscountAmount(item).discountedPrice)}`
+    : formatCurrency(0)}
                     </td>
                   </tr>
-                )}
+                  </>
+                ):(<>
+                <tr>
+                  <td>{index + 1}</td>
+                  <td colSpan={4}>{item?.product?.name}</td>
+                </tr>
+                <tr>
+                  <td></td>
+                  <td>{item.unit_id.description}</td>
+                  <td>{item?.quantity}</td>
+                  <td>{formatCurrency(item?.price)}</td>
+                  <td>{formatCurrency(item?.quantity * item?.price)}</td>
+                </tr>
+                </>)}
               </React.Fragment>
             ))}
           </tbody>

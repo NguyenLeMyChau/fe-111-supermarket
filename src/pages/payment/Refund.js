@@ -13,6 +13,7 @@ import Modal from 'react-modal';
 import PaymentModal from "../sales/Invoice/PaymentModal";
 import { formatCurrency } from "../../utils/fotmatDate";
 import PaymentModalRefund from "../sales/Invoice/PaymentModalRefund";
+import { calculateDiscount, calculateDiscountAmount } from "../../utils/calculatePromotion";
 
 const Refund = () => {
   const navigate = useNavigate();
@@ -24,9 +25,14 @@ const Refund = () => {
   const [totalAmount, setTotalAmount] = useState(useSelector((state) => state.productPay.totalRefund));
   const customer = useSelector((state) => state.productPay.customer);
   const invoiceCodeRefund = useSelector((state) => state.productPay.invoiceCode);
+  const invoiceRefund=useSelector((state) => state.productPay.invoiceRefund);
+  console.log(invoiceRefund)
   const [promotion, setPromotion] = useState([]);
   const [customerPaid, setCustomerPaid] = useState(null);
-  const [paymentMethod, setPaymentMethod] = useState("Tiền mặt");
+  const [paymentMethod, setPaymentMethod] = useState(
+    invoiceRefund?.invoice?.paymentMethod || "Tiền mặt" 
+  );
+  console.log(productList)
   const [productWithPromotions, setProductWithPromotions] = useState([]);
   const change = customerPaid > totalAmount ? customerPaid - totalAmount : 0;
   const [showIneligibleModal, setShowIneligibleModal] = useState(false); // State to show/hide modal
@@ -35,7 +41,6 @@ const Refund = () => {
   const [ineligiblePromotions, setIneligiblePromotions] = useState([]);
   const currentUser = useSelector((state) => state.auth.login?.currentUser);
   const [dataInvoices, setDataInvoices] = useState();
-  console.log(productList);
   const [isPaid, setIsPaid] = useState(false);
 
   const [paymentInfo, setPaymenInfo] = useState(null);
@@ -76,19 +81,17 @@ const Refund = () => {
       let updatedTotalAmount = totalAmount; // Biến tạm để tính tổng sau khi áp dụng khuyến mãi
 
       const productPromises = productList.map(async (product) => {
-        console.log( product.product._id,)
         const promotions = await getPromotionByProductId(
           product.product._id,
           product.unit_id._id
         );
         if (promotions && promotions.length > 0) {
           const applicablePromotions = promotions.map((promotion) => {
-            console.log(promotion)
+    
             const promotionLine = promotion.promotionLine_id;
             if (promotionLine) {
               if (promotionLine.type === 'quantity') {
-                console.log(product._id)
-                console.log( promotion.product_id)
+       
                 // Trường hợp 1: product_id === promotion.product_id === promotion.product_donate
                 if ( product.product._id === promotion.product_id && product.product._id=== promotion.product_donate) {
                   const totalQuantity = promotion.quantity + promotion.quantity_donate;
@@ -183,7 +186,6 @@ const Refund = () => {
       });
 
       const productsWithPromotions = await Promise.all(productPromises);
-      console.log(productsWithPromotions.flat())
       setProductWithPromotions(productsWithPromotions.flat());
       setIneligiblePromotions(ineligible);
       setShowIneligibleModal(ineligible.length > 0 ? true : false);
@@ -295,7 +297,40 @@ const Refund = () => {
             {productWithPromotions.length > 0 ? (
               productWithPromotions.map((product, index) => (
                 <React.Fragment key={index}>
+                  
+                  {product.promotion ? ( // Kiểm tra xem có khuyến mãi không
+                  <>
                   <tr>
+                  <td>{index + 1}</td>
+                  <td>{product.product.name}</td>
+                  <td>{product.unit_id.description}</td>
+                  <td>{formatCurrency(product.price)}</td>
+                  <td>{product.promotion.promotionLine_id.type==="amount"?product?.quantity:calculateDiscount(product).quantity}</td>
+                  <td>{formatCurrency(product.promotion.promotionLine_id.type==="amount"?product?.quantity*product.price:calculateDiscount(product).quantity*product.price)}</td>
+                </tr>
+                    <tr>
+                      <td colSpan="1">
+                        {"KM"}
+                      </td>
+                      <td>{product.promotion?.description} : {product.product.name}</td>
+                      <td>{product.promotion?.promotionLine_id.type==="amount"?product.promotion?.unit_id?.description:product.promotion?.unit_id_donate?.description}</td>
+                      <td>
+                      {product.promotion?.promotionLine_id?.type === "amount"
+      ? `-${formatCurrency(calculateDiscountAmount(product).price)}`
+      : formatCurrency(0)}
+                      </td>
+                      <td>{product.promotion.promotionLine_id.type==="amount"? calculateDiscountAmount(product).discountQuantity :
+                        calculateDiscount(product).discountQuantity}</td>
+                  
+                  <td>
+                      
+                      {product.promotion?.promotionLine_id?.type === "amount"
+      ? `-${formatCurrency(calculateDiscountAmount(product).discountedPrice)}`
+      : formatCurrency(0)}
+                      </td>
+                    </tr>
+                    </>):(<>
+                   <tr>
                     <td>{index + 1}</td>
                     <td>{product.product.name}</td>
                     <td>{product.unit_id.description}</td>
@@ -303,18 +338,7 @@ const Refund = () => {
                     <td>{product.quantity}</td>
                     <td>{formatCurrency(product.price * product.quantity)}</td>
                   </tr>
-                  {product.promotion && ( // Kiểm tra xem có khuyến mãi không
-                    <tr>
-                      <td colSpan="1">
-                        {"KM"}
-                      </td>
-                      <td>{product.product.name}</td>
-          
-                      <td colSpan="3">{product.promotion?.description}</td>
-
-                      <td>-{formatCurrency(product.discountAmount)}</td>
-                    </tr>
-                  )}
+                  </>)}
                 </React.Fragment>
               ))
             ) : (
@@ -360,14 +384,18 @@ const Refund = () => {
             <p><strong>Tổng số tiền hoàn trả:</strong></p>
             <p className="amount">{formatCurrency(discountedTotal)}</p>
           </div>
-
+          <div className="payment-line total-due">
+            <p><strong>Phương thức thanh toán:</strong></p>
+            
+          </div>
           <div className="payment-method-grid">
-            {["Tiền mặt"].map(
+            {["Tiền mặt","ZaloPay"].map(
               (method) => (
                 <button
                   key={method}
                   className={`payment-method-btn ${paymentMethod === method ? "selected" : ""
                     }`}
+                  disabled={true}
                   onClick={() => setPaymentMethod(method)}
                 >
                   {method}

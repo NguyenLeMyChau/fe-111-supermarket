@@ -64,7 +64,7 @@ const addProductToCart = async (accessToken, axiosJWT, accountId, productId, uni
     }
 }
 
-const payCart = async ( accessToken, axiosJWT,employee, customerId, products, paymentMethod, paymentInfo, paymentAmount) => {
+const payCart = async ( accessToken, axiosJWT,employee, customerId, products, paymentMethod, paymentInfo, paymentAmount,promotionOnInvoice) => {
     try {
         console.log(employee,customerId, products, paymentMethod, paymentInfo, paymentAmount)
         const response = await axiosJWT.post(`/api/auth/pay-cart-web`, {
@@ -73,7 +73,8 @@ const payCart = async ( accessToken, axiosJWT,employee, customerId, products, pa
             products,
             paymentMethod,
             paymentInfo,
-            paymentAmount
+            paymentAmount,
+            promotionOnInvoice
         }, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,

@@ -12,6 +12,7 @@ import Receipt from "../sales/Invoice/Receipt";
 import Modal from 'react-modal';
 import PaymentModal from "../sales/Invoice/PaymentModal";
 import { formatCurrency } from "../../utils/fotmatDate";
+import { calculateDiscount, calculateDiscountAmount } from "../../utils/calculatePromotion";
 
 const Payment = () => {
   const navigate = useNavigate();
@@ -188,6 +189,7 @@ const Payment = () => {
 
   useEffect(() => {
     // Tính toán tổng tiền đã giảm mỗi khi promotion thay đổi
+   
     if (promotion?.length > 0) {
       let currentTotal = totalAmount; // Bắt đầu từ tổng ban đầu
       const finalTotals = promotion.map((applicablePromotion) => {
@@ -218,6 +220,7 @@ const Payment = () => {
 
         setDiscountedTotal(minTotal);
         const bestPromotion = promotion[finalTotals.indexOf(minTotal)];
+        console.log(bestPromotion);
         setAppliedPromotion(bestPromotion);
       }
     }
@@ -239,7 +242,10 @@ const Payment = () => {
 
   // Xử lý thanh toán
   const handlePayment = async () => {
-    const isConfirmed = window.confirm('Bạn có chắc chắn thanh toán');
+   
+    
+    if(paymentMethod==="Tiền mặt"){
+      const isConfirmed = window.confirm('Bạn có chắc chắn thanh toán');
     if (!isConfirmed) return;
     if (customerPaid < discountedTotal) {
       alert("Số tiền trả không đủ.");
@@ -254,7 +260,8 @@ const Payment = () => {
         productWithPromotions,
         paymentMethod,
         paymentInfo,
-        discountedTotal
+        discountedTotal,
+        appliedPromotion,
       );
       console.log('pay cart response:', response.data);
       if (response?.success) {
@@ -268,6 +275,7 @@ const Payment = () => {
       console.error("Payment error:", error);
       alert("Có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại.");
     }
+  }
   };
 
 
@@ -306,7 +314,40 @@ const Payment = () => {
             {productWithPromotions.length > 0 ? (
               productWithPromotions.map((product, index) => (
                 <React.Fragment key={index}>
+                  
+                  {product.promotion ? ( // Kiểm tra xem có khuyến mãi không
+                  <>
                   <tr>
+                  <td>{index + 1}</td>
+                  <td>{product.name}</td>
+                  <td>{product.unit.description}</td>
+                  <td>{formatCurrency(product.price)}</td>
+                  <td>{product.promotion.promotionLine_id.type==="amount"?product?.quantity:calculateDiscount(product).quantity}</td>
+                  <td>{formatCurrency(product.promotion.promotionLine_id.type==="amount"?product?.quantity*product.price:calculateDiscount(product).quantity*product.price)}</td>
+                </tr>
+                    <tr>
+                      <td colSpan="1">
+                        {"KM"}
+                      </td>
+                      <td>{product.promotion?.description} : {product.name}</td>
+                      <td>{product.promotion?.promotionLine_id.type==="amount"?product.promotion?.unit_id?.description:product.promotion?.unit_id_donate?.description}</td>
+                      <td>
+                      {product.promotion?.promotionLine_id?.type === "amount"
+      ? `-${formatCurrency(calculateDiscountAmount(product).price)}`
+      : formatCurrency(0)}
+                      </td>
+                      <td>{product.promotion.promotionLine_id.type==="amount"? calculateDiscountAmount(product).discountQuantity :
+                        calculateDiscount(product).discountQuantity}</td>
+                  
+                  <td>
+                      
+                      {product.promotion?.promotionLine_id?.type === "amount"
+      ? `-${formatCurrency(calculateDiscountAmount(product).discountedPrice)}`
+      : formatCurrency(0)}
+                      </td>
+                    </tr>
+                    </>):(<>
+                   <tr>
                     <td>{index + 1}</td>
                     <td>{product.name}</td>
                     <td>{product.unit.description}</td>
@@ -314,18 +355,7 @@ const Payment = () => {
                     <td>{product.quantity}</td>
                     <td>{formatCurrency(product.price * product.quantity)}</td>
                   </tr>
-                  {product.promotion && ( // Kiểm tra xem có khuyến mãi không
-                    <tr>
-                      <td colSpan="1">
-                        {"KM"}
-                      </td>
-                      <td>{product.promotion?.description}</td>
-                      <td colSpan="1"></td>
-                      <td colSpan="1"></td>
-                      <td colSpan="1"></td>
-                      <td>-{formatCurrency(product.discountAmount)}</td>
-                    </tr>
-                  )}
+                  </>)}
                 </React.Fragment>
               ))
             ) : (
@@ -382,9 +412,12 @@ const Payment = () => {
             <p className="amount">{formatCurrency(change)}</p>
           </div>
 
-
+          <div className="payment-line">
+            <p><strong>Phương thức thanh toán : </strong></p>
+          </div>
           <div className="payment-method-grid">
-            {["Tiền mặt"].map(
+        
+            {["Tiền mặt","ZaloPay"].map(
               (method) => (
                 <button
                   key={method}
@@ -472,7 +505,7 @@ const Payment = () => {
                 <tr>
                   <th>Tên sản phẩm</th>
                   <th>Đơn vị</th>
-                  <th>Số lượng yêu cầu</th>
+                 
                   <th>Tên chương trình khuyến mãi</th>
                 </tr>
               </thead>
@@ -481,7 +514,7 @@ const Payment = () => {
                   <tr key={index}>
                     <td>{product.name}</td>
                     <td>{product.unit.description}</td>
-                    <td>{product.requiredQuantity}</td>
+                   
                     <td>{product.promotion.description}</td>
                   </tr>
                 ))}

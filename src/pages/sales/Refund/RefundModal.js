@@ -41,7 +41,7 @@ const RefundModal = ({ isOpen, onRequestClose, getInvoice, accessToken, axiosJWT
         // Dispatch actions to update the state with the fetched products and total amount
         dispatch(clearProductRefund());
         dispatch(setCustomer({ customer: fetchedInvoice.invoiceDetails.customer_id||null }));
-        dispatch(setProductRefund({ productRefund: fetchedInvoice.invoiceDetails.products, totalRefund: totalProductPrice,invoiceCode:fetchedInvoice.invoice.invoiceCode }));
+        dispatch(setProductRefund({ productRefund: fetchedInvoice.invoiceDetails.products, totalRefund: totalProductPrice,invoiceCode:fetchedInvoice.invoice.invoiceCode,invoiceRefund: fetchedInvoice}));
         navigate('/frame-staff/refund');
       }
     else setError("Hóa đơn này đã trả hàng")} else {
