@@ -1,22 +1,92 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Statistical.scss';
 import { useSelector } from 'react-redux';
 import Select from 'react-select';
 import { FaPrint } from 'react-icons/fa';
 import FrameData from '../../containers/frameData/FrameData';
-import { formatDate, formatDateDDMMYYYY } from '../../utils/fotmatDate';
+import { formatDateDDMMYYYY } from '../../utils/fotmatDate';
 
 export default function DailyRevenue() {
     const employeeAndManager = useSelector((state) => state.employee?.employeeAndManager) || [];
     const invoices = useSelector((state) => state.invoice?.invoices) || [];
-    console.log('invoices:', invoices);
 
     const [selectedEmployee, setSelectedEmployee] = useState(null);
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
+    const [groupedData, setGroupedData] = useState([]); // state for grouped data
+
+    // Group invoices by employeeId and createdAt by default
+    useEffect(() => {
+        const groupedInvoices = invoices.reduce((groups, invoice) => {
+            if (!invoice.employee_id) return groups;  // Loại bỏ hóa đơn không có employee_id
+
+            const employee = employeeAndManager.find((emp) => emp._id === invoice.employee_id);
+            const groupKey = `${invoice.employee_id}-${formatDateDDMMYYYY(invoice.createdAt)}`;
+
+            if (!groups[groupKey]) {
+                groups[groupKey] = {
+                    employeeId: employee?.employee_id,
+                    employee_name: employee?.name,
+                    createdAt: formatDateDDMMYYYY(invoice.createdAt),
+                    totalDiscount: 0,
+                    totalRevenueBeforeDiscount: 0,
+                    totalRevenueAfterDiscount: 0,
+                    invoices: []
+                };
+            }
+
+            groups[groupKey].totalDiscount += invoice.discount || 0;
+            groups[groupKey].totalRevenueBeforeDiscount += invoice.revenue_before_discount || 0;
+            groups[groupKey].totalRevenueAfterDiscount += invoice.revenue_after_discount || 0;
+            groups[groupKey].invoices.push(invoice);
+
+            return groups;
+        }, {});
+
+        setGroupedData(Object.values(groupedInvoices)); // Set the grouped data by default
+        console.log('groupedInvoices:', groupedInvoices);
+    }, [invoices, employeeAndManager]);
 
     const handleFilter = () => {
         console.log('Lọc với:', { selectedEmployee, startDate, endDate });
+
+        // Filter invoices based on selected employee and date range
+        const filteredInvoices = invoices
+            .filter((invoice) => {
+                const isEmployeeMatch = selectedEmployee ? invoice.employee_id === selectedEmployee.value : true;
+                const isStartDateMatch = startDate ? formatDateDDMMYYYY(invoice.createdAt) >= formatDateDDMMYYYY(startDate) : true;
+                const isEndDateMatch = endDate ? formatDateDDMMYYYY(invoice.createdAt) <= formatDateDDMMYYYY(endDate) : true;
+                return isEmployeeMatch && isStartDateMatch && isEndDateMatch;
+            });
+        console.log('filteredInvoices:', filteredInvoices);
+        // Group filtered invoices by employeeId and createdAt
+        const groupedInvoices = filteredInvoices.reduce((groups, invoice) => {
+            if (!invoice.employee_id) return groups;  // Loại bỏ hóa đơn không có employee_id
+            const employee = employeeAndManager.find((emp) => emp._id === invoice.employee_id);
+            const groupKey = `${invoice.employee_id}-${formatDateDDMMYYYY(invoice.createdAt)}`;
+
+            if (!groups[groupKey]) {
+                groups[groupKey] = {
+                    employeeId: employee?.employee_id,
+                    employee_name: employee?.name,
+                    createdAt: formatDateDDMMYYYY(invoice.createdAt),
+                    totalDiscount: 0,
+                    totalRevenueBeforeDiscount: 0,
+                    totalRevenueAfterDiscount: 0,
+                    invoices: []
+                };
+            }
+
+            groups[groupKey].totalDiscount += invoice.discount || 0;
+            groups[groupKey].totalRevenueBeforeDiscount += invoice.revenue_before_discount || 0;
+            groups[groupKey].totalRevenueAfterDiscount += invoice.revenue_after_discount || 0;
+            groups[groupKey].invoices.push(invoice);
+
+            return groups;
+        }, {});
+
+        setGroupedData(Object.values(groupedInvoices)); // Update grouped data based on filter
+        console.log('groupedInvoices after filter:', groupedInvoices);
     };
 
     const handleResetFilter = () => {
@@ -24,6 +94,36 @@ export default function DailyRevenue() {
         setStartDate('');
         setEndDate('');
         console.log('Đã hủy lọc');
+        setGroupedData([]); // Reset grouped data if needed
+
+        // Reset to original data (unfiltered)
+        const groupedInvoices = invoices.reduce((groups, invoice) => {
+            if (!invoice.employee_id) return groups;
+
+            const employee = employeeAndManager.find((emp) => emp._id === invoice.employee_id);
+            const groupKey = `${invoice.employee_id}-${formatDateDDMMYYYY(invoice.createdAt)}`;
+
+            if (!groups[groupKey]) {
+                groups[groupKey] = {
+                    employeeId: employee?.employee_id,
+                    employee_name: employee?.name,
+                    createdAt: formatDateDDMMYYYY(invoice.createdAt),
+                    totalDiscount: 0,
+                    totalRevenueBeforeDiscount: 0,
+                    totalRevenueAfterDiscount: 0,
+                    invoices: []
+                };
+            }
+
+            groups[groupKey].totalDiscount += invoice.discount || 0;
+            groups[groupKey].totalRevenueBeforeDiscount += invoice.revenue_before_discount || 0;
+            groups[groupKey].totalRevenueAfterDiscount += invoice.revenue_after_discount || 0;
+            groups[groupKey].invoices.push(invoice);
+
+            return groups;
+        }, {});
+
+        setGroupedData(Object.values(groupedInvoices)); // Restore original grouped data
     };
 
     const employeeOptions = employeeAndManager.map((employee) => ({
@@ -31,68 +131,13 @@ export default function DailyRevenue() {
         label: employee.name,
     }));
 
-    // Lọc và hiển thị dữ liệu invoices có employee_id
-    const filteredInvoices = invoices
-        .filter((invoice) => invoice.employee_id)
-        .map((invoice, index) => {
-            const employee = employeeAndManager.find((emp) => emp._id === invoice.employee_id);
-            return {
-                stt: index + 1,
-                ...invoice,
-                employeeId: employee?.employee_id,
-                employee_name: employee?.name,
-            };
-        });
-
-    console.log('filteredInvoices:', filteredInvoices);
-
-    // Group invoices by employee_id and formatted createdAt (dd/MM/yyyy)
-    const groupedInvoices = filteredInvoices.reduce((acc, invoice) => {
-        // Format the createdAt to dd/MM/yyyy
-        const formattedDate = formatDateDDMMYYYY(invoice.createdAt); // Assuming formatDate gives 'dd/MM/yyyy'
-
-        const groupKey = `${invoice.employeeId}-${formattedDate}`; // Combine employeeId and formatted createdAt to form a unique key
-
-        // If the groupKey does not exist, create an empty array for it
-        if (!acc[groupKey]) {
-            acc[groupKey] = [];
-        }
-
-        // Add the invoice to the correct group
-        acc[groupKey].push(invoice);
-
-        return acc;
-    }, {});
-
-    // Flatten the grouped invoices for easier display
-    const groupedAndFlattenedInvoices = Object.values(groupedInvoices).map((group, index) => {
-        // The first invoice in the group can be used for displaying the grouped info (like employee name)
-        const { employee_name, employeeId, createdAt } = group[0];
-        return group.map((invoice, i) => ({
-            stt: index * group.length + i + 1, // Adjust the STT (index) for each row
-            ...invoice,
-            employee_name,
-            employeeId,
-            createdAt: formatDateDDMMYYYY(createdAt), // Format createdAt to display in dd/MM/yyyy format
-        }));
-    }).flat();
-
-    console.log('Grouped and flattened invoices:', groupedAndFlattenedInvoices);
-
-    // Cấu hình các cột cho bảng FrameData
     const invoiceColumns = [
-        { title: 'STT', dataIndex: 'stt', key: 'stt', width: '10%' },
         { title: 'Mã nhân viên', dataIndex: 'employeeId', key: 'employeeId', width: '15%' },
         { title: 'Tên nhân viên', dataIndex: 'employee_name', key: 'employee_name', width: '20%' },
-        {
-            title: 'Ngày', dataIndex: 'createdAt', key: 'createdAt', width: '15%',
-            render: (date) => (
-                <div>{formatDate(date)}</div>
-            )
-        },
-        { title: 'Chiết khấu', dataIndex: 'discount', key: 'discount', width: '10%' },
-        { title: 'Doanh số trước CK', dataIndex: 'revenue_before_discount', key: 'revenue_before_discount', width: '15%' },
-        { title: 'Doanh số sau CK', dataIndex: 'revenue_after_discount', key: 'revenue_after_discount', width: '15%' }
+        { title: 'Ngày', dataIndex: 'createdAt', key: 'createdAt', width: '15%' },
+        { title: 'Chiết khấu', dataIndex: 'totalDiscount', key: 'totalDiscount', width: '10%' },
+        { title: 'Doanh số trước CK', dataIndex: 'totalRevenueBeforeDiscount', key: 'totalRevenueBeforeDiscount', width: '15%' },
+        { title: 'Doanh số sau CK', dataIndex: 'totalRevenueAfterDiscount', key: 'totalRevenueAfterDiscount', width: '15%' },
     ];
 
     return (
@@ -152,11 +197,12 @@ export default function DailyRevenue() {
             <div>
                 <FrameData
                     title="Thống kê doanh thu bán hàng theo ngày"
-                    data={filteredInvoices}
+                    data={groupedData}
                     columns={invoiceColumns}
                 />
-
             </div>
         </div>
     );
 }
+
+
