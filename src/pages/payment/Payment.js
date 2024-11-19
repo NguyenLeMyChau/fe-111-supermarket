@@ -2,17 +2,27 @@ import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "./Payment.scss";
 import { useDispatch, useSelector } from "react-redux";
-import { clearCustomer, clearProductPay } from "../../store/reducers/productPaySlice";
+import {
+  clearCustomer,
+  clearProductPay,
+} from "../../store/reducers/productPaySlice";
 import axios from "axios";
-import { getPromotionByProductId, getPromotions, payCart } from "../../services/cartRequest";
+import {
+  getPromotionByProductId,
+  getPromotions,
+  payCart,
+} from "../../services/cartRequest";
 import ModalComponent from "../../components/modal/Modal";
 import { green } from "@mui/material/colors";
 import { useAccessToken, useAxiosJWT } from "../../utils/axiosInstance";
 import Receipt from "../sales/Invoice/Receipt";
-import Modal from 'react-modal';
+import Modal from "react-modal";
 import PaymentModal from "../sales/Invoice/PaymentModal";
 import { formatCurrency } from "../../utils/fotmatDate";
-import { calculateDiscount, calculateDiscountAmount } from "../../utils/calculatePromotion";
+import {
+  calculateDiscount,
+  calculateDiscountAmount,
+} from "../../utils/calculatePromotion";
 
 const Payment = () => {
   const navigate = useNavigate();
@@ -21,7 +31,9 @@ const Payment = () => {
   const accessToken = useAccessToken();
   const productList = useSelector((state) => state.productPay.productPay);
   const totalAmountPay = useSelector((state) => state.productPay.totalAmount);
-  const [totalAmount, setTotalAmount] = useState(useSelector((state) => state.productPay.totalAmount));
+  const [totalAmount, setTotalAmount] = useState(
+    useSelector((state) => state.productPay.totalAmount)
+  );
   const customer = useSelector((state) => state.productPay.customer);
   const [promotion, setPromotion] = useState([]);
   const [customerPaid, setCustomerPaid] = useState(null);
@@ -81,34 +93,64 @@ const Payment = () => {
         );
         if (promotions && promotions.length > 0) {
           const applicablePromotions = promotions.map((promotion) => {
-            console.log(promotion)
+            console.log(promotion);
             const promotionLine = promotion.promotionLine_id;
             if (promotionLine) {
-              if (promotionLine.type === 'quantity') {
+              if (promotionLine.type === "quantity") {
                 // Trường hợp 1: product_id === promotion.product_id === promotion.product_donate
-                if (product._id === promotion.product_id && product._id === promotion.product_donate) {
-                  const totalQuantity = promotion.quantity + promotion.quantity_donate;
-                  const eligibleQuantity = Math.floor(product.quantity / totalQuantity);
-                  console.log('Eligible Quantity (same product):', eligibleQuantity);
+                if (
+                  product._id === promotion.product_id &&
+                  product._id === promotion.product_donate &&
+                  product.unit._id === promotion.unit_id?._id &&   product.unit._id===
+                    promotion.unit_id_donate?._id
+                ) {
+                  const totalQuantity =
+                    promotion.quantity + promotion.quantity_donate;
+                  const eligibleQuantity = Math.floor(
+                    product.quantity / totalQuantity
+                  );
+                  console.log(
+                    "Eligible Quantity (same product):",
+                    eligibleQuantity
+                  );
 
                   if (eligibleQuantity < 1) {
                     // Thêm vào danh sách không đủ điều kiện
                     ineligible.push({
                       ...product,
                       promotion,
-                      message: 'Khuyến mãi chưa được áp dụng: số lượng không đủ.',
+                      message:
+                        "Khuyến mãi chưa được áp dụng: số lượng không đủ.",
                       requiredQuantity: totalQuantity,
                     });
                     return { ...product, promotion: null }; // Không có khuyến mãi
                   }
-                  updatedTotalAmount -= product.price * eligibleQuantity
-                  return { ...product, promotion, discountAmount: product.price * eligibleQuantity }; // Có khuyến mãi
+                  updatedTotalAmount -= product.price * eligibleQuantity;
+                  return {
+                    ...product,
+                    promotion,
+                    discountAmount: product.price * eligibleQuantity,
+                    quantityDonate: eligibleQuantity,
+                  }; // Có khuyến mãi
 
                   // Trường hợp 2: product_id === promotion.product_id và product_id !== promotion.product_donate
-                } else if (product._id === promotion.product_id && product._id !== promotion.product_donate) {
-                  const eligibleQuantity = Math.floor(product.quantity / promotion.quantity);
-                  const donateProductExists = productList.some(p => p._id === promotion.product_donate && p.unit === promotion.unit_id_donate);
-                  console.log('Eligible Quantity (different donate product):', eligibleQuantity);
+                } else if (
+                  product._id === promotion.product_id &&
+                  (product._id !== promotion.product_donate ||
+                    product.unit._id !== promotion.unit_id_donate?._id)
+                ) {
+                  const eligibleQuantity = Math.floor(
+                    product.quantity / promotion.quantity
+                  );
+                  const donateProductExists = productList.some(
+                    (p) =>
+                      p._id === promotion.product_donate &&
+                      p.unit._id === promotion.unit_id_donate._id
+                  );
+                  console.log(
+                    "Eligible Quantity (different donate product):",
+                    eligibleQuantity
+                  );
 
                   if (!donateProductExists) {
                     // Thêm vào danh sách không đủ điều kiện
@@ -126,15 +168,28 @@ const Payment = () => {
                       requiredQuantity: promotion.quantity,
                     });
                     return { ...product, promotion: null };
-                  }
-                  else
-                    return { ...product, promotion: null }; // Có khuyến mãi
+                  } else return { ...product, promotion: null }; // Có khuyến mãi
 
                   // Trường hợp 3: product_id !== promotion.product_id và product_id === promotion.product_donate
-                } else if (product._id !== promotion.product_id && product._id === promotion.product_donate) {
-                  const promotionProductExists = productList.some(p => p._id === promotion.product_id && p.unit === promotion.unit_id);
-                  const eligibleQuantity = Math.floor(product.quantity / promotion.quantity);
-                  console.log('Eligible Quantity (donate product):', eligibleQuantity);
+                } else if (
+                  (product._id !== promotion.product_id &&
+                    product._id === promotion.product_donate) ||
+                  (product._id === promotion.product_donate &&
+                    product.unit._id === promotion.unit_id_donate?._id)
+                ) {
+                  const promotionProductExists = productList.find(
+                    (p) =>
+                      p._id === promotion.product_id &&
+                      p.unit._id === promotion.unit_id._id
+                  );
+                  const eligibleQuantity = Math.floor(
+                    promotionProductExists.quantity / promotion.quantity
+                  );
+                  console.log(
+                    "Eligible Quantity (donate product):",
+                    eligibleQuantity,
+                    promotionProductExists
+                  );
 
                   if (!promotionProductExists || eligibleQuantity < 1) {
                     ineligible.push({
@@ -144,12 +199,17 @@ const Payment = () => {
                     });
                     return { ...product, promotion: null }; // Không có khuyến mãi
                   }
-                  updatedTotalAmount -= product.price * eligibleQuantity
-                  return { ...product, promotion, discountAmount: product.price * eligibleQuantity }; // Có khuyến mãi
-
+                  updatedTotalAmount -= product.price * eligibleQuantity;
+                  return {
+                    ...product,
+                    promotion,
+                    discountAmount: product.price * eligibleQuantity,
+                    quantityDonate: eligibleQuantity,
+                  }; // Có khuyến mãi
                 }
               }
               if (promotionLine.type === "amount") {
+                console.log("promotion amouut")
                 const eligibleQuantity = Math.floor(
                   product.quantity / promotion.quantity
                 );
@@ -160,7 +220,12 @@ const Payment = () => {
 
                 if (eligibleQuantity >= 1) {
                   updatedTotalAmount -= discountAmount; // Trừ discount vào tổng tiền
-                  return { ...product, promotion, discountAmount };
+                  return {
+                    ...product,
+                    promotion,
+                    discountAmount,
+                    quantityDonate: eligibleQuantity,
+                  };
                 } else {
                   ineligible.push({
                     ...product,
@@ -180,6 +245,7 @@ const Payment = () => {
       const productsWithPromotions = await Promise.all(productPromises);
       setProductWithPromotions(productsWithPromotions.flat());
       setIneligiblePromotions(ineligible);
+      console.log(productsWithPromotions);
       setShowIneligibleModal(ineligible.length > 0 ? true : false);
       setTotalAmount(updatedTotalAmount);
     };
@@ -189,7 +255,7 @@ const Payment = () => {
 
   useEffect(() => {
     // Tính toán tổng tiền đã giảm mỗi khi promotion thay đổi
-   
+
     if (promotion?.length > 0) {
       let currentTotal = totalAmount; // Bắt đầu từ tổng ban đầu
       const finalTotals = promotion.map((applicablePromotion) => {
@@ -217,7 +283,6 @@ const Payment = () => {
         setDiscountedTotal(totalAmount);
         setAppliedPromotion(null);
       } else {
-
         setDiscountedTotal(minTotal);
         const bestPromotion = promotion[finalTotals.indexOf(minTotal)];
         console.log(bestPromotion);
@@ -242,42 +307,39 @@ const Payment = () => {
 
   // Xử lý thanh toán
   const handlePayment = async () => {
-   
-    
-    if(paymentMethod==="Tiền mặt"){
-      const isConfirmed = window.confirm('Bạn có chắc chắn thanh toán');
-    if (!isConfirmed) return;
-    if (customerPaid < discountedTotal) {
-      alert("Số tiền trả không đủ.");
-      return;
-    }
-    try {
-      const response = await payCart(
-        accessToken,
-        axiosJWT,
-        currentUser.user,
-        customer?.account_id,
-        productWithPromotions,
-        paymentMethod,
-        paymentInfo,
-        discountedTotal,
-        appliedPromotion,
-      );
-      console.log('pay cart response:', response.data);
-      if (response?.success) {
-        alert("Thanh toán thành công!");
-        setIsPaid(true);
-        setDataInvoices(response.data);
-      } else {
-        alert(response?.message || "Thanh toán thất bại!");
+    if (paymentMethod === "Tiền mặt") {
+      const isConfirmed = window.confirm("Bạn có chắc chắn thanh toán");
+      if (!isConfirmed) return;
+      if (customerPaid < discountedTotal) {
+        alert("Số tiền trả không đủ.");
+        return;
       }
-    } catch (error) {
-      console.error("Payment error:", error);
-      alert("Có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại.");
+      try {
+        const response = await payCart(
+          accessToken,
+          axiosJWT,
+          currentUser.user,
+          customer?.account_id,
+          productWithPromotions,
+          paymentMethod,
+          paymentInfo,
+          discountedTotal,
+          appliedPromotion
+        );
+        console.log("pay cart response:", response.data);
+        if (response?.success) {
+          alert("Thanh toán thành công!");
+          setIsPaid(true);
+          setDataInvoices(response.data);
+        } else {
+          alert(response?.message || "Thanh toán thất bại!");
+        }
+      } catch (error) {
+        console.error("Payment error:", error);
+        alert("Có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại.");
+      }
     }
-  }
   };
-
 
   // Xử lý bàn phím để nhập số tiền khách trả
   const handleKeyPress = (value) => {
@@ -307,65 +369,86 @@ const Payment = () => {
               <th>Giá bán</th>
               <th>Số lượng</th>
               <th>Thành tiền</th>
-
             </tr>
           </thead>
           <tbody>
-            {productWithPromotions.length > 0 ? (
-              productWithPromotions.map((product, index) => (
-                <React.Fragment key={index}>
-                  
-                  {product.promotion ? ( // Kiểm tra xem có khuyến mãi không
-                  <>
-                  <tr>
-                  <td>{index + 1}</td>
-                  <td>{product.name}</td>
-                  <td>{product.unit.description}</td>
-                  <td>{formatCurrency(product.price)}</td>
-                  <td>{product.promotion.promotionLine_id.type==="amount"?product?.quantity:calculateDiscount(product).quantity}</td>
-                  <td>{formatCurrency(product.promotion.promotionLine_id.type==="amount"?product?.quantity*product.price:calculateDiscount(product).quantity*product.price)}</td>
-                </tr>
-                    <tr>
-                      <td colSpan="1">
-                        {"KM"}
-                      </td>
-                      <td>{product.promotion?.description} : {product.name}</td>
-                      <td>{product.promotion?.promotionLine_id.type==="amount"?product.promotion?.unit_id?.description:product.promotion?.unit_id_donate?.description}</td>
-                      <td>
-                      {product.promotion?.promotionLine_id?.type === "amount"
-      ? `-${formatCurrency(calculateDiscountAmount(product).price)}`
-      : formatCurrency(0)}
-                      </td>
-                      <td>{product.promotion.promotionLine_id.type==="amount"? calculateDiscountAmount(product).discountQuantity :
-                        calculateDiscount(product).discountQuantity}</td>
-                  
-                  <td>
-                      
-                      {product.promotion?.promotionLine_id?.type === "amount"
-      ? `-${formatCurrency(calculateDiscountAmount(product).discountedPrice)}`
-      : formatCurrency(0)}
-                      </td>
-                    </tr>
-                    </>):(<>
-                   <tr>
-                    <td>{index + 1}</td>
-                    <td>{product.name}</td>
-                    <td>{product.unit.description}</td>
-                    <td>{formatCurrency(product.price)}</td>
-                    <td>{product.quantity}</td>
-                    <td>{formatCurrency(product.price * product.quantity)}</td>
-                  </tr>
-                  </>)}
-                </React.Fragment>
-              ))
-            ) : (
+  {productWithPromotions.length > 0 ? (
+    productWithPromotions.map((product, index) => {
+      const isGift = product.promotion && product.quantity > product.quantityDonate; // Kiểm tra nếu số lượng mua lớn hơn số lượng tặng
+
+      return (
+        <React.Fragment key={index}>
+          {/* Hiển thị sản phẩm chính */}
+          {product.promotion === null && (
+            <tr>
+              <td>{index + 1}</td>
+              <td>{product.name}</td>
+              <td>{product.unit.description}</td>
+              <td>{formatCurrency(product.price)}</td>
+              <td>{product.quantity}</td>
+              <td>{formatCurrency(product.price * product.quantity)}</td>
+            </tr>
+          )}
+          
+
+          {/* Hiển thị sản phẩm tặng (dành cho các loại khuyến mãi "quantity") */}
+          {isGift && (
+            <tr>
+              <td>{index + 1}</td>
+              <td>{product.name}</td>
+              <td>{product.unit.description}</td>
+              <td>{formatCurrency(product.price)}</td>
+              <td>{product.quantity - product.quantityDonate}</td> {/* Số lượng mua thêm */}
+              <td>{formatCurrency(product.price * (product.quantity - product.quantityDonate))}</td> {/* Thành tiền cho số lượng mua thêm */}
+            </tr>
+          )}
+          {product.promotion && product.promotion.promotionLine_id.type === 'quantity' && product.quantityDonate > 0 && (
+            <tr>
+              <td>KM</td>
+              <td>{`${product.promotion.description}: ${product.name}`}</td>
+              <td>{product.unit.description}</td>
+              <td>{formatCurrency(0)}</td>
+              <td>{product.quantityDonate}</td>
+              <td>{formatCurrency(0)}</td>
+            </tr>
+          )}
+
+          {/* Hiển thị sản phẩm mua thêm (có giá trị và thành tiền) */}
+          
+
+          {/* Hiển thị sản phẩm giảm giá (khuyến mãi loại "amount") */}
+          {product.promotion && product.promotion.promotionLine_id.type === 'amount' && product.quantity > 0 && (
+            <>
               <tr>
-                <td colSpan="7" className="empty-cart">
-                  Không có sản phẩm trong giỏ hàng
-                </td>
-              </tr>
-            )}
-          </tbody>
+              <td>{index + 1}</td>
+              <td>{product.name}</td>
+              <td>{product.unit.description}</td>
+              <td>{formatCurrency(product.price)}</td>
+              <td>{product.quantity}</td>
+              <td>{formatCurrency(product.price * product.quantity)}</td>
+            </tr>
+            <tr>
+              <td>KM</td>
+              <td>{`${product.promotion.description}: ${product.name}`}</td>
+              <td>{product.unit.description}</td>
+              <td>-{formatCurrency(product.promotion.amount_donate)}</td> {/* Giá sau khi giảm */}
+              <td>{product.quantity}</td>
+              <td>-{formatCurrency((product.promotion.amount_donate) * product.quantity)}</td> {/* Thành tiền sau giảm */}
+            </tr>
+            </>
+          )}
+        </React.Fragment>
+      );
+    })
+  ) : (
+    <tr>
+      <td colSpan="6" className="empty-cart">Không có sản phẩm trong giỏ hàng</td>
+    </tr>
+  )}
+</tbody>
+
+
+
         </table>
       </div>
 
@@ -374,61 +457,77 @@ const Payment = () => {
         <div className="payment-info">
           {customer && (
             <>
-              <div className="payment-line" style={{ color: 'blue' }}>
-                <p ><strong>Khách hàng:</strong></p>
+              <div className="payment-line" style={{ color: "blue" }}>
+                <p>
+                  <strong>Khách hàng:</strong>
+                </p>
                 <p className="amount">{customer.name}</p>
               </div>
-              <div className="payment-line" style={{ color: 'blue' }}>
-                <p><strong>Số điện thoại:</strong></p>
+              <div className="payment-line" style={{ color: "blue" }}>
+                <p>
+                  <strong>Số điện thoại:</strong>
+                </p>
                 <p className="amount">{customer.phone}</p>
               </div>
             </>
           )}
 
           <div className="payment-line">
-            <p><strong>Tổng số tiền sản phẩm:</strong></p>
+            <p>
+              <strong>Tổng số tiền sản phẩm:</strong>
+            </p>
             <p className="amount">{formatCurrency(totalAmount)}</p>
           </div>
 
           {appliedPromotion && (
             <div className="payment-line">
-              <p><strong>Khuyến mãi ({appliedPromotion.description}):</strong></p>
-              <p className="amount">- {formatCurrency(totalAmount - discountedTotal)} </p>
+              <p>
+                <strong>Khuyến mãi ({appliedPromotion.description}):</strong>
+              </p>
+              <p className="amount">
+                - {formatCurrency(totalAmount - discountedTotal)}{" "}
+              </p>
             </div>
           )}
 
           <div className="payment-line total-due">
-            <p><strong>Tổng số tiền thanh toán:</strong></p>
+            <p>
+              <strong>Tổng số tiền thanh toán:</strong>
+            </p>
             <p className="amount">{formatCurrency(discountedTotal)}</p>
           </div>
 
           <div className="payment-line">
-            <p><strong>Số tiền khách đưa:</strong></p>
+            <p>
+              <strong>Số tiền khách đưa:</strong>
+            </p>
             <p className="amount">{formatCurrency(customerPaid)}</p>
           </div>
 
           <div className="payment-line">
-            <p><strong>Số tiền thối lại:</strong></p>
+            <p>
+              <strong>Số tiền thối lại:</strong>
+            </p>
             <p className="amount">{formatCurrency(change)}</p>
           </div>
 
           <div className="payment-line">
-            <p><strong>Phương thức thanh toán : </strong></p>
+            <p>
+              <strong>Phương thức thanh toán : </strong>
+            </p>
           </div>
           <div className="payment-method-grid">
-        
-            {["Tiền mặt","ZaloPay"].map(
-              (method) => (
-                <button
-                  key={method}
-                  className={`payment-method-btn ${paymentMethod === method ? "selected" : ""
-                    }`}
-                  onClick={() => setPaymentMethod(method)}
-                >
-                  {method}
-                </button>
-              )
-            )}
+            {["Tiền mặt", "ZaloPay"].map((method) => (
+              <button
+                key={method}
+                className={`payment-method-btn ${
+                  paymentMethod === method ? "selected" : ""
+                }`}
+                onClick={() => setPaymentMethod(method)}
+              >
+                {method}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -481,7 +580,11 @@ const Payment = () => {
             <button className="payment-button" onClick={handleClear}>
               C
             </button>
-            <button className="payment-button-pay" onClick={handlePayment} disabled={productWithPromotions.length === 0}>
+            <button
+              className="payment-button-pay"
+              onClick={handlePayment}
+              disabled={productWithPromotions.length === 0}
+            >
               Thanh toán
             </button>
           </div>
@@ -491,9 +594,17 @@ const Payment = () => {
         </div>
       </div>
 
-      {isPaid && dataInvoices && <PaymentModal isPaid={isPaid} closeModal={closeModalPay} accessToken={accessToken} axiosJWT={axiosJWT} invoiceId={dataInvoices.invoiceCode} />}
+      {isPaid && dataInvoices && (
+        <PaymentModal
+          isPaid={isPaid}
+          closeModal={closeModalPay}
+          accessToken={accessToken}
+          axiosJWT={axiosJWT}
+          invoiceId={dataInvoices.invoiceCode}
+        />
+      )}
       <ModalComponent
-        title={'Sản phẩm không đủ điều kiện khuyến mãi'}
+        title={"Sản phẩm không đủ điều kiện khuyến mãi"}
         isOpen={showIneligibleModal}
         onRequestClose={closeModal}
         width={1000}
@@ -505,7 +616,7 @@ const Payment = () => {
                 <tr>
                   <th>Tên sản phẩm</th>
                   <th>Đơn vị</th>
-                 
+
                   <th>Tên chương trình khuyến mãi</th>
                 </tr>
               </thead>
@@ -513,9 +624,8 @@ const Payment = () => {
                 {ineligiblePromotions.map((product, index) => (
                   <tr key={index}>
                     <td>{product.name}</td>
-                    <td>{product.unit.description}</td>
-                   
-                    <td>{product.promotion.description}</td>
+                    <td>{product.unit?.description}</td>
+                    <td>{product.promotion?.description}</td>
                   </tr>
                 ))}
               </tbody>

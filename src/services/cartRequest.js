@@ -87,12 +87,13 @@ const payCart = async ( accessToken, axiosJWT,employee, customerId, products, pa
     }
 
 }
-const refundCart = async ( accessToken, axiosJWT,employee,invoiceCode) => {
+const refundCart = async ( accessToken, axiosJWT,employee,invoiceCode,refundReason) => {
     try {
         console.log(employee,invoiceCode)
         const response = await axiosJWT.post(`/api/auth/refund-cart-web`, {
             employee,
-            invoiceCode
+            invoiceCode,
+            refundReason
         }, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,

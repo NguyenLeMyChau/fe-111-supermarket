@@ -42,6 +42,7 @@ const Refund = () => {
   const currentUser = useSelector((state) => state.auth.login?.currentUser);
   const [dataInvoices, setDataInvoices] = useState();
   const [isPaid, setIsPaid] = useState(false);
+  const [refundReason, setRefundReason] = useState('');
 
   const [paymentInfo, setPaymenInfo] = useState(null);
   useEffect(() => {
@@ -251,6 +252,7 @@ const Refund = () => {
 
   // Xử lý thanh toán
   const handlePayment = async () => {
+   console.log(refundReason);
     const isConfirmed = window.confirm('Bạn có chắc chắn hoàn tiền');
     if (!isConfirmed) return;
  
@@ -260,6 +262,7 @@ const Refund = () => {
         axiosJWT,
         currentUser.user,
         invoiceCodeRefund,
+        refundReason
       );
       console.log('pay cart response:', response.data);
       if (response?.success) {
@@ -294,160 +297,158 @@ const Refund = () => {
             </tr>
           </thead>
           <tbody>
-            {productWithPromotions.length > 0 ? (
-              productWithPromotions.map((product, index) => (
-                <React.Fragment key={index}>
-                  
-                  {product.promotion ? ( // Kiểm tra xem có khuyến mãi không
-                  <>
-                  <tr>
-                  <td>{index + 1}</td>
-                  <td>{product.product.name}</td>
-                  <td>{product.unit_id.description}</td>
-                  <td>{formatCurrency(product.price)}</td>
-                  <td>{product.promotion.promotionLine_id.type==="amount"?product?.quantity:calculateDiscount(product).quantity}</td>
-                  <td>{formatCurrency(product.promotion.promotionLine_id.type==="amount"?product?.quantity*product.price:calculateDiscount(product).quantity*product.price)}</td>
-                </tr>
-                    <tr>
-                      <td colSpan="1">
-                        {"KM"}
-                      </td>
-                      <td>{product.promotion?.description} : {product.product.name}</td>
-                      <td>{product.promotion?.promotionLine_id.type==="amount"?product.promotion?.unit_id?.description:product.promotion?.unit_id_donate?.description}</td>
-                      <td>
-                      {product.promotion?.promotionLine_id?.type === "amount"
-      ? `-${formatCurrency(calculateDiscountAmount(product).price)}`
-      : formatCurrency(0)}
-                      </td>
-                      <td>{product.promotion.promotionLine_id.type==="amount"? calculateDiscountAmount(product).discountQuantity :
-                        calculateDiscount(product).discountQuantity}</td>
-                  
-                  <td>
-                      
-                      {product.promotion?.promotionLine_id?.type === "amount"
-      ? `-${formatCurrency(calculateDiscountAmount(product).discountedPrice)}`
-      : formatCurrency(0)}
-                      </td>
-                    </tr>
-                    </>):(<>
-                   <tr>
-                    <td>{index + 1}</td>
-                    <td>{product.product.name}</td>
-                    <td>{product.unit_id.description}</td>
-                    <td>{formatCurrency(product.price)}</td>
-                    <td>{product.quantity}</td>
-                    <td>{formatCurrency(product.price * product.quantity)}</td>
-                  </tr>
-                  </>)}
-                </React.Fragment>
-              ))
-            ) : (
+  {productWithPromotions.length > 0 ? (
+    productWithPromotions.map((product, index) => {
+      const isGift = product.promotion && product.quantity > product.quantity_donate; // Kiểm tra nếu số lượng mua lớn hơn số lượng tặng
+
+      return (
+        <React.Fragment key={index}>
+          {/* Hiển thị sản phẩm chính */}
+          {product.promotion === null && (
+            <tr>
+              <td>{index + 1}</td>
+              <td>{product.product.name}</td>
+              <td>{product.unit_id.description}</td>
+              <td>{formatCurrency(product.price)}</td>
+              <td>{product.quantity}</td>
+              <td>{formatCurrency(product.price * product.quantity)}</td>
+            </tr>
+          )}
+          
+
+          {/* Hiển thị sản phẩm tặng (dành cho các loại khuyến mãi "quantity") */}
+          {isGift && (
+            <tr>
+              <td>{index + 1}</td>
+              <td>{product.product.name}</td>
+              <td>{product.unit_id.description}</td>
+              <td>{formatCurrency(product.price)}</td>
+              <td>{product.quantity - product.quantity_donate}</td> {/* Số lượng mua thêm */}
+              <td>{formatCurrency(product.price * (product.quantity - product.quantity_donate))}</td> {/* Thành tiền cho số lượng mua thêm */}
+            </tr>
+          )}
+          {product.promotion && product.promotion.promotionLine_id.type === 'quantity' && product.quantity_donate > 0 && (
+            <tr>
+              <td>KM</td>
+              <td>{`${product.promotion.description}: ${product.product.name}`}</td>
+              <td>{product.unit_id.description}</td>
+              <td>{formatCurrency(0)}</td>
+              <td>{product.quantity_donate}</td>
+              <td>{formatCurrency(0)}</td>
+            </tr>
+          )}
+
+          {/* Hiển thị sản phẩm mua thêm (có giá trị và thành tiền) */}
+          
+
+          {/* Hiển thị sản phẩm giảm giá (khuyến mãi loại "amount") */}
+          {product.promotion && product.promotion.promotionLine_id.type === 'amount' && product.quantity > 0 && (
+            <>
               <tr>
-                <td colSpan="7" className="empty-cart">
-                  Không có sản phẩm trong giỏ hàng
-                </td>
-              </tr>
-            )}
-          </tbody>
+              <td>{index + 1}</td>
+              <td>{product.product.name}</td>
+              <td>{product.unit_id.description}</td>
+              <td>{formatCurrency(product.price)}</td>
+              <td>{product.quantity}</td>
+              <td>{formatCurrency(product.price * product.quantity)}</td>
+            </tr>
+            <tr>
+              <td>KM</td>
+              <td>{`${product.promotion.description}: ${product.product.name}`}</td>
+              <td>{product.unit_id.description}</td>
+              <td>-{formatCurrency(product.promotion.amount_donate)}</td> {/* Giá sau khi giảm */}
+              <td>{product.quantity}</td>
+              <td>-{formatCurrency((product.promotion.amount_donate) * product.quantity)}</td> {/* Thành tiền sau giảm */}
+            </tr>
+            </>
+          )}
+        </React.Fragment>
+      );
+    })
+  ) : (
+    <tr>
+      <td colSpan="6" className="empty-cart">Không có sản phẩm trong giỏ hàng</td>
+    </tr>
+  )}
+</tbody>
         </table>
       </div>
 
       <div className="right-section">
-        <h3>Hoàn tiền</h3>
-        <div className="payment-info">
-          {customer && (
-            <>
-              <div className="payment-line" style={{ color: 'blue' }}>
-                <p ><strong>Khách hàng:</strong></p>
-                <p className="amount">{customer.name}</p>
-              </div>
-              <div className="payment-line" style={{ color: 'blue' }}>
-                <p><strong>Số điện thoại:</strong></p>
-                <p className="amount">{customer.phone}</p>
-              </div>
-            </>
-          )}
-
-          <div className="payment-line">
-            <p><strong>Tổng số tiền sản phẩm:</strong></p>
-            <p className="amount">{formatCurrency(totalAmount)}</p>
-          </div>
-
-          {appliedPromotion && (
-            <div className="payment-line">
-              <p><strong>Khuyến mãi ({appliedPromotion.description}):</strong></p>
-              <p className="amount">- {formatCurrency(totalAmount - discountedTotal)} </p>
-            </div>
-          )}
-
-          <div className="payment-line total-due">
-            <p><strong>Tổng số tiền hoàn trả:</strong></p>
-            <p className="amount">{formatCurrency(discountedTotal)}</p>
-          </div>
-          <div className="payment-line total-due">
-            <p><strong>Phương thức thanh toán:</strong></p>
-            
-          </div>
-          <div className="payment-method-grid">
-            {["Tiền mặt","ZaloPay"].map(
-              (method) => (
-                <button
-                  key={method}
-                  className={`payment-method-btn ${paymentMethod === method ? "selected" : ""
-                    }`}
-                  disabled={true}
-                  onClick={() => setPaymentMethod(method)}
-                >
-                  {method}
-                </button>
-              )
-            )}
-          </div>
+  <h3>Hoàn tiền</h3>
+  <div className="payment-info">
+    {customer && (
+      <>
+        <div className="payment-line" style={{ color: 'blue' }}>
+          <p><strong>Khách hàng:</strong></p>
+          <p className="amount">{customer.name}</p>
         </div>
-
-        <div className="refund-line">
-            <button className="refund-button-confirm" onClick={handlePayment} disabled={productWithPromotions.length === 0}>
-              Xác nhận
-            </button>
-          <button onClick={handleBack} className="refund-button-cancel">
-            Hủy
-          </button>
+        <div className="payment-line" style={{ color: 'blue' }}>
+          <p><strong>Số điện thoại:</strong></p>
+          <p className="amount">{customer.phone}</p>
         </div>
+      </>
+    )}
+
+    <div className="payment-line">
+      <p><strong>Tổng số tiền sản phẩm:</strong></p>
+      <p className="amount">{formatCurrency(totalAmount)}</p>
+    </div>
+
+    {appliedPromotion && (
+      <div className="payment-line">
+        <p><strong>Khuyến mãi ({appliedPromotion.description}):</strong></p>
+        <p className="amount">- {formatCurrency(totalAmount - discountedTotal)} </p>
       </div>
+    )}
 
- {isPaid && dataInvoices && <PaymentModalRefund isPaid={isPaid} closeModal={closeModalPay} accessToken={accessToken} axiosJWT={axiosJWT} invoiceId={dataInvoices.invoiceCode} />}
-      <ModalComponent
-        title={'Sản phẩm không đủ điều kiện khuyến mãi'}
-        isOpen={showIneligibleModal}
-        onRequestClose={closeModal}
-        width={1000}
-      >
-        <div className="ineligible-modal">
-          <div className="table-container">
-            <table>
-              <thead>
-                <tr>
-                  <th>Tên sản phẩm</th>
-                  <th>Đơn vị</th>
-                  <th>Số lượng yêu cầu</th>
-                  <th>Tên chương trình khuyến mãi</th>
-                </tr>
-              </thead>
-              <tbody>
-                {ineligiblePromotions.map((product, index) => (
-                  <tr key={index}>
-                    <td>{product.name}</td>
-                    <td>{product.unit.description}</td>
-                    <td>{product.requiredQuantity}</td>
-                    <td>{product.promotion.description}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <button onClick={closeModal}>Đóng</button>
-          </div>
-        </div>
-      </ModalComponent>
+    <div className="payment-line total-due">
+      <p><strong>Tổng số tiền hoàn trả:</strong></p>
+      <p className="amount">{formatCurrency(discountedTotal)}</p>
+    </div>
+
+    <div className="payment-line total-due">
+      <p><strong>Phương thức thanh toán:</strong></p>
+    </div>
+
+    <div className="payment-method-grid">
+      {["Tiền mặt", "ZaloPay"].map(
+        (method) => (
+          <button
+            key={method}
+            className={`payment-method-btn ${paymentMethod === method ? "selected" : ""}`}
+            disabled={true}
+            onClick={() => setPaymentMethod(method)}
+          >
+            {method}
+          </button>
+        )
+      )}
+    </div>
+  </div>
+
+  {/* Textarea for refund reason */}
+  <div className="payment-line">
+    <p><strong>Lý do hoàn trả:</strong></p>
+   
+  </div>
+  <textarea
+      className="refund-reason-input"
+      value={refundReason}
+      onChange={(e) => setRefundReason(e.target.value)}
+      placeholder="Nhập lý do hoàn trả"
+    />
+  <div className="refund-line">
+    <button className="refund-button-confirm" onClick={handlePayment} disabled={productWithPromotions.length === 0}>
+      Xác nhận
+    </button>
+    <button onClick={handleBack} className="refund-button-cancel">
+      Hủy
+    </button>
+  </div>
+</div>
+{isPaid && dataInvoices && <PaymentModalRefund isPaid={isPaid} closeModal={closeModalPay} accessToken={accessToken} axiosJWT={axiosJWT} invoiceId={dataInvoices.invoiceCode} />}
+
     </div>
   );
 };

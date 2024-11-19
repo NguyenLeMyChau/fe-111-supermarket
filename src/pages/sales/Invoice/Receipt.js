@@ -35,20 +35,17 @@ console.log(data);
 
   const calculateDiscount = (item) => {
     if (item.promotion) {
-      const discountQuantity = Math.floor(
-        item.quantity / (item.promotion.quantity + item.promotion.quantity_donate)
-      );
-      const quantity= item.quantity - discountQuantity;
-      const discountedPrice = discountQuantity * item.price;
+      if(item.promotion.promotionLine_id.type === 'quantity') {
+     
+      const discountedPrice =  item?.quantity_donate * item.price;
       return {
-        quantity,
         discountedPrice,
-        discountQuantity,
-        price: item.price
       };
     }
-    return {quantity:0, discountedPrice: 0, discountQuantity: 0 , price: 0};
-  };
+  }
+    return { discountedPrice: 0};
+  }
+  ;
   const calculateDiscountAmount = (item) => {
     if (item.promotion && item.promotion.product_id?._id === item.product._id) {
       const discountQuantity = Math.floor(
@@ -56,13 +53,12 @@ console.log(data);
       );
       const discountedPrice = discountQuantity * item.promotion.amount_donate;
       return {
-        quantity: item.quantity,
+       
         discountedPrice,
-        discountQuantity,
-        price: item.promotion.amount_donate
+       
       };
     }
-    return {quantity:0, discountedPrice: 0, discountQuantity: 0 ,price: item.promotion.amount_donate};
+    return { discountedPrice: 0};
   };
 
 
@@ -131,68 +127,92 @@ console.log(data);
             <tr>
             <th>STT</th>
               <th>Đơn vị</th>
-              <th>Số lượng</th>
               <th>Đơn giá</th>
+              <th>Số lượng</th>
               <th>Thành tiền</th>
   
             </tr>
           </thead>
           <tbody>
-            {data.invoiceDetails.products.map((item, index) => (
+            {data.invoiceDetails.products.map((product, index) => {
+                const isGift = product.promotion && product.quantity > product.quantity_donate; // Kiểm tra nếu số lượng mua lớn hơn số lượng tặng
+              return (
               <React.Fragment key={index}>
                 
-                {item.promotion ? (
-                  <>
-                   <tr>
-                  <td>{index + 1}</td>
-                  <td colSpan={4}>{item?.product?.name}</td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td>{item.unit_id.description}</td>
-                  <td>{item.promotion.promotionLine_id.type==="amount"?item?.quantity:calculateDiscount(item).quantity}</td>
-                 
-                  <td>{formatCurrency(item?.price)}</td>
-                  <td>{item.promotion.promotionLine_id.type==="amount"?item?.quantity*item.price:calculateDiscount(item).quantity*item.price}</td>
-               
-                </tr>
-                   <tr className="promotion-row">
-                   <td>KM</td>
-                   <td colSpan={4}>{item?.promotion?.description} : {item?.product?.name}</td>
-                 </tr>
-                  <tr className="promotion-row">
-                    <td></td>
-                    <td>{item.promotion?.promotionLine_id.type==="amount"?item.promotion?.unit_id?.description:item.promotion?.unit_id_donate?.description}</td>
-                    <td>{item.promotion.promotionLine_id.type==="amount"? calculateDiscountAmount(item).discountQuantity :
-                        calculateDiscount(item).discountQuantity}</td>
-                   <td>
-                      {item.promotion?.promotionLine_id?.type === "amount"
-      ? `-${formatCurrency(calculateDiscountAmount(item).price)}`
-      : formatCurrency(0)}
-                      </td>
-                    <td>
-                      
-                    {item.promotion?.promotionLine_id?.type === "amount"
-    ? `-${formatCurrency(calculateDiscountAmount(item).discountedPrice)}`
-    : formatCurrency(0)}
-                    </td>
-                  </tr>
-                  </>
-                ):(<>
-                <tr>
-                  <td>{index + 1}</td>
-                  <td colSpan={4}>{item?.product?.name}</td>
-                </tr>
-                <tr>
-                  <td></td>
-                  <td>{item.unit_id.description}</td>
-                  <td>{item?.quantity}</td>
-                  <td>{formatCurrency(item?.price)}</td>
-                  <td>{formatCurrency(item?.quantity * item?.price)}</td>
-                </tr>
-                </>)}
+                {product.promotion === null && (
+          <>
+          <tr>
+            <td>{index + 1}</td>
+            <td colSpan={4}>{product?.product?.name}</td>
+          </tr>
+          <tr>
+            <td></td>
+            <td>{product.unit_id.description}</td>
+            <td>{product?.quantity}</td>
+            <td>{formatCurrency(product?.price)}</td>
+            <td>{formatCurrency(product?.quantity * product?.price)}</td>
+          </tr>
+          </>
+          )}
+            {isGift && (
+               <>
+               <tr>
+              <td>{index + 1}</td>
+              <td colSpan={4}>{product?.product?.name}</td>
+            </tr>
+            <tr>
+            <td></td>
+              <td>{product.unit_id.description}</td>
+              <td>{formatCurrency(product.price)}</td>
+              <td>{product.quantity - product.quantity_donate}</td> {/* Số lượng mua thêm */}
+              <td>{formatCurrency(product.price * (product.quantity - product.quantity_donate))}</td> {/* Thành tiền cho số lượng mua thêm */}
+            </tr>
+            </>
+          )}
+           {product.promotion && product.promotion.promotionLine_id.type === 'quantity' && product.quantity_donate > 0 && (
+             <>
+            <tr className="promotion-row">
+             <td>KM</td>
+             <td colSpan={4}>{product?.promotion?.description} : {product?.product?.name}</td>
+          </tr>
+          <tr className="promotion-row">
+          <td></td>
+          <td>{product.unit_id.description}</td>
+              <td>{formatCurrency(0)}</td>
+              <td>{product.quantity_donate}</td>
+              <td>{formatCurrency(0)}</td>
+          </tr>
+          </>
+          )}
+          {product.promotion && product.promotion.promotionLine_id.type === 'amount' && product.quantity > 0 && (
+           
+             <>
+             <tr>
+             <td>{index + 1}</td>
+             <td colSpan={4}>{product?.promotion?.description} : {product?.product?.name}</td>
+          </tr>
+              <tr>
+              <td></td>
+              <td>{product.unit_id.description}</td>
+              <td>{formatCurrency(product.price)}</td>
+              <td>{product.quantity}</td>
+              <td>{formatCurrency(product.price * product.quantity)}</td>
+            </tr>
+            <tr className="promotion-row">
+            <td>KM</td>
+            <td colSpan={4}>{product?.promotion?.description} : {product?.product?.name}</td>
+          </tr>
+          <tr className="promotion-row">
+            <td></td>
+              <td>{product.unit_id.description}</td>
+              <td>-{formatCurrency(product.promotion.amount_donate)}</td> {/* Giá sau khi giảm */}
+              <td>{product.quantity}</td>
+              <td>-{formatCurrency((product.promotion.amount_donate) * product.quantity)}</td> {/* Thành tiền sau giảm */}
+            </tr>
+            </>
+          )}
               </React.Fragment>
-            ))}
+            )})}
           </tbody>
         </table>
       </section>

@@ -271,3 +271,24 @@ button:hover {
   justify-content: center;
  
 }
+.refund-reason-input {
+  width: 100%; 
+  height: 100px; 
+  padding: 10px;
+  font-size: 16px; 
+  
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box; 
+  resize: none;
+  outline: none;
+}
+
+.refund-reason-input:focus {
+  border-color: #007bff; 
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); 
+}
+
+.refund-reason-input::placeholder {
+  color: #888; 
+}

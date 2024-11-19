@@ -13,7 +13,6 @@ export default function Transaction() {
     const transactions = useSelector((state) => state.transaction?.transactions) || [];
     const sortedTransactions = [...transactions].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     const { getItemCodeProduct, getNameProduct, getUnitDescription } = useAddBill();
-
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [filters, setFilters] = useState({
         item_code: [],

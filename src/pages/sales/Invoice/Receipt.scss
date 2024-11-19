@@ -34,8 +34,13 @@
   margin: 15px 0;
 }
 
-.receipt table th,
+
 .receipt table td {
+  border: 1px solid #ddd;
+  padding: 8px 5px;
+  text-align: left;
+}
+.receipt table th {
   border: 1px solid #ddd;
   padding: 8px;
   text-align: left;
@@ -99,13 +104,17 @@
   #receiptToPrint table {
     width: 100%;
     border-collapse: collapse;
-    margin: 10px 0;
+    margin: 15px 0;
   }
 
-  #receiptToPrint table th,
   #receiptToPrint table td {
     border: 1px solid #ccc;
-    padding: 8px;
+    padding: 8px 5x;
+    text-align: left;
+  }
+  #receiptToPrint table th {
+    border: 1px solid #ccc;
+    padding: 10px;
     text-align: left;
   }
 
@@ -117,36 +126,15 @@
     text-align: center;
   }
 
-  #receiptToPrint table th:nth-child(1),
-  #receiptToPrint table td:nth-child(1) {
-    width: 10%;
-    /* Tăng chiều rộng của cột Tên sản phẩm */
-  }
+ 
 
-  /* Thiết lập chiều rộng cột */
-  #receiptToPrint table th:nth-child(2),
-  #receiptToPrint table td:nth-child(2) {
-    width: 40%;
-    /* Tăng chiều rộng của cột Tên sản phẩm */
-  }
+ 
 
-  #receiptToPrint table td th:nth-child(3),
-  #receiptToPrint table td:nth-child(3) {
-    width: 10%;
-    /* Tăng chiều rộng của cột Tên sản phẩm */
-  }
+  
 
-  #receiptToPrint table th:nth-child(4),
-  #receiptToPrint table td:nth-child(4) {
-    width: 10%;
-    /* Tăng chiều rộng của cột Tên sản phẩm */
-  }
+ 
 
-  #receiptToPrint table th:nth-child(5),
-  #receiptToPrint table td:nth-child(5) {
-    width: 10%;
-    /* Tăng chiều rộng của cột Tên sản phẩm */
-  }
+ 
 
   #receiptToPrint table td:nth-child(1) {
     text-align: center;
@@ -230,9 +218,14 @@
   border-collapse: collapse;
   margin-bottom: 20px;
 
-  th,
+ 
   td {
-    padding: 20px;
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+    font-size: 0.9em;
+  }
+  th {
     text-align: left;
     border: 1px solid #ddd;
     font-size: 0.9em;
@@ -245,24 +238,15 @@
     text-align: center;
   }
 
-  th:nth-child(1),
-  td:nth-child(1) {
-    width: 10%;
-    /* Tăng chiều rộng của cột Tên sản phẩm */
-  }
+  
 
   /* Thiết lập chiều rộng cột */
   th:nth-child(2),
   td:nth-child(2) {
-    width: 10%;
+    width:60px;
     /* Tăng chiều rộng của cột Tên sản phẩm */
   }
 
-  th:nth-child(3),
-  td:nth-child(3) {
-    width: 10%;
-    /* Tăng chiều rộng của cột Tên sản phẩm */
-  }
 
   th:nth-child(4),
   td:nth-child(4) {
