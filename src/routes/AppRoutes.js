@@ -36,6 +36,7 @@ import Stocktaking from '../containers/stocktaking/Stocktaking.js';
 import OrderOnline from '../pages/orderOnline/OrderOnline.js';
 import Refund from '../pages/payment/Refund.js';
 import InvoiceRefund from '../pages/invoiceRefund/InvoiceRefund.js';
+import DailyRevenue from '../pages/statistical/DailyRevenue.js';
 
 function AppRoutes() {
     return (
@@ -84,6 +85,10 @@ function AppRoutes() {
                         <Route path="invoice" element={<Invoice />} />
                         <Route path="refund-invoice" element={<InvoiceRefund />} />
                         <Route path="order-online" element={<OrderOnline />} />
+
+                        <Route path="statistical">
+                            <Route path="daily-revenue" element={<DailyRevenue />} />
+                        </Route>
                     </Route>
 
                     <Route path="/frame-staff" element={<FrameStaff />} />
