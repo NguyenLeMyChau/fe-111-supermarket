@@ -56,9 +56,23 @@ export default function DailyRevenue() {
         console.log('groupedInvoices:', groupedInvoices);
     }, [invoices, employeeAndManager]);
 
+    const parseDate = (dateString) => {
+        const [day, month, year] = dateString.split('/').map(Number); // Tách ngày, tháng, năm và chuyển thành số
+        return new Date(year, month - 1, day); // Tạo đối tượng Date (lưu ý tháng bắt đầu từ 0)
+    };
+
     const handleExportExcel = async () => {
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet('DoanhThuBanHang');
+
+        // Xác định ngày sớm nhất và ngày hiện tại
+        const currentDate = new Date();
+        const earliestDate = groupedData.length
+            ? new Date(Math.min(...groupedData.map(item => parseDate(item.createdAt).getTime())))
+            : currentDate;
+
+        const startDateToUse = startDate || earliestDate;
+        const endDateToUse = endDate || currentDate;
 
         // Thêm thông tin cửa hàng
         worksheet.mergeCells('A1:F1');
@@ -82,11 +96,11 @@ export default function DailyRevenue() {
 
         // Thêm thời gian lọc
         worksheet.mergeCells('A6:F6');
-        worksheet.getCell('A6').value = `Từ ngày: ${formatDateDDMMYYYY(startDate) || '---'} - Đến ngày: ${formatDateDDMMYYYY(endDate) || '---'}`;
+        worksheet.getCell('A6').value = `Từ ngày: ${formatDateDDMMYYYY(startDateToUse)} - Đến ngày: ${formatDateDDMMYYYY(endDateToUse)}`;
         worksheet.getCell('A6').alignment = { horizontal: 'center', vertical: 'middle' };
 
         // Thêm Header
-        const headers = ['Mã nhân viên', 'Tên nhân viên', 'Ngày', 'Chiết khấu', 'Doanh số trước CK', 'Doanh số sau CK'];
+        const headers = ['Mã nhân viên', 'Tên nhân viên', 'Ngày', 'Doanh số trước CK', 'Chiết khấu', 'Doanh số sau CK'];
         worksheet.addRow(headers).eachCell((cell) => {
             cell.font = { bold: true };
             cell.alignment = { horizontal: 'center', vertical: 'middle' };
@@ -97,16 +111,60 @@ export default function DailyRevenue() {
             };
         });
 
+        // Tính tổng
+        let totalDiscount = 0;
+        let totalRevenueBeforeDiscount = 0;
+        let totalRevenueAfterDiscount = 0;
+
         // Thêm dữ liệu
         groupedData.forEach((item) => {
-            worksheet.addRow([
+            const revenueBefore = item.totalRevenueBeforeDiscount || 0;
+            const discount = item.totalDiscount || 0;
+            const revenueAfter = item.totalRevenueAfterDiscount || 0;
+
+            totalRevenueBeforeDiscount += revenueBefore;
+            totalDiscount += discount;
+            totalRevenueAfterDiscount += revenueAfter;
+
+            const row = worksheet.addRow([
                 item.employeeId || '',
                 item.employee_name || '',
                 item.createdAt || '',
-                item.totalDiscount || 0,
-                item.totalRevenueBeforeDiscount || 0,
-                item.totalRevenueAfterDiscount || 0,
+                formatCurrency(revenueBefore),
+                formatCurrency(discount),
+                formatCurrency(revenueAfter),
             ]);
+
+            // Căn phải cho các cột tiền
+            row.getCell(4).alignment = { horizontal: 'right' };
+            row.getCell(5).alignment = { horizontal: 'right' };
+            row.getCell(6).alignment = { horizontal: 'right' };
+
+        });
+
+        // Thêm dòng tổng cộng
+        worksheet.addRow([]);
+        const totalRow = worksheet.addRow([
+            'Tổng cộng',
+            '',
+            '',
+            formatCurrency(totalRevenueBeforeDiscount),
+            formatCurrency(totalDiscount),
+            formatCurrency(totalRevenueAfterDiscount),
+
+
+        ]);
+
+        totalRow.eachCell((cell, colNumber) => {
+            if (colNumber > 3) {
+                cell.font = { bold: true };
+                cell.alignment = { horizontal: 'right', vertical: 'middle' };
+                cell.fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'FFDDDDDD' },
+                };
+            }
         });
 
         // Định dạng cột
@@ -114,8 +172,8 @@ export default function DailyRevenue() {
             { width: 15 }, // Mã nhân viên
             { width: 25 }, // Tên nhân viên
             { width: 15 }, // Ngày
-            { width: 15 }, // Chiết khấu
             { width: 20 }, // Doanh số trước CK
+            { width: 15 }, // Chiết khấu
             { width: 20 }, // Doanh số sau CK
         ];
 
@@ -124,6 +182,7 @@ export default function DailyRevenue() {
         const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
         saveAs(blob, `DoanhThuBanHang_${new Date().toISOString().slice(0, 10)}.xlsx`);
     };
+
 
 
     const handleFilter = () => {
