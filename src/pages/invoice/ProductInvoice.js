@@ -7,6 +7,9 @@ export default function ProductInvoice({ isModalOpen, closeModal, products, sele
     console.log('selectedInvoice', selectedInvoice)
     const user = useSelector((state) => state.auth?.login?.currentUser?.user);
     const employees = useSelector((state) => state.employee?.employees) || [];
+    const promotions = useSelector((state) => state.promotion?.promotions) || [];
+    console.log('promotions', promotions);
+
 
     // Lọc thông tin nhân viên dựa vào employee_id
     let employee = employees.find(emp => emp._id === selectedInvoice?.employee_id);
@@ -82,8 +85,8 @@ export default function ProductInvoice({ isModalOpen, closeModal, products, sele
                                 <tr>
                                     <th>Phương thức thanh toán:</th>
                                     <td>{selectedInvoice.paymentMethod}</td>
-                                    <th>Tổng tiền:</th>
-                                    <td>{formatCurrency(selectedInvoice.paymentAmount)}</td>
+                                    <th>Ngày đặt hàng:</th>
+                                    <td>{formatDate(selectedInvoice.createdAt)}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -103,8 +106,8 @@ export default function ProductInvoice({ isModalOpen, closeModal, products, sele
                                     <th>Tên sản phẩm</th>
                                     <th>Đơn vị</th>
                                     <th style={{ textAlign: 'center' }}>Số lượng</th>
-                                    <th style={{ textAlign: 'center' }}>Giá gốc</th>
-                                    <th style={{ textAlign: 'center' }}>Giá tổng</th>
+                                    <th style={{ textAlign: 'center' }}>Đơn giá</th>
+                                    <th style={{ textAlign: 'center' }}>Thành tiền</th>
                                     <th style={{ textAlign: 'center' }}>Khuyến mãi</th>
                                 </tr>
                             </thead>
@@ -139,6 +142,22 @@ export default function ProductInvoice({ isModalOpen, closeModal, products, sele
                         </table>
                     )}
                 </div>
+
+                <div className="invoice-payment-container">
+                    <div className="invoice-payment">
+                        <div className="label">TỔNG TIỀN:</div>
+                        <div className="value">{formatCurrency(selectedInvoice.paymentAmount)}</div>
+                    </div>
+                    <div className="invoice-payment">
+                        <div className="label">GIẢM GIÁ:</div>
+                        <div className="value">0đ</div>
+                    </div>
+                    <div className="invoice-payment">
+                        <div className="label">TỔNG THANH TOÁN:</div>
+                        <div className="value">{formatCurrency(selectedInvoice.paymentAmount)}</div>
+                    </div>
+                </div>
+
             </div>
 
         </Modal>
