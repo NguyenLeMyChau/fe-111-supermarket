@@ -41,6 +41,28 @@ export default function DailyRevenue() {
         }, {});
     };
 
+    const groupInvoicesEmployee = (invoicesList) => {
+        return invoicesList.reduce((groups, invoice) => {
+            if (!invoice.employeeId) return groups;
+            const groupKey = `${invoice.employeeId}`;
+            if (!groups[groupKey]) {
+                groups[groupKey] = {
+                    employeeId: invoice.employeeId,
+                    createdAt: formatDateDDMMYYYY(invoice.createdAt),
+                    totalDiscount: 0,
+                    totalRevenueBeforeDiscount: 0,
+                    totalRevenueAfterDiscount: 0,
+                    data: [],
+                };
+            }
+            groups[groupKey].totalDiscount += invoice.discountPayment || 0;
+            groups[groupKey].totalRevenueBeforeDiscount += invoice.totalPayment || 0;
+            groups[groupKey].totalRevenueAfterDiscount += invoice.paymentAmount || 0;
+            groups[groupKey].data.push(invoice);
+            return groups;
+        }, {});
+    };
+
 
     // Group invoices by employeeId and createdAt by default
     useEffect(() => {
@@ -54,6 +76,8 @@ export default function DailyRevenue() {
 
         setGroupedData(sortedGroupedData); // Set the grouped data by default
         console.log('groupedInvoices:', groupedInvoices);
+        const groupedInvoicesEmployee = groupInvoicesEmployee(sortedGroupedData);
+        console.log('groupedInvoicesEmployee:', groupedInvoicesEmployee);
     }, [invoices, employeeAndManager]);
 
     const parseDate = (dateString) => {
