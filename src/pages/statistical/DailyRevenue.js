@@ -5,6 +5,8 @@ import Select from 'react-select';
 import { FaPrint } from 'react-icons/fa';
 import FrameData from '../../containers/frameData/FrameData';
 import { formatDateDDMMYYYY } from '../../utils/fotmatDate';
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 export default function DailyRevenue() {
     const employeeAndManager = useSelector((state) => state.employee?.employeeAndManager) || [];
@@ -46,6 +48,76 @@ export default function DailyRevenue() {
         setGroupedData(Object.values(groupedInvoices)); // Set the grouped data by default
         console.log('groupedInvoices:', groupedInvoices);
     }, [invoices, employeeAndManager]);
+
+    const handleExportExcel = async () => {
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('DoanhThuBanHang');
+
+        // Thêm thông tin cửa hàng
+        worksheet.mergeCells('A1:F1');
+        worksheet.getCell('A1').value = 'Tên cửa hàng: Siêu thị CAPY SMART';
+        worksheet.getCell('A1').alignment = { horizontal: 'center', vertical: 'middle' };
+        worksheet.getCell('A1').font = { bold: true, size: 12 };
+
+        worksheet.mergeCells('A2:F2');
+        worksheet.getCell('A2').value = 'Địa chỉ: 14 Nguyễn Văn Bảo, Phường 14, Quận Gò Vấp, TPHCM';
+        worksheet.getCell('A2').alignment = { horizontal: 'center', vertical: 'middle' };
+
+        worksheet.mergeCells('A3:F3');
+        worksheet.getCell('A3').value = `Ngày in: ${formatDateDDMMYYYY(new Date().toLocaleDateString())}`;
+        worksheet.getCell('A3').alignment = { horizontal: 'center', vertical: 'middle' };
+
+        // Thêm tiêu đề chính
+        worksheet.mergeCells('A5:F5');
+        worksheet.getCell('A5').value = 'Doanh số bán hàng theo ngày';
+        worksheet.getCell('A5').alignment = { horizontal: 'center', vertical: 'middle' };
+        worksheet.getCell('A5').font = { bold: true, size: 14 };
+
+        // Thêm thời gian lọc
+        worksheet.mergeCells('A6:F6');
+        worksheet.getCell('A6').value = `Từ ngày: ${formatDateDDMMYYYY(startDate) || '---'} - Đến ngày: ${formatDateDDMMYYYY(endDate) || '---'}`;
+        worksheet.getCell('A6').alignment = { horizontal: 'center', vertical: 'middle' };
+
+        // Thêm Header
+        const headers = ['Mã nhân viên', 'Tên nhân viên', 'Ngày', 'Chiết khấu', 'Doanh số trước CK', 'Doanh số sau CK'];
+        worksheet.addRow(headers).eachCell((cell) => {
+            cell.font = { bold: true };
+            cell.alignment = { horizontal: 'center', vertical: 'middle' };
+            cell.fill = {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: 'FFFF00' },
+            };
+        });
+
+        // Thêm dữ liệu
+        groupedData.forEach((item) => {
+            worksheet.addRow([
+                item.employeeId || '',
+                item.employee_name || '',
+                item.createdAt || '',
+                item.totalDiscount || 0,
+                item.totalRevenueBeforeDiscount || 0,
+                item.totalRevenueAfterDiscount || 0,
+            ]);
+        });
+
+        // Định dạng cột
+        worksheet.columns = [
+            { width: 15 }, // Mã nhân viên
+            { width: 25 }, // Tên nhân viên
+            { width: 15 }, // Ngày
+            { width: 15 }, // Chiết khấu
+            { width: 20 }, // Doanh số trước CK
+            { width: 20 }, // Doanh số sau CK
+        ];
+
+        // Xuất file
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        saveAs(blob, `DoanhThuBanHang_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    };
+
 
     const handleFilter = () => {
         console.log('Lọc với:', { selectedEmployee, startDate, endDate });
@@ -188,7 +260,7 @@ export default function DailyRevenue() {
                     <button onClick={handleResetFilter} className="reset-button">
                         Hủy Lọc
                     </button>
-                    <button onClick={handleFilter} className="print-button">
+                    <button onClick={handleExportExcel} className="print-button">
                         <FaPrint className="print-icon" /> In
                     </button>
                 </div>
