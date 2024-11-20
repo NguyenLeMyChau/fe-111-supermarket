@@ -87,6 +87,7 @@ export default function Invoice() {
     ];
 
     const handleRowClick = (invoice) => {
+        console.log('invoice', invoice);
         const invoiceProducts = Array.isArray(invoice.details) ? invoice.details : [];
         setProducts(invoiceProducts);
         setSelectedInvoice(invoice);

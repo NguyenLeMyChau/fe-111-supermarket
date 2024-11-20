@@ -86,3 +86,23 @@
         height: 50px;
     }
 }
+
+.invoice-payment-container {
+    width: 100%;
+}
+
+.invoice-payment {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    margin: 0px 20px;
+}
+
+.invoice-payment .label {
+    font-weight: bold;
+}
+
+.invoice-payment .value {
+    text-align: right;
+}
