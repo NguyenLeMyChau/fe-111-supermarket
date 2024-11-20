@@ -5,7 +5,7 @@ import { loginSuccess } from '../store/reducers/authSlice';
 import { getAllSuppliers } from '../services/supplierRequest';
 import { useLocation, useNavigate } from 'react-router';
 import { getAllCategories, getAllProducts } from '../services/productRequest';
-import { getAllCustomer, getAllEmployees } from '../services/employeeRequest';
+import { getAllCustomer, getAllEmployeeAndManager, getAllEmployees } from '../services/employeeRequest';
 import { getAllPromotions } from '../services/promotionRequest';
 import { getAllBill, getAllStocktaking, getAllTransaction, getAllWarehouse } from '../services/warehouseRequest';
 import { getAllUnit } from '../services/unitRequest';
@@ -37,6 +37,7 @@ const useCommonData = () => {
         '/admin/transaction': getAllTransaction,
         '/admin/stocktaking': getAllStocktaking,
         '/admin/order-online': getAllInvoices,
+        '/admin/statistical/daily-revenue': getAllEmployeeAndManager,
     }), []);
 
     useEffect(() => {

@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
     employees: null,
+    employeeAndManager: null,
     isFetching: false,
     error: false,
 };
@@ -28,8 +29,30 @@ const employeeSlice = createSlice({
             state.isFetching = false;
             state.error = false;
         },
+        getEmployeeAndManagerStart(state) {
+            state.isFetching = true;
+            state.error = false;
+        },
+        getEmployeeAndManagerSuccess(state, action) {
+            state.employeeAndManager = action.payload;
+            state.isFetching = false;
+            state.error = false;
+        },
+        getEmployeeAndManagerFailed(state) {
+            state.isFetching = false;
+            state.error = true;
+        }
+
     }
 });
 
-export const { getEmployeeStart, getEmployeeSuccess, getEmployeeFailed, resetEmployee } = employeeSlice.actions;
+export const {
+    getEmployeeStart,
+    getEmployeeSuccess,
+    getEmployeeFailed,
+    resetEmployee,
+    getEmployeeAndManagerStart,
+    getEmployeeAndManagerSuccess,
+    getEmployeeAndManagerFailed
+} = employeeSlice.actions;
 export default employeeSlice.reducer;
