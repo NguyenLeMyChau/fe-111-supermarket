@@ -146,11 +146,11 @@ export default function ProductInvoice({ isModalOpen, closeModal, products, sele
                 <div className="invoice-payment-container">
                     <div className="invoice-payment">
                         <div className="label">TỔNG TIỀN:</div>
-                        <div className="value">{formatCurrency(selectedInvoice.paymentAmount)}</div>
+                        <div className="value">{formatCurrency(selectedInvoice.totalPayment)}</div>
                     </div>
                     <div className="invoice-payment">
                         <div className="label">GIẢM GIÁ:</div>
-                        <div className="value">0đ</div>
+                        <div className="value">{formatCurrency(selectedInvoice.discountPayment)}</div>
                     </div>
                     <div className="invoice-payment">
                         <div className="label">TỔNG THANH TOÁN:</div>
