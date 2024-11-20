@@ -63,7 +63,56 @@ const addProductToCart = async (accessToken, axiosJWT, accountId, productId, uni
         alert('Thêm sản phẩm vào giỏ hàng thất bại ', error);
     }
 }
+const checkPaymentStatus = async (axiosJWT,appTransId) => {
+    try {
+      const response = await axiosJWT.post(`/api/zalo-pay/order-status/${appTransId}`);
+      console.log(response);
+      return response.data;
 
+    //   if (response.data.return_code === 1) {
+    //     setPaymentStatus("Thanh toán thành công!");
+    //   } else {
+    //     setPaymentStatus("Thanh toán thất bại.");
+    //   }
+    } catch (error) {
+      console.error("Error checking payment status:", error);
+    }
+  };
+
+const payZalo = async (accessToken, axiosJWT, amount,employee, customerId, products, paymentMethod, paymentInfo, paymentAmount,promotionOnInvoice) => {
+    try {
+      const response = await axiosJWT.post(`/api/zalo-pay/payment`, {
+        amount
+      }, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+  
+      console.log(response.data);
+      const paymentLink = response.data.order_url;
+        const paymentData = {
+            employee,
+            customerId,
+            products,
+            paymentMethod,
+            paymentInfo,
+            paymentAmount,
+            promotionOnInvoice
+        };
+        localStorage.setItem("paymentData", JSON.stringify(paymentData)); 
+  
+      // Chuyển hướng đến trang thanh toán của ZaloPay
+      window.location.href = paymentLink;
+  
+      // Trả về dữ liệu phản hồi để xử lý sau khi thanh toán thành công
+   
+    } catch (error) {
+      console.error('Pay cart failed:', error);
+      return null; // Trả về null hoặc xử lý lỗi nếu có
+    }
+  };
+  
 const payCart = async ( accessToken, axiosJWT,employee, customerId, products, paymentMethod, paymentInfo, paymentAmount,promotionOnInvoice) => {
     try {
         console.log(employee,customerId, products, paymentMethod, paymentInfo, paymentAmount)
@@ -257,5 +306,7 @@ export {
     getInvoiceById,
     getInvoiceLast,
     refundCart,
-    getInvoiceRefundById
+    getInvoiceRefundById,
+    payZalo,
+    checkPaymentStatus
 }

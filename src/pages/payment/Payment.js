@@ -8,9 +8,11 @@ import {
 } from "../../store/reducers/productPaySlice";
 import axios from "axios";
 import {
+  checkPaymentStatus,
   getPromotionByProductId,
   getPromotions,
   payCart,
+  payZalo,
 } from "../../services/cartRequest";
 import ModalComponent from "../../components/modal/Modal";
 import { green } from "@mui/material/colors";
@@ -46,6 +48,8 @@ const Payment = () => {
   const [ineligiblePromotions, setIneligiblePromotions] = useState([]);
   const currentUser = useSelector((state) => state.auth.login?.currentUser);
   const [dataInvoices, setDataInvoices] = useState();
+  const urlParams = new URLSearchParams(window.location.search);
+  const [loading,setIsLoading]=useState(false);
 
   const [isPaid, setIsPaid] = useState(false);
 
@@ -142,7 +146,7 @@ const Payment = () => {
                   const eligibleQuantity = Math.floor(
                     product.quantity / promotion.quantity
                   );
-                  const donateProductExists = productList.some(
+                  const donateProductExists = productList.find(
                     (p) =>
                       p._id === promotion.product_donate &&
                       p.unit._id === promotion.unit_id_donate._id
@@ -155,7 +159,7 @@ const Payment = () => {
                   if (!donateProductExists) {
                     // Thêm vào danh sách không đủ điều kiện
                     ineligible.push({
-                      ...donateProductExists,
+                      ...product,
                       promotion,
                       requiredQuantity: promotion.quantity_donate,
                     });
@@ -183,7 +187,7 @@ const Payment = () => {
                       p.unit._id === promotion.unit_id._id
                   );
                   const eligibleQuantity = Math.floor(
-                    promotionProductExists.quantity / promotion.quantity
+                    promotionProductExists?.quantity / promotion.quantity
                   );
                   console.log(
                     "Eligible Quantity (donate product):",
@@ -193,7 +197,7 @@ const Payment = () => {
 
                   if (!promotionProductExists || eligibleQuantity < 1) {
                     ineligible.push({
-                      ...promotionProductExists,
+                      ...product,
                       promotion,
                       requiredQuantity: promotion.quantity,
                     });
@@ -305,11 +309,94 @@ const Payment = () => {
     navigate("/frame-staff/stall");
   };
 
+  useEffect(() => {
+    const fetchPaymentStatus = async () => {
+      // setIsLoading(true);
+      const urlParams = new URLSearchParams(window.location.search);
+      const appTransId = urlParams.get("apptransid");
+      console.log("App Transaction ID:", appTransId);
+  
+      if (appTransId) {
+        try {
+          // Gửi yêu cầu kiểm tra trạng thái thanh toán
+          const responseCheck = await checkPaymentStatus(axiosJWT, appTransId);
+          console.log("Response Check:", responseCheck);
+          if (responseCheck.return_code === 1) {
+            const cartData = JSON.parse(localStorage.getItem("paymentData"));
+          console.log(cartData)
+            if (!cartData) {
+              
+              return;
+            }
+            const {
+              customerId,
+              products,
+              paymentMethod,
+              paymentInfo,
+              paymentAmount,
+              promotionOnInvoice
+            } = cartData;
+            const response = await payCart(
+              accessToken,
+              axiosJWT,
+              currentUser.user,
+              customerId,
+              products,
+              paymentMethod,
+              paymentInfo,
+              paymentAmount,
+              promotionOnInvoice
+            );
+            if (response?.success) {
+              alert("Thanh toán thành công!");
+              
+              setIsPaid(true);
+              setDataInvoices(response.data);
+              localStorage.removeItem("paymentData");
+            } else {
+              alert(response?.message || "Thanh toán thất bại!");
+            }
+          }
+        } catch (error) {
+          console.error("Lỗi khi kiểm tra trạng thái thanh toán:", error);
+          alert("Không thể kiểm tra trạng thái thanh toán.");
+        }
+      }
+    };
+  
+    fetchPaymentStatus(); // Gọi hàm khi trang được tải
+  }, [
+   
+  ]);
+  
+  
   // Xử lý thanh toán
+  
   const handlePayment = async () => {
+    const isConfirmed = window.confirm("Bạn có chắc chắn thanh toán");
+  if (!isConfirmed) return;
+    if(paymentMethod === "ZaloPay"){
+      try {
+      const response = await payZalo(
+          accessToken,
+          axiosJWT,
+         discountedTotal,
+         currentUser.user,
+         customer?.account_id,
+         productWithPromotions,
+         paymentMethod,
+         paymentInfo,
+         discountedTotal,
+         appliedPromotion
+        );
+        console.log("pay cart zalo response:", response);
+     
+      } catch (error) {
+        console.error("Payment error:", error);
+        alert("Có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại.");
+      }
+    }
     if (paymentMethod === "Tiền mặt") {
-      const isConfirmed = window.confirm("Bạn có chắc chắn thanh toán");
-      if (!isConfirmed) return;
       if (customerPaid < discountedTotal) {
         alert("Số tiền trả không đủ.");
         return;
@@ -326,7 +413,7 @@ const Payment = () => {
           discountedTotal,
           appliedPromotion
         );
-        console.log("pay cart response:", response.data);
+        console.log("pay cart response:", response);
         if (response?.success) {
           alert("Thanh toán thành công!");
           setIsPaid(true);
@@ -545,6 +632,8 @@ const Payment = () => {
                 className="payment-button"
                 key={num}
                 onClick={() => handleKeyPress(num)}
+                disabled={paymentMethod!=="Tiền mặt"}
+                style={{ backgroundColor: paymentMethod !== "Tiền mặt" ? "gray" : "pink" }}
               >
                 {num}
               </button>
@@ -552,11 +641,13 @@ const Payment = () => {
             <button
               className="payment-button"
               onClick={() => handleKeyPress(0)}
+              style={{ backgroundColor: paymentMethod !== "Tiền mặt" ? "gray" : "pink" }}
             >
               0
             </button>
             <button
               className="payment-button"
+              style={{ backgroundColor: paymentMethod !== "Tiền mặt" ? "gray" : "pink" }}
               onClick={() => {
                 handleKeyPress(0);
                 handleKeyPress(0);
@@ -566,6 +657,7 @@ const Payment = () => {
             </button>
             <button
               className="payment-button"
+              style={{ backgroundColor: paymentMethod !== "Tiền mặt" ? "gray" : "pink" }}
               onClick={() => {
                 handleKeyPress(0);
                 handleKeyPress(0);
@@ -574,10 +666,10 @@ const Payment = () => {
             >
               000
             </button>
-            <button className="payment-button" onClick={handleDelete}>
+            <button className="payment-button" onClick={handleDelete}  style={{ backgroundColor: paymentMethod !== "Tiền mặt" ? "gray" : "pink" }}>
               ⌫
             </button>
-            <button className="payment-button" onClick={handleClear}>
+            <button className="payment-button" onClick={handleClear}  style={{ backgroundColor: paymentMethod !== "Tiền mặt" ? "gray" : "pink" }}>
               C
             </button>
             <button
@@ -603,7 +695,7 @@ const Payment = () => {
           invoiceId={dataInvoices.invoiceCode}
         />
       )}
-      <ModalComponent
+      {urlParams.size>0 &&<ModalComponent
         title={"Sản phẩm không đủ điều kiện khuyến mãi"}
         isOpen={showIneligibleModal}
         onRequestClose={closeModal}
@@ -615,7 +707,7 @@ const Payment = () => {
               <thead>
                 <tr>
                   <th>Tên sản phẩm</th>
-                  <th>Đơn vị</th>
+                 
 
                   <th>Tên chương trình khuyến mãi</th>
                 </tr>
@@ -624,7 +716,7 @@ const Payment = () => {
                 {ineligiblePromotions.map((product, index) => (
                   <tr key={index}>
                     <td>{product.name}</td>
-                    <td>{product.unit?.description}</td>
+                
                     <td>{product.promotion?.description}</td>
                   </tr>
                 ))}
@@ -633,7 +725,7 @@ const Payment = () => {
             <button onClick={closeModal}>Đóng</button>
           </div>
         </div>
-      </ModalComponent>
+      </ModalComponent>}
     </div>
   );
 };
