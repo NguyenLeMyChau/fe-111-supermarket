@@ -79,7 +79,8 @@ const checkPaymentStatus = async (axiosJWT,appTransId) => {
     }
   };
 
-const payZalo = async (accessToken, axiosJWT, amount,employee, customerId, products, paymentMethod, paymentInfo, paymentAmount,promotionOnInvoice) => {
+const payZalo = async (accessToken, axiosJWT, amount,employee, customerId, products, paymentMethod, paymentInfo, paymentAmount,promotionOnInvoice,discountPayment,
+    totalPayment) => {
     try {
       const response = await axiosJWT.post(`/api/zalo-pay/payment`, {
         amount
@@ -98,7 +99,9 @@ const payZalo = async (accessToken, axiosJWT, amount,employee, customerId, produ
             paymentMethod,
             paymentInfo,
             paymentAmount,
-            promotionOnInvoice
+            promotionOnInvoice,
+            discountPayment,
+            totalPayment
         };
         localStorage.setItem("paymentData", JSON.stringify(paymentData)); 
   
@@ -113,7 +116,8 @@ const payZalo = async (accessToken, axiosJWT, amount,employee, customerId, produ
     }
   };
   
-const payCart = async ( accessToken, axiosJWT,employee, customerId, products, paymentMethod, paymentInfo, paymentAmount,promotionOnInvoice) => {
+const payCart = async ( accessToken, axiosJWT,employee, customerId, products, paymentMethod, paymentInfo, paymentAmount,promotionOnInvoice,discountPayment,
+    totalPayment) => {
     try {
         console.log(employee,customerId, products, paymentMethod, paymentInfo, paymentAmount)
         const response = await axiosJWT.post(`/api/auth/pay-cart-web`, {
@@ -123,7 +127,9 @@ const payCart = async ( accessToken, axiosJWT,employee, customerId, products, pa
             paymentMethod,
             paymentInfo,
             paymentAmount,
-            promotionOnInvoice
+            promotionOnInvoice,
+            discountPayment,
+            totalPayment
         }, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,

@@ -334,7 +334,9 @@ const Payment = () => {
               paymentMethod,
               paymentInfo,
               paymentAmount,
-              promotionOnInvoice
+              promotionOnInvoice,
+              discountPayment,
+              totalPayment
             } = cartData;
             const response = await payCart(
               accessToken,
@@ -345,7 +347,9 @@ const Payment = () => {
               paymentMethod,
               paymentInfo,
               paymentAmount,
-              promotionOnInvoice
+              promotionOnInvoice,
+              discountPayment,
+              totalPayment
             );
             if (response?.success) {
               alert("Thanh toán thành công!");
@@ -369,7 +373,6 @@ const Payment = () => {
    
   ]);
   
-  
   // Xử lý thanh toán
   
   const handlePayment = async () => {
@@ -387,7 +390,9 @@ const Payment = () => {
          paymentMethod,
          paymentInfo,
          discountedTotal,
-         appliedPromotion
+         appliedPromotion,
+         totalAmount-discountedTotal,
+         totalAmount
         );
         console.log("pay cart zalo response:", response);
      
@@ -411,7 +416,9 @@ const Payment = () => {
           paymentMethod,
           paymentInfo,
           discountedTotal,
-          appliedPromotion
+          appliedPromotion,
+          totalAmount-discountedTotal,
+          totalAmount
         );
         console.log("pay cart response:", response);
         if (response?.success) {
