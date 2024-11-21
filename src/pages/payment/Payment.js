@@ -41,7 +41,7 @@ const Payment = () => {
   const [customerPaid, setCustomerPaid] = useState(null);
   const [paymentMethod, setPaymentMethod] = useState("Tiền mặt");
   const [productWithPromotions, setProductWithPromotions] = useState([]);
-  const change = customerPaid > totalAmount ? customerPaid - totalAmount : 0;
+  const change = customerPaid > discountedTotal  ? customerPaid - discountedTotal : 0;
   const [showIneligibleModal, setShowIneligibleModal] = useState(false); // State to show/hide modal
   const [discountedTotal, setDiscountedTotal] = useState(totalAmount || 0);
   const [appliedPromotion, setAppliedPromotion] = useState(null);
