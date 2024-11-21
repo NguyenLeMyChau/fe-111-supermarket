@@ -148,8 +148,8 @@ console.log(data);
           <tr>
             <td></td>
             <td>{product.unit_id.description}</td>
-            <td>{product?.quantity}</td>
             <td>{formatCurrency(product?.price)}</td>
+            <td>{product?.quantity}</td>
             <td>{formatCurrency(product?.quantity * product?.price)}</td>
           </tr>
           </>
