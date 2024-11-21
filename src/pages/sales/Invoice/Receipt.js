@@ -163,7 +163,7 @@ console.log(data);
             <tr>
             <td></td>
               <td>{product.unit_id.description}</td>
-              <td>{formatCurrency(product.price)}</td>
+              <td>{formatCurrency(product?.price)}</td>
               <td>{product.quantity - product.quantity_donate}</td> {/* Số lượng mua thêm */}
               <td>{formatCurrency(product.price * (product.quantity - product.quantity_donate))}</td> {/* Thành tiền cho số lượng mua thêm */}
             </tr>
