@@ -5,6 +5,7 @@ import Select from 'react-select';
 import { FaPrint } from 'react-icons/fa';
 import FrameData from '../../containers/frameData/FrameData';
 import { formatCurrency, formatDateDDMMYYYY } from '../../utils/fotmatDate';
+import { width } from '@mui/system';
 
 export default function ReportCustomer() {
     const customers = useSelector((state) => state.customer?.customers) || [];
@@ -47,7 +48,9 @@ export default function ReportCustomer() {
             invoice.invoices.forEach(({ customer_id, details, discountPayment }) => {
                 // Nếu chưa có dữ liệu cho khách hàng này, khởi tạo
                 if (!result[customer_id]) {
-                    result[customer_id] = {};
+                    result[customer_id] = {
+                        customerInfo: customer_id
+                    };
                 }
 
                 // // Tính tổng giá trị trước chiết khấu của hóa đơn con
@@ -87,6 +90,14 @@ export default function ReportCustomer() {
         }, {});
     };
 
+    const transformTotalToArray = (total) => {
+        const { customerInfo, ...items } = total; // Tách customerInfo và các sản phẩm
+        return Object.entries(items).map(([itemCode, values]) => ({
+            customerInfo,
+            itemCode,
+            ...values,
+        }));
+    };
 
     // Group invoices by employeeId and createdAt by default
     useEffect(() => {
@@ -101,17 +112,65 @@ export default function ReportCustomer() {
         console.log('groupedInvoices:', groupedInvoices);
 
         const total = calculateTotal(sortedGroupedData);
-        setGroupedData(total);
         console.log('total:', total);
+        const transformedData = Object.values(total).flatMap(transformTotalToArray); // Chuyển đổi thành mảng
+        setGroupedData(transformedData); // Cập nhật groupedData
+        console.log('transformedData:', transformedData);
     }, [invoices, customers]);
 
     const invoiceColumns = [
-        { title: 'Mã khách hàng', dataIndex: 'employeeId', key: 'employeeId', width: '15%' },
-        { title: 'Tên khách hàng', dataIndex: 'employee_name', key: 'employee_name', width: '20%' },
+        {
+            title: 'Mã khách hàng', dataIndex: 'employeeId', key: 'employeeId', width: '10%',
+            render: (text, record) => {
+                const customer = customers.find((cus) => cus.account_id === record.customerInfo);
+                return customer ? customer.phone : '';
+            }
+        },
+        {
+            title: 'Tên khách hàng', dataIndex: 'employee_name', key: 'employee_name', width: '15%',
+            render: (text, record) => {
+                const customer = customers.find((cus) => cus.account_id === record.customerInfo);
+                return customer ? customer.name : '';
+            }
+        },
+        {
+            title: 'Địa chỉ', dataIndex: 'street', key: 'street', width: '10%',
+            render: (text, record) => {
+                const customer = customers.find((cus) => cus.account_id === record.customerInfo);
+                return customer ? customer.address.street : '';
+            }
+        },
+        {
+            title: 'Phường/Xã', dataIndex: 'ward', key: 'ward', width: '20%',
+            render: (text, record) => {
+                const customer = customers.find((cus) => cus.account_id === record.customerInfo);
+                return customer ? customer.address.ward : '';
+            }
+        },
+        {
+            title: 'Quận/Huyện', dataIndex: 'district', key: 'district', width: '20%',
+            render: (text, record) => {
+                const customer = customers.find((cus) => cus.account_id === record.customerInfo);
+                return customer ? customer.address.district : '';
+            }
+        },
+        {
+            title: 'Tỉnh/Thành', dataIndex: 'city', key: 'city', width: '20%',
+            render: (text, record) => {
+                const customer = customers.find((cus) => cus.account_id === record.customerInfo);
+                return customer ? customer.address.city : '';
+            }
+        },
+        {
+            title: 'Mã hàng',
+            dataIndex: 'itemCode',
+            key: 'itemCode',
+            width: '10%'
+        },
         {
             title: 'Doanh số trước CK',
-            dataIndex: 'totalRevenueBeforeDiscount',
-            key: 'totalRevenueBeforeDiscount',
+            dataIndex: 'totalBeforePrice',
+            key: 'totalBeforePrice',
             width: '15%',
             className: 'text-right',
             render: (value) => formatCurrency(value)
@@ -122,7 +181,7 @@ export default function ReportCustomer() {
         },
         {
             title: 'Doanh số sau CK', className: 'text-right',
-            dataIndex: 'totalRevenueAfterDiscount', key: 'totalRevenueAfterDiscount', width: '15%', render: (value) => formatCurrency(value)
+            dataIndex: 'totalAfterPrice', key: 'totalAfterPrice', width: '15%', render: (value) => formatCurrency(value)
         },
     ];
 
@@ -163,7 +222,11 @@ export default function ReportCustomer() {
             </div>
 
             <div>
-                <h1>Doanh số theo khách hàng</h1>
+                <FrameData
+                    title="Thống kê doanh thu theo khách hàng"
+                    data={groupedData}
+                    columns={invoiceColumns}
+                />
             </div>
         </div>
     )
