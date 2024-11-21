@@ -114,7 +114,7 @@ const useMenuItems = (onchange) => {
                     text: "Thống kê",
                     subItems: [
                         { Icon: MdOutlineToday, label: "ReportDay", text: "DSBH ngày", path: '/admin/statistical/daily-revenue' },
-                        { Icon: IoPersonCircleOutline, label: "ReportCustomer", text: "DSBH KH", path: '/admin/customer' },
+                        { Icon: IoPersonCircleOutline, label: "ReportCustomer", text: "DSBH KH", path: '/admin/statistical/report-customer' },
                         { Icon: PiInvoice, label: "ReportPromotion", text: "Khuyến mãi", path: '/admin/invoice' },
                     ]
                 },

@@ -37,6 +37,7 @@ import OrderOnline from '../pages/orderOnline/OrderOnline.js';
 import Refund from '../pages/payment/Refund.js';
 import InvoiceRefund from '../pages/invoiceRefund/InvoiceRefund.js';
 import DailyRevenue from '../pages/statistical/DailyRevenue.js';
+import ReportCustomer from '../pages/statistical/ReportCustomer.js';
 
 function AppRoutes() {
     return (
@@ -88,6 +89,7 @@ function AppRoutes() {
 
                         <Route path="statistical">
                             <Route path="daily-revenue" element={<DailyRevenue />} />
+                            <Route path="report-customer" element={<ReportCustomer />} />
                         </Route>
                     </Route>
 

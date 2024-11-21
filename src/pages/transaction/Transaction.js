@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import FrameData from '../../containers/frameData/FrameData';
 import { formatDate } from '../../utils/fotmatDate';
@@ -11,7 +11,6 @@ import Button from '../../components/button/Button';
 
 export default function Transaction() {
     const transactions = useSelector((state) => state.transaction?.transactions) || [];
-    const sortedTransactions = [...transactions].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     const { getItemCodeProduct, getNameProduct, getUnitDescription } = useAddBill();
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [filters, setFilters] = useState({
@@ -20,7 +19,14 @@ export default function Transaction() {
         startDate: '',
         endDate: '',
     });
-    const [filteredTransactions, setFilteredTransactions] = useState(sortedTransactions);
+    const [sortedTransactions, setSortedTransactions] = useState([]);
+    const [filteredTransactions, setFilteredTransactions] = useState([]);
+
+    useEffect(() => {
+        const sorted = [...transactions].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setSortedTransactions(sorted);
+        setFilteredTransactions(sorted);
+    }, [transactions]);
 
     const transactionColumn = [
         { title: 'Mã hàng', dataIndex: 'product_id', key: 'product_item_code', width: '10%', render: (product_id) => getItemCodeProduct(product_id) },
