@@ -393,7 +393,7 @@ export default function ReportCustomer() {
                         Lọc
                     </button>
                     <button className="reset-button" onClick={handleResetFilter}>
-                        Hủy Lọc
+                        Hủy
                     </button>
                     <button className="print-button" onClick={handleExportExcel}>
                         <FaPrint className="print-icon" /> In

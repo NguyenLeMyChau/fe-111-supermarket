@@ -15,14 +15,20 @@ export default function ReportInvoiceRefund() {
 
     console.log('invoices', invoices);
 
-    const [selectedEmployee, setSelectedEmployee] = useState(null);
+    const [selectedInvoice, setSelectedInvoice] = useState(null);
+    const [selectedInvoiceSale, setSelectedInvoiceSale] = useState(null);
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [groupedData, setGroupedData] = useState([]); // state for grouped data
 
-    const employeeOptions = customers.map((customer) => ({
-        value: customer.account_id,
-        label: customer.phone,
+    const invoiceOptions = invoices.map((invoice) => ({
+        value: invoice._id,
+        label: invoice.invoiceCode,
+    }));
+
+    const invoiceSaleOptions = invoices.map((invoice) => ({
+        value: invoice.invoiceCodeSale,
+        label: invoice.invoiceCodeSale,
     }));
 
     const transformInvoicesToDetailsArray = (invoices) => {
@@ -42,6 +48,137 @@ export default function ReportInvoiceRefund() {
         setGroupedData(transformedData); // Cập nhật groupedData
         console.log('transformedData:', transformedData);
     }, [invoices]);
+
+    const handleFilter = () => {
+        console.log('Lọc với:', { selectedInvoice, selectedInvoiceSale, startDate, endDate });
+
+        // Filter invoices based on selected employee and date range
+        const filteredInvoices = invoices
+            .filter((invoice) => {
+                const isInvoiceMatch = selectedInvoice ? invoice.customer_id === selectedInvoice.value : true;
+                const isInvoiceSaleMatch = selectedInvoiceSale ? invoice.customer_id === selectedInvoiceSale.value : true;
+                const isStartDateMatch = startDate ? formatDateDDMMYYYY(invoice.createdAt) >= formatDateDDMMYYYY(startDate) : true;
+                const isEndDateMatch = endDate ? formatDateDDMMYYYY(invoice.createdAt) <= formatDateDDMMYYYY(endDate) : true;
+                return isInvoiceMatch && isInvoiceSaleMatch && isStartDateMatch && isEndDateMatch;
+            });
+        console.log('filteredInvoices:', filteredInvoices);
+
+        const transformedData = transformInvoicesToDetailsArray(invoices);
+        setGroupedData(transformedData); // Cập nhật groupedData
+    };
+
+    const handleResetFilter = () => {
+        setSelectedInvoice(null);
+        setSelectedInvoiceSale(null);
+        setStartDate('');
+        setEndDate('');
+        console.log('Đã hủy lọc');
+        setGroupedData([]); // Reset grouped data if needed
+
+        const transformedData = transformInvoicesToDetailsArray(invoices);
+        setGroupedData(transformedData); // Cập nhật groupedData
+    };
+
+    const handleExportExcel = async () => {
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('BangKeChiTietHangHoaDonTraHang');
+
+        // Xác định ngày sớm nhất và ngày hiện tại
+        const currentDate = new Date();
+        // const earliestDate = groupedData.length
+        //     ? new Date(Math.min(...groupedData.map(item => parseDate(item.createdAt).getTime())))
+        //     : currentDate;
+
+        const startDateToUse = startDate || currentDate;
+        const endDateToUse = endDate || currentDate;
+
+        // Thêm thông tin cửa hàng
+        worksheet.mergeCells('A1:I1');
+        worksheet.getCell('A1').value = 'Tên cửa hàng: Siêu thị CAPY SMART';
+        worksheet.getCell('A1').alignment = { horizontal: 'center', vertical: 'middle' };
+        worksheet.getCell('A1').font = { bold: true, size: 12 };
+
+        worksheet.mergeCells('A2:I2');
+        worksheet.getCell('A2').value = 'Địa chỉ: 14 Nguyễn Văn Bảo, Phường 14, Quận Gò Vấp, TPHCM';
+        worksheet.getCell('A2').alignment = { horizontal: 'center', vertical: 'middle' };
+
+        worksheet.mergeCells('A3:I3');
+        worksheet.getCell('A3').value = `Ngày in: ${formatDateDDMMYYYY(new Date().toLocaleDateString())}`;
+        worksheet.getCell('A3').alignment = { horizontal: 'center', vertical: 'middle' };
+
+        // Thêm tiêu đề chính
+        worksheet.mergeCells('A5:I5');
+        worksheet.getCell('A5').value = 'Bảng kê chi tiết hàng hoá đơn trả hàng';
+        worksheet.getCell('A5').alignment = { horizontal: 'center', vertical: 'middle' };
+        worksheet.getCell('A5').font = { bold: true, size: 14 };
+
+        // Thêm thời gian lọc
+        worksheet.mergeCells('A6:I6');
+        worksheet.getCell('A6').value = `Từ ngày: ${formatDateDDMMYYYY(startDateToUse)} - Đến ngày: ${formatDateDDMMYYYY(endDateToUse)}`;
+        worksheet.getCell('A6').alignment = { horizontal: 'center', vertical: 'middle' };
+
+        // Thêm Header
+        const headers = [
+            'Hoá đơn mua',
+            'Ngày đơn hàng mua',
+            'Hoá đơn trả',
+            'Ngày đơn hàng trả',
+            'Mã hàng',
+            'Tên sản phẩm',
+            'Đơn vị tính',
+            'Số lượng',
+            'Doanh thu'
+        ];
+        worksheet.addRow(headers).eachCell((cell) => {
+            cell.font = { bold: true };
+            cell.alignment = { horizontal: 'center', vertical: 'middle' };
+            cell.fill = {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: 'FFFF00' },
+            };
+        });
+
+        // Thêm dữ liệu
+        groupedData.forEach((item) => {
+            const invoice = invoicesSale.find((inv) => inv.invoiceCode === item.invoiceCodeSale);
+
+            const row = worksheet.addRow([
+                item.invoiceCodeSale || '',
+                invoice ? formatDateDDMMYYYY(invoice.createdAt) : '',
+                item.invoiceCode || '',
+                formatDateDDMMYYYY(item.createdAt),
+                item.item_code || '',
+                item.productName || '',
+                item.unit ? item.unit.description : '',
+                item.quantity || 0,
+                formatCurrency(item.total),
+            ]);
+
+            // Căn phải cho các cột tiền
+            row.getCell(8).alignment = { horizontal: 'center' };
+            row.getCell(9).alignment = { horizontal: 'right' };
+        });
+
+
+        // Định dạng cột
+        worksheet.columns = [
+            { width: 15 }, // Mã nhân viên
+            { width: 15 }, // Tên nhân viên
+            { width: 15 }, // Ngày
+            { width: 15 }, // Ngày
+            { width: 25 }, // Doanh số trước CK
+            { width: 15 }, // Doanh số trước CK
+            { width: 15 }, // Chiết khấu
+            { width: 15 }, // Chiết khấu
+            { width: 20 }, // Doanh số sau CK
+        ];
+
+        // Xuất file
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        saveAs(blob, `BangKeChiTietHangHoaDonTraHang_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    };
 
     const invoiceColumns = [
         {
@@ -98,13 +235,32 @@ export default function ReportInvoiceRefund() {
 
                 <div className='filter-row'>
                     <div className='filter-item'>
-                        <label htmlFor="customer">Mã khách hàng:</label>
+                        <label htmlFor="customer">Mã hoá đơn bán:</label>
                         <Select
                             id="customer"
-                            options={employeeOptions}
-                            value={selectedEmployee}
-                            onChange={setSelectedEmployee}
-                            placeholder="Chọn khách hàng"
+                            options={invoiceSaleOptions}
+                            value={selectedInvoiceSale}
+                            onChange={setSelectedInvoiceSale}
+                            placeholder="Chọn"
+                            menuPortalTarget={document.body}
+                            styles={{
+                                control: (provided) => ({
+                                    ...provided,
+                                    minWidth: '200px',
+                                }),
+                                menuPortal: base => ({ ...base, zIndex: 9999, width: 200 }),
+                            }}
+                        />
+                    </div>
+
+                    <div className='filter-item'>
+                        <label htmlFor="customer">Mã hoá đơn trả:</label>
+                        <Select
+                            id="customer"
+                            options={invoiceOptions}
+                            value={selectedInvoice}
+                            onChange={setSelectedInvoice}
+                            placeholder="Chọn"
                             menuPortalTarget={document.body}
                             styles={{
                                 control: (provided) => ({
@@ -135,13 +291,19 @@ export default function ReportInvoiceRefund() {
                         />
                     </div>
 
-                    <button className="filter-button">
+                    <button className="filter-button" style={{ marginLeft: -20, fontSize: 14 }}
+                        onClick={handleFilter}
+                    >
                         Lọc
                     </button>
-                    <button className="reset-button">
-                        Hủy Lọc
+                    <button className="reset-button" style={{ fontSize: 14 }}
+                        onClick={handleResetFilter}
+                    >
+                        Hủy
                     </button>
-                    <button className="print-button">
+                    <button className="print-button" style={{ fontSize: 14 }}
+                        onClick={handleExportExcel}
+                    >
                         <FaPrint className="print-icon" /> In
                     </button>
                 </div>
