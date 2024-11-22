@@ -5,12 +5,14 @@ import Select from 'react-select';
 import { FaPrint } from 'react-icons/fa';
 import FrameData from '../../containers/frameData/FrameData';
 import { formatCurrency, formatDateDDMMYYYY } from '../../utils/fotmatDate';
-import { width } from '@mui/system';
+import ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 export default function ReportCustomer() {
     const customers = useSelector((state) => state.customer?.customers) || [];
     const invoices = useSelector((state) => state.invoice?.invoices) || [];
 
+    const [selectedEmployee, setSelectedEmployee] = useState(null);
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [groupedData, setGroupedData] = useState([]); // state for grouped data
@@ -118,6 +120,159 @@ export default function ReportCustomer() {
         console.log('transformedData:', transformedData);
     }, [invoices, customers]);
 
+    const handleFilter = () => {
+        console.log('Lọc với:', { selectedEmployee, startDate, endDate });
+
+        // Filter invoices based on selected employee and date range
+        const filteredInvoices = invoices
+            .filter((invoice) => {
+                const isEmployeeMatch = selectedEmployee ? invoice.customer_id === selectedEmployee.value : true;
+                const isStartDateMatch = startDate ? formatDateDDMMYYYY(invoice.createdAt) >= formatDateDDMMYYYY(startDate) : true;
+                const isEndDateMatch = endDate ? formatDateDDMMYYYY(invoice.createdAt) <= formatDateDDMMYYYY(endDate) : true;
+                return isEmployeeMatch && isStartDateMatch && isEndDateMatch;
+            });
+        console.log('filteredInvoices:', filteredInvoices);
+
+        const groupedInvoices = groupInvoices(filteredInvoices);
+
+        // Sắp xếp dữ liệu đã nhóm theo khóa `${invoice.employee_id}-${formatDateDDMMYYYY(invoice.createdAt)}`
+        const sortedGroupedData = Object.values(groupedInvoices).sort((a, b) => {
+            const keyA = `${a.employeeId}-${a.createdAt}`;
+            const keyB = `${b.employeeId}-${b.createdAt}`;
+            return keyA.localeCompare(keyB);
+        });
+
+        const total = calculateTotal(sortedGroupedData);
+        console.log('total:', total);
+        const transformedData = Object.values(total).flatMap(transformTotalToArray); // Chuyển đổi thành mảng
+        setGroupedData(transformedData); // Cập nhật groupedData
+    };
+
+    const handleResetFilter = () => {
+        setSelectedEmployee(null);
+        setStartDate('');
+        setEndDate('');
+        console.log('Đã hủy lọc');
+        setGroupedData([]); // Reset grouped data if needed
+
+        const groupedInvoices = groupInvoices(invoices);
+
+        // Sắp xếp dữ liệu đã nhóm theo khóa `${invoice.employee_id}-${formatDateDDMMYYYY(invoice.createdAt)}`
+        const sortedGroupedData = Object.values(groupedInvoices).sort((a, b) => {
+            const keyA = `${a.employeeId}-${a.createdAt}`;
+            const keyB = `${b.employeeId}-${b.createdAt}`;
+            return keyA.localeCompare(keyB);
+        });
+
+        const total = calculateTotal(sortedGroupedData);
+        console.log('total:', total);
+        const transformedData = Object.values(total).flatMap(transformTotalToArray); // Chuyển đổi thành mảng
+        setGroupedData(transformedData); // Cập nhật groupedData
+    };
+
+    const parseDate = (dateString) => {
+        const [day, month, year] = dateString.split('/').map(Number); // Tách ngày, tháng, năm và chuyển thành số
+        return new Date(year, month - 1, day); // Tạo đối tượng Date (lưu ý tháng bắt đầu từ 0)
+    };
+
+    const handleExportExcel = async () => {
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('DoanhThuBanHangKhachHang');
+
+        // Xác định ngày sớm nhất và ngày hiện tại
+        const currentDate = new Date();
+        // const earliestDate = groupedData.length
+        //     ? new Date(Math.min(...groupedData.map(item => parseDate(item.createdAt).getTime())))
+        //     : currentDate;
+
+        const startDateToUse = startDate || currentDate;
+        const endDateToUse = endDate || currentDate;
+
+        // Thêm thông tin cửa hàng
+        worksheet.mergeCells('A1:F1');
+        worksheet.getCell('A1').value = 'Tên cửa hàng: Siêu thị CAPY SMART';
+        worksheet.getCell('A1').alignment = { horizontal: 'center', vertical: 'middle' };
+        worksheet.getCell('A1').font = { bold: true, size: 12 };
+
+        worksheet.mergeCells('A2:F2');
+        worksheet.getCell('A2').value = 'Địa chỉ: 14 Nguyễn Văn Bảo, Phường 14, Quận Gò Vấp, TPHCM';
+        worksheet.getCell('A2').alignment = { horizontal: 'center', vertical: 'middle' };
+
+        worksheet.mergeCells('A3:F3');
+        worksheet.getCell('A3').value = `Ngày in: ${formatDateDDMMYYYY(new Date().toLocaleDateString())}`;
+        worksheet.getCell('A3').alignment = { horizontal: 'center', vertical: 'middle' };
+
+        // Thêm tiêu đề chính
+        worksheet.mergeCells('A5:F5');
+        worksheet.getCell('A5').value = 'Doanh số theo khách hàng';
+        worksheet.getCell('A5').alignment = { horizontal: 'center', vertical: 'middle' };
+        worksheet.getCell('A5').font = { bold: true, size: 14 };
+
+        // Thêm thời gian lọc
+        worksheet.mergeCells('A6:F6');
+        worksheet.getCell('A6').value = `Từ ngày: ${formatDateDDMMYYYY(startDateToUse)} - Đến ngày: ${formatDateDDMMYYYY(endDateToUse)}`;
+        worksheet.getCell('A6').alignment = { horizontal: 'center', vertical: 'middle' };
+
+        // Thêm Header
+        const headers = ['Mã khách hàng', 'Tên khách hàng', 'Địa chỉ', 'Phường/Xã', 'Quận/Huyện', 'Tỉnh/Thành', 'Mã hàng', 'Doanh số trước CK', 'Chiết khấu', 'Doanh số sau CK'];
+        worksheet.addRow(headers).eachCell((cell) => {
+            cell.font = { bold: true };
+            cell.alignment = { horizontal: 'center', vertical: 'middle' };
+            cell.fill = {
+                type: 'pattern',
+                pattern: 'solid',
+                fgColor: { argb: 'FFFF00' },
+            };
+        });
+
+        // Thêm dữ liệu
+        groupedData.forEach((item) => {
+            const customer = customers.find((cus) => cus.account_id === item.customerInfo);
+
+            const revenueBefore = item.totalBeforePrice || 0;
+            const discount = item.totalDiscount || 0;
+            const revenueAfter = item.totalAfterPrice || 0;
+
+            const row = worksheet.addRow([
+                customer.phone || '',
+                customer.name || '',
+                customer.address.street || '',
+                customer.address.ward || '',
+                customer.address.district || '',
+                customer.address.city || '',
+                item.itemCode || '',
+                formatCurrency(revenueBefore),
+                formatCurrency(discount),
+                formatCurrency(revenueAfter),
+            ]);
+
+            // Căn phải cho các cột tiền
+            row.getCell(7).alignment = { horizontal: 'right' };
+            row.getCell(8).alignment = { horizontal: 'right' };
+            row.getCell(9).alignment = { horizontal: 'right' };
+
+        });
+
+
+        // Định dạng cột
+        worksheet.columns = [
+            { width: 15 }, // Mã nhân viên
+            { width: 25 }, // Tên nhân viên
+            { width: 20 }, // Ngày
+            { width: 20 }, // Ngày
+            { width: 20 }, // Ngày
+            { width: 20 }, // Ngày
+            { width: 20 }, // Doanh số trước CK
+            { width: 15 }, // Chiết khấu
+            { width: 20 }, // Doanh số sau CK
+        ];
+
+        // Xuất file
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        saveAs(blob, `DoanhThuBanHangKhachHang_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    };
+
     const invoiceColumns = [
         {
             title: 'Mã khách hàng', dataIndex: 'employeeId', key: 'employeeId', width: '10%',
@@ -185,11 +340,36 @@ export default function ReportCustomer() {
         },
     ];
 
+    const employeeOptions = customers.map((customer) => ({
+        value: customer.account_id,
+        label: customer.phone,
+    }));
+
     return (
         <div className='statistical-page'>
             <div className='filter-statistical'>
                 <h3>Lọc doanh số theo khách hàng</h3>
+
                 <div className='filter-row'>
+                    <div className='filter-item'>
+                        <label htmlFor="customer">Mã khách hàng:</label>
+                        <Select
+                            id="customer"
+                            options={employeeOptions}
+                            value={selectedEmployee}
+                            onChange={setSelectedEmployee}
+                            placeholder="Chọn khách hàng"
+                            menuPortalTarget={document.body}
+                            styles={{
+                                control: (provided) => ({
+                                    ...provided,
+                                    minWidth: '200px',
+                                }),
+                                menuPortal: base => ({ ...base, zIndex: 9999, width: 200 }),
+                            }}
+                        />
+                    </div>
+
                     <div className='filter-item'>
                         <label htmlFor="start-date">Ngày bắt đầu:</label>
                         <input
@@ -209,13 +389,13 @@ export default function ReportCustomer() {
                         />
                     </div>
 
-                    <button className="filter-button">
+                    <button className="filter-button" onClick={handleFilter}>
                         Lọc
                     </button>
-                    <button className="reset-button">
+                    <button className="reset-button" onClick={handleResetFilter}>
                         Hủy Lọc
                     </button>
-                    <button className="print-button">
+                    <button className="print-button" onClick={handleExportExcel}>
                         <FaPrint className="print-icon" /> In
                     </button>
                 </div>
