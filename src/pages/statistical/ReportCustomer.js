@@ -278,7 +278,7 @@ export default function ReportCustomer() {
             title: 'Mã khách hàng', dataIndex: 'employeeId', key: 'employeeId', width: '10%',
             render: (text, record) => {
                 const customer = customers.find((cus) => cus.account_id === record.customerInfo);
-                return customer ? customer.phone : '';
+                return customer ? customer.customer_id : '';
             }
         },
         {
@@ -289,28 +289,28 @@ export default function ReportCustomer() {
             }
         },
         {
-            title: 'Địa chỉ', dataIndex: 'street', key: 'street', width: '10%',
+            title: 'Địa chỉ', dataIndex: 'street', key: 'street', width: '20%',
             render: (text, record) => {
                 const customer = customers.find((cus) => cus.account_id === record.customerInfo);
                 return customer ? customer.address.street : '';
             }
         },
         {
-            title: 'Phường/Xã', dataIndex: 'ward', key: 'ward', width: '20%',
+            title: 'Phường/Xã', dataIndex: 'ward', key: 'ward', width: '15%',
             render: (text, record) => {
                 const customer = customers.find((cus) => cus.account_id === record.customerInfo);
                 return customer ? customer.address.ward : '';
             }
         },
         {
-            title: 'Quận/Huyện', dataIndex: 'district', key: 'district', width: '20%',
+            title: 'Quận/Huyện', dataIndex: 'district', key: 'district', width: '15%',
             render: (text, record) => {
                 const customer = customers.find((cus) => cus.account_id === record.customerInfo);
                 return customer ? customer.address.district : '';
             }
         },
         {
-            title: 'Tỉnh/Thành', dataIndex: 'city', key: 'city', width: '20%',
+            title: 'Tỉnh/Thành', dataIndex: 'city', key: 'city', width: '15%',
             render: (text, record) => {
                 const customer = customers.find((cus) => cus.account_id === record.customerInfo);
                 return customer ? customer.address.city : '';
@@ -342,7 +342,7 @@ export default function ReportCustomer() {
 
     const employeeOptions = customers.map((customer) => ({
         value: customer.account_id,
-        label: customer.phone,
+        label: customer.customer_id,
     }));
 
     return (
