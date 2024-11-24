@@ -9,7 +9,6 @@ import ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
 export default function ReportInvoiceRefund() {
-    const customers = useSelector((state) => state.customer?.customers) || [];
     const invoices = useSelector((state) => state.invoice?.invoiceRefund) || [];
     const invoicesSale = useSelector((state) => state.invoice?.invoices) || [];
 
@@ -22,7 +21,7 @@ export default function ReportInvoiceRefund() {
     const [groupedData, setGroupedData] = useState([]); // state for grouped data
 
     const invoiceOptions = invoices.map((invoice) => ({
-        value: invoice._id,
+        value: invoice.invoiceCode,
         label: invoice.invoiceCode,
     }));
 
@@ -55,15 +54,15 @@ export default function ReportInvoiceRefund() {
         // Filter invoices based on selected employee and date range
         const filteredInvoices = invoices
             .filter((invoice) => {
-                const isInvoiceMatch = selectedInvoice ? invoice.customer_id === selectedInvoice.value : true;
-                const isInvoiceSaleMatch = selectedInvoiceSale ? invoice.customer_id === selectedInvoiceSale.value : true;
+                const isInvoiceMatch = selectedInvoice ? invoice.invoiceCode === selectedInvoice.value : true;
+                const isInvoiceSaleMatch = selectedInvoiceSale ? invoice.invoiceCodeSale === selectedInvoiceSale.value : true;
                 const isStartDateMatch = startDate ? formatDateDDMMYYYY(invoice.createdAt) >= formatDateDDMMYYYY(startDate) : true;
                 const isEndDateMatch = endDate ? formatDateDDMMYYYY(invoice.createdAt) <= formatDateDDMMYYYY(endDate) : true;
                 return isInvoiceMatch && isInvoiceSaleMatch && isStartDateMatch && isEndDateMatch;
             });
         console.log('filteredInvoices:', filteredInvoices);
 
-        const transformedData = transformInvoicesToDetailsArray(invoices);
+        const transformedData = transformInvoicesToDetailsArray(filteredInvoices);
         setGroupedData(transformedData); // Cập nhật groupedData
     };
 
@@ -79,17 +78,21 @@ export default function ReportInvoiceRefund() {
         setGroupedData(transformedData); // Cập nhật groupedData
     };
 
+    const parseDate = (dateString) => {
+        const [day, month, year] = dateString.split('/').map(Number); // Tách ngày, tháng, năm và chuyển thành số
+        return new Date(year, month - 1, day); // Tạo đối tượng Date (lưu ý tháng bắt đầu từ 0)
+    };
+
     const handleExportExcel = async () => {
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet('BangKeChiTietHangHoaDonTraHang');
 
         // Xác định ngày sớm nhất và ngày hiện tại
         const currentDate = new Date();
-        // const earliestDate = groupedData.length
-        //     ? new Date(Math.min(...groupedData.map(item => parseDate(item.createdAt).getTime())))
-        //     : currentDate;
-
-        const startDateToUse = startDate || currentDate;
+        const earliestDate = groupedData.length
+            ? new Date(Math.min(...groupedData.map(item => parseDate(formatDateDDMMYYYY(item.createdAt)).getTime())))
+            : currentDate;
+        const startDateToUse = startDate || earliestDate;
         const endDateToUse = endDate || currentDate;
 
         // Thêm thông tin cửa hàng
@@ -139,9 +142,14 @@ export default function ReportInvoiceRefund() {
             };
         });
 
+        //Tính tổng
+        let total = 0;
+
         // Thêm dữ liệu
         groupedData.forEach((item) => {
             const invoice = invoicesSale.find((inv) => inv.invoiceCode === item.invoiceCodeSale);
+
+            total += item.total;
 
             const row = worksheet.addRow([
                 item.invoiceCodeSale || '',
@@ -158,6 +166,33 @@ export default function ReportInvoiceRefund() {
             // Căn phải cho các cột tiền
             row.getCell(8).alignment = { horizontal: 'center' };
             row.getCell(9).alignment = { horizontal: 'right' };
+        });
+
+        // Thêm dòng tổng cộng
+        worksheet.addRow([]);
+        const totalRow = worksheet.addRow([
+            'Tổng cộng',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            formatCurrency(total),
+
+        ]);
+
+        totalRow.eachCell((cell, colNumber) => {
+            if (colNumber > 8) {
+                cell.font = { bold: true };
+                cell.alignment = { horizontal: 'right', vertical: 'middle' };
+                cell.fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'FFDDDDDD' },
+                };
+            }
         });
 
 
@@ -273,7 +308,7 @@ export default function ReportInvoiceRefund() {
                     </div>
 
                     <div className='filter-item'>
-                        <label htmlFor="start-date">Ngày bắt đầu:</label>
+                        <label htmlFor="start-date">Ngày bắt đầu trả:</label>
                         <input
                             type="date"
                             id="start-date"
@@ -282,7 +317,7 @@ export default function ReportInvoiceRefund() {
                         />
                     </div>
                     <div className='filter-item'>
-                        <label htmlFor="end-date">Ngày kết thúc:</label>
+                        <label htmlFor="end-date">Ngày kết thúc trả:</label>
                         <input
                             type="date"
                             id="end-date"

@@ -11,6 +11,7 @@ import { saveAs } from 'file-saver';
 export default function ReportCustomer() {
     const customers = useSelector((state) => state.customer?.customers) || [];
     const invoices = useSelector((state) => state.invoice?.invoices) || [];
+    const units = useSelector((state) => state.unit?.units) || [];
 
     const [selectedEmployee, setSelectedEmployee] = useState(null);
     const [startDate, setStartDate] = useState('');
@@ -47,44 +48,49 @@ export default function ReportCustomer() {
     const calculateTotal = (data) => {
         return data.reduce((result, invoice) => {
             // Duyệt qua từng phần tử trong mảng `invoices` của hóa đơn
-            invoice.invoices.forEach(({ customer_id, details, discountPayment }) => {
+            invoice.invoices.forEach(({ customer_id, details, discountPayment, totalPayment }) => {
                 // Nếu chưa có dữ liệu cho khách hàng này, khởi tạo
                 if (!result[customer_id]) {
                     result[customer_id] = {
-                        customerInfo: customer_id
+                        customerInfo: customer_id,
+                        items: [] // Danh sách các item
                     };
                 }
 
-                // // Tính tổng giá trị trước chiết khấu của hóa đơn con
-                // const totalBeforeDiscount = details.reduce(
-                //     (sum, { price, quantity }) => sum + price * quantity,
-                //     0
-                // );
 
                 // Duyệt qua từng sản phẩm trong `details`
-                details.forEach(({ item_code, price, total, quantity }) => {
-                    // Nếu chưa có dữ liệu cho item_code này, khởi tạo
-                    if (!result[customer_id][item_code]) {
-                        result[customer_id][item_code] = {
-                            totalQuantity: 0,
-                            totalBeforePrice: 0,
-                            totalAfterPrice: 0,
-                            totalDiscount: 0
-                        };
+                details.forEach(({ item_code, unit_id, price, total, quantity, quantity_donate }) => {
+
+                    // Tìm item trong danh sách nếu đã tồn tại
+                    const existingItem = result[customer_id].items.find(
+                        (item) => item.item_code === item_code && item.unit_id === unit_id
+                    );
+
+                    let totalValue = (quantity - quantity_donate) * price;
+
+                    // Tính giá trị chiết khấu nếu discountPayment > 0
+                    let discountValue = 0;
+                    if (discountPayment > 0 && totalPayment > 0) {
+                        discountValue = discountPayment * (total / totalPayment);
                     }
 
-                    // Cộng dồn số lượng và tổng giá trị
-                    result[customer_id][item_code].totalQuantity += quantity;
-                    result[customer_id][item_code].totalBeforePrice += price * quantity;
-                    result[customer_id][item_code].totalAfterPrice += total;
-                    result[customer_id][item_code].totalDiscount += price * quantity - total;
-
-                    // // Tính tỷ lệ chiết khấu và cộng dồn vào tổng chiết khấu
-                    // if (totalBeforeDiscount > 0) {
-                    //     const itemProportion = (price * quantity) / totalBeforeDiscount;
-                    //     const itemDiscount = itemProportion * discountPayment;
-                    //     result[customer_id][item_code].totalDiscount += itemDiscount;
-                    // }
+                    if (existingItem) {
+                        // Cập nhật nếu đã tồn tại
+                        existingItem.totalQuantity += quantity;
+                        existingItem.totalBeforePrice += price * quantity + discountValue;
+                        existingItem.totalAfterPrice += total;
+                        existingItem.totalDiscount += price * quantity - total + discountValue;
+                    } else {
+                        // Thêm mới nếu chưa tồn tại
+                        result[customer_id].items.push({
+                            item_code,
+                            unit_id,
+                            totalQuantity: quantity,
+                            totalBeforePrice: price * quantity + discountValue,
+                            totalAfterPrice: total,
+                            totalDiscount: price * quantity - total + discountValue
+                        });
+                    }
                 });
             });
 
@@ -92,13 +98,20 @@ export default function ReportCustomer() {
         }, {});
     };
 
+
     const transformTotalToArray = (total) => {
-        const { customerInfo, ...items } = total; // Tách customerInfo và các sản phẩm
-        return Object.entries(items).map(([itemCode, values]) => ({
-            customerInfo,
-            itemCode,
-            ...values,
-        }));
+        console.log('total transformTotalToArray:', total);
+        return Object.values(total).flatMap(({ customerInfo, items }) =>
+            (items || []).map(({ item_code, unit_id, totalQuantity, totalBeforePrice, totalAfterPrice, totalDiscount }) => ({
+                customerInfo,
+                item_code,
+                unit_id,
+                totalQuantity,
+                totalBeforePrice,
+                totalAfterPrice,
+                totalDiscount,
+            }))
+        );
     };
 
     // Group invoices by employeeId and createdAt by default
@@ -115,7 +128,7 @@ export default function ReportCustomer() {
 
         const total = calculateTotal(sortedGroupedData);
         console.log('total:', total);
-        const transformedData = Object.values(total).flatMap(transformTotalToArray); // Chuyển đổi thành mảng
+        const transformedData = transformTotalToArray(total); // Chuyển đổi thành mảng
         setGroupedData(transformedData); // Cập nhật groupedData
         console.log('transformedData:', transformedData);
     }, [invoices, customers]);
@@ -144,7 +157,7 @@ export default function ReportCustomer() {
 
         const total = calculateTotal(sortedGroupedData);
         console.log('total:', total);
-        const transformedData = Object.values(total).flatMap(transformTotalToArray); // Chuyển đổi thành mảng
+        const transformedData = transformTotalToArray(total); // Chuyển đổi thành mảng
         setGroupedData(transformedData); // Cập nhật groupedData
     };
 
@@ -166,13 +179,8 @@ export default function ReportCustomer() {
 
         const total = calculateTotal(sortedGroupedData);
         console.log('total:', total);
-        const transformedData = Object.values(total).flatMap(transformTotalToArray); // Chuyển đổi thành mảng
+        const transformedData = transformTotalToArray(total); // Chuyển đổi thành mảng
         setGroupedData(transformedData); // Cập nhật groupedData
-    };
-
-    const parseDate = (dateString) => {
-        const [day, month, year] = dateString.split('/').map(Number); // Tách ngày, tháng, năm và chuyển thành số
-        return new Date(year, month - 1, day); // Tạo đối tượng Date (lưu ý tháng bắt đầu từ 0)
     };
 
     const handleExportExcel = async () => {
@@ -189,27 +197,27 @@ export default function ReportCustomer() {
         const endDateToUse = endDate || currentDate;
 
         // Thêm thông tin cửa hàng
-        worksheet.mergeCells('A1:F1');
+        worksheet.mergeCells('A1:J1');
         worksheet.getCell('A1').value = 'Tên cửa hàng: Siêu thị CAPY SMART';
         worksheet.getCell('A1').alignment = { horizontal: 'center', vertical: 'middle' };
         worksheet.getCell('A1').font = { bold: true, size: 12 };
 
-        worksheet.mergeCells('A2:F2');
+        worksheet.mergeCells('A2:J2');
         worksheet.getCell('A2').value = 'Địa chỉ: 14 Nguyễn Văn Bảo, Phường 14, Quận Gò Vấp, TPHCM';
         worksheet.getCell('A2').alignment = { horizontal: 'center', vertical: 'middle' };
 
-        worksheet.mergeCells('A3:F3');
+        worksheet.mergeCells('A3:J3');
         worksheet.getCell('A3').value = `Ngày in: ${formatDateDDMMYYYY(new Date().toLocaleDateString())}`;
         worksheet.getCell('A3').alignment = { horizontal: 'center', vertical: 'middle' };
 
         // Thêm tiêu đề chính
-        worksheet.mergeCells('A5:F5');
+        worksheet.mergeCells('A5:J5');
         worksheet.getCell('A5').value = 'Doanh số theo khách hàng';
         worksheet.getCell('A5').alignment = { horizontal: 'center', vertical: 'middle' };
         worksheet.getCell('A5').font = { bold: true, size: 14 };
 
         // Thêm thời gian lọc
-        worksheet.mergeCells('A6:F6');
+        worksheet.mergeCells('A6:J6');
         worksheet.getCell('A6').value = `Từ ngày: ${formatDateDDMMYYYY(startDateToUse)} - Đến ngày: ${formatDateDDMMYYYY(endDateToUse)}`;
         worksheet.getCell('A6').alignment = { horizontal: 'center', vertical: 'middle' };
 
@@ -225,6 +233,11 @@ export default function ReportCustomer() {
             };
         });
 
+        // Tính tổng
+        let totalDiscount = 0;
+        let totalRevenueBeforeDiscount = 0;
+        let totalRevenueAfterDiscount = 0;
+
         // Thêm dữ liệu
         groupedData.forEach((item) => {
             const customer = customers.find((cus) => cus.account_id === item.customerInfo);
@@ -232,6 +245,10 @@ export default function ReportCustomer() {
             const revenueBefore = item.totalBeforePrice || 0;
             const discount = item.totalDiscount || 0;
             const revenueAfter = item.totalAfterPrice || 0;
+
+            totalRevenueBeforeDiscount += revenueBefore;
+            totalDiscount += discount;
+            totalRevenueAfterDiscount += revenueAfter;
 
             const row = worksheet.addRow([
                 customer.phone || '',
@@ -253,6 +270,33 @@ export default function ReportCustomer() {
 
         });
 
+        // Thêm dòng tổng cộng
+        worksheet.addRow([]);
+        const totalRow = worksheet.addRow([
+            'Tổng cộng',
+            '',
+            '',
+            '',
+            '',
+            '',
+            '',
+            formatCurrency(totalRevenueBeforeDiscount),
+            formatCurrency(totalDiscount),
+            formatCurrency(totalRevenueAfterDiscount),
+
+        ]);
+
+        totalRow.eachCell((cell, colNumber) => {
+            if (colNumber > 7) {
+                cell.font = { bold: true };
+                cell.alignment = { horizontal: 'right', vertical: 'middle' };
+                cell.fill = {
+                    type: 'pattern',
+                    pattern: 'solid',
+                    fgColor: { argb: 'FFDDDDDD' },
+                };
+            }
+        });
 
         // Định dạng cột
         worksheet.columns = [
@@ -262,9 +306,9 @@ export default function ReportCustomer() {
             { width: 20 }, // Ngày
             { width: 20 }, // Ngày
             { width: 20 }, // Ngày
-            { width: 20 }, // Doanh số trước CK
-            { width: 15 }, // Chiết khấu
-            { width: 20 }, // Doanh số sau CK
+            { width: 25 }, // Doanh số trước CK
+            { width: 20 }, // Chiết khấu
+            { width: 25 }, // Doanh số sau CK
         ];
 
         // Xuất file
@@ -318,9 +362,16 @@ export default function ReportCustomer() {
         },
         {
             title: 'Mã hàng',
-            dataIndex: 'itemCode',
-            key: 'itemCode',
+            dataIndex: 'item_code',
+            key: 'item_code',
             width: '10%'
+        },
+        {
+            title: 'Đơn vị tính', dataIndex: 'unit', key: 'unit', width: '15%',
+            render: (text, record) => {
+                const unit = units.find((unit) => unit._id === record.unit_id);
+                return unit ? unit.description : '';
+            }
         },
         {
             title: 'Doanh số trước CK',

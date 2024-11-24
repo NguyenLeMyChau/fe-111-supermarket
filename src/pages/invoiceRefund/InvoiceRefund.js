@@ -42,7 +42,7 @@ export default function InvoiceRefund() {
             render: (customerName) => customerName ? customerName : 'Không cập nhật'
         },
         {
-            title: 'Ngày đặt hàng',
+            title: 'Ngày trả hàng',
             dataIndex: 'createdAt',
             key: 'createdAt',
             width: '15%',
