@@ -197,32 +197,32 @@ export default function ReportCustomer() {
         const endDateToUse = endDate || currentDate;
 
         // Thêm thông tin cửa hàng
-        worksheet.mergeCells('A1:J1');
+        worksheet.mergeCells('A1:K1');
         worksheet.getCell('A1').value = 'Tên cửa hàng: Siêu thị CAPY SMART';
         worksheet.getCell('A1').alignment = { horizontal: 'center', vertical: 'middle' };
         worksheet.getCell('A1').font = { bold: true, size: 12 };
 
-        worksheet.mergeCells('A2:J2');
+        worksheet.mergeCells('A2:K2');
         worksheet.getCell('A2').value = 'Địa chỉ: 14 Nguyễn Văn Bảo, Phường 14, Quận Gò Vấp, TPHCM';
         worksheet.getCell('A2').alignment = { horizontal: 'center', vertical: 'middle' };
 
-        worksheet.mergeCells('A3:J3');
+        worksheet.mergeCells('A3:K3');
         worksheet.getCell('A3').value = `Ngày in: ${formatDateDDMMYYYY(new Date().toLocaleDateString())}`;
         worksheet.getCell('A3').alignment = { horizontal: 'center', vertical: 'middle' };
 
         // Thêm tiêu đề chính
-        worksheet.mergeCells('A5:J5');
+        worksheet.mergeCells('A5:K5');
         worksheet.getCell('A5').value = 'Doanh số theo khách hàng';
         worksheet.getCell('A5').alignment = { horizontal: 'center', vertical: 'middle' };
         worksheet.getCell('A5').font = { bold: true, size: 14 };
 
         // Thêm thời gian lọc
-        worksheet.mergeCells('A6:J6');
+        worksheet.mergeCells('A6:K6');
         worksheet.getCell('A6').value = `Từ ngày: ${formatDateDDMMYYYY(startDateToUse)} - Đến ngày: ${formatDateDDMMYYYY(endDateToUse)}`;
         worksheet.getCell('A6').alignment = { horizontal: 'center', vertical: 'middle' };
 
         // Thêm Header
-        const headers = ['Mã khách hàng', 'Tên khách hàng', 'Địa chỉ', 'Phường/Xã', 'Quận/Huyện', 'Tỉnh/Thành', 'Mã hàng', 'Doanh số trước CK', 'Chiết khấu', 'Doanh số sau CK'];
+        const headers = ['Mã khách hàng', 'Tên khách hàng', 'Địa chỉ', 'Phường/Xã', 'Quận/Huyện', 'Tỉnh/Thành', 'Mã hàng', 'Đơn vị tính', 'Doanh số trước CK', 'Chiết khấu', 'Doanh số sau CK'];
         worksheet.addRow(headers).eachCell((cell) => {
             cell.font = { bold: true };
             cell.alignment = { horizontal: 'center', vertical: 'middle' };
@@ -241,6 +241,7 @@ export default function ReportCustomer() {
         // Thêm dữ liệu
         groupedData.forEach((item) => {
             const customer = customers.find((cus) => cus.account_id === item.customerInfo);
+            const unit = units.find((unit) => unit._id === item.unit_id);
 
             const revenueBefore = item.totalBeforePrice || 0;
             const discount = item.totalDiscount || 0;
@@ -251,22 +252,23 @@ export default function ReportCustomer() {
             totalRevenueAfterDiscount += revenueAfter;
 
             const row = worksheet.addRow([
-                customer.phone || '',
+                customer.customer_id || '',
                 customer.name || '',
                 customer.address.street || '',
                 customer.address.ward || '',
                 customer.address.district || '',
                 customer.address.city || '',
-                item.itemCode || '',
+                item.item_code || '',
+                unit.description || '',
                 formatCurrency(revenueBefore),
                 formatCurrency(discount),
                 formatCurrency(revenueAfter),
             ]);
 
             // Căn phải cho các cột tiền
-            row.getCell(7).alignment = { horizontal: 'right' };
-            row.getCell(8).alignment = { horizontal: 'right' };
             row.getCell(9).alignment = { horizontal: 'right' };
+            row.getCell(10).alignment = { horizontal: 'right' };
+            row.getCell(11).alignment = { horizontal: 'right' };
 
         });
 
@@ -280,6 +282,7 @@ export default function ReportCustomer() {
             '',
             '',
             '',
+            '',
             formatCurrency(totalRevenueBeforeDiscount),
             formatCurrency(totalDiscount),
             formatCurrency(totalRevenueAfterDiscount),
@@ -287,7 +290,7 @@ export default function ReportCustomer() {
         ]);
 
         totalRow.eachCell((cell, colNumber) => {
-            if (colNumber > 7) {
+            if (colNumber > 8) {
                 cell.font = { bold: true };
                 cell.alignment = { horizontal: 'right', vertical: 'middle' };
                 cell.fill = {
