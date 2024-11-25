@@ -39,6 +39,7 @@ import InvoiceRefund from '../pages/invoiceRefund/InvoiceRefund.js';
 import DailyRevenue from '../pages/statistical/DailyRevenue.js';
 import ReportCustomer from '../pages/statistical/ReportCustomer.js';
 import { SocketProvider } from '../context/SocketContext.js';
+import ReportInvoiceRefund from '../pages/statistical/ReportInvoiceRefund.js';
 
 function AppRoutes() {
     return (
@@ -92,6 +93,7 @@ function AppRoutes() {
                         <Route path="statistical">
                             <Route path="daily-revenue" element={<DailyRevenue />} />
                             <Route path="report-customer" element={<ReportCustomer />} />
+                            <Route path="report-invoice-refund" element={<ReportInvoiceRefund />} />
                         </Route>
                     </Route>
 

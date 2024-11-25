@@ -327,7 +327,7 @@ export default function DailyRevenue() {
                         Lọc
                     </button>
                     <button onClick={handleResetFilter} className="reset-button">
-                        Hủy Lọc
+                        Hủy
                     </button>
                     <button onClick={handleExportExcel} className="print-button">
                         <FaPrint className="print-icon" /> In
