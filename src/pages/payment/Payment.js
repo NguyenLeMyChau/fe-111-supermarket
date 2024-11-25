@@ -25,6 +25,7 @@ import {
   calculateDiscount,
   calculateDiscountAmount,
 } from "../../utils/calculatePromotion";
+import { useSocket } from "../../context/SocketContext";
 
 const Payment = () => {
   const navigate = useNavigate();
@@ -49,7 +50,7 @@ const Payment = () => {
   const currentUser = useSelector((state) => state.auth.login?.currentUser);
   const [dataInvoices, setDataInvoices] = useState();
   const urlParams = new URLSearchParams(window.location.search);
-  const [loading,setIsLoading]=useState(false);
+  const { emitSocketEvent } = useSocket();
 
   const [isPaid, setIsPaid] = useState(false);
 
@@ -339,6 +340,7 @@ const Payment = () => {
               totalPayment
             } = cartData;
             const response = await payCart(
+              emitSocketEvent,
               accessToken,
               axiosJWT,
               currentUser.user,
@@ -408,6 +410,7 @@ const Payment = () => {
       }
       try {
         const response = await payCart(
+          emitSocketEvent,
           accessToken,
           axiosJWT,
           currentUser.user,

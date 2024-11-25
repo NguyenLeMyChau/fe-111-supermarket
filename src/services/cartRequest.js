@@ -116,7 +116,7 @@ const payZalo = async (accessToken, axiosJWT, amount,employee, customerId, produ
     }
   };
   
-const payCart = async ( accessToken, axiosJWT,employee, customerId, products, paymentMethod, paymentInfo, paymentAmount,promotionOnInvoice,discountPayment,
+const payCart = async ( emitSocketEvent,accessToken, axiosJWT,employee, customerId, products, paymentMethod, paymentInfo, paymentAmount,promotionOnInvoice,discountPayment,
     totalPayment) => {
     try {
         console.log(employee,customerId, products, paymentMethod, paymentInfo, paymentAmount)
@@ -135,6 +135,10 @@ const payCart = async ( accessToken, axiosJWT,employee, customerId, products, pa
                 Authorization: `Bearer ${accessToken}`,
             },
         });
+        if(response.data.success) {
+            emitSocketEvent("paymentSuccess", response.data);
+            console.log(response.data.invoice)
+        }
         console.log(response.data)
         return response.data;
     } catch (error) {

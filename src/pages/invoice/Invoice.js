@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import FrameData from '../../containers/frameData/FrameData';
 import { formatCurrency, formatDate } from '../../utils/fotmatDate';
 import { useLocation, useNavigate } from 'react-router';
@@ -7,18 +7,63 @@ import ProductInvoice from './ProductInvoice';
 import './Invoice.scss';
 import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
+import { useSocket } from '../../context/SocketContext';
+import { updateInvoiceStatus } from '../../store/reducers/invoiceSlice';
+import { getInvoicesByInvoiceCode } from '../../services/invoiceRequest';
+import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
+import { toast } from 'react-toastify';
 
 export default function Invoice() {
     const navigate = useNavigate();
     const location = useLocation();
-
+    const accessToken = useAccessToken();
+    const axiosJWT = useAxiosJWT();
+    const dispatch = useDispatch();
     const invoices = useSelector((state) => state.invoice?.invoices) || [];
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [products, setProducts] = useState(null);
     const [selectedInvoice, setSelectedInvoice] = useState(null);
+    const { emitSocketEvent, onSocketEvent } = useSocket();
     console.log(invoices)
     // Tạo bản sao của mảng invoices trước khi sắp xếp
     const sortedInvoices = [...invoices].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+
+    useEffect(() => {
+        const handleNewInvoice = async (data) => {
+            const { invoice } = data;
+            console.log(invoice);
+    
+            try {
+              
+                // Fetch the full invoice data by invoiceCode
+              await getInvoicesByInvoiceCode(accessToken, axiosJWT,dispatch, invoice);
+                
+            } catch (error) {
+                console.error('Error fetching invoice:', error);
+                toast.error('Không thể thêm mới đơn hàng.');
+            }
+        };
+    
+      
+    const handleUpdateStatus = async (data) => {
+        const { invoiceCode, status } = data;
+        console.log('Status Update:', invoiceCode, status);
+
+        try {
+            // Dispatch action to update the invoice status in Redux store
+            dispatch(updateInvoiceStatus({invoiceCode:invoiceCode,status:status}))
+        } catch (error) {
+            console.error('Error updating invoice status:', error);
+            toast.error('Không thể cập nhật trạng thái hóa đơn.');
+        }
+    };
+
+    // Subscribe to 'newInvoice' and 'updateStatus' events
+    onSocketEvent('newInvoice', handleNewInvoice);
+   onSocketEvent('updateStatus', handleUpdateStatus);
+
+}, [onSocketEvent, accessToken, axiosJWT, dispatch]);
 
     const getStatusColor = (status) => {
         const matchedStatus = orderStatuses.find(s => s.value === status);

@@ -1,4 +1,4 @@
-import { getInvoiceFailed, getInvoiceRefundStart, getInvoiceRefundSuccess, getInvoiceStart, getInvoiceSuccess, resetInvoice } from "../store/reducers/invoiceSlice";
+import { addInvoice, getInvoiceFailed, getInvoiceRefundStart, getInvoiceRefundSuccess, getInvoiceStart, getInvoiceSuccess, resetInvoice, updateInvoiceStatus } from "../store/reducers/invoiceSlice";
 
 
 const getAllInvoices = async (accessToken, axiosJWT, dispatch) => {
@@ -17,6 +17,25 @@ const getAllInvoices = async (accessToken, axiosJWT, dispatch) => {
         dispatch(getInvoiceFailed());
     }
 };
+
+const getInvoicesByInvoiceCode = async (accessToken, axiosJWT,dispatch,invoiceCode) => {
+    
+    try {
+        dispatch(getInvoiceRefundStart());
+        const response = await axiosJWT.post(`/api/invoice/get-invoice-by-invoiceCode`,{invoiceCode}, {
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+        dispatch(addInvoice(response.data));
+        console.log(response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Get One invoices failed:', error);
+        dispatch(getInvoiceFailed());
+    }
+};
+
 const getAllInvoicesRefund = async (accessToken, axiosJWT, dispatch) => {
     
     try {
@@ -35,21 +54,25 @@ const getAllInvoicesRefund = async (accessToken, axiosJWT, dispatch) => {
     }
 };
 
-const updateStatusOrder = async (accessToken, axiosJWT, toast, navigate, invoice_id, status) => {
+const updateStatusOrder = async (accessToken, axiosJWT, toast, navigate, invoice, status,emitSocketEvent,employee_id) => {
+    console.log(employee_id);
     try {
         await axiosJWT.put(`/api/invoice/update-status-order`, {
-            invoice_id,
-            status
+            invoice_id:invoice._id,
+            status,
+            employee_id
         }, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
         });
-        toast.success('Cập nhật trạng thái đơn hàng thành công');
-        navigate('/admin/order-online');
+        // toast.success('Cập nhật trạng thái đơn hàng thành công');
+        emitSocketEvent("updateStatusSuccess",{invoiceCode:invoice.invoiceCode, status});
+        // navigate('/admin/order-online');
     } catch (error) {
         console.error('Update status order failed:', error);
     }
 };
 
-export { getAllInvoices, updateStatusOrder,getAllInvoicesRefund };
+
+export { getAllInvoices, updateStatusOrder,getAllInvoicesRefund,getInvoicesByInvoiceCode };

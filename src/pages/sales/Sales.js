@@ -14,6 +14,7 @@ import AddCustomerModal from "./AddCustomerModal/AddCustomerModal.js";
 import AddCustomer from "../customer/AddCustomer.js";
 import { formatCurrency } from "../../utils/fotmatDate.js";
 import RefundModal from "./Refund/RefundModal.js";
+import { resetInvoice } from "../../store/reducers/invoiceSlice.js";
 
 const Sales = () => {
   const navigate = useNavigate();
@@ -193,7 +194,6 @@ const Sales = () => {
       setCart([]);
       setTotal(0);
       dispatch(clearProductPay());
-
       setSelectedProduct(null);
     }
   };
@@ -206,6 +206,7 @@ const Sales = () => {
       setTotal(0);
       dispatch(clearProductPay());
       dispatch(clearCustomer());
+      dispatch(resetInvoice());
       setSelectedProduct(null);
     }
   };

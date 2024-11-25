@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import FrameData from '../../containers/frameData/FrameData';
 import { formatCurrency, formatDate } from '../../utils/fotmatDate';
 import { useLocation, useNavigate } from 'react-router';
@@ -11,13 +11,15 @@ import Button from '../../components/button/Button';
 import Select from 'react-select';
 import Modal from '../../components/modal/Modal';
 import { toast } from 'react-toastify';
-import { updateStatusOrder } from '../../services/invoiceRequest';
+import { getInvoicesByInvoiceCode, updateStatusOrder } from '../../services/invoiceRequest';
 import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
 import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import { BiSolidSkipNextCircle } from "react-icons/bi";
+import { useSocket } from '../../context/SocketContext';
+import { addInvoice, getInvoiceFailed, getInvoiceStart, updateInvoiceStatus } from '../../store/reducers/invoiceSlice';
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -51,23 +53,65 @@ function a11yProps(index) {
 export default function OrderOnline() {
     const accessToken = useAccessToken();
     const axiosJWT = useAxiosJWT();
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
-
-    const invoices = useSelector((state) => state.invoice?.invoices) || [];
+    const invoices = useSelector((state) => state.invoice?.invoices || []);
+    const currentUser = useSelector((state) => state.auth.login?.currentUser);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [products, setProducts] = useState(null);
     const [selectedInvoice, setSelectedInvoice] = useState(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [orderStatus, setOrderStatus] = useState(false);
     const [selectedTab, setSelectedTab] = useState(0); // Track selected tab index
+    const { emitSocketEvent, onSocketEvent } = useSocket();
 
     console.log(invoices)
+
+    useEffect(() => {
+        const handleNewInvoice = async (data) => {
+            const { invoice } = data;
+            console.log(invoice);
+    
+            try {
+              
+                // Fetch the full invoice data by invoiceCode
+              await getInvoicesByInvoiceCode(accessToken, axiosJWT,dispatch, invoice);
+                
+            } catch (error) {
+                console.error('Error fetching invoice:', error);
+                toast.error('Không thể thêm mới đơn hàng.');
+            }
+        };
+    
+      
+    const handleUpdateStatusSocket = async (data) => {
+        const { invoiceCode, status } = data;
+        console.log('Status Update:', invoiceCode, status);
+
+        try {
+            // Dispatch action to update the invoice status in Redux store
+            dispatch(updateInvoiceStatus({invoiceCode:invoiceCode,status:status}))
+           
+        } catch (error) {
+            console.error('Error updating invoice status:', error);
+            toast.error('Không thể cập nhật trạng thái hóa đơn.');
+        }
+    };
+
+    // Subscribe to 'newInvoice' and 'updateStatus' events
+    onSocketEvent('newInvoice', handleNewInvoice);
+   onSocketEvent('updateStatus', handleUpdateStatusSocket);
+
+}, [onSocketEvent, accessToken, axiosJWT, dispatch]);
+
+    
+
     // Lọc các hóa đơn để loại bỏ những hóa đơn có status là 'Tại quầy'
     const filteredInvoices = invoices.filter(invoice => invoice.status !== 'Tại quầy');
 
     // Tạo bản sao của mảng invoices trước khi sắp xếp
-    const sortedInvoices = [...filteredInvoices].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    const sortedInvoices = [...filteredInvoices].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
     const orderStatuses = [
         { value: 'Chờ xử lý', label: 'Chờ xử lý', color: '#FFA500' },
@@ -93,18 +137,23 @@ export default function OrderOnline() {
 
     const handleEditClick = async (event, invoice) => {
         event.stopPropagation();
-
+        console.log(currentUser)
+        let userPay = ""; // Initialize userPay variable
         const nextStatus = getNextStatus(invoice.status);
         if (nextStatus === invoice.status) return; // Không cho phép chuyển trạng thái nếu đã là 'Đã nhận hàng'
-
+        if (invoice.status === "Chuẩn bị hàng") {
+            userPay = currentUser.user._id;
+        }
         try {
             await updateStatusOrder(
                 accessToken,
                 axiosJWT,
                 toast,
                 navigate,
-                invoice._id,
-                nextStatus
+                invoice,
+                nextStatus,
+                emitSocketEvent,
+                userPay
             );
         } catch (error) {
             console.error('Cập nhật trạng thái thất bại:', error);
@@ -139,6 +188,20 @@ export default function OrderOnline() {
                 title: 'Ngày đặt hàng',
                 dataIndex: 'createdAt',
                 key: 'createdAt',
+                width: '15%',
+                render: (date) => (
+                    <div>
+                        <div>{formatDate(date)}</div>
+                        <div style={{ fontSize: '12px', color: 'gray' }}>
+                            {formatDistanceToNow(new Date(date), { addSuffix: true, locale: vi })}
+                        </div>
+                    </div>
+                )
+            },
+            {
+                title: 'Ngày cập nhật',
+                dataIndex: 'updatedAt',
+                key: 'updatedAt',
                 width: '15%',
                 render: (date) => (
                     <div>
@@ -231,15 +294,34 @@ export default function OrderOnline() {
 
     const handleUpdateStatus = async () => {
         try {
+            let userPay = ""; // Initialize userPay variable
+    
             console.log('selectedInvoice:', selectedInvoice);
-            await updateStatusOrder(accessToken, axiosJWT, toast, navigate, selectedInvoice._id, selectedInvoice.status.value);
+            console.log('selectedInvoice:', currentUser);
+            // Check if the status is "Chuẩn bị hàng" and assign value to userPay accordingly
+            if (selectedInvoice.status.value === "Chuẩn bị hàng") {
+                userPay = currentUser._id;
+            }
+    
+            // Call the function to update the order status
+            await updateStatusOrder(
+                accessToken, 
+                axiosJWT, 
+                toast, 
+                navigate, 
+                selectedInvoice, 
+                selectedInvoice.status.value, 
+                emitSocketEvent,
+                userPay
+            );
+    
+            // Close the modal after successful update
             setIsEditModalOpen(false);
         } catch (error) {
             console.error('Failed to update status:', error);
         }
-
     };
-
+    
 
     return (
         <>

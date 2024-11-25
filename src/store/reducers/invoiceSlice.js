@@ -1,4 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { toast } from 'react-toastify';
 
 const initialState = {
     invoices: null,
@@ -47,6 +48,31 @@ const invoiceSlice = createSlice({
             state.isFetching = false;
             state.error = false;
         },
+        addInvoice(state, action) {
+            const existingInvoice = state.invoices.find(
+                (invoice) => invoice.invoiceCode === action.payload.invoiceCode
+            );
+        
+            if (!existingInvoice) {
+                toast.success(`Hóa đơn mới: ${action.payload.invoiceCode}`);
+                state.invoices = [...state.invoices, action.payload];
+            }
+            state.isFetching = false;
+            state.error = false;
+        },
+        updateInvoiceStatus(state, action) {
+            const { invoiceCode, status } = action.payload;
+            const invoiceIndex = state.invoices?.findIndex(
+                (invoice) => invoice.invoiceCode === invoiceCode && invoice.status !== status
+            );
+            if (invoiceIndex !== -1) {
+                toast.success(`Cập nhật trạng thái hóa đơn: ${invoiceCode} - ${status}`);
+                state.invoices[invoiceIndex] = {
+                    ...state.invoices[invoiceIndex],
+                    status,
+                };
+            }
+        },
     }
 });
 
@@ -59,5 +85,7 @@ export const {
     getInvoiceRefundSuccess,
     getInvoiceRefundFailed,
     resetRefundInvoice,
+    addInvoice,
+    updateInvoiceStatus,
 } = invoiceSlice.actions;
 export default invoiceSlice.reducer;

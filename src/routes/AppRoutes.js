@@ -38,12 +38,14 @@ import Refund from '../pages/payment/Refund.js';
 import InvoiceRefund from '../pages/invoiceRefund/InvoiceRefund.js';
 import DailyRevenue from '../pages/statistical/DailyRevenue.js';
 import ReportCustomer from '../pages/statistical/ReportCustomer.js';
+import { SocketProvider } from '../context/SocketContext.js';
 
 function AppRoutes() {
     return (
         <Router>
+            <SocketProvider>
             <PaymentModalProvider>
-
+            
                 <Routes>
                     <Route path="*" element={<Navigate to="/login" />} />
                     <Route path="/login" element={<Login />} />
@@ -110,7 +112,7 @@ function AppRoutes() {
                     </Route>
                 </Routes>
             </PaymentModalProvider>
-
+            </SocketProvider>
         </Router>
     );
 }
