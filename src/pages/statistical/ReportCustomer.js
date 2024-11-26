@@ -59,14 +59,12 @@ export default function ReportCustomer() {
 
 
                 // Duyệt qua từng sản phẩm trong `details`
-                details.forEach(({ item_code, unit_id, price, total, quantity, quantity_donate }) => {
+                details.forEach(({ item_code, unit_id, price, total, quantity }) => {
 
                     // Tìm item trong danh sách nếu đã tồn tại
                     const existingItem = result[customer_id].items.find(
                         (item) => item.item_code === item_code && item.unit_id === unit_id
                     );
-
-                    let totalValue = (quantity - quantity_donate) * price;
 
                     // Tính giá trị chiết khấu nếu discountPayment > 0
                     let discountValue = 0;
@@ -77,18 +75,18 @@ export default function ReportCustomer() {
                     if (existingItem) {
                         // Cập nhật nếu đã tồn tại
                         existingItem.totalQuantity += quantity;
-                        existingItem.totalBeforePrice += price * quantity + discountValue;
-                        existingItem.totalAfterPrice += total;
+                        existingItem.totalBeforePrice += price * quantity;
                         existingItem.totalDiscount += price * quantity - total + discountValue;
+                        existingItem.totalAfterPrice += total - discountValue;
                     } else {
                         // Thêm mới nếu chưa tồn tại
                         result[customer_id].items.push({
                             item_code,
                             unit_id,
                             totalQuantity: quantity,
-                            totalBeforePrice: price * quantity + discountValue,
-                            totalAfterPrice: total,
-                            totalDiscount: price * quantity - total + discountValue
+                            totalBeforePrice: price * quantity,
+                            totalDiscount: price * quantity - total + discountValue,
+                            totalAfterPrice: total - discountValue,
                         });
                     }
                 });
