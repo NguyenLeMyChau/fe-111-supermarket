@@ -11,6 +11,7 @@ import { saveAs } from 'file-saver';
 export default function ReportCustomer() {
     const customers = useSelector((state) => state.customer?.customers) || [];
     const invoices = useSelector((state) => state.invoice?.invoices) || [];
+    console.log('invoicesCustomer:', invoices);
     const units = useSelector((state) => state.unit?.units) || [];
 
     const [selectedEmployee, setSelectedEmployee] = useState(null);
@@ -21,7 +22,7 @@ export default function ReportCustomer() {
 
     const groupInvoices = (invoicesList) => {
         return invoicesList.reduce((groups, invoice) => {
-            if (!invoice.customer_id) return groups;
+            if (!invoice.customer_id || invoice.isRefund === true) return groups;
             const customer = customers.find((cus) => cus.account_id === invoice.customer_id);
             const groupKey = `${invoice.customer_id}-${formatDateDDMMYYYY(invoice.createdAt)}`;
             if (!groups[groupKey]) {

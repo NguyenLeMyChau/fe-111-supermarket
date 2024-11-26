@@ -11,6 +11,7 @@ import { saveAs } from 'file-saver';
 export default function DailyRevenue() {
     const employeeAndManager = useSelector((state) => state.employee?.employeeAndManager) || [];
     const invoices = useSelector((state) => state.invoice?.invoices) || [];
+    console.log('invoices:', invoices);
 
     const [selectedEmployee, setSelectedEmployee] = useState(null);
     const [startDate, setStartDate] = useState('');
@@ -19,7 +20,7 @@ export default function DailyRevenue() {
 
     const groupInvoices = (invoicesList) => {
         return invoicesList.reduce((groups, invoice) => {
-            if (!invoice.employee_id) return groups;
+            if (!invoice.employee_id || invoice.isRefund === true) return groups; // Skip if no employee_id or isRefund is true
             const employee = employeeAndManager.find((emp) => emp._id === invoice.employee_id);
             const groupKey = `${invoice.employee_id}-${formatDateDDMMYYYY(invoice.createdAt)}`;
             if (!groups[groupKey]) {
