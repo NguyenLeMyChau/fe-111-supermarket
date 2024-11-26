@@ -324,7 +324,7 @@ const Sales = () => {
             <tbody>
               {cart.map((item, index) => (
                 <tr
-                  key={item._id}
+                key={`${item._id}-${item.unit._id}`}
                   onClick={() => handleRowClick(item)}
                   className={`clickable-row ${selectedProduct?._id === item._id && selectedProduct?.unit === item.unit ? 'selected' : ''}`}
                 >
