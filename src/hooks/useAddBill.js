@@ -125,6 +125,7 @@ const useAddBill = () => {
     }, [productList]);
 
     const unitOptions = (product) => {
+        console.log('product', product);
         // Lọc các đơn vị có status là true
         const filteredUnits = product?.unit_convert?.filter(unitProduct => unitProduct.status === true);
         console.log('filteredUnits', filteredUnits);
