@@ -69,10 +69,13 @@ export default function DailyRevenue() {
     useEffect(() => {
         const groupedInvoices = groupInvoices(invoices);
         // Sắp xếp dữ liệu đã nhóm theo khóa `${invoice.employee_id}-${formatDateDDMMYYYY(invoice.createdAt)}`
+        // Sắp xếp dữ liệu đã nhóm
         const sortedGroupedData = Object.values(groupedInvoices).sort((a, b) => {
-            const keyA = `${a.employeeId}-${a.createdAt}`;
-            const keyB = `${b.employeeId}-${b.createdAt}`;
-            return keyA.localeCompare(keyB);
+            const dateA = new Date(a.createdAt);
+            const dateB = new Date(b.createdAt);
+            const employeeCompare = a.employeeId.localeCompare(b.employeeId);
+
+            return employeeCompare !== 0 ? employeeCompare : dateA - dateB;
         });
 
         setGroupedData(sortedGroupedData); // Set the grouped data by default
@@ -304,10 +307,13 @@ export default function DailyRevenue() {
         const groupedInvoices = groupInvoices(invoices);
 
         // Sắp xếp dữ liệu đã nhóm theo khóa `${invoice.employee_id}-${formatDateDDMMYYYY(invoice.createdAt)}`
+        // Sắp xếp dữ liệu đã nhóm
         const sortedGroupedData = Object.values(groupedInvoices).sort((a, b) => {
-            const keyA = `${a.employeeId}-${a.createdAt}`;
-            const keyB = `${b.employeeId}-${b.createdAt}`;
-            return keyA.localeCompare(keyB);
+            const dateA = new Date(a.createdAt);
+            const dateB = new Date(b.createdAt);
+            const employeeCompare = a.employeeId.localeCompare(b.employeeId);
+
+            return employeeCompare !== 0 ? employeeCompare : dateA - dateB;
         });
 
         setGroupedData(sortedGroupedData); // Restore original grouped data
