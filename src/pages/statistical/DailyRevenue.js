@@ -88,7 +88,7 @@ export default function DailyRevenue() {
 
     const handleExportExcel = async () => {
         const workbook = new ExcelJS.Workbook();
-        const worksheet = workbook.addWorksheet('DoanhThuBanHang');
+        const worksheet = workbook.addWorksheet('DoanhThuBanHang', { views: [{ showGridLines: false }] });
 
         // Xác định ngày sớm nhất và ngày hiện tại
         const currentDate = new Date();
@@ -134,6 +134,12 @@ export default function DailyRevenue() {
                 pattern: 'solid',
                 fgColor: { argb: 'FFFF00' },
             };
+            cell.border = {
+                top: { style: 'thin' },
+                left: { style: 'thin' },
+                bottom: { style: 'thin' },
+                right: { style: 'thin' },
+            };
         });
 
         // Tính tổng
@@ -165,6 +171,15 @@ export default function DailyRevenue() {
             row.getCell(5).alignment = { horizontal: 'right' };
             row.getCell(6).alignment = { horizontal: 'right' };
 
+            // Đóng viền cho các ô
+            row.eachCell((cell) => {
+                cell.border = {
+                    top: { style: 'thin' },
+                    left: { style: 'thin' },
+                    bottom: { style: 'thin' },
+                    right: { style: 'thin' },
+                };
+            });
         });
 
         // Thêm dòng tổng cộng
@@ -190,6 +205,13 @@ export default function DailyRevenue() {
                     fgColor: { argb: 'FFDDDDDD' },
                 };
             }
+
+            cell.border = {
+                top: { style: 'thin' },
+                left: { style: 'thin' },
+                bottom: { style: 'thin' },
+                right: { style: 'thin' },
+            };
         });
 
         // Định dạng cột
@@ -209,32 +231,68 @@ export default function DailyRevenue() {
     };
 
 
+    const parseDateFilter = (date, isEndDate = false) => {
+        if (!date) return null;
+
+        const parsedDate = new Date(date);
+        if (isEndDate) {
+            // Nếu là ngày kết thúc, đặt thời gian thành cuối ngày (23:59:59)
+            parsedDate.setHours(23, 59, 59, 999);
+        }
+        return parsedDate;
+    };
+
 
     const handleFilter = () => {
         console.log('Lọc với:', { selectedEmployee, startDate, endDate });
 
-        // Filter invoices based on selected employee and date range
-        const filteredInvoices = invoices
-            .filter((invoice) => {
-                const isEmployeeMatch = selectedEmployee ? invoice.employee_id === selectedEmployee.value : true;
-                const isStartDateMatch = startDate ? formatDateDDMMYYYY(invoice.createdAt) >= formatDateDDMMYYYY(startDate) : true;
-                const isEndDateMatch = endDate ? formatDateDDMMYYYY(invoice.createdAt) <= formatDateDDMMYYYY(endDate) : true;
-                return isEmployeeMatch && isStartDateMatch && isEndDateMatch;
-            });
-        console.log('filteredInvoices:', filteredInvoices);
+        // Chuyển đổi startDate và endDate
+        const startDateParsed = parseDateFilter(startDate);
+        const endDateParsed = parseDateFilter(endDate, true);
 
-        const groupedInvoices = groupInvoices(filteredInvoices);
+        // Lọc invoices
+        const filteredInvoices = invoices.filter((invoice) => {
+            const invoiceDate = new Date(invoice.createdAt);
 
-        // Sắp xếp dữ liệu đã nhóm theo khóa `${invoice.employee_id}-${formatDateDDMMYYYY(invoice.createdAt)}`
-        const sortedGroupedData = Object.values(groupedInvoices).sort((a, b) => {
-            const keyA = `${a.employeeId}-${a.createdAt}`;
-            const keyB = `${b.employeeId}-${b.createdAt}`;
-            return keyA.localeCompare(keyB);
+            const isEmployeeMatch = selectedEmployee
+                ? invoice.employee_id === selectedEmployee.value
+                : true;
+
+            const isStartDateMatch = startDateParsed
+                ? invoiceDate >= startDateParsed
+                : true;
+
+            const isEndDateMatch = endDateParsed
+                ? invoiceDate <= endDateParsed
+                : true;
+
+            console.log('Invoice Date:', invoiceDate);
+            console.log('isStartDateMatch:', isStartDateMatch, 'isEndDateMatch:', isEndDateMatch);
+
+            return isEmployeeMatch && isStartDateMatch && isEndDateMatch;
         });
 
-        setGroupedData(sortedGroupedData); // Update grouped data based on filter
-        console.log('groupedInvoices after filter:', groupedInvoices);
+        console.log('Filtered Invoices:', filteredInvoices);
+
+        // Gộp dữ liệu
+        const groupedInvoices = groupInvoices(filteredInvoices);
+
+        // Sắp xếp dữ liệu đã nhóm
+        const sortedGroupedData = Object.values(groupedInvoices).sort((a, b) => {
+            const dateA = new Date(a.createdAt);
+            const dateB = new Date(b.createdAt);
+            const employeeCompare = a.employeeId.localeCompare(b.employeeId);
+
+            return employeeCompare !== 0 ? employeeCompare : dateA - dateB;
+        });
+
+        // Cập nhật dữ liệu đã lọc và sắp xếp
+        setGroupedData(sortedGroupedData);
+
+        console.log('Grouped and Sorted Data:', sortedGroupedData);
     };
+
+
 
     const handleResetFilter = () => {
         setSelectedEmployee(null);
@@ -331,7 +389,7 @@ export default function DailyRevenue() {
                         Hủy
                     </button>
                     <button onClick={handleExportExcel} className="print-button">
-                        <FaPrint className="print-icon" /> In
+                        <FaPrint className="print-icon" /> Excel
                     </button>
                 </div>
             </div>

@@ -48,23 +48,59 @@ export default function ReportInvoiceRefund() {
         console.log('transformedData:', transformedData);
     }, [invoices]);
 
+    // Hàm chuyển đổi chuỗi ngày thành Date
+    const parseDateFilter = (date, isEndDate = false) => {
+        if (!date) return null;
+        const parsedDate = new Date(date);
+        if (isEndDate) {
+            // Đặt thời gian cuối ngày nếu là endDate
+            parsedDate.setHours(23, 59, 59, 999);
+        }
+        return parsedDate;
+    };
+
     const handleFilter = () => {
         console.log('Lọc với:', { selectedInvoice, selectedInvoiceSale, startDate, endDate });
 
-        // Filter invoices based on selected employee and date range
-        const filteredInvoices = invoices
-            .filter((invoice) => {
-                const isInvoiceMatch = selectedInvoice ? invoice.invoiceCode === selectedInvoice.value : true;
-                const isInvoiceSaleMatch = selectedInvoiceSale ? invoice.invoiceCodeSale === selectedInvoiceSale.value : true;
-                const isStartDateMatch = startDate ? formatDateDDMMYYYY(invoice.createdAt) >= formatDateDDMMYYYY(startDate) : true;
-                const isEndDateMatch = endDate ? formatDateDDMMYYYY(invoice.createdAt) <= formatDateDDMMYYYY(endDate) : true;
-                return isInvoiceMatch && isInvoiceSaleMatch && isStartDateMatch && isEndDateMatch;
-            });
+        // Chuyển đổi startDate và endDate
+        const startDateParsed = parseDateFilter(startDate);
+        const endDateParsed = parseDateFilter(endDate, true);
+
+        // Lọc invoices
+        const filteredInvoices = invoices.filter((invoice) => {
+            const invoiceDate = new Date(invoice.createdAt);
+
+            const isInvoiceMatch = selectedInvoice
+                ? invoice.invoiceCode === selectedInvoice.value
+                : true;
+
+            const isInvoiceSaleMatch = selectedInvoiceSale
+                ? invoice.invoiceCodeSale === selectedInvoiceSale.value
+                : true;
+
+            const isStartDateMatch = startDateParsed
+                ? invoiceDate >= startDateParsed
+                : true;
+
+            const isEndDateMatch = endDateParsed
+                ? invoiceDate <= endDateParsed
+                : true;
+
+            console.log('Invoice Date:', invoiceDate);
+            console.log('isStartDateMatch:', isStartDateMatch, 'isEndDateMatch:', isEndDateMatch);
+
+            return isInvoiceMatch && isInvoiceSaleMatch && isStartDateMatch && isEndDateMatch;
+        });
+
         console.log('filteredInvoices:', filteredInvoices);
 
+        // Chuyển đổi dữ liệu đã lọc thành định dạng chi tiết
         const transformedData = transformInvoicesToDetailsArray(filteredInvoices);
-        setGroupedData(transformedData); // Cập nhật groupedData
+
+        // Cập nhật groupedData
+        setGroupedData(transformedData);
     };
+
 
     const handleResetFilter = () => {
         setSelectedInvoice(null);
@@ -85,7 +121,7 @@ export default function ReportInvoiceRefund() {
 
     const handleExportExcel = async () => {
         const workbook = new ExcelJS.Workbook();
-        const worksheet = workbook.addWorksheet('BangKeChiTietHangHoaDonTraHang');
+        const worksheet = workbook.addWorksheet('BangKeChiTietHangHoaDonTraHang', { views: [{ showGridLines: false }] });
 
         // Xác định ngày sớm nhất và ngày hiện tại
         const currentDate = new Date();
@@ -140,9 +176,15 @@ export default function ReportInvoiceRefund() {
                 pattern: 'solid',
                 fgColor: { argb: 'FFFF00' },
             };
+            cell.border = {
+                top: { style: 'thin' },
+                left: { style: 'thin' },
+                bottom: { style: 'thin' },
+                right: { style: 'thin' },
+            };
         });
 
-        //Tính tổng
+        // Tính tổng
         let total = 0;
 
         // Thêm dữ liệu
@@ -166,6 +208,16 @@ export default function ReportInvoiceRefund() {
             // Căn phải cho các cột tiền
             row.getCell(8).alignment = { horizontal: 'center' };
             row.getCell(9).alignment = { horizontal: 'right' };
+
+            // Đóng viền cho các ô
+            row.eachCell((cell) => {
+                cell.border = {
+                    top: { style: 'thin' },
+                    left: { style: 'thin' },
+                    bottom: { style: 'thin' },
+                    right: { style: 'thin' },
+                };
+            });
         });
 
         // Thêm dòng tổng cộng
@@ -180,7 +232,6 @@ export default function ReportInvoiceRefund() {
             '',
             '',
             formatCurrency(total),
-
         ]);
 
         totalRow.eachCell((cell, colNumber) => {
@@ -193,20 +244,25 @@ export default function ReportInvoiceRefund() {
                     fgColor: { argb: 'FFDDDDDD' },
                 };
             }
+            cell.border = {
+                top: { style: 'thin' },
+                left: { style: 'thin' },
+                bottom: { style: 'thin' },
+                right: { style: 'thin' },
+            };
         });
-
 
         // Định dạng cột
         worksheet.columns = [
-            { width: 15 }, // Mã nhân viên
-            { width: 15 }, // Tên nhân viên
-            { width: 15 }, // Ngày
-            { width: 15 }, // Ngày
-            { width: 25 }, // Doanh số trước CK
-            { width: 15 }, // Doanh số trước CK
-            { width: 15 }, // Chiết khấu
-            { width: 15 }, // Chiết khấu
-            { width: 20 }, // Doanh số sau CK
+            { width: 15 }, // Hoá đơn mua
+            { width: 15 }, // Ngày đơn hàng mua
+            { width: 15 }, // Hoá đơn trả
+            { width: 15 }, // Ngày đơn hàng trả
+            { width: 15 }, // Mã hàng
+            { width: 25 }, // Tên sản phẩm
+            { width: 15 }, // Đơn vị tính
+            { width: 15 }, // Số lượng
+            { width: 20 }, // Doanh thu
         ];
 
         // Xuất file
@@ -339,7 +395,7 @@ export default function ReportInvoiceRefund() {
                     <button className="print-button" style={{ fontSize: 14 }}
                         onClick={handleExportExcel}
                     >
-                        <FaPrint className="print-icon" /> In
+                        <FaPrint className="print-icon" /> Excel
                     </button>
                 </div>
             </div>
