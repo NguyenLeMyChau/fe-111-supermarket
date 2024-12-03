@@ -48,23 +48,59 @@ export default function ReportInvoiceRefund() {
         console.log('transformedData:', transformedData);
     }, [invoices]);
 
+    // Hàm chuyển đổi chuỗi ngày thành Date
+    const parseDateFilter = (date, isEndDate = false) => {
+        if (!date) return null;
+        const parsedDate = new Date(date);
+        if (isEndDate) {
+            // Đặt thời gian cuối ngày nếu là endDate
+            parsedDate.setHours(23, 59, 59, 999);
+        }
+        return parsedDate;
+    };
+
     const handleFilter = () => {
         console.log('Lọc với:', { selectedInvoice, selectedInvoiceSale, startDate, endDate });
 
-        // Filter invoices based on selected employee and date range
-        const filteredInvoices = invoices
-            .filter((invoice) => {
-                const isInvoiceMatch = selectedInvoice ? invoice.invoiceCode === selectedInvoice.value : true;
-                const isInvoiceSaleMatch = selectedInvoiceSale ? invoice.invoiceCodeSale === selectedInvoiceSale.value : true;
-                const isStartDateMatch = startDate ? formatDateDDMMYYYY(invoice.createdAt) >= formatDateDDMMYYYY(startDate) : true;
-                const isEndDateMatch = endDate ? formatDateDDMMYYYY(invoice.createdAt) <= formatDateDDMMYYYY(endDate) : true;
-                return isInvoiceMatch && isInvoiceSaleMatch && isStartDateMatch && isEndDateMatch;
-            });
+        // Chuyển đổi startDate và endDate
+        const startDateParsed = parseDateFilter(startDate);
+        const endDateParsed = parseDateFilter(endDate, true);
+
+        // Lọc invoices
+        const filteredInvoices = invoices.filter((invoice) => {
+            const invoiceDate = new Date(invoice.createdAt);
+
+            const isInvoiceMatch = selectedInvoice
+                ? invoice.invoiceCode === selectedInvoice.value
+                : true;
+
+            const isInvoiceSaleMatch = selectedInvoiceSale
+                ? invoice.invoiceCodeSale === selectedInvoiceSale.value
+                : true;
+
+            const isStartDateMatch = startDateParsed
+                ? invoiceDate >= startDateParsed
+                : true;
+
+            const isEndDateMatch = endDateParsed
+                ? invoiceDate <= endDateParsed
+                : true;
+
+            console.log('Invoice Date:', invoiceDate);
+            console.log('isStartDateMatch:', isStartDateMatch, 'isEndDateMatch:', isEndDateMatch);
+
+            return isInvoiceMatch && isInvoiceSaleMatch && isStartDateMatch && isEndDateMatch;
+        });
+
         console.log('filteredInvoices:', filteredInvoices);
 
+        // Chuyển đổi dữ liệu đã lọc thành định dạng chi tiết
         const transformedData = transformInvoicesToDetailsArray(filteredInvoices);
-        setGroupedData(transformedData); // Cập nhật groupedData
+
+        // Cập nhật groupedData
+        setGroupedData(transformedData);
     };
+
 
     const handleResetFilter = () => {
         setSelectedInvoice(null);

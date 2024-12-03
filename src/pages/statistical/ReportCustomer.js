@@ -132,17 +132,42 @@ export default function ReportCustomer() {
         console.log('transformedData:', transformedData);
     }, [invoices, customers]);
 
+    const parseDateFilter = (date, isEndDate = false) => {
+        if (!date) return null;
+
+        const parsedDate = new Date(date);
+        if (isEndDate) {
+            // Nếu là ngày kết thúc, đặt thời gian thành cuối ngày (23:59:59)
+            parsedDate.setHours(23, 59, 59, 999);
+        }
+        return parsedDate;
+    };
+
     const handleFilter = () => {
         console.log('Lọc với:', { selectedEmployee, startDate, endDate });
 
-        // Filter invoices based on selected employee and date range
-        const filteredInvoices = invoices
-            .filter((invoice) => {
-                const isEmployeeMatch = selectedEmployee ? invoice.customer_id === selectedEmployee.value : true;
-                const isStartDateMatch = startDate ? formatDateDDMMYYYY(invoice.createdAt) >= formatDateDDMMYYYY(startDate) : true;
-                const isEndDateMatch = endDate ? formatDateDDMMYYYY(invoice.createdAt) <= formatDateDDMMYYYY(endDate) : true;
-                return isEmployeeMatch && isStartDateMatch && isEndDateMatch;
-            });
+        // Chuyển đổi startDate và endDate
+        const startDateParsed = parseDateFilter(startDate);
+        const endDateParsed = parseDateFilter(endDate, true);
+
+        // Lọc hóa đơn dựa trên nhân viên và khoảng thời gian
+        const filteredInvoices = invoices.filter((invoice) => {
+            const invoiceDate = new Date(invoice.createdAt);
+
+            const isEmployeeMatch = selectedEmployee
+                ? invoice.customer_id === selectedEmployee.value
+                : true;
+
+            const isStartDateMatch = startDateParsed
+                ? invoiceDate >= startDateParsed
+                : true;
+
+            const isEndDateMatch = endDateParsed
+                ? invoiceDate <= endDateParsed
+                : true;
+
+            return isEmployeeMatch && isStartDateMatch && isEndDateMatch;
+        });
         console.log('filteredInvoices:', filteredInvoices);
 
         const groupedInvoices = groupInvoices(filteredInvoices);
