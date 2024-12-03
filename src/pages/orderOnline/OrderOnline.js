@@ -118,7 +118,7 @@ export default function OrderOnline() {
         { value: 'Chuẩn bị hàng', label: 'Chuẩn bị hàng', color: '#D2691E' },
         { value: 'Đang giao hàng', label: 'Đang giao hàng', color: '#0000FF' },
         { value: 'Đã nhận hàng', label: 'Đã nhận hàng', color: '#800080' },
-        // { value: 'Bị từ chối', label: 'Bị từ chối', color: '#FF0000' },
+        { value: 'Yêu cầu hoàn trả', label: 'Yêu cầu hoàn trả', color: '#FF0000' },
         // { value: 'Đã hủy', label: 'Đã hủy', color: '#A9A9A9' },
     ];
 
@@ -234,7 +234,7 @@ export default function OrderOnline() {
             },
         ];
 
-        if (status !== 'Đang giao hàng' && status !== 'Đã nhận hàng') {
+        if (status !== 'Đang giao hàng' && status !== 'Đã nhận hàng' && status !== 'Yêu cầu hoàn trả') {
             columns.push({
                 title: 'Cập nhật',
                 key: 'edit',
