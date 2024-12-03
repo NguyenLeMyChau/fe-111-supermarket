@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import FrameData from '../../containers/frameData/FrameData';
 import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 import { MdDelete, MdDoDisturbOn, MdDoNotDisturbAlt } from 'react-icons/md';
-import { formatDate } from '../../utils/fotmatDate';
+import { formatCurrency, formatDate } from '../../utils/fotmatDate';
 import Modal from '../../components/modal/Modal';
 import { CiEdit } from 'react-icons/ci';
 
@@ -284,7 +284,9 @@ const handleDeleteClickDetail = async (event, promotionDetail) => {
       render: (unit_id) => unit_id?.description,
     },
     { title: 'Số lượng', dataIndex: 'quantity', key: 'quantity', width: '10%', className: 'text-center' },
-    { title: 'Số tiền tặng', dataIndex: 'amount_donate', key: 'amount_donate', width: '10%', className: 'text-center' },
+    { title: 'Số tiền tặng', dataIndex: 'amount_donate', key: 'amount_donate', width: '10%', className: 'text-center', render:(text)=>(
+      <p>{formatCurrency(text)}</p>
+    )},
     {
       title: 'Chỉnh sửa',
       key: 'edit',
@@ -365,9 +367,15 @@ const handleDeleteClickDetail = async (event, promotionDetail) => {
   const promotionDetailColumnPer = [
     { title: 'Mã chi tiết', dataIndex: 'promotionDetailId', key: 'promotionDetailId', width: '20%' },
     { title: 'Mô tả', dataIndex: 'description', key: 'description', width: '20%' },
-    { title: 'Số tiền bán', dataIndex: 'amount_sales', key: 'amount_sales', width: '10%', className: 'text-center' },
-    { title: 'Phần trăm khuyến mãi', dataIndex: 'percent', key: 'percent', width: '10%', className: 'text-center' },
-    { title: 'Tôi đa', dataIndex: 'amount_limit', key: 'amount_limit', width: '10%', className: 'text-center' },
+    { title: 'Số tiền bán', dataIndex: 'amount_sales', key: 'amount_sales', width: '10%', className: 'text-center', render:(text)=>(
+      <p>{formatCurrency(text)}</p>
+    ) },
+    { title: 'Phần trăm khuyến mãi', dataIndex: 'percent', key: 'percent', width: '10%', className: 'text-center' , render:(text)=>(
+      <p>{text}%</p>
+    )},
+    { title: 'Tôi đa', dataIndex: 'amount_limit', key: 'amount_limit', width: '10%', className: 'text-center', render:(text)=>(
+      <p>{formatCurrency(text)}</p>
+    ) },
     {
       title: 'Chỉnh sửa',
       key: 'edit',

@@ -132,6 +132,7 @@ export default function EditProductPrice({ onClose, priceId, initialData }) {
               max={productPriceData.endDate < format(new Date(), 'yyyy-MM-dd')
                 ? productPriceData.endDate
                 : null}  
+                disabled={productPriceData.endDate <= format(new Date(), 'yyyy-MM-dd')?true:false}
             />
           <Input
                     label='Trạng thái'
@@ -139,12 +140,13 @@ export default function EditProductPrice({ onClose, priceId, initialData }) {
                     type='checkbox'
                     defaultChecked={productPriceData.status==='active'}
                     onChange={handleCheckboxChange}
+                    disabled={(productPriceData.startDate <= format(new Date(), 'yyyy-MM-dd') && initialData.status==='active')?true:false}
           />
           <div className='flex-row-center'>
           {loading ? ( <ClipLoader size={30} color="#2392D0" loading={loading} />
         ) : (
             <div className='login-button' style={{ width: 200 }}>      
-            <Button type='submit' text='Cập nhật' />
+            <Button type='submit' text='Cập nhật'  disabled={productPriceData.endDate <= format(new Date(), 'yyyy-MM-dd')?true:false}/>
             </div>
           )}
            

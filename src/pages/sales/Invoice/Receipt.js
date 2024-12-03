@@ -227,7 +227,7 @@ console.log(data);
         {appliedPromotion && (
           <div className="payment-line">
             <p>
-              <strong>Khuyến mãi ({appliedPromotion.description}):</strong>
+              <strong>{appliedPromotion.description}:</strong>
             </p>
             <p className="amount">
               - {formatCurrency(finalPaymentAmount - discountTotal)}{" "}

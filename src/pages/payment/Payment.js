@@ -49,7 +49,7 @@ const Payment = () => {
   const [appliedPromotion, setAppliedPromotion] = useState(null);
   const [ineligiblePromotions, setIneligiblePromotions] = useState([]);
   const currentUser = useSelector((state) => state.auth.login?.currentUser);
-  const [dataInvoices, setDataInvoices] = useState();
+  const [dataInvoices, setDataInvoices] = useState(null);
   const urlParams = new URLSearchParams(window.location.search);
   const { emitSocketEvent } = useSocket();
 
@@ -525,7 +525,7 @@ const Payment = () => {
               <td>{product.quantity}</td>
               <td>{formatCurrency(product.price * product.quantity)}</td>
             </tr>
-            <tr>
+            <tr className="promotion-row">
               <td>KM</td>
               <td>{`${product.promotion.description}: ${product.name}`}</td>
               <td>{product.unit.description}</td>
@@ -580,7 +580,7 @@ const Payment = () => {
           {appliedPromotion && (
             <div className="payment-line">
               <p>
-                <strong>Khuyến mãi ({appliedPromotion.description}):</strong>
+                <strong>{appliedPromotion.description}:</strong>
               </p>
               <p className="amount">
                 - {formatCurrency(totalAmount - discountedTotal)}{" "}
@@ -706,7 +706,7 @@ const Payment = () => {
           invoiceId={dataInvoices.invoiceCode}
         />
       )}
-      {urlParams.size>0 &&<ModalComponent
+      {urlParams.size === 0 &&<ModalComponent
         title={"Sản phẩm không đủ điều kiện khuyến mãi"}
         isOpen={showIneligibleModal}
         onRequestClose={closeModal}
@@ -718,8 +718,6 @@ const Payment = () => {
               <thead>
                 <tr>
                   <th>Tên sản phẩm</th>
-                 
-
                   <th>Tên chương trình khuyến mãi</th>
                 </tr>
               </thead>

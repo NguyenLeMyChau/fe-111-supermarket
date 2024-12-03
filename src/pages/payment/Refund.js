@@ -398,7 +398,7 @@ const Refund = () => {
 
     {appliedPromotion && (
       <div className="payment-line">
-        <p><strong>Khuyến mãi ({appliedPromotion.description}):</strong></p>
+        <p><strong>{appliedPromotion.description}:</strong></p>
         <p className="amount">- {formatCurrency(totalAmount - discountedTotal)} </p>
       </div>
     )}

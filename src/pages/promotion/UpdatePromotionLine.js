@@ -100,8 +100,8 @@ const UpdatePromotionLine = ({ promotionLine, onClose, promotionHeader }) => {
                     value={formData.startDate}
                     type="date"
                     onChange={handleChange}
-                    disabled={promotionLine.status !== 'inactive'}
-                    min={formData.startDate}
+                    disabled={(formData.startDate <= today && promotionLine.status === 'active')?true:false}
+                    min={formData.startDate<today?formData.startDate:today}
                     max={formData.endDate}
                     error={errors.startDate}
                 />
@@ -116,7 +116,7 @@ const UpdatePromotionLine = ({ promotionLine, onClose, promotionHeader }) => {
                     min={today > formData.startDate ? today : formData.startDate}
                     max={formData.endDate}
                     error={errors.endDate}
-                    disabled={promotionLine.status !== 'inactive'}
+                    disabled={formData.endDate < today}
                 />
 
                 <Input
@@ -125,6 +125,7 @@ const UpdatePromotionLine = ({ promotionLine, onClose, promotionHeader }) => {
                 type='checkbox'
                 defaultChecked={formData.status==='active'}
                 onChange={handleCheckboxChange}
+                disabled={(formData.startDate <= today && promotionLine.status === 'active')?true:false}
       />
 
                 <div className="flex-row-center">

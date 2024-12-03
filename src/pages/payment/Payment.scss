@@ -238,6 +238,7 @@ button:hover {
 .payment-line .amount {
   font-weight: bold;
   text-align: right;
+  width: 30%;
 }
 
 .total-due .amount {
@@ -291,4 +292,14 @@ button:hover {
 
 .refund-reason-input::placeholder {
   color: #888; 
+}
+
+.promotion-row {
+  background-color: #4fd186;
+  color: #27ae60;
+
+  td {
+    color: black;
+    font-style: italic;
+  }
 }
