@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Warehouse.scss';
 import { useSelector } from 'react-redux';
 import FrameData from '../frameData/FrameData';
@@ -10,6 +10,8 @@ import Button from '../../components/button/Button';
 import Select from 'react-select';
 import { formatDate } from '../../utils/fotmatDate';
 import useAddBill from '../../hooks/useAddBill';
+import { IoIosCheckmarkCircleOutline } from 'react-icons/io';
+import { MdDoNotDisturbAlt } from 'react-icons/md';
 
 export default function Warehouse() {
     const navigate = useNavigate();
@@ -22,6 +24,10 @@ export default function Warehouse() {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+    useEffect(() => {
+        applyFilters();
+    }, [warehouses, productList]);
 
     // Gom các bộ lọc vào object
     const [filters, setFilters] = useState({
@@ -74,18 +80,20 @@ export default function Warehouse() {
                 return quantityBasic; // Định dạng theo nhu cầu
             }
         },
-        // {
-        //     title: 'Trạng thái',
-        //     dataIndex: 'status',
-        //     key: 'status',
-        //     width: '10%',
-        //     className: 'text-center',
-        //     render: (text, record) => {
-        //         const unitConvert = record.unit_convert.find(item => item.unit === record.unit._id && item.status === true);
-        //         return unitConvert ? 'Đã cập nhật' : 'Chưa cập nhật';
+        {
+            title: 'Trạng thái',
+            dataIndex: 'status',
+            key: 'status',
+            width: '10%',
+            className: 'text-center',
+            render: (text, record) => {
+                const unitConvert = record.unit_convert.find(item => item.unit === record.unit._id && item.status === true);
+                return unitConvert
+                    ? <IoIosCheckmarkCircleOutline style={{ color: 'green' }} size={20} />
+                    : <MdDoNotDisturbAlt style={{ color: 'red' }} size={20} />
 
-        //     }
-        // },
+            }
+        },
     ];
 
     const transactionColumn = [

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import FrameData from '../../containers/frameData/FrameData';
 import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
@@ -35,6 +35,10 @@ export default function Product() {
 
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedProduct, setSelectedProduct] = useState(null);
+
+    useEffect(() => {
+        applyFilters();
+    }, [products]);
 
     const handleEditClick = (event, product) => {
         event.stopPropagation();
