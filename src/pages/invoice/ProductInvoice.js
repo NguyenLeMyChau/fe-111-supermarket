@@ -88,6 +88,18 @@ export default function ProductInvoice({ isModalOpen, closeModal, products, sele
                                     <th>Ngày đặt hàng:</th>
                                     <td>{formatDate(selectedInvoice.createdAt)}</td>
                                 </tr>
+
+                                {
+                                    selectedInvoice.returnReason && (
+                                        <tr>
+                                            <th>Lý do trả hàng:</th>
+                                            <td colSpan="2">
+                                                {selectedInvoice.returnReason}
+                                            </td>
+                                        </tr>
+                                    )
+                                }
+
                             </tbody>
                         </table>
                     </div>
@@ -121,111 +133,111 @@ export default function ProductInvoice({ isModalOpen, closeModal, products, sele
 
                                     return (
                                         <React.Fragment key={product._id}>
-                                        {product.promotion === null && (
-                                            <>  
-                                        <tr>
-                                            <td>
-                                                {unitImage ? (
-                                                    <img src={unitImage ? unitImage : product.productImg} alt={product.productName} />
-                                                ) : (
-                                                    <img src={product.productImg} alt={product.productName} /> // Fallback if no unit image is found
-                                                )}
-                                            </td>
-                                            
-                                            {product.item_code && <td>{product.item_code}</td>}
-                                            {product.productName && <td>{product.productName}</td>}
-                                            {product.unit.description && <td>{product.unit.description}</td>}
-                                            {product.quantity && <td style={{ textAlign: 'center' }}>{product.quantity}</td>}
-                                            {product.price && <td style={{ textAlign: 'right' }}>{formatCurrency(product.price)}</td>}
-                                            {product.total && <td style={{ textAlign: 'right' }}>{formatCurrency(product.total)}</td>}
-                                            <td></td>
-                                        </tr>
-                                        </>
-                                        )}
-                                         {isGift && (
-                                            <>  
-                                        <tr>
-                                            <td>
-                                                {unitImage ? (
-                                                    <img src={unitImage ? unitImage : product.productImg} alt={product.productName} />
-                                                ) : (
-                                                    <img src={product.productImg} alt={product.productName} /> // Fallback if no unit image is found
-                                                )}
-                                            </td>
-                                            
-                                            {product.item_code && <td>{product.item_code}</td>}
-                                            {product.productName && <td>{product.productName}</td>}
-                                            {product.unit.description && <td>{product.unit.description}</td>}
-                                            {product.quantity && <td style={{ textAlign: 'center' }}>{product.quantity - product.quantity_donate}</td>}
-                                            {product.price && <td style={{ textAlign: 'right' }}>{formatCurrency(product.price)}</td>}
-                                            {product.total && <td style={{ textAlign: 'right' }}>{formatCurrency(product.price * (product.quantity - product.quantity_donate))}</td>}
-                                            <td></td>
-                                        </tr>
-                                        </>
-                                        )}
-                                         {product.promotion && product.promotion.type === 'quantity' && product.quantity_donate > 0 && (
-                                            <>  
-                                        <tr>
-                                            <td>
-                                                {unitImage ? (
-                                                    <img src={unitImage ? unitImage : product.productImg} alt={product.productName} />
-                                                ) : (
-                                                    <img src={product.productImg} alt={product.productName} /> // Fallback if no unit image is found
-                                                )}
-                                            </td>
-                                            
-                                            {product.item_code && <td>{product.item_code}</td>}
-                                            {product.productName && <td>{product.productName}</td>}
-                                            {product.unit.description && <td>{product.unit.description}</td>}
-                                            <td style={{ textAlign: 'center' }}>{product.quantity_donate}</td>
-                                            <td style={{ textAlign: 'right' }}>0</td>
-                                            <td style={{ textAlign: 'right' }}>0</td>
-                                            <td>{product?.promotion?.promotionDetail?.description}</td>
-                                        </tr>
-                                        </>
-                                        )}
-                                          {product.promotion && product.promotion.type === 'amount' && product.quantity > 0 && (
-                                            <>  
-                                             <tr>
-                                            <td>
-                                                {unitImage ? (
-                                                    <img src={unitImage ? unitImage : product.productImg} alt={product.productName} />
-                                                ) : (
-                                                    <img src={product.productImg} alt={product.productName} /> // Fallback if no unit image is found
-                                                )}
-                                            </td>
-                                            
-                                            {product.item_code && <td>{product.item_code}</td>}
-                                            {product.productName && <td>{product.productName}</td>}
-                                            {product.unit.description && <td>{product.unit.description}</td>}
-                                            {product.quantity && <td style={{ textAlign: 'center' }}>{product.quantity}</td>}
-                                            {product.price && <td style={{ textAlign: 'right' }}>{formatCurrency(product.price)}</td>}
-                                            {product.total && <td style={{ textAlign: 'right' }}>{formatCurrency(product.price * product.quantity)}</td>}
-                                            <td></td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                {unitImage ? (
-                                                    <img src={unitImage ? unitImage : product.productImg} alt={product.productName} />
-                                                ) : (
-                                                    <img src={product.productImg} alt={product.productName} /> // Fallback if no unit image is found
-                                                )}
-                                            </td>
-                                            
-                                            {product.item_code && <td>{product.item_code}</td>}
-                                            {product.productName && <td>{product.productName}</td>}
-                                            {product.unit.description && <td>{product.unit.description}</td>}
-                                            {product.quantity && <td style={{ textAlign: 'center' }}>{product.quantity}</td>}
-                                            {product.price && <td style={{ textAlign: 'right' }}>-{formatCurrency(product.promotion.promotionDetail?.amount_donate)}</td>}
-                                            {product.total && <td style={{ textAlign: 'right' }}>-{formatCurrency((product.promotion.promotionDetail?.amount_donate) * product.quantity)}</td>}
-                                            <td>{product?.promotion?.promotionDetail?.description}</td>
-                                        </tr>
-                                        </>
-                                        )}
+                                            {product.promotion === null && (
+                                                <>
+                                                    <tr>
+                                                        <td>
+                                                            {unitImage ? (
+                                                                <img src={unitImage ? unitImage : product.productImg} alt={product.productName} />
+                                                            ) : (
+                                                                <img src={product.productImg} alt={product.productName} /> // Fallback if no unit image is found
+                                                            )}
+                                                        </td>
+
+                                                        {product.item_code && <td>{product.item_code}</td>}
+                                                        {product.productName && <td>{product.productName}</td>}
+                                                        {product.unit.description && <td>{product.unit.description}</td>}
+                                                        {product.quantity && <td style={{ textAlign: 'center' }}>{product.quantity}</td>}
+                                                        {product.price && <td style={{ textAlign: 'right' }}>{formatCurrency(product.price)}</td>}
+                                                        {product.total && <td style={{ textAlign: 'right' }}>{formatCurrency(product.total)}</td>}
+                                                        <td></td>
+                                                    </tr>
+                                                </>
+                                            )}
+                                            {isGift && (
+                                                <>
+                                                    <tr>
+                                                        <td>
+                                                            {unitImage ? (
+                                                                <img src={unitImage ? unitImage : product.productImg} alt={product.productName} />
+                                                            ) : (
+                                                                <img src={product.productImg} alt={product.productName} /> // Fallback if no unit image is found
+                                                            )}
+                                                        </td>
+
+                                                        {product.item_code && <td>{product.item_code}</td>}
+                                                        {product.productName && <td>{product.productName}</td>}
+                                                        {product.unit.description && <td>{product.unit.description}</td>}
+                                                        {product.quantity && <td style={{ textAlign: 'center' }}>{product.quantity - product.quantity_donate}</td>}
+                                                        {product.price && <td style={{ textAlign: 'right' }}>{formatCurrency(product.price)}</td>}
+                                                        {product.total && <td style={{ textAlign: 'right' }}>{formatCurrency(product.price * (product.quantity - product.quantity_donate))}</td>}
+                                                        <td></td>
+                                                    </tr>
+                                                </>
+                                            )}
+                                            {product.promotion && product.promotion.type === 'quantity' && product.quantity_donate > 0 && (
+                                                <>
+                                                    <tr>
+                                                        <td>
+                                                            {unitImage ? (
+                                                                <img src={unitImage ? unitImage : product.productImg} alt={product.productName} />
+                                                            ) : (
+                                                                <img src={product.productImg} alt={product.productName} /> // Fallback if no unit image is found
+                                                            )}
+                                                        </td>
+
+                                                        {product.item_code && <td>{product.item_code}</td>}
+                                                        {product.productName && <td>{product.productName}</td>}
+                                                        {product.unit.description && <td>{product.unit.description}</td>}
+                                                        <td style={{ textAlign: 'center' }}>{product.quantity_donate}</td>
+                                                        <td style={{ textAlign: 'right' }}>0</td>
+                                                        <td style={{ textAlign: 'right' }}>0</td>
+                                                        <td>{product?.promotion?.promotionDetail?.description}</td>
+                                                    </tr>
+                                                </>
+                                            )}
+                                            {product.promotion && product.promotion.type === 'amount' && product.quantity > 0 && (
+                                                <>
+                                                    <tr>
+                                                        <td>
+                                                            {unitImage ? (
+                                                                <img src={unitImage ? unitImage : product.productImg} alt={product.productName} />
+                                                            ) : (
+                                                                <img src={product.productImg} alt={product.productName} /> // Fallback if no unit image is found
+                                                            )}
+                                                        </td>
+
+                                                        {product.item_code && <td>{product.item_code}</td>}
+                                                        {product.productName && <td>{product.productName}</td>}
+                                                        {product.unit.description && <td>{product.unit.description}</td>}
+                                                        {product.quantity && <td style={{ textAlign: 'center' }}>{product.quantity}</td>}
+                                                        {product.price && <td style={{ textAlign: 'right' }}>{formatCurrency(product.price)}</td>}
+                                                        {product.total && <td style={{ textAlign: 'right' }}>{formatCurrency(product.price * product.quantity)}</td>}
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            {unitImage ? (
+                                                                <img src={unitImage ? unitImage : product.productImg} alt={product.productName} />
+                                                            ) : (
+                                                                <img src={product.productImg} alt={product.productName} /> // Fallback if no unit image is found
+                                                            )}
+                                                        </td>
+
+                                                        {product.item_code && <td>{product.item_code}</td>}
+                                                        {product.productName && <td>{product.productName}</td>}
+                                                        {product.unit.description && <td>{product.unit.description}</td>}
+                                                        {product.quantity && <td style={{ textAlign: 'center' }}>{product.quantity}</td>}
+                                                        {product.price && <td style={{ textAlign: 'right' }}>-{formatCurrency(product.promotion.promotionDetail?.amount_donate)}</td>}
+                                                        {product.total && <td style={{ textAlign: 'right' }}>-{formatCurrency((product.promotion.promotionDetail?.amount_donate) * product.quantity)}</td>}
+                                                        <td>{product?.promotion?.promotionDetail?.description}</td>
+                                                    </tr>
+                                                </>
+                                            )}
                                         </React.Fragment>
-                                           
+
                                     );
-                                    
+
                                 }
                                 )}
                             </tbody>

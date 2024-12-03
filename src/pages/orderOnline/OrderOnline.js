@@ -72,40 +72,40 @@ export default function OrderOnline() {
         const handleNewInvoice = async (data) => {
             const { invoice } = data;
             console.log(invoice);
-    
+
             try {
-              
+
                 // Fetch the full invoice data by invoiceCode
-              await getInvoicesByInvoiceCode(accessToken, axiosJWT,dispatch, invoice);
-                
+                await getInvoicesByInvoiceCode(accessToken, axiosJWT, dispatch, invoice);
+
             } catch (error) {
                 console.error('Error fetching invoice:', error);
                 toast.error('Không thể thêm mới đơn hàng.');
             }
         };
-    
-      
-    const handleUpdateStatusSocket = async (data) => {
-        const { invoiceCode, status } = data;
-        console.log('Status Update:', invoiceCode, status);
 
-        try {
-            // Dispatch action to update the invoice status in Redux store
-            dispatch(updateInvoiceStatus({invoiceCode:invoiceCode,status:status}))
-           
-        } catch (error) {
-            console.error('Error updating invoice status:', error);
-            toast.error('Không thể cập nhật trạng thái hóa đơn.');
-        }
-    };
 
-    // Subscribe to 'newInvoice' and 'updateStatus' events
-    onSocketEvent('newInvoice', handleNewInvoice);
-   onSocketEvent('updateStatus', handleUpdateStatusSocket);
+        const handleUpdateStatusSocket = async (data) => {
+            const { invoiceCode, status } = data;
+            console.log('Status Update:', invoiceCode, status);
 
-}, [onSocketEvent, accessToken, axiosJWT, dispatch]);
+            try {
+                // Dispatch action to update the invoice status in Redux store
+                dispatch(updateInvoiceStatus({ invoiceCode: invoiceCode, status: status }))
 
-    
+            } catch (error) {
+                console.error('Error updating invoice status:', error);
+                toast.error('Không thể cập nhật trạng thái hóa đơn.');
+            }
+        };
+
+        // Subscribe to 'newInvoice' and 'updateStatus' events
+        onSocketEvent('newInvoice', handleNewInvoice);
+        onSocketEvent('updateStatus', handleUpdateStatusSocket);
+
+    }, [onSocketEvent, accessToken, axiosJWT, dispatch]);
+
+
 
     // Lọc các hóa đơn để loại bỏ những hóa đơn có status là 'Tại quầy'
     const filteredInvoices = invoices.filter(invoice => invoice.status !== 'Tại quầy');
@@ -295,33 +295,33 @@ export default function OrderOnline() {
     const handleUpdateStatus = async () => {
         try {
             let userPay = ""; // Initialize userPay variable
-    
+
             console.log('selectedInvoice:', selectedInvoice);
             console.log('selectedInvoice:', currentUser);
             // Check if the status is "Chuẩn bị hàng" and assign value to userPay accordingly
             if (selectedInvoice.status.value === "Chuẩn bị hàng") {
                 userPay = currentUser._id;
             }
-    
+
             // Call the function to update the order status
             await updateStatusOrder(
-                accessToken, 
-                axiosJWT, 
-                toast, 
-                navigate, 
-                selectedInvoice, 
-                selectedInvoice.status.value, 
+                accessToken,
+                axiosJWT,
+                toast,
+                navigate,
+                selectedInvoice,
+                selectedInvoice.status.value,
                 emitSocketEvent,
                 userPay
             );
-    
+
             // Close the modal after successful update
             setIsEditModalOpen(false);
         } catch (error) {
             console.error('Failed to update status:', error);
         }
     };
-    
+
 
     return (
         <>
