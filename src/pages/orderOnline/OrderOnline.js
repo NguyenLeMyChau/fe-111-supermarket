@@ -242,7 +242,7 @@ export default function OrderOnline() {
                 className: 'text-center',
                 render: (text, record) => (
                     <BiSolidSkipNextCircle
-                        style={{ color: 'red', cursor: 'pointer' }}
+                        style={{ color: 'green', cursor: 'pointer' }}
                         size={30}
                         onClick={(event) => handleEditClick(event, record)}
                     />

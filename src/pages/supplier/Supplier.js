@@ -10,6 +10,7 @@ import AddSuplier from './AddSupplier';
 import { MdDelete } from 'react-icons/md';
 import { deleteSupplier } from '../../services/supplierRequest';
 import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
+import { toast } from 'react-toastify';
 
 export default function Supplier() {
     const navigate = useNavigate();
@@ -45,7 +46,7 @@ export default function Supplier() {
         event.stopPropagation(); // Ngăn chặn sự kiện click của hàng bảng
         if (supplier.productCount > 0) {
             console.log('Không thể xóa nhà cung cấp có sản phẩm.');
-            alert('Không thể xóa nhà cung cấp khi vẫn còn sản phẩm');
+            toast.warning('Không thể xóa nhà cung cấp khi vẫn còn sản phẩm');
             return;
         }
         if (window.confirm(`Bạn có chắc chắn muốn xóa nhà cung cấp "${supplier.name}"?`)) {
@@ -54,7 +55,7 @@ export default function Supplier() {
                 await deleteSupplier(supplier._id, accessToken, axiosJWT, navigate);
             } catch (error) {
                 console.error('Failed to delete category:', error);
-                alert('Có lỗi xảy ra khi xóa nhà cung cấp.');
+                toast.error('Có lỗi xảy ra khi xóa nhà cung cấp.');
             }
         }
     }

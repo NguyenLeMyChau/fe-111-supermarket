@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { orderProductFromSupplier } from '../services/warehouseRequest';
 import { useAccessToken, useAxiosJWT } from '../utils/axiosInstance';
 import { useNavigate } from 'react-router';
+import { toast } from 'react-toastify';
 
 const useAddOrder = (selectedProducts, supplierId) => {
     const navigate = useNavigate();
@@ -64,12 +65,12 @@ const useAddOrder = (selectedProducts, supplierId) => {
             const order = await orderProductFromSupplier(accessToken, axiosJWT, orderData);
 
             console.log('Kết quả đặt hàng:', order);
-            alert('Đặt hàng thành công!');
+            toast.success('Đặt hàng thành công!');
             navigate('/admin/order');
 
         } catch (error) {
             console.error('Đặt hàng thất bại:', error);
-            alert(error.response ? error.response.data.message : error.message);
+            toast.error(error.response ? error.response.data.message : error.message);
         } finally {
             setIsLoading(false); // Đặt isLoading thành false khi xử lý xong
         }
@@ -97,7 +98,7 @@ const useAddOrder = (selectedProducts, supplierId) => {
 
         } catch (error) {
             console.error('Load dữ liệu nhà cung cấp thất bại:', error);
-            alert(error.response ? error.response.data.message : error.message);
+            toast.error(error.response ? error.response.data.message : error.message);
         } finally {
             setIsLoadingSupplier(false);
         }

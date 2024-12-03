@@ -9,6 +9,7 @@ import { validatePromotionHeaderData } from '../../utils/validation'; // Validat
 import { format } from 'date-fns';
 import { useDispatch } from 'react-redux';
 import ClipLoader from 'react-spinners/ClipLoader';
+import { toast } from 'react-toastify';
 
 export default function AddPromotionHeader({ isOpen, onClose }) {
     const axiosJWT = useAxiosJWT();
@@ -47,7 +48,7 @@ export default function AddPromotionHeader({ isOpen, onClose }) {
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
             setLoading(false)
-            alert(errors);
+            toast.error(errors);
             return;
         }
 
@@ -60,13 +61,13 @@ export default function AddPromotionHeader({ isOpen, onClose }) {
                 setPromotionData({ description: '', startDate: format(new Date(), 'yyyy-MM-dd'), endDate: '' });
                 setErrors({});
                 setLoading(false)
-                alert('Đã thêm chương trình khuyến mãi thành công');
+                toast.success('Đã thêm chương trình khuyến mãi thành công');
                 
                 onClose();
             }
         } catch (error) {
             console.error('Failed to add promotion header:', error);
-            alert('Có lỗi xảy ra khi thêm chương trình khuyến mãi.');
+            toast.error('Có lỗi xảy ra khi thêm chương trình khuyến mãi.');
         }
     };
 

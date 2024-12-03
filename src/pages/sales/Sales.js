@@ -15,6 +15,7 @@ import AddCustomer from "../customer/AddCustomer.js";
 import { formatCurrency } from "../../utils/fotmatDate.js";
 import RefundModal from "./Refund/RefundModal.js";
 import { resetInvoice } from "../../store/reducers/invoiceSlice.js";
+import { toast } from "react-toastify";
 
 const Sales = () => {
   const navigate = useNavigate();
@@ -156,7 +157,7 @@ const Sales = () => {
         setTotal((prevTotal) => prevTotal + (price.price || 0)); // Sử dụng giá hoặc 0 nếu không tìm thấy
         setBarcode(''); // Xóa dữ liệu trong ô nhập barcode sau khi thêm sản phẩm
       } else {
-        alert(product?.message);
+        toast.error(product?.message);
         setBarcode('');
       }
     }

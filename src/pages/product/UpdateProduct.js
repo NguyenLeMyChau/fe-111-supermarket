@@ -9,6 +9,7 @@ import { updateProduct } from '../../services/productRequest';
 import { uploadImageVideo } from '../../services/uploadRequest';
 import { getProductsByBarcodeInUnitConvert } from '../../services/authRequest';
 import { TiDelete } from 'react-icons/ti';
+import { toast } from 'react-toastify';
 
 const UpdateProduct = ({ product }) => {
     const axiosJWT = useAxiosJWT();
@@ -68,7 +69,7 @@ const UpdateProduct = ({ product }) => {
 
             // Kiểm tra định dạng file
             if (!fileTypes.test(file.type)) {
-                alert('Vui lòng chọn file hình ảnh hợp lệ (jpeg, jpg, png).');
+                toast.warning('Vui lòng chọn file hình ảnh hợp lệ (jpeg, jpg, png).');
                 return; // Nếu không hợp lệ, không tiếp tục
             }
 
@@ -131,7 +132,7 @@ const UpdateProduct = ({ product }) => {
 
             //     // Nếu sản phẩm đã tồn tại và không phải là sản phẩm hiện tại, hiển thị thông báo và dừng lại
             //     if (existingProduct && existingProduct[0]._id !== product._id) {
-            //         alert(`Sản phẩm với mã vạch ${unit.barcode} đã tồn tại.`);
+            //         toast.warning(`Sản phẩm với mã vạch ${unit.barcode} đã tồn tại.`);
             //         setLoading(false); // Kết thúc loading
             //         return; // Dừng lại nếu sản phẩm đã tồn tại và không phải là sản phẩm hiện tại
             //     }
@@ -147,7 +148,7 @@ const UpdateProduct = ({ product }) => {
 
         } catch (error) {
             console.error('Failed to update product:', error);
-            alert('Có lỗi xảy ra khi cập nhật sản phẩm.');
+            toast.error('Có lỗi xảy ra khi cập nhật sản phẩm.');
         } finally {
             setLoading(false); // Kết thúc loading
         }

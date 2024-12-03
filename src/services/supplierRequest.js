@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import { getSupplierFailed, getSupplierStart, getSupplierSuccess } from "../store/reducers/supplierSlice";
 
 const getAllSuppliers = async (accessToken, axiosJWT, dispatch) => {
@@ -23,7 +24,7 @@ const addSupplier = async (supplierData, accessToken, axiosJWT) => {
                 Authorization: `Bearer ${accessToken}`,
             },
         });
-        alert('Thêm thành công nhà cung cấp mới');
+        toast.success('Thêm thành công nhà cung cấp mới');
         return response.data;
     }
     catch (error) {
@@ -38,7 +39,7 @@ const updateSupplier = async (supplierId, supplierData, accessToken, axiosJWT) =
                 Authorization: `Bearer ${accessToken}`,
             },
         });
-        alert('Cập nhật thành công nhà cung cấp');
+        toast.success('Cập nhật thành công nhà cung cấp');
         return response.data;
     }
     catch (error) {
@@ -53,7 +54,7 @@ const deleteSupplier = async (supplierId, accessToken, axiosJWT) => {
                 Authorization: `Bearer ${accessToken}`,
             },
         });
-        alert('Xóa thành công nhà cung cấp');
+        toast.success('Xóa thành công nhà cung cấp');
         return response.data;
     }
     catch (error) {

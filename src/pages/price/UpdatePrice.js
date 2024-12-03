@@ -7,6 +7,7 @@ import { validatePriceHeaderData } from '../../utils/validation';
 import { updateProductPrice } from '../../services/priceRequest';
 import { useDispatch } from 'react-redux';
 import ClipLoader from 'react-spinners/ClipLoader';
+import { toast } from 'react-toastify';
 
 export default function EditProductPrice({ onClose, priceId, initialData }) {
   const axiosJWT = useAxiosJWT();
@@ -63,7 +64,7 @@ export default function EditProductPrice({ onClose, priceId, initialData }) {
     const validationErrors = validatePriceHeaderData(productPriceData);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-        alert(errors)
+      toast.success(errors)
         setLoading(false)
       return;
     }
@@ -73,16 +74,16 @@ export default function EditProductPrice({ onClose, priceId, initialData }) {
 
       if (updatedPrice) {
         console.log('Product price updated:', updatedPrice);
-        alert('Cập nhật chương trình giá thành công');
+        toast.success('Cập nhật chương trình giá thành công');
         setLoading(false)
         onClose()      
       }else {
         setLoading(false)
-        alert(messages.join('\n'));}
+        toast.error(messages.join('\n'));}
     } catch (error) {
       console.error('Failed to update product price:', error);
       setLoading(false)
-      alert('Lỗi khi cập nhật sản phẩm');
+      toast.error('Lỗi khi cập nhật sản phẩm');
     }
   };
 

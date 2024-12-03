@@ -10,6 +10,7 @@ import { validatePromotionDetailData } from "../../utils/validation";
 import Dropdownpicker from "../../components/dropdownpicker/dropdownpicker";
 import { getAllProducts } from "../../services/productRequest";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 
 export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
   const axiosJWT = useAxiosJWT();
@@ -179,7 +180,7 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       setIsLoading(false)
-      alert(validationErrors)
+      toast.error(validationErrors)
       return;
     }
 
@@ -206,12 +207,12 @@ export default function AddPromotionDetail({ isOpen, onClose, promotionLine }) {
           description: "",
         });
         setErrors({});
-        alert("Đã thêm chi tiết khuyến mãi thành công");
+        toast.success("Đã thêm chi tiết khuyến mãi thành công");
         onClose(); // Đóng modal
       }
     } catch (error) {
       console.error("Failed to add promotion detail:", error);
-      alert("Có lỗi xảy ra khi thêm chi tiết khuyến mãi.");
+      toast.error("Có lỗi xảy ra khi thêm chi tiết khuyến mãi.");
     }
   };
 

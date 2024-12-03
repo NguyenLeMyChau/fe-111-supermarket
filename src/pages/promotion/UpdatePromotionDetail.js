@@ -7,6 +7,7 @@ import { validatePromotionDetailData } from '../../utils/validation';
 import Dropdownpicker from '../../components/dropdownpicker/dropdownpicker';
 import { getAllProducts } from '../../services/productRequest';
 import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 
 const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine ,onChangeDetail}) => {
     const axiosJWT = useAxiosJWT();
@@ -176,18 +177,18 @@ const UpdatePromotionDetail = ({ promotionDetail, onClose, promotionLine ,onChan
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       setIsLoading(false)
-      alert(validationErrors)
+      toast.info(validationErrors)
       return;
     }
         try {
             setIsLoading(true);
             const promotions = await updatePromotionDetail(promotionDetail._id, formData,dispatch, accessToken, axiosJWT);
             setIsLoading(false);
-            alert('Cập nhật chi tiết khuyến mãi thành công');
+            toast.success('Cập nhật chi tiết khuyến mãi thành công');
             onChangeDetail(promotions.data)
             onClose(); 
         } catch (error) {
-            alert('Cập nhật chi tiết khuyến mãi thất bại: ');
+          toast.error('Cập nhật chi tiết khuyến mãi thất bại: ');
         } finally {
             setIsLoading(false);
         }

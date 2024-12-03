@@ -1,6 +1,7 @@
 import { getEmployeeAndManagerFailed, getEmployeeAndManagerStart, getEmployeeAndManagerSuccess, getEmployeeFailed, getEmployeeStart, getEmployeeSuccess } from "../store/reducers/employeeSlice";
 import { getCustomerFailed, getCustomerStart, getCustomerSuccess } from "../store/reducers/customerSlice";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 const getAllEmployees = async (accessToken, axiosJWT, dispatch) => {
     dispatch(getEmployeeStart());
@@ -28,7 +29,7 @@ const registerEmployee = async (registerData, accessToken, axiosJWT) => {
         return response.data;
     } catch (error) {
         console.error('Resign employee failed:', error);
-        alert(error.response ? error.response.data.message : error.message);
+        toast.error(error.response ? error.response.data.message : error.message);
     }
 }
 
@@ -39,11 +40,11 @@ const updateEmployee = async (employeeId, employeeData, accessToken, axiosJWT) =
                 Authorization: `Bearer ${accessToken}`,
             },
         });
-        alert('Cập nhật thông tin nhân viên thành công');
+        toast.success('Cập nhật thông tin nhân viên thành công');
         return response.data;
     } catch (error) {
         console.error('Update employee failed:', error);
-        alert(error.response ? error.response.data.message : error.message);
+        toast.error(error.response ? error.response.data.message : error.message);
     }
 }
 
@@ -60,18 +61,18 @@ const getAllCustomer = async (accessToken, axiosJWT, dispatch) => {
     } catch (error) {
         dispatch(getCustomerFailed());
         console.error('Get all categories failed:', error);
-        alert(error.response ? error.response.data.message : error.message);
+        toast.error(error.response ? error.response.data.message : error.message);
     }
 };
 
 const registerCustomer = async (registerData) => {
     try {
         const response = await axios.post(`/api/auth/register-customer`, registerData);
-        alert('Đăng ký khách hàng thành công');
+        toast.success('Đăng ký khách hàng thành công');
         return response.data;
     } catch (error) {
         console.error('Resign customer failed:', error);
-        alert(error.response ? error.response.data.message : error.message);
+        toast.error(error.response ? error.response.data.message : error.message);
     }
 }
 
@@ -82,11 +83,11 @@ const updateCustomer = async (customerId, customerData, accessToken, axiosJWT) =
                 Authorization: `Bearer ${accessToken}`,
             },
         });
-        alert('Cập nhật thông tin khách hàng thành công');
+        toast.success('Cập nhật thông tin khách hàng thành công');
         return response.data;
     } catch (error) {
         console.error('Update customer failed:', error);
-        alert(error.response ? error.response.data.message : error.message);
+        toast.error(error.response ? error.response.data.message : error.message);
     }
 }
 

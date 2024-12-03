@@ -7,6 +7,7 @@ import { updateProductPriceDetail } from "../../services/priceRequest"; // Updat
 import { useDispatch, useSelector } from "react-redux";
 import { getAllProducts } from "../../services/productRequest";
 import ClipLoader from "react-spinners/ClipLoader";
+import { toast } from "react-toastify";
 
 export default function UpdatePriceDetail({
   priceDetail,
@@ -73,7 +74,7 @@ export default function UpdatePriceDetail({
     const validationErrors = validatePriceDetailData(productPriceData);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      alert(JSON.stringify(validationErrors)); // Displaying the validation errors properly
+      toast.success(JSON.stringify(validationErrors)); // Displaying the validation errors properly
       setLoading(false)
       return;
     }
@@ -95,7 +96,7 @@ export default function UpdatePriceDetail({
         });
         setErrors({});
         setLoading(false)
-        alert(updatedPrice.message);
+        toast.success(updatedPrice.message);
         const updatedProductPriceHeader = updatedPrice.data.find(
           (item) => item._id === productPriceData.productPriceHeader_id
         );
@@ -113,7 +114,7 @@ export default function UpdatePriceDetail({
     } catch (error) {
       console.error("Failed to update product price:", error);
       setLoading(false)
-      alert(error);
+      toast.error(error);
     }
   };
 

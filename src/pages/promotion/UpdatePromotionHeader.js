@@ -6,6 +6,7 @@ import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
 import { validatePromotionHeaderData } from '../../utils/validation';
 import ClipLoader from 'react-spinners/ClipLoader';
 import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 
 const UpdatePromotionHeader = ({ promotionHeader, onClose }) => {
     const axiosJWT = useAxiosJWT();
@@ -54,17 +55,17 @@ const UpdatePromotionHeader = ({ promotionHeader, onClose }) => {
         const validationErrors = validatePromotionHeaderData(formData);
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
-            alert(errors);
+            toast.info(errors);
             setLoading(false)
             return;
         }
         try {
             await updatePromotionHeader(promotionHeader._id, formData, dispatch,accessToken, axiosJWT);
-            alert('Cập nhật thành công khuyến mãi');
+            toast.success('Cập nhật thành công khuyến mãi');
             setLoading(false)
             onClose();
         } catch (error) {
-            alert('Cập nhật khuyến mãi thất bại: ' + error);
+            toast.error('Cập nhật khuyến mãi thất bại: ' + error);
         }
     };
 

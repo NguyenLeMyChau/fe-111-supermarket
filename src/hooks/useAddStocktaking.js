@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useAccessToken, useAxiosJWT } from '../utils/axiosInstance';
 import { useNavigate } from 'react-router';
 import { addStocktaking } from '../services/warehouseRequest';
+import { toast } from 'react-toastify';
 
 const useAddStocktaking = () => {
     const navigate = useNavigate();
@@ -167,19 +168,19 @@ const useAddStocktaking = () => {
         if (!isConfirmed) return;
 
         if (billId === '') {
-            alert('Vui lòng nhập mã phiếu nhập kho');
+            toast.warning('Vui lòng nhập mã phiếu nhập kho');
             return;
         }
 
         if (description === '') {
-            alert('Vui lòng nhập mô tả cho phiếu nhập');
+            toast.warning('Vui lòng nhập mô tả cho phiếu nhập');
             return;
         }
 
         // Check if all units are selected before proceeding
         for (let i = 0; i < products.length; i++) {
             if (!units[i]) {
-                alert(`Vui lòng chọn đơn vị tính cho sản phẩm: ${products[i].item_code}`);
+                toast.warning(`Vui lòng chọn đơn vị tính cho sản phẩm: ${products[i].item_code}`);
                 return; // Stop the process if any unit is missing
             }
         }
@@ -203,7 +204,7 @@ const useAddStocktaking = () => {
             await addStocktaking(stocktakingData, navigate, accessToken, axiosJWT);
         } catch (error) {
             console.error('Nhập hàng thất bại:', error);
-            alert(error.response ? error.response.data.message : error.message);
+            toast.error(error.response ? error.response.data.message : error.message);
         } finally {
             setIsLoading(false);
         }

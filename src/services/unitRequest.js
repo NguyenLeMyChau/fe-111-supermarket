@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import { getUnitFailed, getUnitStart, getUnitSuccess } from "../store/reducers/unitSlice";
 
 const getAllUnit = async (accessToken, axiosJWT, dispatch) => {
@@ -36,7 +37,7 @@ const addUnit = async (unitData, accessToken, axiosJWT) => {
                 Authorization: `Bearer ${accessToken}`,
             },
         });
-        alert('Thêm đơn vị tính thành công');
+        toast.success('Thêm đơn vị tính thành công');
         return response.data;
     } catch (error) {
         console.error('Add unit failed:', error);
@@ -50,7 +51,7 @@ const updateUnit = async (unitId, unitData, accessToken, axiosJWT, navigate) => 
                 Authorization: `Bearer ${accessToken}`,
             },
         });
-        alert('Cập nhật đơn vị tính thành công');
+        toast.success('Cập nhật đơn vị tính thành công');
         navigate('/admin/unit');
         return response.data;
     } catch (error) {
@@ -65,7 +66,7 @@ const deleteUnit = async (unitId, accessToken, axiosJWT, navigate) => {
                 Authorization: `Bearer ${accessToken}`,
             },
         });
-        alert('Xóa đơn vị tính thành công');
+        toast.success('Xóa đơn vị tính thành công');
         navigate('/admin/unit');
         return response.data;
     } catch (error) {

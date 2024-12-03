@@ -10,6 +10,7 @@ import { MdDelete } from 'react-icons/md';
 import { deleteCategory } from '../../services/productRequest';
 import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
 import { useNavigate } from 'react-router';
+import { toast } from 'react-toastify';
 
 export default function Category() {
     const accessToken = useAccessToken();
@@ -46,7 +47,7 @@ export default function Category() {
         event.stopPropagation(); // Ngăn chặn sự kiện click của hàng bảng
         if (category.productCount > 0) {
             console.log('Không thể xóa danh mục có sản phẩm.');
-            alert('Không thể xóa danh mục khi vẫn còn sản phẩm');
+            toast.warning('Không thể xóa danh mục khi vẫn còn sản phẩm');
             return;
         }
         // Thực hiện logic xóa, ví dụ: dispatch action để xóa danh mục
@@ -56,7 +57,7 @@ export default function Category() {
                 await deleteCategory(category._id, accessToken, axiosJWT, navigate);
             } catch (error) {
                 console.error('Failed to delete category:', error);
-                alert('Có lỗi xảy ra khi xóa loại sản phẩm.');
+                toast.error('Có lỗi xảy ra khi xóa loại sản phẩm.');
             }
         }
     };

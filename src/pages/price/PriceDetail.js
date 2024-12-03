@@ -12,6 +12,9 @@ import { deleteProductPriceDetail } from "../../services/priceRequest";
 import { MdDelete } from "react-icons/md";
 import { useAccessToken, useAxiosJWT } from "../../utils/axiosInstance";
 import ClipLoader from "react-spinners/ClipLoader";
+import { toast } from "react-toastify";
+import { formatCurrency } from "../../utils/fotmatDate";
+
 
 export default function PriceDetail() {
   const dispatch = useDispatch();
@@ -46,7 +49,7 @@ if(filteredProductHeader?.status !== "inactive") return
     const deletedPriceDetail = await deleteProductPriceDetail(accessToken, axiosJWT, dispatch, productPriceHeader._id);
     if(deletedPriceDetail) {
       setLoading(false)
-      alert(deletedPriceDetail.message)
+      toast.success(deletedPriceDetail.message)
       const updatedProductPriceHeader = deletedPriceDetail.allProductPrices?.find(
         (item) => item._id === productPriceHeader.productPriceHeader_id
       );
@@ -60,7 +63,7 @@ if(filteredProductHeader?.status !== "inactive") return
   
     else {
       setLoading(false)
-      alert(deletedPriceDetail.message)}
+      toast.error(deletedPriceDetail.message)}
  
 };
 
@@ -115,6 +118,9 @@ useState(productPriceHeader);
       key: "price",
       width: "10%",
       className: "text-center",
+      render:(text)=>(
+        <p>{formatCurrency(text)}</p>
+      )
     },
     {
       title: "Chỉnh sửa",

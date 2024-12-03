@@ -5,6 +5,7 @@ import { updateUser } from '../../services/authRequest';
 import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
 import { useNavigate } from 'react-router';
 import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 
 const UpdateUser = ({ user }) => {
     const dispatch = useDispatch();
@@ -66,10 +67,10 @@ const UpdateUser = ({ user }) => {
 
         try {
             await updateUser(user.id, formData, dispatch, navigate, accessToken, axiosJWT);
-            alert('Cập nhật thông tin thành công!');
+            toast.success('Cập nhật thông tin thành công!');
         } catch (error) {
             console.error('Error updating user:', error);
-            alert('Cập nhật thất bại. Vui lòng thử lại.');
+            toast.error('Cập nhật thất bại. Vui lòng thử lại.');
         }
     };
 

@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import { getOrderFailed, getOrderStart, getOrderSuccess } from "../store/reducers/orderSlice";
 import { getStocktakingFailed, getStocktakingStart, getStocktakingSuccess } from "../store/reducers/stocktakingSlice";
 import { getTransactionFailed, getTransactionStart, getTransactionSuccess } from "../store/reducers/transactionSlice";
@@ -17,7 +18,7 @@ const getAllWarehouse = async (accessToken, axiosJWT, dispatch) => {
     } catch (error) {
         dispatch(getWarehouseFailed());
         console.error('Get all warehouse failed:', error);
-        alert(error.response ? error.response.data.message : error.message);
+        toast.error(error.response ? error.response.data.message : error.message);
     }
 };
 
@@ -35,7 +36,7 @@ const getAllOrder = async (accessToken, axiosJWT, dispatch) => {
     } catch (error) {
         dispatch(getOrderFailed());
         console.error('Get all order failed:', error);
-        alert(error.response ? error.response.data.message : error.message);
+        toast.error(error.response ? error.response.data.message : error.message);
     }
 }
 
@@ -52,7 +53,7 @@ const orderProductFromSupplier = async (accessToken, axiosJWT, orderData) => {
         return response.data;
     } catch (error) {
         console.error('Order product failed:', error);
-        alert(error.response ? error.response.data.message : error.message);
+        toast.error(error.response ? error.response.data.message : error.message);
     }
 }
 
@@ -66,7 +67,7 @@ const updateOrderStatus = async (accessToken, axiosJWT, orderId, newStatus, prod
         return response.data;
     } catch (error) {
         console.error('update status failed:', error);
-        alert(error.response ? error.response.data.message : error.message);
+        toast.error(error.response ? error.response.data.message : error.message);
     }
 }
 
@@ -81,12 +82,12 @@ const addBillWarehouse = async (orderData, navigate, accessToken, axiosJWT) => {
                     Authorization: `Bearer ${accessToken}`,
                 },
             });
-        alert('Nhập hàng thành công!');
+            toast.success('Nhập hàng thành công!');
         navigate('/admin/bill');
         return response.data;
     } catch (error) {
         console.error('Add bill failed:', error);
-        alert(error.response ? error.response.data.message : error.message);
+        toast.error(error.response ? error.response.data.message : error.message);
     }
 }
 
@@ -103,7 +104,7 @@ const getAllBill = async (accessToken, axiosJWT, dispatch) => {
     } catch (error) {
         dispatch(getOrderFailed());
         console.error('Get all order failed:', error);
-        alert(error.response ? error.response.data.message : error.message);
+        toast.error(error.response ? error.response.data.message : error.message);
     }
 }
 
@@ -114,11 +115,11 @@ const updateBill = async (oldBillId, newBillId, productList, accessToken, axiosJ
                 Authorization: `Bearer ${accessToken}`,
             },
         });
-        alert('Cập nhật phiếu nhập kho thành công!');
+        toast.success('Cập nhật phiếu nhập kho thành công!');
         return response.data;
     } catch (error) {
         console.error('update bill failed:', error);
-        alert(error.response ? error.response.data.message : error.message);
+        toast.error(error.response ? error.response.data.message : error.message);
     }
 }
 
@@ -135,7 +136,7 @@ const getAllTransaction = async (accessToken, axiosJWT, dispatch) => {
     } catch (error) {
         dispatch(getTransactionFailed());
         console.error('Get all transaction failed:', error);
-        alert(error.response ? error.response.data.message : error.message);
+        toast.error(error.response ? error.response.data.message : error.message);
     }
 }
 
@@ -146,11 +147,11 @@ const cancelBill = async (billId, cancel_reason, accessToken, axiosJWT) => {
                 Authorization: `Bearer ${accessToken}`,
             },
         });
-        alert('Huỷ phiếu nhập thành công');
+        toast.success('Huỷ phiếu nhập thành công');
         return response.data;
     } catch (error) {
         console.error('Cancel bill failed:', error);
-        alert(error.response ? error.response.data.message : error.message);
+        toast.error(error.response ? error.response.data.message : error.message);
     }
 }
 
@@ -167,12 +168,12 @@ const addStocktaking = async (stocktakingData, navigate, accessToken, axiosJWT) 
                 Authorization: `Bearer ${accessToken}`,
             },
         });
-        alert('Nhập phiếu kiểm kê kho thành công!');
+        toast.success('Nhập phiếu kiểm kê kho thành công!');
         navigate('/admin/stocktaking');
         return response.data;
     } catch (error) {
         console.error('Add stocktaking failed:', error);
-        alert(error.response ? error.response.data.message : error.message);
+        toast.error(error.response ? error.response.data.message : error.message);
     }
 }
 
@@ -189,7 +190,7 @@ const getAllStocktaking = async (accessToken, axiosJWT, dispatch) => {
     } catch (error) {
         dispatch(getStocktakingFailed());
         console.error('Get all stocktaking failed:', error);
-        alert(error.response ? error.response.data.message : error.message);
+        toast.error(error.response ? error.response.data.message : error.message);
     }
 }
 

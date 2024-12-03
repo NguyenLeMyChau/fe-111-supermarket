@@ -1,6 +1,7 @@
 import axios from "axios";
 import { getCartFailed, getCartStart, getCartSuccess } from "../store/reducers/cartSlice";
 import { clearCustomer, setCustomer } from "../store/reducers/productPaySlice";
+import { toast } from "react-toastify";
 
 
 const getCartById = async (dispatch, accessToken, axiosJWT, accountId) => {
@@ -56,11 +57,11 @@ const addProductToCart = async (accessToken, axiosJWT, accountId, productId, uni
                 Authorization: `Bearer ${accessToken}`,
             },
         });
-        alert('Thêm sản phẩm vào giỏ hàng thành công');
+        toast.success('Thêm sản phẩm vào giỏ hàng thành công');
         return response.data;
     } catch (error) {
         console.error('Add product to cart failed:', error);
-        alert('Thêm sản phẩm vào giỏ hàng thất bại ', error);
+        toast.error('Thêm sản phẩm vào giỏ hàng thất bại ', error);
     }
 }
 const checkPaymentStatus = async (axiosJWT,appTransId) => {
@@ -246,7 +247,7 @@ const updateProductCart = async (accountId, productId, quantity, accessToken, ax
                 Authorization: `Bearer ${accessToken}`,
             },
         });
-        alert('Cập nhật giỏ hàng thành công');
+        toast.success('Cập nhật giỏ hàng thành công');
         return response.data;
     } catch (error) {
         console.error('Update product cart failed:', error);
@@ -269,7 +270,7 @@ const checkStockQuantityInCart = async (item_code, quantity, accessToken, axiosJ
         return response.data;
     } catch (error) {
         console.error('Check stock quantity failed:', error);
-        alert(error.response ? error.response.data.message : error.message);
+        toast.error(error.response ? error.response.data.message : error.message);
     }
 }
 const getProductsByBarcodeInUnitConvert = async (barcode, accessToken, axiosJWT) => {
@@ -284,7 +285,7 @@ const getProductsByBarcodeInUnitConvert = async (barcode, accessToken, axiosJWT)
         return response.data;
     } catch (error) {
         console.error('Get product by barcode failed:', error);
-        alert(error.response ? error.response.data.message : error.message);
+        toast.error(error.response ? error.response.data.message : error.message);
     }
 }
 const getCustomerByPhone = async (phone, accessToken, axiosJWT) => {

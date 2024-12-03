@@ -13,6 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getAllProducts } from "../../services/productRequest";
 import { useNavigate } from "react-router";
 import ClipLoader from "react-spinners/ClipLoader";
+import { toast } from "react-toastify";
 
 export default function AddProductPriceDetail({
   isOpen,
@@ -67,7 +68,7 @@ export default function AddProductPriceDetail({
   const handleDropdownChangeProduct = (name, value) => {
     if (name === "unit_id") {
       setProductPriceData((prevData) => ({ ...prevData, unit_id: value ,price:""}));
-      const productPrice = productPriceHeader.productPrices.find(
+      const productPrice = productPriceHeader.productPrices?.find(
         (product) =>
           product.item_code === productPriceData.item_code &&
           product.unit_id._id === value
@@ -85,7 +86,7 @@ export default function AddProductPriceDetail({
       }));
     }
     if (name === "item_code" || name === "name") {
-      const selectedProduct = products.find(
+      const selectedProduct = products?.find(
         (product) => product.name === value || product.item_code === value
       );
       console.log(selectedProduct);
@@ -107,7 +108,7 @@ export default function AddProductPriceDetail({
         }));
       }
     }
-      const productPrice = productPriceHeader.productPrices.find(
+      const productPrice = productPriceHeader.productPrices?.find(
         (product) =>
           product.item_code === productPriceData.item_code &&
           product.unit_id._id === productPriceData.unit_id
@@ -127,7 +128,7 @@ setLoading(true)
     const validationErrors = validatePriceDetailData(productPriceData);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      alert(JSON.stringify(validationErrors)); // Displaying the validation errors properly
+      toast.error(JSON.stringify(validationErrors)); // Displaying the validation errors properly
       setLoading(false)
       return;
     }
@@ -150,8 +151,8 @@ setLoading(true)
         });
         setErrors({});
         setLoading(false)
-        alert(addedPrice.message);
-        const updatedProductPriceHeader = addedPrice.data.find(
+        toast.success(addedPrice.message);
+        const updatedProductPriceHeader = addedPrice.data?.find(
           (item) => item._id === productPriceData.productPriceHeader_id
         );
   
@@ -168,7 +169,7 @@ setLoading(true)
     } catch (error) {
       console.error("Failed to add product price:", error);
       setLoading(false)
-      alert(error);
+      toast.error(error);
     }
   };
 

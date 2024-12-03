@@ -5,6 +5,7 @@ import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
 import { updateCategory } from '../../services/productRequest';
 import ClipLoader from 'react-spinners/ClipLoader';
 import { uploadImageVideo } from '../../services/uploadRequest';
+import { toast } from 'react-toastify';
 
 const UpdateCategory = ({ category }) => {
     const accessToken = useAccessToken();
@@ -38,7 +39,7 @@ const UpdateCategory = ({ category }) => {
 
             // Kiểm tra định dạng file
             if (!fileTypes.test(file.type)) {
-                alert('Vui lòng chọn file hình ảnh hợp lệ (jpeg, jpg, png).');
+                toast.warning('Vui lòng chọn file hình ảnh hợp lệ (jpeg, jpg, png).');
                 return; // Nếu không hợp lệ, không tiếp tục
             }
 

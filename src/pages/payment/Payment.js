@@ -26,6 +26,7 @@ import {
   calculateDiscountAmount,
 } from "../../utils/calculatePromotion";
 import { useSocket } from "../../context/SocketContext";
+import { toast } from "react-toastify";
 
 const Payment = () => {
   const navigate = useNavigate();
@@ -354,18 +355,18 @@ const Payment = () => {
               totalPayment
             );
             if (response?.success) {
-              alert("Thanh toán thành công!");
+              toast.success("Thanh toán thành công!");
               
               setIsPaid(true);
               setDataInvoices(response.data);
               localStorage.removeItem("paymentData");
             } else {
-              alert(response?.message || "Thanh toán thất bại!");
+              toast.error(response?.message || "Thanh toán thất bại!");
             }
           }
         } catch (error) {
           console.error("Lỗi khi kiểm tra trạng thái thanh toán:", error);
-          alert("Không thể kiểm tra trạng thái thanh toán.");
+          toast.warning("Không thể kiểm tra trạng thái thanh toán.");
         }
       }
     };
@@ -400,12 +401,12 @@ const Payment = () => {
      
       } catch (error) {
         console.error("Payment error:", error);
-        alert("Có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại.");
+        toast.error("Có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại.");
       }
     }
     if (paymentMethod === "Tiền mặt") {
       if (customerPaid < discountedTotal) {
-        alert("Số tiền trả không đủ.");
+        toast.warning("Số tiền trả không đủ.");
         return;
       }
       try {
@@ -425,15 +426,15 @@ const Payment = () => {
         );
         console.log("pay cart response:", response);
         if (response?.success) {
-          alert("Thanh toán thành công!");
+          toast.success("Thanh toán thành công!");
           setIsPaid(true);
           setDataInvoices(response.data);
         } else {
-          alert(response?.message || "Thanh toán thất bại!");
+          toast.error(response?.message || "Thanh toán thất bại!");
         }
       } catch (error) {
         console.error("Payment error:", error);
-        alert("Có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại.");
+        toast.error("Có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại.");
       }
     }
   };
@@ -500,7 +501,7 @@ const Payment = () => {
             </tr>
           )}
           {product.promotion && product.promotion.promotionLine_id.type === 'quantity' && product.quantityDonate > 0 && (
-            <tr>
+            <tr className="promotion-row">
               <td>KM</td>
               <td>{`${product.promotion.description}: ${product.name}`}</td>
               <td>{product.unit.description}</td>

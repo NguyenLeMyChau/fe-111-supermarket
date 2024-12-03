@@ -10,6 +10,7 @@ import { uploadImageVideo } from '../../services/uploadRequest';
 import ClipLoader from 'react-spinners/ClipLoader'; // Import ClipLoader
 import { TiDelete } from "react-icons/ti";
 import { getProductsByBarcodeInUnitConvert } from '../../services/authRequest';
+import { toast } from 'react-toastify';
 
 export default function AddProduct({ isOpen, onClose }) {
     const axiosJWT = useAxiosJWT();
@@ -116,7 +117,7 @@ export default function AddProduct({ isOpen, onClose }) {
 
             // Kiểm tra định dạng file
             if (!fileTypes.test(file.type)) {
-                alert('Vui lòng chọn file hình ảnh hợp lệ (jpeg, jpg, png).');
+                toast.warning('Vui lòng chọn file hình ảnh hợp lệ (jpeg, jpg, png).');
                 return; // Nếu không hợp lệ, không tiếp tục
             }
 
@@ -166,7 +167,7 @@ export default function AddProduct({ isOpen, onClose }) {
             //     const existingProduct = await getProductsByBarcodeInUnitConvert(unit.barcode, accessToken, axiosJWT);
             //     console.log('Existing product:', existingProduct);
             //     if (existingProduct) {
-            //         alert(`Sản phẩm với mã vạch ${unit.barcode} đã tồn tại.`);
+            //         toast.warning(`Sản phẩm với mã vạch ${unit.barcode} đã tồn tại.`);
             //         return; // Dừng lại nếu sản phẩm đã tồn tại
             //     }
             // }
@@ -183,7 +184,7 @@ export default function AddProduct({ isOpen, onClose }) {
 
         } catch (error) {
             console.error('Failed to add product:', error);
-            alert('Có lỗi xảy ra khi thêm sản phẩm.');
+            toast.error('Có lỗi xảy ra khi thêm sản phẩm.');
         } finally {
             setLoading(false); // Kết thúc loading
         }

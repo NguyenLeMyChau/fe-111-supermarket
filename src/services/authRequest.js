@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import { loginFailed, loginStart, loginSuccess, logoutFailed, logoutStart, logoutSuccess, resetLogoutState } from '../store/reducers/authSlice';
+import { toast } from 'react-toastify';
 
 const loginUser = async (loginData, dispatch, navigate) => {
     dispatch(loginStart());
@@ -36,13 +37,13 @@ const loginUser = async (loginData, dispatch, navigate) => {
             navigate('/home');
         }
         else {
-            alert('Chờ cập nhật role')
+            toast.info('Chờ cập nhật role')
         }
 
     } catch (error) {
         dispatch(loginFailed());
         console.error('Login failed:', error);
-        alert(error.response ? error.response.data.message : error.message);
+        toast.error(error.response ? error.response.data.message : error.message);
     }
 }
 
@@ -64,7 +65,7 @@ const logoutUser = async (dispatch, navigate, accessToken, axiosJWT) => {
     } catch (error) {
         dispatch(logoutFailed());
         console.error('Logout failed:', error);
-        alert(error.response ? error.response.data.message : error.message);
+        toast.error(error.response ? error.response.data.message : error.message);
     }
 }
 
@@ -76,13 +77,13 @@ const updateUser = async (accountId, userData, dispatch, navigate, accessToken, 
             },
         });
 
-        alert('Cập nhật thông tin thành công. Vui lòng đăng nhập lại để thực hiện thao tác khác');
+        toast.success('Cập nhật thông tin thành công. Vui lòng đăng nhập lại để thực hiện thao tác khác');
 
         logoutUser(dispatch, navigate, accessToken, axiosJWT);
 
     } catch (error) {
         console.error('Update user failed:', error);
-        alert(error.response ? error.response.data.message : error.message);
+        toast.error(error.response ? error.response.data.message : error.message);
     }
 }
 
@@ -97,7 +98,7 @@ const getProductsByBarcodeInUnitConvert = async (barcode, accessToken, axiosJWT)
         return response.data;
     } catch (error) {
         console.error('Get product by barcode failed:', error);
-        alert(error.response ? error.response.data.message : error.message);
+        toast.error(error.response ? error.response.data.message : error.message);
     }
 }
 

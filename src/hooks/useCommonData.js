@@ -11,6 +11,7 @@ import { getAllBill, getAllStocktaking, getAllTransaction, getAllWarehouse } fro
 import { getAllUnit } from '../services/unitRequest';
 import { getAllPrices } from '../services/priceRequest'
 import { getAllInvoices, getAllInvoicesRefund } from '../services/invoiceRequest';
+import { toast } from 'react-toastify';
 
 const useCommonData = () => {
     const dispatch = useDispatch();
@@ -62,10 +63,10 @@ const useCommonData = () => {
 
     useEffect(() => {
         if (!currentUser && !logout) {
-            alert('Vui lòng đăng nhập để thực hiện chức năng này!');
+            toast.warning('Vui lòng đăng nhập để thực hiện chức năng này!');
             navigate('/login');
         } else if (currentUser?.role !== 'manager' && !logout) {
-            alert('Chỉ có quản lý mới có thể truy cập trang này!');
+            toast.warning('Chỉ có quản lý mới có thể truy cập trang này!');
             navigate('/login');
         }
     }, [currentUser, logout, navigate]);

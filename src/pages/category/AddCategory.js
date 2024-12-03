@@ -6,6 +6,7 @@ import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
 import { addCategory } from '../../services/productRequest';
 import ClipLoader from 'react-spinners/ClipLoader';
 import { uploadImageVideo } from '../../services/uploadRequest';
+import { toast } from 'react-toastify';
 
 export default function AddCategory({ isOpen, onClose }) {
     const axiosJWT = useAxiosJWT();
@@ -39,7 +40,7 @@ export default function AddCategory({ isOpen, onClose }) {
         const newErrors = validate();
         if (Object.keys(newErrors).length > 0) {
             setErrors(newErrors);
-            alert('Vui lòng kiểm tra lại thông tin.');
+            toast.warning('Vui lòng kiểm tra lại thông tin.');
             return;
         }
 
@@ -51,7 +52,7 @@ export default function AddCategory({ isOpen, onClose }) {
             }
         } catch (error) {
             console.error('Failed to add category:', error);
-            alert('Có lỗi xảy ra khi thêm loại sản phẩm.');
+            toast.error('Có lỗi xảy ra khi thêm loại sản phẩm.');
         }
     };
 
@@ -62,7 +63,7 @@ export default function AddCategory({ isOpen, onClose }) {
 
             // Kiểm tra định dạng file
             if (!fileTypes.test(file.type)) {
-                alert('Vui lòng chọn file hình ảnh hợp lệ (jpeg, jpg, png).');
+                toast.warning('Vui lòng chọn file hình ảnh hợp lệ (jpeg, jpg, png).');
                 return; // Nếu không hợp lệ, không tiếp tục
             }
 

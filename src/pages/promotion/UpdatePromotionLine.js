@@ -5,6 +5,7 @@ import { updatePromotionLine } from '../../services/promotionRequest';
 import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
 import { validatePromotionLineData } from '../../utils/validation';
 import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
 
 const UpdatePromotionLine = ({ promotionLine, onClose, promotionHeader }) => {
     const axiosJWT = useAxiosJWT();
@@ -62,18 +63,18 @@ const UpdatePromotionLine = ({ promotionLine, onClose, promotionHeader }) => {
         const validationErrors = validatePromotionLineData(formData);
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
-            alert(errors)
+            toast.warning(errors)
             return;
         }
         try {
             setIsLoading(true);
             const updateLine =  await updatePromotionLine(promotionLine._id,dispatch, formData, accessToken, axiosJWT);
             if(!updateLine)
-            alert(updateLine.message);
-        else {alert(updateLine.message);
+            toast.success(updateLine.message);
+        else {toast.error(updateLine.message);
             onClose();}
         } catch (error) {
-            alert('Cập nhật dòng khuyến mãi thất bại');
+            toast.error('Cập nhật dòng khuyến mãi thất bại');
         } 
     };
 

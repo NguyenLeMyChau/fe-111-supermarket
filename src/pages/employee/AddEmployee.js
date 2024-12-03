@@ -7,6 +7,7 @@ import { registerEmployee } from '../../services/employeeRequest';
 import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
 import { validateEmployeeData } from '../../utils/validation';
 import ClipLoader from 'react-spinners/ClipLoader';
+import { toast } from 'react-toastify';
 
 export default function AddEmployee({ isOpen, onClose }) {
     const axiosJWT = useAxiosJWT();
@@ -58,7 +59,7 @@ export default function AddEmployee({ isOpen, onClose }) {
         const validationErrors = validateEmployeeData(employeeData);
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
-            alert('Vui lòng kiểm tra lại thông tin.');
+            toast.warning('Vui lòng kiểm tra lại thông tin.');
             return;
         }
 
@@ -78,11 +79,11 @@ export default function AddEmployee({ isOpen, onClose }) {
                     password: '123456789',
                 });
                 setErrors({});
-                alert('Đăng ký nhân viên thành công');
+                toast.success('Đăng ký nhân viên thành công');
             }
         } catch (error) {
             console.error('Failed to register employee:', error);
-            alert('Có lỗi xảy ra khi thêm nhân viên.');
+            toast.error('Có lỗi xảy ra khi thêm nhân viên.');
         } finally {
             setLoading(false); // Kết thúc loading
         }

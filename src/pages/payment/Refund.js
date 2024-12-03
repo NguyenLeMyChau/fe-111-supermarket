@@ -14,6 +14,7 @@ import PaymentModal from "../sales/Invoice/PaymentModal";
 import { formatCurrency } from "../../utils/fotmatDate";
 import PaymentModalRefund from "../sales/Invoice/PaymentModalRefund";
 import { calculateDiscount, calculateDiscountAmount } from "../../utils/calculatePromotion";
+import { toast } from "react-toastify";
 
 const Refund = () => {
   const navigate = useNavigate();
@@ -266,15 +267,15 @@ const Refund = () => {
       );
       console.log('pay cart response:', response.data);
       if (response?.success) {
-        alert("Trả hàng thành công!");
+        toast.success("Trả hàng thành công!");
         setIsPaid(true);
         setDataInvoices(response.data);
       } else {
-        alert(response?.message || "Thanh toán thất bại!");
+        toast.error(response?.message || "Thanh toán thất bại!");
       }
     } catch (error) {
       console.error("Payment error:", error);
-      alert("Có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại.");
+      toast.error("Có lỗi xảy ra trong quá trình thanh toán. Vui lòng thử lại.");
     }
   };
 

@@ -5,6 +5,7 @@ import Button from '../../components/button/Button';
 import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
 import { addSupplier } from '../../services/supplierRequest';
 import { validateSupplierData } from '../../utils/validation';
+import { toast } from 'react-toastify';
 
 export default function AddSuplier({ isOpen, onClose }) {
     const axiosJWT = useAxiosJWT();
@@ -53,7 +54,7 @@ export default function AddSuplier({ isOpen, onClose }) {
         e.preventDefault();
         const newErrors = validateSupplierData(supplierData);
         if (Object.keys(newErrors).length > 0) {
-            alert('Vui lòng kiểm tra lại thông tin.');
+            toast.warning('Vui lòng kiểm tra lại thông tin.');
             setErrors(newErrors);
             return;
         }
@@ -71,7 +72,7 @@ export default function AddSuplier({ isOpen, onClose }) {
             }
         } catch (error) {
             console.error('Failed to add category:', error);
-            alert('Có lỗi xảy ra khi thêm nhà cung cấp.');
+            toast.error('Có lỗi xảy ra khi thêm nhà cung cấp.');
         }
     };
 

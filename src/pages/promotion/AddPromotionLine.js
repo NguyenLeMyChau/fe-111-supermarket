@@ -10,6 +10,7 @@ import { validatePromotionLineData } from "../../utils/validation";
 import { format } from "date-fns";
 import { useDispatch } from "react-redux";
 import ClipLoader from "react-spinners/ClipLoader";
+import { toast } from "react-toastify";
 
 export default function AddPromotionLine({ isOpen, onClose, promotionHeader }) {
   const dispatch = useDispatch();
@@ -58,7 +59,7 @@ export default function AddPromotionLine({ isOpen, onClose, promotionHeader }) {
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       setLoading(false);
-      alert(errors);
+      toast.error(errors);
       return;
     }
 
@@ -80,12 +81,12 @@ export default function AddPromotionLine({ isOpen, onClose, promotionHeader }) {
         });
         setErrors({});
         setLoading(false);
-        alert("Đã thêm dòng khuyến mãi thành công");
+        toast.success("Đã thêm dòng khuyến mãi thành công");
         onClose()
       }
     } catch (error) {
       console.error("Failed to add promotion line:", error);
-      alert("Có lỗi xảy ra khi thêm dòng khuyến mãi");
+      toast.error("Có lỗi xảy ra khi thêm dòng khuyến mãi");
     }
   };
 

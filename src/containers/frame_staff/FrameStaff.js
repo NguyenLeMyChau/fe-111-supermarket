@@ -4,6 +4,7 @@ import Header from '../header/Header';
 import { useNavigate } from 'react-router';
 import { useSelector } from 'react-redux';
 import User from '../user/User';
+import { toast } from 'react-toastify';
 
 export default function FrameStaff() {
     const [currentContent, setCurrentContent] = useState(<User />);
@@ -13,10 +14,10 @@ export default function FrameStaff() {
 
     useEffect(() => {
         if (!login && !logout) {
-            alert('Vui lòng đăng nhập để thực hiện chức năng này!');
+            toast.info('Vui lòng đăng nhập để thực hiện chức năng này!');
             navigate('/login');
         } else if (login?.role !== 'staff' && !logout) {
-            alert('Chỉ có nhân viên mới có thể truy cập trang này!');
+            toast.info('Chỉ có nhân viên mới có thể truy cập trang này!');
             navigate('/login');
         }
     }, [login, logout, navigate]);

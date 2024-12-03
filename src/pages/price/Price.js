@@ -14,6 +14,7 @@ import { format } from 'date-fns';
 import { deleteProductPrice, getAllPriceDetail } from '../../services/priceRequest';
 import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
 import ClipLoader from 'react-spinners/ClipLoader';
+import { toast } from 'react-toastify';
 
 export default function Price() {
   const navigate = useNavigate();
@@ -50,8 +51,8 @@ const handleDeleteClick = async (event, productPriceHeader) => {
     const deletedPriceHeader = await deleteProductPrice(accessToken, axiosJWT, dispatch, productPriceHeader._id);
     setLoading(false)
     if(deletedPriceHeader) 
-      alert(deletedPriceHeader.message)
-    else alert(deletedPriceHeader.message)
+      toast.success(deletedPriceHeader.message)
+    else toast.error(deletedPriceHeader.message)
  
 };
 

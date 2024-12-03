@@ -1,3 +1,4 @@
+import { toast } from 'react-toastify';
 import { getInvoiceCustomerFailed, getInvoiceCustomerStart, getInvoiceCustomerSuccess } from '../store/reducers/invoiceCustomerSlice';
 
 const updateCustomerInfo = async (accountId, customerInfo, navigate, accessToken, axiosJWT) => {
@@ -10,7 +11,7 @@ const updateCustomerInfo = async (accountId, customerInfo, navigate, accessToken
                 Authorization: `Bearer ${accessToken}`,
             },
         });
-        alert('Vui lòng đăng nhập lại để cập nhật thông tin mới, chúng tôi xin lỗi vì sự bất tiện này');
+        toast.warning('Vui lòng đăng nhập lại để cập nhật thông tin mới, chúng tôi xin lỗi vì sự bất tiện này');
         navigate('Login');
         return response.data;
     } catch (error) {

@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import { getCategoryFailed, getCategoryStart, getCategorySuccess } from "../store/reducers/categorySlice";
 import { getProductFailed, getProductStart, getProductSuccess } from "../store/reducers/productSlice";
 
@@ -24,7 +25,7 @@ const deleteCategory = async (categoryId, accessToken, axiosJWT, navigate) => {
                 Authorization: `Bearer ${accessToken}`,
             },
         });
-        alert('Xóa thành công loại sản phẩm');
+        toast.success('Xóa thành công loại sản phẩm');
         navigate('/admin/category');
         return response.data;
     }
@@ -40,7 +41,7 @@ const addCategory = async (categoryData, accessToken, axiosJWT) => {
                 Authorization: `Bearer ${accessToken}`,
             },
         });
-        alert('Thêm thành công loại sản phẩm mới');
+        toast.success('Thêm thành công loại sản phẩm mới');
         return response.data;
     }
     catch (error) {
@@ -55,7 +56,7 @@ const updateCategory = async (categoryId, categoryData, accessToken, axiosJWT) =
                 Authorization: `Bearer ${accessToken}`,
             },
         });
-        alert('Cập nhật thành công loại sản phẩm');
+        toast.success('Cập nhật thành công loại sản phẩm');
         return response.data;
     }
     catch (error) {
@@ -114,12 +115,12 @@ const addProductWithWarehouse = async (productData, accessToken, axiosJWT, onClo
                 Authorization: `Bearer ${accessToken}`,
             },
         });
-        alert('Thêm thành công sản phẩm mới');
+        toast.success('Thêm thành công sản phẩm mới');
         onClose();
         return response.data;
     } catch (error) {
         console.error('Add product failed:', error);
-        alert(error.response ? error.response.data.message : error.message);
+        toast.error(error.response ? error.response.data.message : error.message);
     }
 }
 
@@ -130,11 +131,11 @@ const updateProduct = async (productId, productData, accessToken, axiosJWT) => {
                 Authorization: `Bearer ${accessToken}`,
             },
         });
-        alert('Cập nhật thành công sản phẩm');
+        toast.success('Cập nhật thành công sản phẩm');
         return response.data;
     } catch (error) {
         console.error('Update product failed:', error);
-        alert(error.response ? error.response.data.message : error.message);
+        toast.error(error.response ? error.response.data.message : error.message);
     }
 }
 

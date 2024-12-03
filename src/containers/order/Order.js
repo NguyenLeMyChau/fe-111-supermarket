@@ -10,6 +10,7 @@ import Select from 'react-select';
 import Button from '../../components/button/Button';
 import { updateOrderStatus } from '../../services/warehouseRequest';
 import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
+import { toast } from 'react-toastify';
 
 export default function Order() {
     const navigate = useNavigate();
@@ -123,7 +124,7 @@ export default function Order() {
         if (window.confirm('Bạn có chắc chắn muốn cập nhật trạng thái đơn hàng không?')) {
             try {
                 await updateOrderStatus(accessToken, axiosJWT, orderDetail.orderId, orderDetail.status.value, orderDetail.products);
-                alert('Cập nhật trạng thái đơn hàng thành công');
+                toast.success('Cập nhật trạng thái đơn hàng thành công');
                 navigate('/admin/order');
                 // setIsModalOpen(false);
             } catch (error) {

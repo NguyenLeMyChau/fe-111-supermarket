@@ -8,6 +8,7 @@ import { validatePriceHeaderData } from '../../utils/validation';
 import { addProductPrice, copyProductPrice } from '../../services/priceRequest';
 import { useDispatch } from 'react-redux';
 import ClipLoader from 'react-spinners/ClipLoader';
+import { toast } from 'react-toastify';
 
 export default function AddProductPrice({ isOpen, onClose ,productPriceHeader,title}) {
   const axiosJWT = useAxiosJWT();
@@ -37,7 +38,7 @@ console.log(productPriceHeader)
     if (Object.keys(validationErrors).length > 0) {
         setErrors(validationErrors);
         console.log(validationErrors)
-        alert(errors);
+        toast.error(errors);
         setLoading(false)
         return;
     }
@@ -50,13 +51,13 @@ console.log(productPriceHeader)
         console.log('Product price added:', addedPrice.data);
         setProductPriceData({ description: '', startDate: format(new Date(), 'yyyy-MM-dd'), endDate: '', status: 'inactive' });
         setErrors({});
-        alert('Thêm chương trình giá thành công');
+        toast.success('Thêm chương trình giá thành công');
         setLoading(false)
         onClose();
       }
     } catch (error) {
       console.error('Failed to add product price:', error);
-      alert('Lỗi khi thêm sản phẩm');
+      toast.error('Lỗi khi thêm sản phẩm');
       setLoading(false)
     }
   };

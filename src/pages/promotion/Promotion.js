@@ -18,6 +18,7 @@ import ClipLoader from 'react-spinners/ClipLoader';
 import { format } from 'date-fns';
 import { deletePromotionDetail, deletePromotionHeader, deletePromotionLine } from '../../services/promotionRequest';
 import { useAccessToken, useAxiosJWT } from '../../utils/axiosInstance';
+import { toast } from 'react-toastify';
 
 export default function Promotion() {
   const dispatch = useDispatch();
@@ -52,7 +53,7 @@ console.log(promotions)
     const currentDate = new Date();
     const endDate = new Date(promotionHeader.endDate); // Make sure endDate is in Date format
     if (endDate < currentDate) {
-      alert("Không thể chỉnh sửa chương trình khuyến mãi vì ngày kết thúc đã qua.");
+      toast.warning("Không thể chỉnh sửa chương trình khuyến mãi vì ngày kết thúc đã qua.");
       return; // Exit if the end date has passed
     }
   
@@ -71,7 +72,7 @@ const handleEditClickLine = (event, promotionLine) => {
   const currentDate = new Date();
   const endDate = new Date(promotionLine.endDate); // Make sure endDate is in Date format
   if (endDate < currentDate) {
-    alert("Không thể chỉnh sửa chương trình khuyến mãi vì ngày kết thúc đã qua.");
+    toast.warning("Không thể chỉnh sửa chương trình khuyến mãi vì ngày kết thúc đã qua.");
     return; // Exit if the end date has passed
   }
   
@@ -102,7 +103,7 @@ const handleDeleteClick = async (event, promotionLine) => {
   const currentDate = new Date();
   const endDate = new Date(promotionLine.endDate); // Make sure endDate is in Date format
   if (endDate < currentDate) {
-    alert("Không thể xóa chương trình khuyến mãi vì ngày kết thúc đã qua.");
+    toast.warning("Không thể xóa chương trình khuyến mãi vì ngày kết thúc đã qua.");
     return; // Exit if the end date has passed
   }
   const confirmDelete = window.confirm("Có chắn chắn xóa");
@@ -111,8 +112,8 @@ const handleDeleteClick = async (event, promotionLine) => {
     const deleteHeader = await deletePromotionLine(promotionLine._id, accessToken, dispatch, axiosJWT);
     setLoading(false)
     if(deleteHeader) 
-      alert(deleteHeader.message)
-    else alert(deleteHeader.message)
+      toast.success(deleteHeader.message)
+    else toast.error(deleteHeader.message)
 };
 const handleDeleteClickHeader = async (event, promotionHeader) => {
   event.stopPropagation();
@@ -121,7 +122,7 @@ const handleDeleteClickHeader = async (event, promotionHeader) => {
   const currentDate = new Date();
   const endDate = new Date(promotionHeader.endDate); // Make sure endDate is in Date format
   if (endDate < currentDate) {
-    alert("Không thể xóa chương trình khuyến mãi vì ngày kết thúc đã qua.");
+    toast.warning("Không thể xóa chương trình khuyến mãi vì ngày kết thúc đã qua.");
     return; // Exit if the end date has passed
   }
 
@@ -136,11 +137,11 @@ const handleDeleteClickHeader = async (event, promotionHeader) => {
 
     // Handle response
     setLoading(false);
-    alert(deleteHeader.message);
+    toast.success(deleteHeader.message);
 
   } catch (error) {
     setLoading(false);
-    alert("Đã có lỗi xảy ra khi xóa chương trình khuyến mãi.");
+    toast.error("Đã có lỗi xảy ra khi xóa chương trình khuyến mãi.");
   }
 };
 
@@ -155,8 +156,8 @@ const handleDeleteClickDetail = async (event, promotionDetail) => {
      console.log(deleteHeader)
      setLoading(false)
      if(deleteHeader) 
-       alert(deleteHeader.message)
-     else alert(deleteHeader.message)
+      toast.success(deleteHeader.message)
+     else toast.error(deleteHeader.message)
 };
   const promotionHeaderColumn = [
     { title: 'Mã khuyến mãi', dataIndex: 'promotionHeaderId', key: 'promotionHeaderId', width: '20%', },
@@ -411,7 +412,7 @@ const handleDeleteClickDetail = async (event, promotionDetail) => {
   const currentDate = new Date();
   const endDate = new Date(currentLine.endDate); // Make sure endDate is in Date format
   if (endDate < currentDate) {
-    alert("Chương trình đã kết thúc");
+    toast.info("Chương trình đã kết thúc");
     return; // Exit if the end date has passed
   }
     setIsOpenNewDetail(true)
@@ -422,7 +423,7 @@ const handleDeleteClickDetail = async (event, promotionDetail) => {
   const currentDate = new Date();
   const endDate = new Date(item.endDate); // Make sure endDate is in Date format
   if (endDate < currentDate) {
-    alert("Chương trình đã kết thúc");
+    toast.info("Chương trình đã kết thúc");
     return; // Exit if the end date has passed
   }
     selectCurrentHeader(item);

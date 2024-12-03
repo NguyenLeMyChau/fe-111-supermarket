@@ -4,6 +4,7 @@ import Input from '../../components/input/Input';
 import Button from '../../components/button/Button';
 import { registerCustomer } from '../../services/employeeRequest';
 import { validateCustomerData } from '../../utils/validation';
+import { toast } from 'react-toastify';
 
 export default function AddCustomer({ isOpen, onClose,onSubmit }) {
 
@@ -54,7 +55,7 @@ export default function AddCustomer({ isOpen, onClose,onSubmit }) {
         const validationErrors = validateCustomerData(employeeData);
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
-            alert('Vui lòng kiểm tra lại thông tin.');
+            toast.warning('Vui lòng kiểm tra lại thông tin.');
             return;
         }
 
@@ -76,7 +77,7 @@ export default function AddCustomer({ isOpen, onClose,onSubmit }) {
             }
         } catch (error) {
             console.error('Failed to register employee:', error);
-            alert('Có lỗi xảy ra khi thêm nhân viên.');
+            toast.warning('Có lỗi xảy ra khi thêm nhân viên.');
         }
     };
 

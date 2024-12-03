@@ -10,6 +10,7 @@ import Button from '../../components/button/Button';
 import ClipLoader from 'react-spinners/ClipLoader';
 import { useNavigate } from 'react-router';
 import { MdDelete } from 'react-icons/md';
+import { toast } from 'react-toastify';
 
 export default function Unit() {
     const units = useSelector((state) => state.unit?.units) || [];
@@ -55,7 +56,7 @@ export default function Unit() {
     const handleDeleteClick = async (unit) => {
         const unitData = productCountByUnit.find(item => item.unitId === unit._id);
         if (unitData && unitData.productCount > 0) {
-            alert(`Không thể xóa đơn vị "${unit.description}" vì có sản phẩm sử dụng.`);
+            toast.warning(`Không thể xóa đơn vị "${unit.description}" vì có sản phẩm sử dụng.`);
             return;
         }
 
@@ -65,7 +66,7 @@ export default function Unit() {
                 await deleteUnit(unit._id, accessToken, axiosJWT, navigate);
             } catch (error) {
                 console.error('Failed to delete unit:', error);
-                alert('Có lỗi xảy ra khi xóa đơn vị tính.');
+                toast.error('Có lỗi xảy ra khi xóa đơn vị tính.');
             } finally {
                 setLoading(false);
             }
@@ -136,7 +137,7 @@ export default function Unit() {
             }
         } catch (error) {
             console.error('Failed to add category:', error);
-            alert('Có lỗi xảy ra khi thêm nhà cung cấp.');
+            toast.error('Có lỗi xảy ra khi thêm nhà cung cấp.');
         } finally {
             setLoading(false);
         }
