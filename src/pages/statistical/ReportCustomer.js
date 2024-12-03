@@ -184,14 +184,10 @@ export default function ReportCustomer() {
 
     const handleExportExcel = async () => {
         const workbook = new ExcelJS.Workbook();
-        const worksheet = workbook.addWorksheet('DoanhThuBanHangKhachHang');
+        const worksheet = workbook.addWorksheet('DoanhThuBanHangKhachHang', { views: [{ showGridLines: false }] });
 
         // Xác định ngày sớm nhất và ngày hiện tại
         const currentDate = new Date();
-        // const earliestDate = groupedData.length
-        //     ? new Date(Math.min(...groupedData.map(item => parseDate(item.createdAt).getTime())))
-        //     : currentDate;
-
         const startDateToUse = startDate || currentDate;
         const endDateToUse = endDate || currentDate;
 
@@ -221,7 +217,7 @@ export default function ReportCustomer() {
         worksheet.getCell('A6').alignment = { horizontal: 'center', vertical: 'middle' };
 
         // Thêm Header
-        const headers = ['Mã khách hàng', 'Tên khách hàng', 'Địa chỉ', 'Phường/Xã', 'Quận/Huyện', 'Tỉnh/Thành', 'Mã hàng', 'Đơn vị tính', 'Doanh số trước CK', 'Chiết khấu', 'Doanh số sau CK'];
+        const headers = ['Mã khách hàng', 'Tên khách hàng', 'Địa chỉ', 'Phường/Xã', 'Quận/Huyện', 'Tỉnh/Thành', 'Mã hàng', 'Đơn vị tính', 'Số lượng', 'Doanh số trước CK', 'Chiết khấu', 'Doanh số sau CK'];
         worksheet.addRow(headers).eachCell((cell) => {
             cell.font = { bold: true };
             cell.alignment = { horizontal: 'center', vertical: 'middle' };
@@ -229,6 +225,12 @@ export default function ReportCustomer() {
                 type: 'pattern',
                 pattern: 'solid',
                 fgColor: { argb: 'FFFF00' },
+            };
+            cell.border = {
+                top: { style: 'thin' },
+                left: { style: 'thin' },
+                bottom: { style: 'thin' },
+                right: { style: 'thin' },
             };
         });
 
@@ -259,16 +261,27 @@ export default function ReportCustomer() {
                 customer.address.city || '',
                 item.item_code || '',
                 unit.description || '',
+                item.totalQuantity,
                 formatCurrency(revenueBefore),
                 formatCurrency(discount),
                 formatCurrency(revenueAfter),
             ]);
 
             // Căn phải cho các cột tiền
-            row.getCell(9).alignment = { horizontal: 'right' };
+            row.getCell(9).alignment = { horizontal: 'center' };
             row.getCell(10).alignment = { horizontal: 'right' };
             row.getCell(11).alignment = { horizontal: 'right' };
+            row.getCell(12).alignment = { horizontal: 'right' };
 
+            // Đóng viền cho các ô
+            row.eachCell((cell) => {
+                cell.border = {
+                    top: { style: 'thin' },
+                    left: { style: 'thin' },
+                    bottom: { style: 'thin' },
+                    right: { style: 'thin' },
+                };
+            });
         });
 
         // Thêm dòng tổng cộng
@@ -282,14 +295,14 @@ export default function ReportCustomer() {
             '',
             '',
             '',
+            '',
             formatCurrency(totalRevenueBeforeDiscount),
             formatCurrency(totalDiscount),
             formatCurrency(totalRevenueAfterDiscount),
-
         ]);
 
         totalRow.eachCell((cell, colNumber) => {
-            if (colNumber > 8) {
+            if (colNumber > 9) {
                 cell.font = { bold: true };
                 cell.alignment = { horizontal: 'right', vertical: 'middle' };
                 cell.fill = {
@@ -298,18 +311,27 @@ export default function ReportCustomer() {
                     fgColor: { argb: 'FFDDDDDD' },
                 };
             }
+            cell.border = {
+                top: { style: 'thin' },
+                left: { style: 'thin' },
+                bottom: { style: 'thin' },
+                right: { style: 'thin' },
+            };
         });
 
         // Định dạng cột
         worksheet.columns = [
-            { width: 15 }, // Mã nhân viên
-            { width: 25 }, // Tên nhân viên
-            { width: 20 }, // Ngày
-            { width: 20 }, // Ngày
-            { width: 20 }, // Ngày
-            { width: 20 }, // Ngày
-            { width: 25 }, // Doanh số trước CK
-            { width: 20 }, // Chiết khấu
+            { width: 15 }, // Mã khách hàng
+            { width: 25 }, // Tên khách hàng
+            { width: 20 }, // Địa chỉ
+            { width: 20 }, // Phường/Xã
+            { width: 20 }, // Quận/Huyện
+            { width: 20 }, // Tỉnh/Thành
+            { width: 15 }, // Mã hàng
+            { width: 15 }, // Đơn vị tính
+            { width: 10 }, // Số lượng
+            { width: 20 }, // Doanh số trước CK
+            { width: 15 }, // Chiết khấu
             { width: 25 }, // Doanh số sau CK
         ];
 
@@ -369,11 +391,14 @@ export default function ReportCustomer() {
             width: '10%'
         },
         {
-            title: 'Đơn vị tính', dataIndex: 'unit', key: 'unit', width: '15%',
+            title: 'ĐVT', dataIndex: 'unit', key: 'unit', width: '15%',
             render: (text, record) => {
                 const unit = units.find((unit) => unit._id === record.unit_id);
                 return unit ? unit.description : '';
             }
+        },
+        {
+            title: 'Số lượng', dataIndex: 'totalQuantity', key: 'totalQuantity', width: '10%',
         },
         {
             title: 'Doanh số trước CK',
@@ -449,7 +474,7 @@ export default function ReportCustomer() {
                         Hủy
                     </button>
                     <button className="print-button" onClick={handleExportExcel}>
-                        <FaPrint className="print-icon" /> In
+                        <FaPrint className="print-icon" /> Excel
                     </button>
                 </div>
             </div>

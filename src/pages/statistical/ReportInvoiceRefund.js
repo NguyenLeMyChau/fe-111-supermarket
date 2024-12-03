@@ -85,7 +85,7 @@ export default function ReportInvoiceRefund() {
 
     const handleExportExcel = async () => {
         const workbook = new ExcelJS.Workbook();
-        const worksheet = workbook.addWorksheet('BangKeChiTietHangHoaDonTraHang');
+        const worksheet = workbook.addWorksheet('BangKeChiTietHangHoaDonTraHang', { views: [{ showGridLines: false }] });
 
         // Xác định ngày sớm nhất và ngày hiện tại
         const currentDate = new Date();
@@ -140,9 +140,15 @@ export default function ReportInvoiceRefund() {
                 pattern: 'solid',
                 fgColor: { argb: 'FFFF00' },
             };
+            cell.border = {
+                top: { style: 'thin' },
+                left: { style: 'thin' },
+                bottom: { style: 'thin' },
+                right: { style: 'thin' },
+            };
         });
 
-        //Tính tổng
+        // Tính tổng
         let total = 0;
 
         // Thêm dữ liệu
@@ -166,6 +172,16 @@ export default function ReportInvoiceRefund() {
             // Căn phải cho các cột tiền
             row.getCell(8).alignment = { horizontal: 'center' };
             row.getCell(9).alignment = { horizontal: 'right' };
+
+            // Đóng viền cho các ô
+            row.eachCell((cell) => {
+                cell.border = {
+                    top: { style: 'thin' },
+                    left: { style: 'thin' },
+                    bottom: { style: 'thin' },
+                    right: { style: 'thin' },
+                };
+            });
         });
 
         // Thêm dòng tổng cộng
@@ -180,7 +196,6 @@ export default function ReportInvoiceRefund() {
             '',
             '',
             formatCurrency(total),
-
         ]);
 
         totalRow.eachCell((cell, colNumber) => {
@@ -193,20 +208,25 @@ export default function ReportInvoiceRefund() {
                     fgColor: { argb: 'FFDDDDDD' },
                 };
             }
+            cell.border = {
+                top: { style: 'thin' },
+                left: { style: 'thin' },
+                bottom: { style: 'thin' },
+                right: { style: 'thin' },
+            };
         });
-
 
         // Định dạng cột
         worksheet.columns = [
-            { width: 15 }, // Mã nhân viên
-            { width: 15 }, // Tên nhân viên
-            { width: 15 }, // Ngày
-            { width: 15 }, // Ngày
-            { width: 25 }, // Doanh số trước CK
-            { width: 15 }, // Doanh số trước CK
-            { width: 15 }, // Chiết khấu
-            { width: 15 }, // Chiết khấu
-            { width: 20 }, // Doanh số sau CK
+            { width: 15 }, // Hoá đơn mua
+            { width: 15 }, // Ngày đơn hàng mua
+            { width: 15 }, // Hoá đơn trả
+            { width: 15 }, // Ngày đơn hàng trả
+            { width: 15 }, // Mã hàng
+            { width: 25 }, // Tên sản phẩm
+            { width: 15 }, // Đơn vị tính
+            { width: 15 }, // Số lượng
+            { width: 20 }, // Doanh thu
         ];
 
         // Xuất file
@@ -339,7 +359,7 @@ export default function ReportInvoiceRefund() {
                     <button className="print-button" style={{ fontSize: 14 }}
                         onClick={handleExportExcel}
                     >
-                        <FaPrint className="print-icon" /> In
+                        <FaPrint className="print-icon" /> Excel
                     </button>
                 </div>
             </div>
