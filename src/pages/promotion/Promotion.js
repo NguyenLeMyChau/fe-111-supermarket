@@ -117,6 +117,15 @@ const handleDeleteClick = async (event, promotionLine) => {
 };
 const handleDeleteClickHeader = async (event, promotionHeader) => {
   event.stopPropagation();
+console.log(promotionHeader)
+const activeLine = promotionHeader.lines
+?.filter(line => line.status === 'active')
+.map(line => {
+  return line;
+});
+
+console.log(activeLine);
+if(activeLine.length > 0) return;
 
   // Check if the endDate is before the current date
   const currentDate = new Date();
