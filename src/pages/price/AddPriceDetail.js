@@ -93,9 +93,15 @@ export default function AddProductPriceDetail({
       if (selectedProduct) {
         // Get the unit IDs for the selected product
         const unitIds = products
-          .filter((product) => product.item_code === selectedProduct.item_code)
-          .flatMap((product) => product.unit_convert.map((unit) => unit.unit));
-        console.log(unitIds);
+        .filter((product) => product.item_code === selectedProduct.item_code) // Lọc sản phẩm theo item_code
+        .flatMap((product) => 
+          product.unit_convert
+            .filter((unit) => unit.status === true) // Lọc chỉ các đơn vị có unit.status === true
+            .map((unit) => unit.unit) // Lấy giá trị của unit
+        );
+      
+      console.log(unitIds);
+      
         if (unitIds) {
           setUnitItem(unitIds);
         }
