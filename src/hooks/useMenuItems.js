@@ -72,7 +72,7 @@ const useMenuItems = (onchange) => {
             section: "Menu",
             items: [
                 { Icon: FaRegUser, label: "User", text: "Cá nhân", path: '/admin/user' },
-                { Icon: GoHome, label: "Dashboard", text: "Tổng quan", path: '/admin/dashboard' },
+                // { Icon: GoHome, label: "Dashboard", text: "Tổng quan", path: '/admin/dashboard' },
                 {
                     Icon: MdProductionQuantityLimits,
                     label: "ProductMenu",
