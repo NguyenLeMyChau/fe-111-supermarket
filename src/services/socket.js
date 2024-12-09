@@ -2,7 +2,7 @@ import { io } from "socket.io-client";
 
 
 const SOCKET_URL = process.env.REACT_APP_API_URL; // Địa chỉ server
-
+console.log(SOCKET_URL)
 // Khởi tạo kết nối socket
 const socket = io(SOCKET_URL, {
   autoConnect: false, // Chỉ kết nối khi cần thiết

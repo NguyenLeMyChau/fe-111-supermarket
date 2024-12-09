@@ -19,7 +19,7 @@ function Menu({ onchange }) {
                 <p className='text-xl font-weight-semibold text-primary'>CAPY SMART</p>
             </div>
 
-            {menuItems.map((menuSection) => (
+            {menuItems?.map((menuSection) => (
                 <div 
                     className={`menu-menu ${menuSection.section === 'Setting' ? 'menu-setting' : ''}`} 
                     key={menuSection.section}

@@ -75,9 +75,10 @@ const Payment = () => {
     const fetchPromotions = async () => {
       try {
         const response = await getPromotions();
+        console.log(response)
         if (response) {
           // Lọc ra những khuyến mãi có type là 'percentage'
-          const percentagePromotions = response.filter(
+          const percentagePromotions = response?.filter(
             (promo) => promo.promotionLine_id.type === "percentage"
           );
           setPromotion(percentagePromotions);
@@ -92,7 +93,7 @@ const Payment = () => {
       const ineligible = [];
       let updatedTotalAmount = totalAmount; // Biến tạm để tính tổng sau khi áp dụng khuyến mãi
 
-      const productPromises = productList.map(async (product) => {
+      const productPromises = productList?.map(async (product) => {
         const promotions = await getPromotionByProductId(
           product._id,
           product.unit._id

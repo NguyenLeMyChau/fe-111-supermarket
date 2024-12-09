@@ -25,7 +25,7 @@ const useAddBill = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const getUnitDescription = (unitId) => {
-        const unitProduct = unitList.find(unit => unit._id === unitId);
+        const unitProduct = unitList?.find(unit => unit._id === unitId);
         return unitProduct ? unitProduct?.description : '';
     };
 

@@ -6,22 +6,24 @@ Modal.setAppElement("#root"); // For accessibility
 
 const QuantityModal = ({ isOpen, onRequestClose, product, onUpdateQuantity }) => {
   const [quantity, setQuantity] = useState(0); // Set initial quantity to 0
-  const [initialQuantity, setInitialQuantity] = useState(0); // State for initial quantity
+  const [initialQuantity, setInitialQuantity] = useState(0); 
 
   useEffect(() => {
     if (product) {
-      setInitialQuantity(product.quantity); // Set initial quantity when product changes
-      setQuantity(product.quantity); // Set quantity to product's current quantity when product changes
+      setInitialQuantity(product.quantity); 
+      setQuantity(product.quantity); 
     }
   }, [isOpen]);
 
   const handleQuantityChange = (e) => {
-    setQuantity(e.target.value);
+    const newValue = parseInt(e.target.value, 10);
+    if (newValue >= 0) {
+      setQuantity(newValue);
+    }
   };
 
   const handleUpdateQuantity = () => {
-    onUpdateQuantity(product._id,product.unit._id, parseInt(quantity, 10)); // Ensure quantity is a number
-
+    onUpdateQuantity(product._id, product.unit._id, quantity); // Ensure quantity is a number
     onRequestClose();
   };
 
@@ -57,14 +59,24 @@ const QuantityModal = ({ isOpen, onRequestClose, product, onUpdateQuantity }) =>
             type="number"
             value={quantity}
             onChange={handleQuantityChange}
-            min="1"
+            min="0" // Add minimum value to ensure it can't be negative
             className="quantity-modal__input quantity-modal__input--updated"
             id="updated-quantity"
           />
         </div>
 
-        <button onClick={handleUpdateQuantity} className="quantity-modal__button quantity-modal__button--update">Cập nhật</button>
-        <button onClick={onRequestClose} className="quantity-modal__button quantity-modal__button--cancel">Hủy</button>
+        <button
+          onClick={handleUpdateQuantity}
+          className="quantity-modal__button quantity-modal__button--update"
+        >
+          Cập nhật
+        </button>
+        <button
+          onClick={onRequestClose}
+          className="quantity-modal__button quantity-modal__button--cancel"
+        >
+          Hủy
+        </button>
       </div>
     </Modal>
   );
