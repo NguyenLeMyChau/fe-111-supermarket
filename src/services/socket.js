@@ -7,7 +7,6 @@ console.log(SOCKET_URL)
 const socket = io(SOCKET_URL, {
   autoConnect: false, // Chỉ kết nối khi cần thiết
 });
-
 // Hàm tiện ích để kết nối
 export const connectSocket = () => {
   if (!socket.connected) {
