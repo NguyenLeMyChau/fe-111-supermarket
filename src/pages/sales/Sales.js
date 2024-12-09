@@ -177,11 +177,12 @@ const Sales = () => {
       console.log(selectedProduct);
 
       // Filter out the item if both id and unit match
-      setCart(cart.filter((item) => !(item.id === selectedProduct.id && item.unit === selectedProduct.unit)));
-
+      const newCart = cart.filter((item) => !(item.id === selectedProduct.id && item.unit === selectedProduct.unit));
+      setCart(newCart);
+      const  newTotal = total - selectedProduct.total
       // Adjust the total by subtracting the total of the selected product
-      setTotal(total - selectedProduct.total);
-
+      setTotal(newTotal);
+      dispatch(setProductPay({ productPay: newCart, totalAmount: newTotal }));
       // Clear the selected product
       setSelectedProduct(null);
     }

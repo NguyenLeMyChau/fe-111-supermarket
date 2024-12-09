@@ -59,7 +59,7 @@ const QuantityModal = ({ isOpen, onRequestClose, product, onUpdateQuantity }) =>
             type="number"
             value={quantity}
             onChange={handleQuantityChange}
-            min="0" // Add minimum value to ensure it can't be negative
+            min="1" // Add minimum value to ensure it can't be negative
             className="quantity-modal__input quantity-modal__input--updated"
             id="updated-quantity"
           />
