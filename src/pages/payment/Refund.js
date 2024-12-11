@@ -95,11 +95,21 @@ const Refund = () => {
               if (promotionLine.type === 'quantity') {
        
                 // Trường hợp 1: product_id === promotion.product_id === promotion.product_donate
-                if ( product.product._id === promotion.product_id && product.product._id=== promotion.product_donate) {
-                  const totalQuantity = promotion.quantity + promotion.quantity_donate;
-                  const eligibleQuantity = Math.floor(product.quantity / totalQuantity);
-                  console.log('Eligible Quantity (same product):', eligibleQuantity);
-
+                if (
+                  product.product._id === promotion.product_id &&
+                  product.product._id === promotion.product_donate &&
+                  product.product.unit._id === promotion.unit_id?._id &&   product.product.unit._id===
+                    promotion.unit_id_donate?._id
+                ) {
+                  const totalQuantity =
+                    promotion.quantity + promotion.quantity_donate;
+                  const eligibleQuantity = Math.floor(
+                    product.quantity / totalQuantity
+                  );
+                  console.log(
+                    "Eligible Quantity (same product):",
+                    eligibleQuantity
+                  );
                   if (eligibleQuantity < 1) {
                     // Thêm vào danh sách không đủ điều kiện
                     ineligible.push({
@@ -111,18 +121,26 @@ const Refund = () => {
                     return { ...product, promotion: null }; // Không có khuyến mãi
                   }
                   updatedTotalAmount -= product.price * eligibleQuantity
-                  return { ...product, promotion, discountAmount: product.price * eligibleQuantity }; // Có khuyến mãi
+                  return { ...product, promotion, discountAmount: product.product.price * eligibleQuantity }; // Có khuyến mãi
 
                   // Trường hợp 2: product_id === promotion.product_id và product_id !== promotion.product_donate
-                } else if (product.product._id=== promotion.product_id && product.product._id!== promotion.product_donate) {
+                }else if (
+                  product.product._id === promotion.product_id &&
+                    (product._id !== promotion.product_donate ||
+                      product.unit_id._id !== promotion.unit_id_donate?._id)
+                  ){
                   const eligibleQuantity = Math.floor(product.quantity / promotion.quantity);
-                  const donateProductExists = productList.some(p => p._id === promotion.product_donate && p.unit === promotion.unit_id_donate);
+                  const donateProductExists = productList.find(
+                    (p) =>
+                      p._id === promotion.product_donate &&
+                      p.unit_id._id === promotion.unit_id_donate._id
+                  );
+                 
                   console.log('Eligible Quantity (different donate product):', eligibleQuantity);
-
                   if (!donateProductExists) {
                     // Thêm vào danh sách không đủ điều kiện
                     ineligible.push({
-                      ...donateProductExists,
+                      ...product,
                       promotion,
                       requiredQuantity: promotion.quantity_donate,
                     });
@@ -135,27 +153,44 @@ const Refund = () => {
                       requiredQuantity: promotion.quantity,
                     });
                     return { ...product, promotion: null };
-                  }
-                  else
-                    return { ...product, promotion: null }; // Có khuyến mãi
+                  } else return { ...product, promotion: null }; // Có khuyến mãi
 
                   // Trường hợp 3: product_id !== promotion.product_id và product_id === promotion.product_donate
-                } else if (product.product._id !== promotion.product_id && product.product._id=== promotion.product_donate) {
-                  const promotionProductExists = productList.some(p => p._id === promotion.product_id && p.unit === promotion.unit_id);
-                  const eligibleQuantity = Math.floor(product.quantity / promotion.quantity);
+                } else if (
+                  (product.product._id !== promotion.product_id &&
+                    product.product._id === promotion.product_donate) ||
+                  (product.product._id === promotion.product_donate &&
+                    product.unit_id._id === promotion.unit_id_donate?._id)
+                ) {
+                  const promotionProductExists = productList.find(
+                    (p) =>
+                      p._id === promotion.product_id &&
+                      p.unit_id._id === promotion.unit_id._id
+                  );
+                  const eligibleQuantity = Math.floor(
+                    promotionProductExists?.quantity / promotion.quantity
+                  );
+                  console.log(
+                    "Eligible Quantity (donate product):",
+                    eligibleQuantity,
+                    promotionProductExists
+                  );
                   console.log('Eligible Quantity (donate product):', eligibleQuantity);
-
                   if (!promotionProductExists || eligibleQuantity < 1) {
                     ineligible.push({
-                      ...promotionProductExists,
+                      ...product,
                       promotion,
                       requiredQuantity: promotion.quantity,
                     });
                     return { ...product, promotion: null }; // Không có khuyến mãi
                   }
-                  updatedTotalAmount -= product.price * eligibleQuantity
-                  return { ...product, promotion, discountAmount: product.price * eligibleQuantity }; // Có khuyến mãi
-
+                  updatedTotalAmount -= product.price * eligibleQuantity;
+                  return {
+                    ...product,
+                    promotion,
+                    discountAmount: product.price * eligibleQuantity,
+                    quantityDonate: eligibleQuantity,
+                  }; // Có khuyến mãi
                 }
               }
               if (promotionLine.type === "amount") {
@@ -300,8 +335,8 @@ const Refund = () => {
           <tbody>
   {productWithPromotions.length > 0 ? (
     productWithPromotions.map((product, index) => {
-      const isGift = product.promotion && product.quantity > product.quantity_donate; // Kiểm tra nếu số lượng mua lớn hơn số lượng tặng
-
+      const isGift = product.promotion && product.quantity > product.quantity_donate; 
+      console.log("gilt",isGift)
       return (
         <React.Fragment key={index}>
           {/* Hiển thị sản phẩm chính */}
@@ -329,7 +364,7 @@ const Refund = () => {
             </tr>
           )}
           {product.promotion && product.promotion.promotionLine_id.type === 'quantity' && product.quantity_donate > 0 && (
-            <tr>
+             <tr className="promotion-row">
               <td>KM</td>
               <td>{`${product.promotion.description}: ${product.product.name}`}</td>
               <td>{product.unit_id.description}</td>
@@ -353,7 +388,7 @@ const Refund = () => {
               <td>{product.quantity}</td>
               <td>{formatCurrency(product.price * product.quantity)}</td>
             </tr>
-            <tr>
+            <tr className="promotion-row">
               <td>KM</td>
               <td>{`${product.promotion.description}: ${product.product.name}`}</td>
               <td>{product.unit_id.description}</td>
