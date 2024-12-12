@@ -37,6 +37,7 @@ const useCommonData = () => {
         '/admin/unit': getAllUnit,
         '/admin/transaction': getAllTransaction,
         '/admin/stocktaking': getAllStocktaking,
+        '/admin/stocktaking/add-stocktaking': getAllWarehouse,
         '/admin/order-online': getAllInvoices,
         '/admin/statistical/daily-revenue': getAllEmployeeAndManager,
     }), []);

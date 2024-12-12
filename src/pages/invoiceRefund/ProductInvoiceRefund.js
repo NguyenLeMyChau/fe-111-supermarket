@@ -22,7 +22,7 @@ export default function ProductInvoiceRefund({ isModalOpen, closeModal, products
 
     return (
         <Modal
-            title={'Chi tiết đơn hàng khách hàng'}
+            title={'Chi tiết đơn hàng hoàn trả'}
             isOpen={isModalOpen}
             onClose={closeModal}
             width={'100%'}
@@ -85,6 +85,10 @@ export default function ProductInvoiceRefund({ isModalOpen, closeModal, products
                                     <td>{selectedInvoice.paymentMethod}</td>
                                     <th>Tổng tiền:</th>
                                     <td>{formatCurrency(selectedInvoice.paymentAmount)}</td>
+                                </tr>
+                                <tr>
+                                    <th>Lý do hoàn trả:</th>
+                                    <td>{selectedInvoice.refundReason}</td>
                                 </tr>
                             </tbody>
                         </table>

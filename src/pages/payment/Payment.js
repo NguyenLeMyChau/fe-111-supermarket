@@ -264,8 +264,9 @@ const Payment = () => {
     // Tính toán tổng tiền đã giảm mỗi khi promotion thay đổi
 
     if (promotion?.length > 0) {
-      let currentTotal = totalAmount; // Bắt đầu từ tổng ban đầu
+      
       const finalTotals = promotion.map((applicablePromotion) => {
+        let currentTotal = totalAmount; // Bắt đầu từ tổng ban đầu
         // Kiểm tra điều kiện để áp dụng khuyến mãi
         if (currentTotal > applicablePromotion.amount_sales) {
           const discountAmount =

@@ -87,19 +87,20 @@ const Refund = () => {
           product.product._id,
           product.unit_id._id
         );
+        
         if (promotions && promotions.length > 0) {
           const applicablePromotions = promotions.map((promotion) => {
-    
+            console.log("prom",promotions)
             const promotionLine = promotion.promotionLine_id;
             if (promotionLine) {
               if (promotionLine.type === 'quantity') {
        
                 // Trường hợp 1: product_id === promotion.product_id === promotion.product_donate
                 if (
-                  product.product._id === promotion.product_id &&
-                  product.product._id === promotion.product_donate &&
-                  product.product.unit._id === promotion.unit_id?._id &&   product.product.unit._id===
-                    promotion.unit_id_donate?._id
+                  product.product?._id === promotion.product_id &&
+                  product.product?._id === promotion.product_donate &&
+                  product.unit_id?._id === promotion.unit_id?._id &&   
+                  product.unit_id?._id=== promotion.unit_id_donate?._id
                 ) {
                   const totalQuantity =
                     promotion.quantity + promotion.quantity_donate;
@@ -126,13 +127,13 @@ const Refund = () => {
                   // Trường hợp 2: product_id === promotion.product_id và product_id !== promotion.product_donate
                 }else if (
                   product.product._id === promotion.product_id &&
-                    (product._id !== promotion.product_donate ||
+                    (product.product._id !== promotion.product_donate ||
                       product.unit_id._id !== promotion.unit_id_donate?._id)
                   ){
                   const eligibleQuantity = Math.floor(product.quantity / promotion.quantity);
                   const donateProductExists = productList.find(
                     (p) =>
-                      p._id === promotion.product_donate &&
+                      p.product._id === promotion.product_donate &&
                       p.unit_id._id === promotion.unit_id_donate._id
                   );
                  
@@ -157,14 +158,14 @@ const Refund = () => {
 
                   // Trường hợp 3: product_id !== promotion.product_id và product_id === promotion.product_donate
                 } else if (
-                  (product.product._id !== promotion.product_id &&
+                  (product.product._id !== promotion.product_id&&
                     product.product._id === promotion.product_donate) ||
                   (product.product._id === promotion.product_donate &&
                     product.unit_id._id === promotion.unit_id_donate?._id)
                 ) {
                   const promotionProductExists = productList.find(
                     (p) =>
-                      p._id === promotion.product_id &&
+                      p.product._id === promotion.product_id &&
                       p.unit_id._id === promotion.unit_id._id
                   );
                   const eligibleQuantity = Math.floor(
@@ -235,8 +236,9 @@ const Refund = () => {
   useEffect(() => {
     // Tính toán tổng tiền đã giảm mỗi khi promotion thay đổi
     if (promotion?.length > 0) {
-      let currentTotal = totalAmount; // Bắt đầu từ tổng ban đầu
       const finalTotals = promotion.map((applicablePromotion) => {
+        let currentTotal = totalAmount; // Bắt đầu từ tổng ban đầu
+
         // Kiểm tra điều kiện để áp dụng khuyến mãi
         if (currentTotal > applicablePromotion.amount_sales) {
           const discountAmount =
@@ -336,7 +338,6 @@ const Refund = () => {
   {productWithPromotions.length > 0 ? (
     productWithPromotions.map((product, index) => {
       const isGift = product.promotion && product.quantity > product.quantity_donate; 
-      console.log("gilt",isGift)
       return (
         <React.Fragment key={index}>
           {/* Hiển thị sản phẩm chính */}

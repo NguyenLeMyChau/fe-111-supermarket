@@ -80,8 +80,8 @@ console.log(data)
 
   useEffect(() => {
     if (promotion.length > 0) {
-      let currentTotal = finalPaymentAmount;
       const finalTotals = promotion.map((applicablePromotion) => {
+        let currentTotal = finalPaymentAmount;
         if (currentTotal > applicablePromotion.amount_sales) {
           const discountAmount =
             (currentTotal * applicablePromotion.percent) / 100;
