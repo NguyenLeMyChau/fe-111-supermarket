@@ -93,7 +93,7 @@ const CustomerInfoModal = ({ isOpen, onRequestClose, onSubmit,invoiceData }) => 
                 <p>Email: {customerInfo.email}</p>
                 <p>Số điện thoại: {customerInfo.phone}</p>
                 <p>Điểm tích lũy: {customerInfo.loyaltyPoints}</p>
-                <p>Giới tính: {customerInfo.gender ? "Nam" : "Nữ"}</p>
+                <p>Giới tính: {customerInfo.gender ? "Nữ" : "Nam"}</p>
                 <p>Địa chỉ: 
                   {`${customerInfo.address?.street || ""}, 
                     ${customerInfo.address?.ward || ""}, 
