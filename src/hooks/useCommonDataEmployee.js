@@ -13,7 +13,7 @@ import { getAllPrices } from '../services/priceRequest'
 import { getAllInvoices, getAllInvoicesRefund } from '../services/invoiceRequest';
 import { toast } from 'react-toastify';
 
-const useCommonData = () => {
+const useCommonDataEmployee = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
@@ -23,31 +23,13 @@ const useCommonData = () => {
     const axiosJWT = createAxiosInstance(currentUser, dispatch, loginSuccess);
 
     const apiCallMapping = useMemo(() => ({
-        '/admin/inventory': getAllWarehouse,
-        '/admin/bill': getAllBill,
-        '/admin/product': getAllProducts,
-        '/admin/category': getAllCategories,
-        '/admin/supplier': getAllSuppliers,
-        '/admin/employee': getAllEmployees,
-        '/admin/promotion': getAllPromotions,
-        '/admin/price': getAllPrices,
-        '/admin/invoice': getAllInvoices,
-        '/admin/refund-invoice': getAllInvoicesRefund,
-        '/admin/customer': getAllCustomer,
-        '/admin/unit': getAllUnit,
-        '/admin/transaction': getAllTransaction,
-        '/admin/stocktaking': getAllStocktaking,
-        '/admin/stocktaking/add-stocktaking': getAllWarehouse,
-        '/admin/order-online': getAllInvoices,
-        '/admin/statistical/daily-revenue': getAllEmployeeAndManager,
         '/frame-staff/order-online': getAllInvoices,
-
     }), []);
 
     useEffect(() => {
         // Kiểm tra currentUser và vai trò là 'manager'
-        if (!currentUser || currentUser.role !== 'manager') {
-            console.warn('currentUser is null or not manager');
+        if (!currentUser || currentUser.role !== 'staff') {
+            console.warn('currentUser is null or not staff');
             return;
         }
 
@@ -64,15 +46,15 @@ const useCommonData = () => {
     }, [currentUser, axiosJWT, dispatch, location.pathname, apiCallMapping]);
 
 
-    useEffect(() => {
-        if (!currentUser && !logout) {
-            toast.warning('Vui lòng đăng nhập để thực hiện chức năng này!');
-            navigate('/login');
-        } else if (currentUser?.role !== 'manager' && !logout) {
-            toast.warning('Chỉ có quản lý mới có thể truy cập trang này!');
-            navigate('/login');
-        }
-    }, [currentUser, logout, navigate]);
+    // useEffect(() => {
+    //     if (!currentUser && !logout) {
+    //         toast.warning('Vui lòng đăng nhập để thực hiện chức năng này!');
+    //         navigate('/login');
+    //     } else if (currentUser?.role !== 'staff' && !logout) {
+    //         toast.warning('Chỉ có nhân viên có thể truy cập trang này!');
+    //         navigate('/login');
+    //     }
+    // }, [currentUser, logout, navigate]);
 
 
     useEffect(() => {
@@ -87,4 +69,4 @@ const useCommonData = () => {
 
 };
 
-export default useCommonData;
+export default useCommonDataEmployee;

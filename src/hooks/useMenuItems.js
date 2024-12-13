@@ -142,7 +142,7 @@ const useMenuItems = (onchange) => {
             items: [
                 { Icon: FaRegUser, label: "User", text: "Thông tin" },
                 { Icon: FaCashRegister, label: "Stall", text: "Quầy thu ngân" },
-                { Icon: TbReport, label: "Online", text: "Đơn hàng online" },
+                { Icon: TbReport, label: "OrderOnline", text: "Đơn hàng online" ,path: '/frame-staff/order-online'  },
             ],
         },
         {

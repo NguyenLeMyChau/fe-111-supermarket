@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import Menu from '../menu/Menu';
 import Header from '../header/Header';
-import { useNavigate } from 'react-router';
+import { Outlet, useNavigate } from 'react-router';
 import { useSelector } from 'react-redux';
 import User from '../user/User';
 import { toast } from 'react-toastify';
+import useCommonDataEmployee from '../../hooks/useCommonDataEmployee';
 
 export default function FrameStaff() {
+    useCommonDataEmployee();
     const [currentContent, setCurrentContent] = useState(<User />);
     const navigate = useNavigate();
     const logout = useSelector((state) => state.auth?.login?.isLogout);
@@ -36,7 +38,8 @@ export default function FrameStaff() {
             <div className='frame-content'>
                 <Header />
                 <main className='main-content'>
-                    {currentContent}
+                    {/* {currentContent} */}
+                       <Outlet />
                 </main>
             </div>
         </div>

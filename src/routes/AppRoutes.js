@@ -97,11 +97,14 @@ function AppRoutes() {
                         </Route>
                     </Route>
 
-                    <Route path="/frame-staff" element={<FrameStaff />} />
+                    <Route path="/frame-staff" element={<FrameStaff />} >
+                         <Route path="order-online" element={<OrderOnline />} />
+                    </Route>
                     <Route path="/frame-staff/stall" element={<Stall />} />
                     <Route path="/frame-staff/payment" element={<Payment />} />
                     <Route path="/frame-staff/refund" element={<Refund />} />
                     <Route path="/home" element={<Home />} />
+                   
 
                     <Route path="/customer">
                         <Route path="*" element={<Navigate to="/home" />} />
