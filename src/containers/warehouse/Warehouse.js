@@ -42,17 +42,18 @@ export default function Warehouse() {
     const [filteredTransactions, setFilteredTransactions] = useState([]); // State for filtered transactions
 
     const warehouseColumn = [
-        { title: 'Mã hàng', dataIndex: 'item_code', key: 'item_code', width: '10%', className: 'text-center' },
+        { title: 'Mã hàng', dataIndex: 'item_code', key: 'item_code', width: '10%', className: 'text-center', sortable: true },
         {
             title: 'Tên sản phẩm',
             dataIndex: 'product',
             key: 'product_name',
             width: '30%',
+            sortable: true
         },
         {
             title: 'Đơn vị tính', dataIndex: 'unit', key: 'unit', width: '10%', render: (text, record) => record.unit ? record.unit.description : ''
         },
-        { title: 'Số lượng', dataIndex: 'stock_quantity', key: 'stock_quantity', width: '10%', className: 'text-center' },
+        { title: 'Số lượng', dataIndex: 'stock_quantity', key: 'stock_quantity', width: '10%', className: 'text-center', sortable: true },
         {
             title: 'Đơn vị cơ bản', dataIndex: 'unitBasic', key: 'unitBasic', width: '15%', render: (text, record) => record.unitBasic ? record.unitBasic.description : ''
         },

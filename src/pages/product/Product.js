@@ -65,8 +65,8 @@ export default function Product() {
                 />
             )
         },
-        { title: 'Mã hàng', dataIndex: 'item_code', key: 'item_code', width: '10%', className: 'text-center' },
-        { title: 'Tên sản phẩm', dataIndex: 'name', key: 'name', width: '20%' },
+        { title: 'Mã hàng', dataIndex: 'item_code', key: 'item_code', width: '10%', className: 'text-center', sortable: true },
+        { title: 'Tên sản phẩm', dataIndex: 'name', key: 'name', width: '20%', sortable: true },
         { title: 'Đơn vị tính', dataIndex: 'unit_id', key: 'unit_id', width: '10%', render: (unit) => unit.description },
         { title: 'Barcode', dataIndex: 'barcode', key: 'barcode', width: '15%', className: 'text-center' },
         {
