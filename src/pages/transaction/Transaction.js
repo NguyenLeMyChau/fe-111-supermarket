@@ -5,14 +5,12 @@ import { formatDate } from '../../utils/fotmatDate';
 import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import useAddBill from '../../hooks/useAddBill';
-import Modal from '../../components/modal/Modal';
 import Select from 'react-select';
 import Button from '../../components/button/Button';
 
 export default function Transaction() {
     const transactions = useSelector((state) => state.transaction?.transactions) || [];
     const { getItemCodeProduct, getNameProduct, getUnitDescription } = useAddBill();
-    const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [filters, setFilters] = useState({
         item_code: [],
         productName: [],
@@ -27,6 +25,12 @@ export default function Transaction() {
         setSortedTransactions(sorted);
         setFilteredTransactions(sorted);
     }, [transactions]);
+
+    useEffect(() => {
+        if (sortedTransactions.length > 0) {
+            applyFilters();
+        }
+    }, [filters, sortedTransactions]);
 
     const transactionColumn = [
         { title: 'Mã hàng', dataIndex: 'product_id', key: 'product_item_code', width: '10%', render: (product_id) => getItemCodeProduct(product_id) },
@@ -56,14 +60,6 @@ export default function Transaction() {
     const uniqueProductOptions = Array.from(new Set(transactions.map(transaction => getNameProduct(transaction.product_id))))
         .map(name => ({ value: name, label: name }));
 
-    const handleFilterClick = () => {
-        setIsFilterOpen(true);
-    };
-
-    const closeFilterModal = () => {
-        setIsFilterOpen(false);
-    };
-
     const applyFilters = () => {
         let filteredData = sortedTransactions;
 
@@ -84,7 +80,6 @@ export default function Transaction() {
         }
 
         setFilteredTransactions(filteredData);
-        closeFilterModal();
     };
 
     const resetFilters = () => {
@@ -98,23 +93,9 @@ export default function Transaction() {
     };
 
     return (
-        <div>
-            <FrameData
-                title="Giao dịch"
-                data={filteredTransactions}
-                columns={transactionColumn}
-                itemsPerPage={10}
-                handleFilterClick={handleFilterClick}
-            />
-
-            <Modal
-                title="Lọc giao dịch"
-                isOpen={isFilterOpen}
-                onClose={closeFilterModal}
-                width={500}
-                height='auto'
-            >
-                <div className="filter-modal-content">
+        <>
+            <div className='filter-statistical'>
+                <div className='filter-row'>
                     <div className="filter-item">
                         <label>Mã hàng</label>
                         <Select
@@ -123,7 +104,7 @@ export default function Transaction() {
                             options={uniqueItemCodeOptions}
                             onChange={(selectedOptions) => setFilters({ ...filters, item_code: selectedOptions.map(option => option.value) })}
                             styles={{
-                                container: (provided) => ({ ...provided, width: '265px', zIndex: 9999 }),
+                                container: (provided) => ({ ...provided, width: '200px', zIndex: 9999 }),
                             }}
                         />
                     </div>
@@ -135,7 +116,7 @@ export default function Transaction() {
                             options={uniqueProductOptions}
                             onChange={(selectedOptions) => setFilters({ ...filters, productName: selectedOptions.map(option => option.value) })}
                             styles={{
-                                container: (provided) => ({ ...provided, width: '265px', zIndex: 8888 }),
+                                container: (provided) => ({ ...provided, width: '200px', zIndex: 8888 }),
                             }}
                         />
                     </div>
@@ -157,22 +138,22 @@ export default function Transaction() {
                     </div>
                     <div className='button-filter'>
                         <Button
-                            text='Lọc'
-                            backgroundColor='#1366D9'
-                            color='white'
-                            width='150'
-                            onClick={applyFilters}
-                        />
-                        <Button
                             text='Huỷ lọc'
                             backgroundColor='#FF0000'
                             color='white'
-                            width='150'
+                            width='100'
                             onClick={resetFilters}
                         />
                     </div>
                 </div>
-            </Modal>
-        </div>
+            </div>
+
+            <FrameData
+                title="Giao dịch"
+                data={filteredTransactions}
+                columns={transactionColumn}
+                itemsPerPage={10}
+            />
+        </>
     );
 }

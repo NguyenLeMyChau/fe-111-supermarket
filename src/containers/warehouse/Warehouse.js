@@ -5,7 +5,6 @@ import FrameData from '../frameData/FrameData';
 import { useLocation, useNavigate } from 'react-router';
 import ProductWarehouse from './ProductWarehouse';
 
-import Modal from '../../components/modal/Modal';
 import Button from '../../components/button/Button';
 import Select from 'react-select';
 import { formatDate } from '../../utils/fotmatDate';
@@ -17,13 +16,14 @@ export default function Warehouse() {
     const navigate = useNavigate();
     const location = useLocation();
 
+    const categories = useSelector((state) => state.category?.categories) || [];
     const warehouses = useSelector((state) => state.warehouse?.warehouse);
+    console.log('warehouses', warehouses);
     const productList = useSelector((state) => state.product?.products) || [];
     const transactions = useSelector((state) => state.transaction?.transactions) || [];
     const { getUnitDescription } = useAddBill();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isFilterOpen, setIsFilterOpen] = useState(false);
 
     useEffect(() => {
         applyFilters();
@@ -31,9 +31,10 @@ export default function Warehouse() {
 
     // Gom các bộ lọc vào object
     const [filters, setFilters] = useState({
-        item_code: '',
-        productName: '',
+        item_code: [],
+        productName: [],
         stockQuantity: '',
+        category_id: [], // Thêm category_id vào state filters
     });
 
     const [filteredWarehouses, setFilteredWarehouses] = useState(warehouses);
@@ -56,7 +57,7 @@ export default function Warehouse() {
             title: 'Đơn vị cơ bản', dataIndex: 'unitBasic', key: 'unitBasic', width: '15%', render: (text, record) => record.unitBasic ? record.unitBasic.description : ''
         },
         {
-            title: 'Số lượng cơ bản',
+            title: 'SL cơ bản',
             dataIndex: 'quantityBasic',
             key: 'quantityBasic',
             width: '15%',
@@ -136,27 +137,17 @@ export default function Warehouse() {
         }
     };
 
-    const handleFilterClick = () => {
-        setIsFilterOpen(true);
-    };
-
-    const closeFilterModal = () => {
-        setIsFilterOpen(false);
-    };
-
-
     const applyFilters = () => {
         let filteredData = warehouses;
 
-        if (filters.item_code) {
+        if (filters.item_code.length > 0) {
             filteredData = filteredData.filter(warehouse =>
-                warehouse.item_code === filters.item_code);
+                filters.item_code.includes(warehouse.item_code));
         }
 
-        if (filters.productName) {
+        if (filters.productName.length > 0) {
             filteredData = filteredData.filter(warehouse =>
-                console.log('warehose', warehouse) ||
-                warehouse.product?.toLowerCase().includes(filters.productName.toLowerCase()));
+                filters.productName.includes(warehouse.product));
         }
 
         if (filters.stockQuantity) {
@@ -165,15 +156,23 @@ export default function Warehouse() {
             );
         }
 
+        if (filters.category_id.length > 0) {
+            filteredData = filteredData.filter(warehouse => {
+                const productFind = productList.find(product => product.item_code === warehouse.item_code);
+                return productFind && filters.category_id.includes(productFind.category_id);
+            });
+        }
+
         setFilteredWarehouses(filteredData);
-        closeFilterModal();
     };
 
     // Hàm đặt lại bộ lọc
     const resetFilters = () => {
         setFilters({
-            productName: '',
+            item_code: [],
+            productName: [],
             stockQuantity: '',
+            category_id: [], // Đặt lại category_id
         });
         setFilteredWarehouses(warehouses);
     };
@@ -192,42 +191,27 @@ export default function Warehouse() {
             label: item_code
         }));
 
+    // Tạo danh sách các tùy chọn cho category_id từ categories
+    const uniqueCategoryOptions = categories.map(category => ({
+        value: category._id,
+        label: category.name
+    }));
+
     return (
-        <div>
-            <FrameData
-                title="Kho"
-                data={filteredWarehouses}
-                columns={warehouseColumn}
-                itemsPerPage={10}
-                onRowClick={handleRowClick}
-                handleFilterClick={handleFilterClick}
-            />
-
-            <ProductWarehouse
-                isModalOpen={isModalOpen}
-                closeModal={closeModal}
-                products={filteredTransactions}
-                productColumns={transactionColumn}
-            />
-
-            <Modal
-                title={'Lọc dữ liệu kho'}
-                isOpen={isFilterOpen}
-                onClose={closeFilterModal}
-                width={500}
-                height={350}
-            >
-                <div className="filter-modal-content">
+        <>
+            <div className='filter-statistical'>
+                <div className='filter-row'>
                     <div className="filter-item">
                         <label>Mã hàng</label>
                         <Select
-                            value={uniqueItemCodeOptions.find(option => option.value === filters.item_code) || null}
+                            isMulti
+                            value={uniqueItemCodeOptions.filter(option => filters.item_code.includes(option.value))}
                             options={uniqueItemCodeOptions}
-                            onChange={(selectedOption) => setFilters({ ...filters, item_code: selectedOption?.value || '' })}
+                            onChange={(selectedOptions) => setFilters({ ...filters, item_code: selectedOptions.map(option => option.value) })}
                             styles={{
                                 container: (provided) => ({
                                     ...provided,
-                                    width: '265px',
+                                    width: '200px',
                                     zIndex: 9999,
                                 }),
                             }}
@@ -236,18 +220,34 @@ export default function Warehouse() {
                     <div className="filter-item">
                         <label>Tên sản phẩm</label>
                         <Select
-                            value={uniqueProductOptions.find(option => option.value === filters.productName) || null}
+                            isMulti
+                            value={uniqueProductOptions.filter(option => filters.productName.includes(option.value))}
                             options={uniqueProductOptions}
-                            onChange={(selectedOption) => setFilters({ ...filters, productName: selectedOption?.value || '' })}
+                            onChange={(selectedOptions) => setFilters({ ...filters, productName: selectedOptions.map(option => option.value) })}
                             styles={{
                                 container: (provided) => ({
                                     ...provided,
-                                    width: '265px',
+                                    width: '200px',
                                     zIndex: 8888,
                                 }),
                             }}
                         />
-
+                    </div>
+                    <div className="filter-item">
+                        <label>Loại sản phẩm</label>
+                        <Select
+                            isMulti
+                            value={uniqueCategoryOptions.filter(option => filters.category_id.includes(option.value))}
+                            options={uniqueCategoryOptions}
+                            onChange={(selectedOptions) => setFilters({ ...filters, category_id: selectedOptions.map(option => option.value) })}
+                            styles={{
+                                container: (provided) => ({
+                                    ...provided,
+                                    width: '200px',
+                                    zIndex: 7777,
+                                }),
+                            }}
+                        />
                     </div>
                     <div className="filter-item">
                         <label>Tồn kho lớn hơn:</label>
@@ -258,26 +258,39 @@ export default function Warehouse() {
                             onChange={(e) => setFilters({ ...filters, stockQuantity: e.target.value })}
                         />
                     </div>
-
                     <div className='button-filter'>
                         <Button
                             text='Lọc'
                             backgroundColor='#1366D9'
                             color='white'
-                            width='150'
+                            width='100'
                             onClick={applyFilters}
                         />
                         <Button
                             text='Huỷ lọc'
                             backgroundColor='#FF0000'
                             color='white'
-                            width='150'
+                            width='100'
                             onClick={resetFilters}
                         />
                     </div>
                 </div>
-            </Modal>
+            </div>
 
-        </div>
+            <FrameData
+                title="Kho"
+                data={filteredWarehouses}
+                columns={warehouseColumn}
+                itemsPerPage={10}
+                onRowClick={handleRowClick}
+            />
+
+            <ProductWarehouse
+                isModalOpen={isModalOpen}
+                closeModal={closeModal}
+                products={filteredTransactions}
+                productColumns={transactionColumn}
+            />
+        </>
     );
 }

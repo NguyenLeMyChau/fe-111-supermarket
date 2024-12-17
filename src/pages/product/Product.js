@@ -19,16 +19,18 @@ export default function Product() {
     const accessToken = useAccessToken();
 
     const products = useSelector((state) => state.product?.products) || [];
+    const categories = useSelector((state) => state.category?.categories) || [];
+    console.log('Products', products);
+    console.log('Categories', categories);
     const isProductDetail = location.pathname.includes('product-detail');
     const [isOpenNewProduct, setIsOpenNewProduct] = useState(false);
 
-    const [isFilterOpen, setIsFilterOpen] = useState(false);
-
     // Gom các bộ lọc vào object
     const [filters, setFilters] = useState({
-        productName: '',
-        item_code: '',
-        barcode: '',
+        productName: [],
+        item_code: [],
+        barcode: [],
+        category_id: [], // Thêm category_id vào state filters
     });
 
     const [filteredProducts, setFilteredProducts] = useState(products);
@@ -91,43 +93,38 @@ export default function Product() {
     const applyFilters = () => {
         let filteredData = products;
 
-        if (filters.productName) {
+        if (filters.productName.length > 0) {
             filteredData = filteredData.filter(product =>
-                product?.name?.toLowerCase().includes(filters.productName.toLowerCase()));
+                filters.productName.includes(product.name));
         }
 
-        if (filters.item_code) {
+        if (filters.item_code.length > 0) {
             filteredData = filteredData.filter(product =>
-                product.item_code === filters.item_code
-            );
+                filters.item_code.includes(product.item_code));
         }
 
-        if (filters.barcode) {
+        if (filters.barcode.length > 0) {
             filteredData = filteredData.filter(product =>
-                product.barcode === filters.barcode
-            );
+                filters.barcode.includes(product.barcode));
+        }
+
+        if (filters.category_id.length > 0) {
+            filteredData = filteredData.filter(product =>
+                filters.category_id.includes(product.category_id));
         }
 
         setFilteredProducts(filteredData);
-        closeFilterModal();
     };
 
     // Hàm đặt lại bộ lọc
     const resetFilters = () => {
         setFilters({
-            productName: '',
-            item_code: '',
-            barcode: '',
+            productName: [],
+            item_code: [],
+            barcode: [],
+            category_id: [], // Đặt lại category_id
         });
         setFilteredProducts(products);
-    };
-
-    const handleFilterClick = () => {
-        setIsFilterOpen(true);
-    };
-
-    const closeFilterModal = () => {
-        setIsFilterOpen(false);
     };
 
     // Options cho react-select
@@ -152,41 +149,32 @@ export default function Product() {
             label: barcode
         }));
 
+    // Tạo danh sách các tùy chọn cho category_id từ categories
+    const uniqueCategoryOptions = categories.map(category => ({
+        value: category._id,
+        label: category.name
+    }));
+
     return (
         <>
             {isProductDetail ? (
                 <ProductDetail />
             ) : (
                 <>
-                    <FrameData
-                        title="Danh sách sản phẩm"
-                        buttonText="Thêm sản phẩm"
-                        data={filteredProducts}
-                        columns={productColumns}
-                        onRowClick={handleRowClick}
-                        onButtonClick={() => setIsOpenNewProduct(true)}
-                        handleFilterClick={handleFilterClick}
-                    />
+                    <div className='filter-statistical'>
+                        <div className='filter-row'>
 
-                    <Modal
-                        title={'Lọc sản phẩm'}
-                        isOpen={isFilterOpen}
-                        onClose={closeFilterModal}
-                        width={500}
-                        height={400}
-                    >
-
-                        <div className="filter-modal-content">
                             <div className="filter-item">
                                 <label>Mã hàng</label>
                                 <Select
-                                    value={uniqueItemCodeOptions.find(option => option.value === filters.item_code) || null}
+                                    isMulti
+                                    value={uniqueItemCodeOptions.filter(option => filters.item_code.includes(option.value))}
                                     options={uniqueItemCodeOptions}
-                                    onChange={(selectedOption) => setFilters({ ...filters, item_code: selectedOption?.value || '' })}
+                                    onChange={(selectedOptions) => setFilters({ ...filters, item_code: selectedOptions.map(option => option.value) })}
                                     styles={{
                                         container: (provided) => ({
                                             ...provided,
-                                            width: '300px',
+                                            width: '200px',
                                             zIndex: 9999,
                                         }),
                                     }}
@@ -195,54 +183,78 @@ export default function Product() {
                             <div className="filter-item">
                                 <label>Tên sản phẩm</label>
                                 <Select
-                                    value={uniqueProductOptions.find(option => option.value === filters.productName) || null}
+                                    isMulti
+                                    value={uniqueProductOptions.filter(option => filters.productName.includes(option.value))}
                                     options={uniqueProductOptions}
-                                    onChange={(selectedOption) => setFilters({ ...filters, productName: selectedOption?.value || '' })}
+                                    onChange={(selectedOptions) => setFilters({ ...filters, productName: selectedOptions.map(option => option.value) })}
                                     styles={{
                                         container: (provided) => ({
                                             ...provided,
-                                            width: '300px',
+                                            width: '200px',
                                             zIndex: 8888,
                                         }),
                                     }}
                                 />
-
                             </div>
                             <div className="filter-item">
                                 <label>Barcode</label>
                                 <Select
-                                    value={uniqueBarcodeOptions.find(option => option.value === filters.barcode) || null}
+                                    isMulti
+                                    value={uniqueBarcodeOptions.filter(option => filters.barcode.includes(option.value))}
                                     options={uniqueBarcodeOptions}
-                                    onChange={(selectedOption) => setFilters({ ...filters, barcode: selectedOption?.value || '' })}
+                                    onChange={(selectedOptions) => setFilters({ ...filters, barcode: selectedOptions.map(option => option.value) })}
                                     styles={{
                                         container: (provided) => ({
                                             ...provided,
-                                            width: '300px',
+                                            width: '200px',
                                             zIndex: 7777,
                                         }),
                                     }}
                                 />
-
                             </div>
-
+                            <div className="filter-item">
+                                <label>Loại sản phẩm</label>
+                                <Select
+                                    isMulti
+                                    value={uniqueCategoryOptions.filter(option => filters.category_id.includes(option.value))}
+                                    options={uniqueCategoryOptions}
+                                    onChange={(selectedOptions) => setFilters({ ...filters, category_id: selectedOptions.map(option => option.value) })}
+                                    styles={{
+                                        container: (provided) => ({
+                                            ...provided,
+                                            width: '200px',
+                                            zIndex: 6666,
+                                        }),
+                                    }}
+                                />
+                            </div>
                             <div className='button-filter'>
                                 <Button
                                     text='Lọc'
                                     backgroundColor='#1366D9'
                                     color='white'
-                                    width='150'
+                                    width='100'
                                     onClick={applyFilters}
                                 />
                                 <Button
                                     text='Huỷ lọc'
                                     backgroundColor='#FF0000'
                                     color='white'
-                                    width='150'
+                                    width='100'
                                     onClick={resetFilters}
                                 />
                             </div>
                         </div>
-                    </Modal>
+                    </div>
+
+                    <FrameData
+                        title="Danh sách sản phẩm"
+                        buttonText="Thêm sản phẩm"
+                        data={filteredProducts}
+                        columns={productColumns}
+                        onRowClick={handleRowClick}
+                        onButtonClick={() => setIsOpenNewProduct(true)}
+                    />
 
                 </>
             )}
