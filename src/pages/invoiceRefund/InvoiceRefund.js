@@ -75,7 +75,7 @@ export default function InvoiceRefund() {
                         {formatDistanceToNow(new Date(date), { addSuffix: true, locale: vi })}
                     </div>
                 </div>
-            )
+            ), sortable: true
         },
         {
             title: 'Tổng tiền',

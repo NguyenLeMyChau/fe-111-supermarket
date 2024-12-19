@@ -119,7 +119,7 @@ export default function Invoice() {
                         {formatDistanceToNow(new Date(date), { addSuffix: true, locale: vi })}
                     </div>
                 </div>
-            )
+            ), sortable: true
         },
         {
             title: 'Tổng tiền',

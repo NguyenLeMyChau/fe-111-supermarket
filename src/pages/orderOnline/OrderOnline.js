@@ -196,7 +196,7 @@ export default function OrderOnline() {
                             {formatDistanceToNow(new Date(date), { addSuffix: true, locale: vi })}
                         </div>
                     </div>
-                )
+                ), sortable: true
             },
             {
                 title: 'Ngày cập nhật',
@@ -210,7 +210,7 @@ export default function OrderOnline() {
                             {formatDistanceToNow(new Date(date), { addSuffix: true, locale: vi })}
                         </div>
                     </div>
-                )
+                ), sortable: true
             },
             {
                 title: 'Tổng tiền',
@@ -374,7 +374,7 @@ export default function OrderOnline() {
                                         container: (provided) => ({
                                             ...provided,
                                             width: '350px',
-                                            zIndex: 7777,
+                                            zIndex: 1000,
                                         }),
                                     }}
                                 />

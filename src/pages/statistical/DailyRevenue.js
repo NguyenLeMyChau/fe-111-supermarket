@@ -365,7 +365,7 @@ export default function DailyRevenue() {
                                     ...provided,
                                     minWidth: '200px',
                                 }),
-                                menuPortal: base => ({ ...base, zIndex: 9999, width: 200 }),
+                                menuPortal: base => ({ ...base, zIndex: 1000, width: 200 }),
                             }}
                         />
                     </div>

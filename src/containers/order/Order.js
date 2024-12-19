@@ -161,7 +161,7 @@ export default function Order() {
                         isDisabled={orderStatus}
                         menuPortalTarget={document.body}
                         styles={{
-                            menuPortal: base => ({ ...base, zIndex: 9999, width: 200 }),
+                            menuPortal: base => ({ ...base, zIndex: 1000, width: 200 }),
                             option: (provided, state) => ({
                                 ...provided,
                                 color: state.data.color,

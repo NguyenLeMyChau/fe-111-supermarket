@@ -23,7 +23,7 @@ export default function Customer() {
 
     const employeeColumns = [
         { title: 'Mã khách hàng', dataIndex: 'customer_id', key: 'customer_id', width: '15%' },
-        { title: 'Họ và tên', dataIndex: 'name', key: 'name', width: '15%' },
+        { title: 'Họ và tên', dataIndex: 'name', key: 'name', width: '15%', sortable: true },
         { title: 'Số điện thoại', dataIndex: 'phone', key: 'phone', width: '10%' },
         { title: 'Email', dataIndex: 'email', key: 'email', width: '10%' },
         {
@@ -37,7 +37,7 @@ export default function Customer() {
                 return `${street}, ${ward}, ${district}, ${city}`;
             }
         },
-        { title: 'Giới tính', dataIndex: 'gender', key: 'gender', width: '10%', render: (gender) => gender ? 'Nữ' : 'Nam' },
+        { title: 'Giới tính', dataIndex: 'gender', key: 'gender', width: '10%', render: (gender) => gender ? 'Nữ' : 'Nam', sortable: true },
         {
             title: 'Chỉnh sửa',
             key: 'edit',

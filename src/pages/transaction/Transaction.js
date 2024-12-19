@@ -106,7 +106,7 @@ export default function Transaction() {
                             options={uniqueItemCodeOptions}
                             onChange={(selectedOptions) => setFilters({ ...filters, item_code: selectedOptions.map(option => option.value) })}
                             styles={{
-                                container: (provided) => ({ ...provided, width: '200px', zIndex: 9999 }),
+                                container: (provided) => ({ ...provided, width: '200px', zIndex: 1000 }),
                             }}
                         />
                     </div>
@@ -118,7 +118,7 @@ export default function Transaction() {
                             options={uniqueProductOptions}
                             onChange={(selectedOptions) => setFilters({ ...filters, productName: selectedOptions.map(option => option.value) })}
                             styles={{
-                                container: (provided) => ({ ...provided, width: '200px', zIndex: 8888 }),
+                                container: (provided) => ({ ...provided, width: '200px', zIndex: 1000 }),
                             }}
                         />
                     </div>

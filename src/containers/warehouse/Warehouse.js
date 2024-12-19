@@ -213,7 +213,7 @@ export default function Warehouse() {
                                 container: (provided) => ({
                                     ...provided,
                                     width: '200px',
-                                    zIndex: 9999,
+                                    zIndex: 1000,
                                 }),
                             }}
                         />
@@ -229,7 +229,7 @@ export default function Warehouse() {
                                 container: (provided) => ({
                                     ...provided,
                                     width: '200px',
-                                    zIndex: 8888,
+                                    zIndex: 1000,
                                 }),
                             }}
                         />
@@ -245,7 +245,7 @@ export default function Warehouse() {
                                 container: (provided) => ({
                                     ...provided,
                                     width: '200px',
-                                    zIndex: 7777,
+                                    zIndex: 1000,
                                 }),
                             }}
                         />
