@@ -221,9 +221,9 @@ console.log(data);
       <footer className="receipt-footer">
         <div className="payment-line">
           <p>
-            <strong>Tổng tiền:</strong>
+            <strong>Tổng tiền sản phẩm:</strong>
           </p>
-          <p className="amount">{formatCurrency(finalPaymentAmount)}</p>
+          <p className="amount">{formatCurrency(data.invoice.totalPayment||0)}</p>
         </div>
         {appliedPromotion && (
           <div className="payment-line">
@@ -231,16 +231,33 @@ console.log(data);
               <strong>{appliedPromotion.description}:</strong>
             </p>
             <p className="amount">
-              - {formatCurrency(finalPaymentAmount - discountTotal)}{" "}
+              - {formatCurrency(data.invoice.discountPayment)}{" "}
             </p>
           </div>
         )}
         <div className="payment-line">
           <p>
-            <strong>Thành tiền:</strong>
+            <strong>Tổng tiền thanh toán:</strong>
           </p>
-          <p className="amount">{formatCurrency(discountTotal)}</p>
+          <p className="amount">{formatCurrency(data.invoice.paymentAmount||0)}</p>
         </div>
+        {data.invoice.paymentMethod==='Tiền mặt' && (
+          <>
+           <div className="payment-line">
+          <p>
+            <strong>Tiền khách đưa:</strong>
+          </p>
+          <p className="amount">{formatCurrency(data.invoice.paymentCustomer||0)}</p>
+        </div>
+        <div className="payment-line">
+          <p>
+            <strong>Tiền thối lại:</strong>
+          </p>
+          <p className="amount">{formatCurrency(data.invoice.paymentCustomer- data.invoice.paymentAmount)||0}</p>
+        </div>
+          </>
+        )}
+       
         <div className="payment-line">
           <p>
             <strong>Phương thức thanh toán:</strong>

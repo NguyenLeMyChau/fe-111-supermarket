@@ -340,7 +340,8 @@ const Payment = () => {
               paymentAmount,
               promotionOnInvoice,
               discountPayment,
-              totalPayment
+              totalPayment,
+              
             } = cartData;
             const response = await payCart(
               emitSocketEvent,
@@ -354,7 +355,8 @@ const Payment = () => {
               paymentAmount,
               promotionOnInvoice,
               discountPayment,
-              totalPayment
+              totalPayment,
+              
             );
             if (response?.success) {
               toast.success("Thanh toán thành công!");
@@ -424,7 +426,8 @@ const Payment = () => {
           discountedTotal,
           appliedPromotion,
           totalAmount-discountedTotal,
-          totalAmount
+          totalAmount,
+          customerPaid
         );
         console.log("pay cart response:", response);
         if (response?.success) {
