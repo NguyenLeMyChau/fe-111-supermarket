@@ -7,7 +7,7 @@ import UpdatePriceDetail from "./UpdatePriceDetail";
 import { useLocation } from "react-router";
 import Button from "../../components/button/Button";
 import { useDispatch, useSelector } from "react-redux";
-import Select from "react-dropdown-select";
+import Select from "react-select";
 import { deleteProductPriceDetail } from "../../services/priceRequest";
 import { MdDelete } from "react-icons/md";
 import { useAccessToken, useAxiosJWT } from "../../utils/axiosInstance";
@@ -22,66 +22,65 @@ export default function PriceDetail() {
   const accessToken = useAccessToken();
   const location = useLocation();
   const categories = useSelector((state) => state.category?.categories) || [];
-  const units = useSelector((state) => state.unit?.units) || [];
   const { productPriceHeader, productDetail } = location.state || {};
   const [currentDetail, selectCurrentDetail] = useState({});
   const [isEditModalDetailOpen, setIsEditModalDetailOpen] = useState(false);
-  const [isFilterModalOpen, setIsFilterModalOpen] = useState(false);
-  const [isOpenNewPrice,setIsOpenNewPrice]= useState(false);
-  const [loading, setLoading] = useState(false); 
+  const [isOpenNewPrice, setIsOpenNewPrice] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // Filter state
   const [filters, setFilters] = useState({
-    productName: "",
-    unit: "",
-    category:"",
+    item_code: [],
+    productName: [],
+    category: [],
   });
-console.log(productDetail,productPriceHeader)
+  console.log(productDetail, productPriceHeader)
 
 
-const handleDeleteClick = async (event, productPriceHeader) => {
-  event.stopPropagation();
-if(filteredProductHeader?.status !== "inactive") return
-  const confirmDelete = window.confirm("Có chắn chắn xóa giá sản phẩm");
-  if (!confirmDelete) return; // Exit if user cancels
+  const handleDeleteClick = async (event, productPriceHeader) => {
+    event.stopPropagation();
+    if (filteredProductHeader?.status !== "inactive") return
+    const confirmDelete = window.confirm("Có chắn chắn xóa giá sản phẩm");
+    if (!confirmDelete) return; // Exit if user cancels
     setLoading(true)
 
     const deletedPriceDetail = await deleteProductPriceDetail(accessToken, axiosJWT, dispatch, productPriceHeader._id);
-    if(deletedPriceDetail) {
+    if (deletedPriceDetail) {
       setLoading(false)
       toast.success(deletedPriceDetail.message)
       const updatedProductPriceHeader = deletedPriceDetail.allProductPrices?.find(
         (item) => item._id === productPriceHeader.productPriceHeader_id
       );
-    if (updatedProductPriceHeader) {
-      setLoading(false)
-      const productDetail = updatedProductPriceHeader.productPrices || [];
-      updateProductPriceHeader(updatedProductPriceHeader)
-      updateProductPriceDetail(productDetail)
+      if (updatedProductPriceHeader) {
+        setLoading(false)
+        const productDetail = updatedProductPriceHeader.productPrices || [];
+        updateProductPriceHeader(updatedProductPriceHeader)
+        updateProductPriceDetail(productDetail)
+      }
     }
-  }
-  
+
     else {
       setLoading(false)
-      toast.error(deletedPriceDetail.message)}
- 
-};
+      toast.error(deletedPriceDetail.message)
+    }
 
-const [filteredProductHeader, setFilteredProductHeader] =
-useState(productPriceHeader);
+  };
+
+  const [filteredProductHeader, setFilteredProductHeader] =
+    useState(productPriceHeader);
 
   const [filteredProductDetails, setFilteredProductDetails] =
     useState(productDetail);
 
-    const updateProductPriceHeader = (updatedHeader) => {
-      setFilteredProductHeader(updatedHeader); 
-      console.log(updatedHeader)
-    };
-    
-    const updateProductPriceDetail = (updateDetail) => {
-      setFilteredProductDetails(updateDetail); 
-      console.log(updateDetail)
-    };
+  const updateProductPriceHeader = (updatedHeader) => {
+    setFilteredProductHeader(updatedHeader);
+    console.log(updatedHeader)
+  };
+
+  const updateProductPriceDetail = (updateDetail) => {
+    setFilteredProductDetails(updateDetail);
+    console.log(updateDetail)
+  };
   const productDetailColumn = [
     {
       title: "Mã sản phẩm",
@@ -89,6 +88,7 @@ useState(productPriceHeader);
       key: "item_code",
       width: "20%",
       className: "text-center",
+      sortable: true,
       // render: (product) => product?.item_code,
     },
     {
@@ -103,6 +103,7 @@ useState(productPriceHeader);
       dataIndex: "product",
       key: "product",
       width: "20%",
+      sortable: true,
       render: (product) => product?.name,
     },
     {
@@ -118,7 +119,8 @@ useState(productPriceHeader);
       key: "price",
       width: "10%",
       className: "text-center",
-      render:(text)=>(
+      sortable: true,
+      render: (text) => (
         <p>{formatCurrency(text)}</p>
       )
     },
@@ -134,7 +136,7 @@ useState(productPriceHeader);
           onClick={(event) => handleEditDetailClick(event, record)}
         />
       ),
-    },{
+    }, {
       title: 'Xóa',
       key: 'delete',
       width: '5%',
@@ -150,7 +152,7 @@ useState(productPriceHeader);
           />
         )
       ),
-      
+
     },];
   const handleEditDetailClick = (event, productPriceDetail) => {
     event.stopPropagation();
@@ -162,87 +164,144 @@ useState(productPriceHeader);
     setIsEditModalDetailOpen(false);
   };
 
-  const handleFilterClick = () => {
-    setIsFilterModalOpen(true);
-  };
-
-  const closeFilterModal = () => {
-    setIsFilterModalOpen(false);
-  };
-
-  // Filter handling
-  const handleFilterChange = (e) => {
-    const { name, value } = e.target;
-    setFilters({ ...filters, [name]: value });
+  const handleDropdownChange = (name, selectedOptions) => {
+    const values = selectedOptions ? selectedOptions.map(option => option.value) : [];
+    setFilters((prevFilters) => ({
+      ...prevFilters,
+      [name]: values,
+    }));
   };
 
   const applyFilters = () => {
     let filteredData = productDetail;
 
-    if (filters.productName) {
+    if (filters.productName.length > 0) {
       filteredData = filteredData.filter((detail) =>
-        detail.product?.name
-          ?.toLowerCase()
-          .includes(filters.productName.toLowerCase())
+        filters.productName.includes(detail.product?.name)
       );
     }
 
-    if (filters.unit) {
+    if (filters.category.length > 0) {
       filteredData = filteredData.filter((detail) =>
-        detail.unit_id.description
-          ?.toLowerCase()
-          .includes(filters.unit.toLowerCase())
+        filters.category.includes(detail.product?.category_id.name)
       );
     }
 
-
-    if (filters.item_code) {
+    if (filters.item_code.length > 0) {
       filteredData = filteredData.filter((detail) =>
-        detail.item_code
-          ?.toLowerCase()
-          .includes(filters.item_code.toLowerCase())
-      );
-    }
-
-    if (filters.category) {
-      filteredData = filteredData.filter((detail) =>
-        detail.product?.category_id.name
-          ?.toLowerCase()
-          .includes(filters.category.toLowerCase())
+        filters.item_code.includes(detail.item_code)
       );
     }
 
     setFilteredProductDetails(filteredData);
-    closeFilterModal();
   };
+
 
   const resetFilters = () => {
     setFilters({
-      productName: "",
-      unit: "",
-      minPrice: "",
-      maxPrice: "",
-      item_code: "",
-      productType: "",
+      item_code: [],
+      productName: [],
+      category: [],
     });
     setFilteredProductDetails(productDetail);
   };
-  const handleDropdownChange = (name, value) => {
-    if (name === "unit") {
-      const selectedUnit = units.find((unit) => unit._id === value[0].value);
-      const description = selectedUnit ? selectedUnit.description : "";
-      setFilters({ ...filters, [name]: description });
-    }
-    if (name === "category") {
-      const selectedCategory = categories.find(
-        (category) => category._id === value[0].value
-      );
-      const nameCategory = selectedCategory ? selectedCategory.name : "";
-      setFilters({ ...filters, [name]: nameCategory });
-    }
-  };
+
+  // Option lists for the dropdowns
+  const productNameOptions = Array.from(
+    new Set(productDetail.map((detail) => detail.product?.name))
+  ).map((name) => ({
+    value: name,
+    label: name,
+  }));
+
+  const itemCodeOptions = Array.from(
+    new Set(productDetail.map((detail) => detail.item_code))
+  ).map((itemCode) => ({
+    value: itemCode,
+    label: itemCode,
+  }));
+  const categoryOptions = categories.map((category) => ({
+    value: category.name,
+    label: category.name,
+  }));
+
+
   return (
-    <div>
+    <>
+      <div className="filter-statistical" style={{ marginBottom: 20 }}>
+        <div className='filter-row'>
+          <div className="filter-item">
+            <label>Mã sản phẩm</label>
+            <Select
+              options={itemCodeOptions}
+              placeholder="Mã sản phẩm"
+              onChange={(selectedOptions) => handleDropdownChange("item_code", selectedOptions)}
+              value={filters.item_code.map(code => ({ value: code, label: code }))}
+              isMulti
+              styles={{
+                container: (provided) => ({
+                  ...provided,
+                  width: '200px',
+                  zIndex: 1000,
+                }),
+              }}
+            />
+          </div>
+          <div className="filter-item">
+            <label>Tên sản phẩm</label>
+            <Select
+              options={productNameOptions}
+              placeholder="Tên sản phẩm"
+              onChange={(selectedOptions) => handleDropdownChange("productName", selectedOptions)}
+              value={filters.productName.map(name => ({ value: name, label: name }))}
+              isMulti
+              styles={{
+                container: (provided) => ({
+                  ...provided,
+                  width: '500px',
+                  zIndex: 1000,
+                }),
+              }}
+            />
+          </div>
+          <div className="filter-item">
+            <label>Loại sản phẩm</label>
+            <Select
+              options={categoryOptions}
+              placeholder="Loại sản phẩm"
+              onChange={(selectedOptions) => handleDropdownChange("category", selectedOptions)}
+              value={filters.category.map(category => ({ value: category, label: category }))}
+              isMulti
+              styles={{
+                container: (provided) => ({
+                  ...provided,
+                  width: '200px',
+                  zIndex: 1000,
+                }),
+              }}
+            />
+          </div>
+          <div className='button-filter'>
+            <Button
+              text='Lọc'
+              backgroundColor='#1366D9'
+              color='white'
+              width='100'
+              onClick={applyFilters}
+            />
+            <Button
+              text='Huỷ lọc'
+              backgroundColor='#FF0000'
+              color='white'
+              width='100'
+              onClick={resetFilters}
+            />
+          </div>
+
+        </div>
+      </div>
+
+
       <FrameData
         title={`Chi tiết : ${filteredProductHeader.description}`}
         data={filteredProductDetails}
@@ -250,118 +309,48 @@ useState(productPriceHeader);
         columns={productDetailColumn}
         itemsPerPage={8}
         showGoBack={true}
-        handleFilterClick={handleFilterClick}
         onButtonClick={() => setIsOpenNewPrice(true)}
-        // renderModal={
-        //   productPriceHeader?.status === "inactive"
-        //     ? (onClose) => (
-        //         <AddProductPriceDetail
-        //           isOpen={true}
-        //           onClose={onClose}
-        //           productPriceHeader={productPriceHeader}
-                 
-        //         />
-        //       )
-        //     : null
-        // }
+      // renderModal={
+      //   productPriceHeader?.status === "inactive"
+      //     ? (onClose) => (
+      //         <AddProductPriceDetail
+      //           isOpen={true}
+      //           onClose={onClose}
+      //           productPriceHeader={productPriceHeader}
+
+      //         />
+      //       )
+      //     : null
+      // }
       />
-  {isOpenNewPrice && filteredProductHeader?.status === "inactive" ? (<AddProductPriceDetail
-                  isOpen={isOpenNewPrice}
-                  onClose={() => setIsOpenNewPrice(false)}
-                  productPriceHeader={filteredProductHeader}
-                  updateProductPriceDetail={updateProductPriceDetail}
-                  updateProductPriceHeader={updateProductPriceHeader}
-    
-                />):null}
-      {isEditModalDetailOpen && filteredProductHeader?.status === "inactive" ? (
-        <Modal
-          title={`Cập nhật giá`}
-          isOpen={isEditModalDetailOpen}
-          onClose={handleCloseEditModalDetail}
-          width={"30%"}
-        >
-          <UpdatePriceDetail
-            priceDetailid={currentDetail._id}
-            priceDetail={currentDetail}
+      {
+        isOpenNewPrice && filteredProductHeader?.status === "inactive" ? (<AddProductPriceDetail
+          isOpen={isOpenNewPrice}
+          onClose={() => setIsOpenNewPrice(false)}
+          productPriceHeader={filteredProductHeader}
+          updateProductPriceDetail={updateProductPriceDetail}
+          updateProductPriceHeader={updateProductPriceHeader}
+
+        />) : null
+      }
+      {
+        isEditModalDetailOpen && filteredProductHeader?.status === "inactive" ? (
+          <Modal
+            title={`Cập nhật giá`}
+            isOpen={isEditModalDetailOpen}
             onClose={handleCloseEditModalDetail}
-            updateProductPriceDe={updateProductPriceDetail}
-            updateProductPriceHeader={updateProductPriceHeader}
-          />
-        </Modal>
-      ) : null}
-
-      {/* Filter Modal */}
-      <Modal
-        title="Lọc chi tiết giá"
-        isOpen={isFilterModalOpen}
-        onClose={closeFilterModal}
-        width={600}
-        height={700}
-      >
-        <div className="filter-modal-content">
-          <div className="filter-item">
-            <label>Mã hàng:</label>
-            <input
-              type="text"
-              name="item_code"
-              value={filters.item_code}
-              onChange={handleFilterChange}
+            width={"30%"}
+          >
+            <UpdatePriceDetail
+              priceDetailid={currentDetail._id}
+              priceDetail={currentDetail}
+              onClose={handleCloseEditModalDetail}
+              updateProductPriceDe={updateProductPriceDetail}
+              updateProductPriceHeader={updateProductPriceHeader}
             />
-          </div>
-
-          <div className="filter-item">
-            <label>Loại sản phẩm:</label>
-            <Select
-              value={filters.category}
-              onChange={(value) => handleDropdownChange("category", value)}
-              options={categories.map((categorie) => ({
-                value: categorie._id,
-                label: categorie.name,
-              }))}
-              placeholder="Chọn loại sản phẩm"
-            />
-          </div>
-          <div className="filter-item">
-            <label>Tên sản phẩm:</label>
-            <input
-              type="text"
-              name="productName"
-              value={filters.productName}
-              onChange={handleFilterChange}
-            />
-          </div>
-
-          <div className="filter-item">
-            <label>Đơn vị tính</label>
-            <Select
-              value={filters.unit}
-              onChange={(value) => handleDropdownChange("unit", value)}
-              options={units.map((unit) => ({
-                value: unit._id,
-                label: unit.description,
-              }))}
-              placeholder="Chọn đơn vị tính"
-            />
-          </div>
-
-          <div className="button-filter">
-            <Button
-              text="Lọc"
-              backgroundColor="#1366D9"
-              color="white"
-              width="150"
-              onClick={applyFilters}
-            />
-            <Button
-              text="Huỷ lọc"
-              backgroundColor="#FF0000"
-              color="white"
-              width="150"
-              onClick={resetFilters}
-            />
-          </div>
-        </div>
-      </Modal>
-    </div>
+          </Modal>
+        ) : null
+      }
+    </>
   );
 }
