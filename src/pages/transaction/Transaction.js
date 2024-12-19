@@ -76,7 +76,9 @@ export default function Transaction() {
         }
 
         if (filters.endDate) {
-            filteredData = filteredData.filter(transaction => new Date(transaction.createdAt) <= new Date(filters.endDate));
+            const endDate = new Date(filters.endDate);
+            endDate.setHours(23, 59, 59, 999); // Đặt thời gian của ngày kết thúc đến cuối ngày
+            filteredData = filteredData.filter(transaction => new Date(transaction.createdAt) <= endDate);
         }
 
         setFilteredTransactions(filteredData);
