@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { GoHome } from "react-icons/go";
 import { MdOutlineInventory2, MdProductionQuantityLimits, MdOutlineToday, MdOutlinePayment } from "react-icons/md";
 import { BsFileBarGraph, BsPersonVcard } from "react-icons/bs";
 import { FaRegUser, FaCashRegister, FaUsers } from "react-icons/fa";
@@ -16,6 +15,7 @@ import { DiUnitySmall } from "react-icons/di";
 import { IoPersonCircleOutline } from "react-icons/io5";
 import { LiaFileInvoiceSolid } from "react-icons/lia";
 import { HiOutlineDocumentReport } from "react-icons/hi";
+import { FaChartLine } from "react-icons/fa6";
 
 import { createAxiosInstance } from '../utils/util';
 import { logoutSuccess } from '../store/reducers/authSlice';
@@ -113,6 +113,7 @@ const useMenuItems = (onchange) => {
                     label: "Report",
                     text: "Thống kê",
                     subItems: [
+                        { Icon: FaChartLine, label: "Overview", text: "Tổng quan", path: '/admin/statistical/overview' },
                         { Icon: MdOutlineToday, label: "ReportDay", text: "DSBH ngày", path: '/admin/statistical/daily-revenue' },
                         { Icon: IoPersonCircleOutline, label: "ReportCustomer", text: "DSBH KH", path: '/admin/statistical/report-customer' },
                         { Icon: PiInvoice, label: "ReportInvoiceRefund", text: "Hoá đơn trả", path: '/admin/statistical/report-invoice-refund' },
