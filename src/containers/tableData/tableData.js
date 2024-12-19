@@ -1,35 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './table.scss';
-import { FaSort, FaSortUp, FaSortDown } from 'react-icons/fa'; // Import icons
+import { FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
 
 export default function TableData({ columns, data, onRowClick }) {
-    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
-
-    // Hàm sắp xếp dữ liệu
-    const sortedData = React.useMemo(() => {
-        if (sortConfig.key) {
-            return [...data].sort((a, b) => {
-                const valueA = a[sortConfig.key];
-                const valueB = b[sortConfig.key];
-                if (valueA < valueB) return sortConfig.direction === 'asc' ? -1 : 1;
-                if (valueA > valueB) return sortConfig.direction === 'asc' ? 1 : -1;
-                return 0;
-            });
-        }
-        return data;
-    }, [data, sortConfig]);
-
-    const handleSort = (key) => {
-        let direction = 'asc';
-        if (sortConfig.key === key && sortConfig.direction === 'asc') {
-            direction = 'desc';
-        }
-        setSortConfig({ key, direction });
-    };
-
-    const renderSortIcon = (key) => {
-        if (sortConfig.key !== key) return <FaSort />;
-        return sortConfig.direction === 'asc' ? <FaSortUp /> : <FaSortDown />;
+    const renderSortIcon = (key, sortDirection) => {
+        if (!sortDirection) return <FaSort />;
+        return sortDirection === 'asc' ? <FaSortUp /> : <FaSortDown />;
     };
 
     return (
@@ -41,15 +17,15 @@ export default function TableData({ columns, data, onRowClick }) {
                             key={column.key}
                             className={column.className}
                             style={{ width: column.width, cursor: column.sortable ? 'pointer' : 'default' }}
-                            onClick={() => column.sortable && handleSort(column.dataIndex)}
+                            onClick={() => column.sortable && column.onSort && column.onSort(column.dataIndex)}
                         >
-                            {column.title} {column.sortable && renderSortIcon(column.dataIndex)}
+                            {column.title} {column.sortable && renderSortIcon(column.dataIndex, column.sortDirection)}
                         </th>
                     ))}
                 </tr>
             </thead>
             <tbody>
-                {sortedData.map((item, index) => (
+                {data.map((item, index) => (
                     <tr
                         key={item._id}
                         onClick={() => onRowClick && onRowClick(item)}
