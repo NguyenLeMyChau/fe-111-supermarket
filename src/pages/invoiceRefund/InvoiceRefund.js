@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import FrameData from '../../containers/frameData/FrameData';
 import { formatCurrency, formatDate } from '../../utils/fotmatDate';
@@ -7,18 +7,40 @@ import ProductInvoice from './ProductInvoiceRefund';
 import './Invoice.scss';
 import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
+import Select from 'react-select';
+import Button from '../../components/button/Button';
 
 export default function InvoiceRefund() {
     const navigate = useNavigate();
     const location = useLocation();
 
     const invoices = useSelector((state) => state.invoice?.invoiceRefund) || [];
+    const customers = useSelector((state) => state.customer?.customers) || [];
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [products, setProducts] = useState(null);
     const [selectedInvoice, setSelectedInvoice] = useState(null);
-    console.log(invoices)
-    // Tạo bản sao của mảng invoices trước khi sắp xếp
-    const sortedInvoices = [...invoices].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    const [filters, setFilters] = useState({
+        invoiceCode: [],
+        invoiceCodeSale: [],
+        phone: [],
+        startDate: '',
+        endDate: '',
+    });
+
+    const [sortedInvoices, setSortedInvoices] = useState([]);
+    const [filteredInvoices, setFilteredInvoices] = useState([]);
+
+    useEffect(() => {
+        const sorted = [...invoices].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        setSortedInvoices(sorted);
+        setFilteredInvoices(sorted);
+    }, [invoices]);
+
+    useEffect(() => {
+        if (sortedInvoices.length > 0) {
+            applyFilters();
+        }
+    }, [filters, sortedInvoices]);
 
     const getStatusColor = (status) => {
         const matchedStatus = orderStatuses.find(s => s.value === status);
@@ -63,7 +85,6 @@ export default function InvoiceRefund() {
             className: 'text-right',
             render: (total) => formatCurrency(total)
         },
-      
     ];
 
     const invoiceDetailColumn = [
@@ -97,12 +118,146 @@ export default function InvoiceRefund() {
         }
     }
 
+    const applyFilters = () => {
+        let filteredData = sortedInvoices;
+
+        if (filters.invoiceCode.length > 0) {
+            filteredData = filteredData.filter(transaction => filters.invoiceCode.includes(transaction.invoiceCode));
+        }
+
+        if (filters.invoiceCodeSale.length > 0) {
+            filteredData = filteredData.filter(transaction => filters.invoiceCodeSale.includes(transaction.invoiceCodeSale));
+        }
+
+        if (filters.phone.length > 0) {
+            filteredData = filteredData.filter(transaction => filters.phone.includes(transaction.customer_id));
+        }
+
+        if (filters.startDate) {
+            filteredData = filteredData.filter(transaction => new Date(transaction.createdAt) >= new Date(filters.startDate));
+        }
+
+        if (filters.endDate) {
+            const endDate = new Date(filters.endDate);
+            endDate.setHours(23, 59, 59, 999); // Đặt thời gian của ngày kết thúc đến cuối ngày
+            filteredData = filteredData.filter(transaction => new Date(transaction.createdAt) <= endDate);
+        }
+
+        setFilteredInvoices(filteredData);
+    };
+
+    const resetFilters = () => {
+        setFilters({
+            invoiceCode: [],
+            invoiceCodeSale: [],
+            phone: [],
+            startDate: '',
+            endDate: '',
+        });
+        setFilteredInvoices(sortedInvoices);
+    };
+
+    const handleSelectChange = (selectedOption, field) => {
+        setFilters(prevState => ({
+            ...prevState,
+            [field]: selectedOption ? selectedOption.map(option => option.value) : []
+        }));
+    };
+
+    // Các tùy chọn cho Select
+    const invoiceCodeOptions = invoices.map(invoice => ({ value: invoice.invoiceCode, label: invoice.invoiceCode }));
+    const invoiceCodeSaleOptions = invoices.map(invoice => ({ value: invoice.invoiceCodeSale, label: invoice.invoiceCodeSale }));
+    const phoneOptions = customers.map(customer => ({ value: customer.account_id, label: customer.phone }));
 
     return (
         <>
+            <div className="filter-statistical">
+                <div className='filter-row'>
+                    <div className="filter-item" style={{ marginRight: -20 }}>
+                        <label>Mã hóa đơn trả</label>
+                        <Select
+                            isMulti
+                            value={invoiceCodeOptions.filter(option => filters.invoiceCode.includes(option.value))}
+                            options={invoiceCodeOptions}
+                            onChange={(selected) => handleSelectChange(selected, 'invoiceCode')}
+                            styles={{
+                                container: (provided) => ({
+                                    ...provided,
+                                    width: '200px',
+                                    zIndex: 1000,
+                                }),
+                            }}
+                        />
+                    </div>
+
+                    <div className="filter-item" style={{ marginRight: -20 }}>
+                        <label>Mã hóa đơn bán</label>
+                        <Select
+                            isMulti
+                            value={invoiceCodeSaleOptions.filter(option => filters.invoiceCodeSale.includes(option.value))}
+                            options={invoiceCodeSaleOptions}
+                            onChange={(selected) => handleSelectChange(selected, 'invoiceCodeSale')}
+                            styles={{
+                                container: (provided) => ({
+                                    ...provided,
+                                    width: '200px',
+                                    zIndex: 1000,
+                                }),
+                            }}
+                        />
+                    </div>
+
+                    <div className="filter-item" style={{ marginRight: -20 }}>
+                        <label>SĐT khách</label>
+                        <Select
+                            isMulti
+                            value={phoneOptions.filter(option => filters.phone.includes(option.value))}
+                            options={phoneOptions}
+                            onChange={(selected) => handleSelectChange(selected, 'phone')}
+                            placeholder="Chọn số điện thoại"
+                            styles={{
+                                container: (provided) => ({
+                                    ...provided,
+                                    width: '200px',
+                                    zIndex: 1000,
+                                }),
+                            }}
+                        />
+                    </div>
+                    <div className="filter-item" style={{ marginRight: -20 }}>
+                        <label>Ngày bắt đầu</label>
+                        <input
+                            type="date"
+                            value={filters.startDate}
+                            onChange={(e) => handleSelectChange([{ value: e.target.value }], 'startDate')}
+                            placeholder="Chọn ngày bắt đầu"
+                        />
+                    </div>
+                    <div className="filter-item" style={{ marginRight: -20 }}>
+                        <label>Ngày kết thúc</label>
+                        <input
+                            type="date"
+                            value={filters.endDate}
+                            onChange={(e) => handleSelectChange([{ value: e.target.value }], 'endDate')}
+                            placeholder="Chọn ngày kết thúc"
+                        />
+                    </div>
+
+                    <div className='button-filter' style={{ marginLeft: 20, marginTop: 20 }}>
+                        <Button
+                            text='Huỷ lọc'
+                            backgroundColor='#FF0000'
+                            color='white'
+                            width='100'
+                            onClick={resetFilters}
+                        />
+                    </div>
+                </div>
+            </div>
+
             <FrameData
                 title="Danh sách hoá đơn trả"
-                data={sortedInvoices}
+                data={filteredInvoices}
                 columns={invoiceColumn}
                 onRowClick={handleRowClick}
                 itemsPerPage={5}
@@ -119,9 +274,6 @@ export default function InvoiceRefund() {
                     />
                 )
             }
-
         </>
-
-
     );
 }
